@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-02 16:45:05
 LastEditors: ChenHJ
-LastEditTime: 2022-03-09 13:22:03
+LastEditTime: 2022-03-09 15:35:24
 FilePath: /chenhj/0302code/data_predealing.py
 Aim: 
 Mission: 
@@ -98,4 +98,20 @@ f4 = xr.open_dataset("/home/ys17-23/chenhj/Nino/ERA5/tp_mon_1x1_1950_1978.nc")
 tp2 = f4["tp"]
 tpnew = xr.concat([tp, tp2], "time")
 tpnew.to_netcdf("/home/ys17-23/chenhj/Nino/ERA5/tp_mon_1x1_195001_202111.nc")
+# %%
+variable = ["ua", "va", "ta", "wap", "hus", "zg", "pr"]
+for var in variable:
+    srcPath = "/home/ys17-23/chenhj/CMIP6/historical/" + var
+    dstPath = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/" + var
+    start = 1950
+    end = 2014
+    ca.p_year(srcPath, dstPath, start, end)
+# %%
+variable = ["ua", "va", "ta", "wap", "hus", "zg", "pr"]
+for var in variable:
+    srcPath = "/home/ys17-23/chenhj/CMIP6/ssp585/" + var
+    dstPath = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/ssp585/" + var
+    start = 2015
+    end = 2099
+    ca.p_year(srcPath, dstPath, start, end)
 # %%
