@@ -78,8 +78,8 @@ reload(ca)
 hgt_ERA5_JJA_200 = hgt_ERA5_JJA.sel(level=200.0)
 u_ERA5_JJA_200 = u_ERA5_JJA.sel(level=200.0)
 
-hgt_his_JJA_200 = hgt_his_JJA[:,9,:,:]
-u_his_JJA_200 = u_his_JJA[:,9,:,:]
+hgt_his_JJA_200 = hgt_his_JJA[:, 9, :, :]
+u_his_JJA_200 = u_his_JJA[:, 9, :, :]
 # hgt_his_JJA_200 = hgt_his_JJA.sel(plev=2e+04)
 # u_his_JJA_200 = u_his_JJA.sel(plev=2e+04)
 
@@ -104,19 +104,60 @@ for t_ERA5, t_his in zip(hgt_ERA5_SAH_area.time, hgt_his_SAH_area.time):
     ridgelat_ERA5, ridgelon_ERA5 = ca.cal_ridge_line(u_ERA5_SAH_area.sel(time=t_ERA5))
     ridgelat_his, ridgelon_his = ca.cal_ridge_line(u_his_SAH_area.sel(time=t_his))
     center_loc_ERA5[
-        hgt_ERA5_SAH_area.sel(time=t_ERA5, lat=ridgelat_ERA5, lon=ridgelon_ERA5).argmax(dim=["lat", "lon"])[
-            "lon"
-        ]
+        hgt_ERA5_SAH_area.sel(time=t_ERA5, lat=ridgelat_ERA5, lon=ridgelon_ERA5).argmax(
+            dim=["lat", "lon"]
+        )["lon"]
     ] += 1
     center_loc_his[
-        hgt_his_SAH_area.sel(time=t_his, lat=ridgelat_his, lon=ridgelon_his).argmax(dim=["lat", "lon"])[
-            "lon"
-        ]
+        hgt_his_SAH_area.sel(time=t_his, lat=ridgelat_his, lon=ridgelon_his).argmax(
+            dim=["lat", "lon"]
+        )["lon"]
     ] += 1
+
 
 frequency_ERA5 = xr.DataArray(center_loc_ERA5, coords=[lon], dims=["lon"])
 frequency_his = xr.DataArray(center_loc_his, coords=[lon], dims=["lon"])
 
+# %%
+fig = pplt.figure(refwidth=4.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=1, nrows=2)
+axs[0].bar(frequency_ERA5, width=0.6, color="black")
+axs[1].bar(frequency_his, width=0.6, color="black")
+
+axs[0].format(
+    xformatter="deglon",
+    ylim=(0, 20),
+    xlim=(startlon, endlon),
+    ylocator=5,
+    xminorlocator=2.5,
+    xlabel="Longitude",
+    ylabel="Frequency",
+    title="ERA5"
+)
+axs[1].format(
+    xformatter="deglon",
+    ylim=(0, 65),
+    xlim=(startlon, endlon),
+    ylocator=5,
+    xminorlocator=2.5,
+    xlabel="Longitude",
+    ylabel="Frequency",
+    title="ens"
+)
+
+# %%
+#   calculate the SAHI
+def cal_SAHI(da):
+    areaA = da.loc[:, 22.5:32.5, 55:75]
+    areaB = da.loc[:, 22.5:32.5, 85:105]
+    weights = np.cos(np.deg2rad(areaA.lat))
+    weights.name = "weights"
+    indA = areaA.weighted(weights).mean(("lon", "lat"), skipna=True)
+    indB = areaB.weighted(weights).mean(("lon", "lat"), skipna=True)
+    return ca.standardize(indA-indB)
+SAHI_ERA5 = cal_SAHI(hgt_ERA5_JJA_200)
+
+# %%
 # %%
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
@@ -221,18 +262,7 @@ fig_SAH.colorbar(con, loc="b", width=0.13, length=0.5, label="")
 
 
 # %%
-fig = pplt.figure(refwidth=4.0, refheight=2.5, span=False, share=False)
-axs = fig.subplots(ncols=1, nrows=1)
-axs[0].bar(frequency1, width=0.6, color="black")
-axs.format(
-    xformatter="deglon",
-    ylim=(0, 20),
-    xlim=(startlon, endlon),
-    ylocator=5,
-    xminorlocator=2.5,
-    xlabel="Longitude",
-    ylabel="Frequency",
-)
+
 
 # %%
 
