@@ -154,10 +154,33 @@ def cal_SAHI(da):
     weights.name = "weights"
     indA = areaA.weighted(weights).mean(("lon", "lat"), skipna=True)
     indB = areaB.weighted(weights).mean(("lon", "lat"), skipna=True)
-    return ca.standardize(indA-indB)
+    return ca.standardize(indB-indA)
 SAHI_ERA5 = cal_SAHI(hgt_ERA5_JJA_200)
+SAHI_his = cal_SAHI(hgt_his_JJA_200)
 
 # %%
+fig_SAHI = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig_SAHI.subplots(ncols=1, nrows=1)
+lw = 0.8
+axs[0].line(SAHI_ERA5, lw = lw, color="black")
+axs[0].line(SAHI_his, lw=lw, color="blue")
+
+axs[0].format(
+    ylim=(-3, 3),
+    ylocator=1.0,
+    yminorlocator=0.5,
+    xlabel="time",
+    ylabel="SAHI",
+    xrotation=0
+)
+axs[0].legend(loc='ll', ncols=1, labels=['ERA5', 'historical'])
+# %%
+#   choose the eastern-type and western-type
+eastern_year_ERA5 = time.where(SAHI_ERA5>=1.0, drop=True)
+western_year_ERA5 = time.where(SAHI_ERA5<=1.0, drop=True)
+
+eastern_year_his = time.where(SAHI_his>=1.0, drop=True)
+western_year_his = time.where(SAHI_his<=1.0, drop=True)
 # %%
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
