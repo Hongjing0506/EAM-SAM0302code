@@ -70,6 +70,7 @@ u_ERA5_JJA = ca.p_time(u_ERA5, 6, 8, True)
 
 hgt_his_JJA = ca.p_time(hgt_his, 6, 8, True)
 u_his_JJA = ca.p_time(u_his, 6, 8, True)
+print(hgt_his_JJA)
 
 # %%
 #   select the 200hPa data and calculate the center of SAH and detrend
@@ -77,29 +78,44 @@ reload(ca)
 hgt_ERA5_JJA_200 = hgt_ERA5_JJA.sel(level=200.0)
 u_ERA5_JJA_200 = u_ERA5_JJA.sel(level=200.0)
 
-hgt_his_JJA_200 = hgt_his_JJA.sel(plev=20000)
+hgt_his_JJA_200 = hgt_his_JJA[:,9,:,:]
+u_his_JJA_200 = u_his_JJA[:,9,:,:]
+# hgt_his_JJA_200 = hgt_his_JJA.sel(plev=2e+04)
+# u_his_JJA_200 = u_his_JJA.sel(plev=2e+04)
 
 startlon = 20.0
 endlon = 130.0
 startlat = 0.0
 endlat = 45.0
 
-hgt_SAH_area = hgt_ERA5_JJA_200.loc[:, startlat:endlat, startlon:endlon]
-u_SAH_area = u_ERA5_JJA_200.loc[:, startlat:endlat, startlon:endlon]
-time = hgt_SAH_area.coords["time"]
-lon = hgt_SAH_area.coords["lon"]
-center_loc = np.zeros(len(lon))
+hgt_ERA5_SAH_area = hgt_ERA5_JJA_200.loc[:, startlat:endlat, startlon:endlon]
+u_ERA5_SAH_area = u_ERA5_JJA_200.loc[:, startlat:endlat, startlon:endlon]
+
+hgt_his_SAH_area = hgt_his_JJA_200.loc[:, startlat:endlat, startlon:endlon]
+u_his_SAH_area = u_his_JJA_200.loc[:, startlat:endlat, startlon:endlon]
+
+time = hgt_ERA5_SAH_area.coords["time"]
+lon = hgt_ERA5_SAH_area.coords["lon"]
+center_loc_ERA5 = np.zeros(len(lon))
+center_loc_his = np.zeros(len(lon))
 
 # calculate the ridge line of SAH
-for t in time:
-    ridgelat, ridgelon = ca.cal_ridge_line(u_SAH_area.sel(time=t))
-    center_loc[
-        hgt_SAH_area.sel(time=t, lat=ridgelat, lon=ridgelon).argmax(dim=["lat", "lon"])[
+for t_ERA5, t_his in zip(hgt_ERA5_SAH_area.time, hgt_his_SAH_area.time):
+    ridgelat_ERA5, ridgelon_ERA5 = ca.cal_ridge_line(u_ERA5_SAH_area.sel(time=t_ERA5))
+    ridgelat_his, ridgelon_his = ca.cal_ridge_line(u_his_SAH_area.sel(time=t_his))
+    center_loc_ERA5[
+        hgt_ERA5_SAH_area.sel(time=t_ERA5, lat=ridgelat_ERA5, lon=ridgelon_ERA5).argmax(dim=["lat", "lon"])[
+            "lon"
+        ]
+    ] += 1
+    center_loc_his[
+        hgt_his_SAH_area.sel(time=t_his, lat=ridgelat_his, lon=ridgelon_his).argmax(dim=["lat", "lon"])[
             "lon"
         ]
     ] += 1
 
-frequency1 = xr.DataArray(center_loc, coords=[lon], dims=["lon"])
+frequency_ERA5 = xr.DataArray(center_loc_ERA5, coords=[lon], dims=["lon"])
+frequency_his = xr.DataArray(center_loc_his, coords=[lon], dims=["lon"])
 
 # %%
 pplt.rc.grid = False
