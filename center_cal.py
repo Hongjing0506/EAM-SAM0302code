@@ -221,7 +221,7 @@ eastern_his_ridgelat, eastern_his_ridgelon = ca.cal_ridge_line(u_eastern_his_mea
 western_his_ridgelat, western_his_ridgelon = ca.cal_ridge_line(u_western_his_mean)
 
 # %%
-
+reload(sepl)
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
 cl = 0
@@ -235,88 +235,27 @@ axs = fig_SAH.subplots(ncols=2, nrows=3, proj=proj)
 xticks = np.arange(startlon, endlon + 1, 10)
 yticks = np.arange(startlat, endlat + 1, 5)
 sepl.geo_ticks(axs, xticks, yticks, cl, 5, 2.5)
+sepl.add_shape(r"/home/ys17-23/chenhj/TP_shape/Qinghai-Tibet_Plateau.shp", axs, proj)
 
 startrange = 12100
-endrange = 12580
-spacing = 40
+endrange = 12500
+spacing = 80
+levels = np.arange(startrange, endrange + 0.5 * spacing, spacing)
+levels = np.append(levels, np.array([12540, 12580]))
+con_labels = np.append(np.arange(startrange + spacing, endrange + 0.5*spacing, 2*spacing), np.array([12540, 12580]))
 con = axs[0, 0].contour(
-    cli_ERA5,
-    values=np.arange(startrange, endrange + 0.5 * spacing, spacing),
+    hgt_cli_ERA5,
+    levels=levels,
     extend="both",
     color="black",
+    labels=True,
+    labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
+    lw=0.8,
 )
-axs[0, 0].scatter(cli_ERA5_ridgelon, cli_ERA5_ridgelat)
 
-# w, h = 0.12, 0.14
-# for i, ax in enumerate(axs):
-#     add_patches_for_index(ind, ax, cl)
-#     rect = Rectangle(
-#         (1 - w, 0),
-#         w,
-#         h,
-#         transform=ax.transAxes,
-#         fc="white",
-#         ec="k",
-#         lw=0.5,
-#         zorder=1.1,
-#     )
-#     con = ax.contourf(
-#         r_mon_hgt850[0, i, :, :],
-#         cmap="ColdHot",
-#         extend="both",
-#         vmin=-1.0,
-#         vmax=1.0,
-#     )
-#     n = 4
-#     sepl.plt_sig(
-#         r_mon_hgt850[0, i, :, :],
-#         ax,
-#         n,
-#         np.where(
-#             abs(r_mon_hgt850[0, i, ::n, ::n]) >= rlim_mon_hgt850[0, i, ::n, ::n]
-#         ),
-#         "red",
-#         1.0,
-#     )
-#     ski = 6
-#     ax.quiver(
-#         r_mon_u850[0, i, ::ski, ::ski],
-#         r_mon_v850[0, i, ::ski, ::ski],
-#         zorder=1,
-#         headwidth=2.6,
-#         headlength=2.3,
-#         headaxislength=2.3,
-#         scale_units="xy",
-#         scale=0.12,
-#         pivot="mid",
-#         color="grey5",
-#     )
-#     tmp_check = ca.wind_check(r_mon_u850, r_mon_v850, rlim_mon_u850, rlim_mon_v850)
-#     m = ax.quiver(
-#         r_mon_u850.where(tmp_check != 0)[0, i, ::ski, ::ski],
-#         r_mon_v850.where(tmp_check != 0)[0, i, ::ski, ::ski],
-#         zorder=1,
-#         headwidth=2.6,
-#         headlength=2.3,
-#         headaxislength=2.3,
-#         scale_units="xy",
-#         scale=0.12,
-#         pivot="mid",
-#         color="black",
-#     )
-#     del tmp_check
-#     ax.add_patch(rect)
-#     qk = ax.quiverkey(
-#         m,
-#         X=1 - w / 2,
-#         Y=0.7 * h,
-#         U=0.5,
-#         label="0.5",
-#         labelpos="S",
-#         labelsep=0.02,
-#         fontproperties={"size": 5},
-#         zorder=3.1,
-#     )
+axs[0, 0].line(cli_ERA5_ridgelon, cli_ERA5_ridgelat, lw=0.8, color="grey7", linestyle = '--')
+
+
 #     ax.format(
 #         ltitle=f"{ind} " + np.array(r_mon_hgt850.coords["x"])[0],
 #         rtitle="hgt850 & U850 " + np.array(r_mon_hgt850.coords["y"])[i],
