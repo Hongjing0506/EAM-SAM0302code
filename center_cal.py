@@ -182,12 +182,13 @@ axs[0].format(
     yminorlocator=0.5,
     xminorlocator=2.0,
     xlabel="time",
-    ylabel="SAHI",
+    ylabel="SAHI EW",
     xrotation=0,
 )
 axs[0].legend(loc="ll", ncols=1, labels=["ERA5", "historical"])
 axs[0].text(1952, 2.5, "SAHI ERA5 std : {:.2f}".format(np.array(SAHI_ERA5_std)), size=7)
 axs[0].text(1952, 2.2, "SAHI his std : {:.2f}".format(np.array(SAHI_his_std)), size=7)
+fig_SAHI.format(title="SAHI-EW")
 # %%
 #   choose the eastern-type and western-type
 eastern_year_ERA5 = SAHI_ERA5.time.dt.year.where(
@@ -464,11 +465,20 @@ fig_std.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 def cal_SAHI_NS(da):
     areaA = da.loc[:, 27.5:32.5, 50:100]
     areaB = da.loc[:, 22.5:27.5, 50:100]
-    weights = np.cos(np.deg2rad(areaA.lat))
-    weights.name = "weights"
-    indA = areaA.weighted(weights).mean(("lon", "lat"), skipna=True)
-    indB = areaB.weighted(weights).mean(("lon", "lat"), skipna=True)
+    weightsA = np.cos(np.deg2rad(areaA.lat))
+    weightsA.name = "weights"
+    weightsB = np.cos(np.deg2rad(areaB.lat))
+    weightsB.name = "weights"
+    indA = areaA.weighted(weightsA).mean(("lon", "lat"), skipna=True)
+    indB = areaB.weighted(weightsB).mean(("lon", "lat"), skipna=True)
     return indA - indB
+
+SAHI_NS_ERA5 = cal_SAHI_NS(hgt_ERA5_JJA_200)
+SAHI_NS_his = cal_SAHI_NS(hgt_his_JJA_200)
+
+
+SAHI_NS_ERA5_std = SAHI_NS_ERA5.std(dim="time", skipna=True)
+SAHI_NS_his_std = SAHI_NS_his.std(dim="time", skipna=True)
 
 # %%
 def add_patches_for_NS(ax):
@@ -483,3 +493,25 @@ def add_patches_for_NS(ax):
     y0 = 22.5
     height = 5.0
     patches(x0, y0, width, height, proj)
+
+# %%
+fig_SAHI_NS = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig_SAHI_NS.subplots(ncols=1, nrows=1)
+lw = 0.8
+axs[0].line(SAHI_NS_ERA5.time.dt.year, ca.standardize(SAHI_NS_ERA5), lw=lw, color="black")
+axs[0].line(SAHI_NS_ERA5.time.dt.year, ca.standardize(SAHI_NS_his), lw=lw, color="blue")
+
+axs[0].format(
+    ylim=(-3, 3),
+    ylocator=1.0,
+    yminorlocator=0.5,
+    xminorlocator=2.0,
+    xlabel="time",
+    ylabel="SAHI NS",
+    xrotation=0,
+)
+axs[0].legend(loc="ll", ncols=1, labels=["ERA5", "historical"])
+axs[0].text(2000, 2.5, "SAHI ERA5 std : {:.2f}".format(np.array(SAHI_NS_ERA5_std)), size=7)
+axs[0].text(2000, 2.2, "SAHI his std : {:.2f}".format(np.array(SAHI_NS_his_std)), size=7)
+fig_SAHI_NS.format(title="SAHI-NS")
+# %%
