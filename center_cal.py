@@ -154,28 +154,34 @@ def cal_SAHI(da):
     weights.name = "weights"
     indA = areaA.weighted(weights).mean(("lon", "lat"), skipna=True)
     indB = areaB.weighted(weights).mean(("lon", "lat"), skipna=True)
-    return ca.standardize(indB - indA)
+    return indB - indA
 
 
 SAHI_ERA5 = cal_SAHI(hgt_ERA5_JJA_200)
 SAHI_his = cal_SAHI(hgt_his_JJA_200)
 
+SAHI_ERA5_std = SAHI_ERA5.std(dim="time", skipna=True)
+SAHI_his_std = SAHI_his.std(dim="time", skipna=True)
+
 # %%
 fig_SAHI = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
 axs = fig_SAHI.subplots(ncols=1, nrows=1)
 lw = 0.8
-axs[0].line(SAHI_ERA5, lw=lw, color="black")
-axs[0].line(SAHI_his, lw=lw, color="blue")
+axs[0].line(SAHI_ERA5.time.dt.year, ca.standardize(SAHI_ERA5), lw=lw, color="black")
+axs[0].line(SAHI_ERA5.time.dt.year, ca.standardize(SAHI_his), lw=lw, color="blue")
 
 axs[0].format(
     ylim=(-3, 3),
     ylocator=1.0,
     yminorlocator=0.5,
+    xminorlocator=2.0,
     xlabel="time",
     ylabel="SAHI",
     xrotation=0,
 )
 axs[0].legend(loc="ll", ncols=1, labels=["ERA5", "historical"])
+axs[0].text(1952, 2.5, "SAHI ERA5 std : {:.2f}".format(np.array(SAHI_ERA5_std)), size=7)
+axs[0].text(1952, 2.2, "SAHI his std : {:.2f}".format(np.array(SAHI_his_std)), size=7)
 # %%
 #   choose the eastern-type and western-type
 eastern_year_ERA5 = SAHI_ERA5.time.dt.year.where(SAHI_ERA5 >= 1.0, drop=True)
