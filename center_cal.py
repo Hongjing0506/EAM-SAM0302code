@@ -88,11 +88,11 @@ endlon = 130.0
 startlat = 0.0
 endlat = 45.0
 
-hgt_ERA5_SAH_area = hgt_ERA5_JJA_200.loc[:, startlat:endlat, startlon:endlon]
-u_ERA5_SAH_area = u_ERA5_JJA_200.loc[:, startlat:endlat, startlon:endlon]
+hgt_ERA5_SAH_area = hgt_ERA5_JJA_200.loc[:, startlat-1.25:endlat+1.25, startlon:endlon]
+u_ERA5_SAH_area = u_ERA5_JJA_200.loc[:, startlat-1.25:endlat+1.25, startlon:endlon]
 
-hgt_his_SAH_area = hgt_his_JJA_200.loc[:, startlat:endlat, startlon:endlon]
-u_his_SAH_area = u_his_JJA_200.loc[:, startlat:endlat, startlon:endlon]
+hgt_his_SAH_area = hgt_his_JJA_200.loc[:, startlat-1.25:endlat+1.25, startlon:endlon]
+u_his_SAH_area = u_his_JJA_200.loc[:, startlat-1.25:endlat+1.25, startlon:endlon]
 
 time = hgt_ERA5_SAH_area.coords["time"]
 lon = hgt_ERA5_SAH_area.coords["lon"]
@@ -184,11 +184,11 @@ axs[0].text(1952, 2.5, "SAHI ERA5 std : {:.2f}".format(np.array(SAHI_ERA5_std)),
 axs[0].text(1952, 2.2, "SAHI his std : {:.2f}".format(np.array(SAHI_his_std)), size=7)
 # %%
 #   choose the eastern-type and western-type
-eastern_year_ERA5 = SAHI_ERA5.time.dt.year.where(SAHI_ERA5 >= 1.0, drop=True)
-western_year_ERA5 = SAHI_ERA5.time.dt.year.where(SAHI_ERA5 <= -1.0, drop=True)
+eastern_year_ERA5 = SAHI_ERA5.time.dt.year.where(ca.standardize(SAHI_ERA5) >= 1.0, drop=True)
+western_year_ERA5 = SAHI_ERA5.time.dt.year.where(ca.standardize(SAHI_ERA5) <= -1.0, drop=True)
 
-eastern_year_his = SAHI_his.time.dt.year.where(SAHI_his >= 1.0, drop=True)
-western_year_his = SAHI_his.time.dt.year.where(SAHI_his <= -1.0, drop=True)
+eastern_year_his = SAHI_his.time.dt.year.where(ca.standardize(SAHI_his) >= 1.0, drop=True)
+western_year_his = SAHI_his.time.dt.year.where(ca.standardize(SAHI_his) <= -1.0, drop=True)
 
 # %%
 #   calculate the climatology SAH and eastern and western-type SAH and their ridge line
@@ -341,7 +341,54 @@ fig_SAH.format(abcloc="l", abc="(a)")
 
 
 # %%
+#   calculate the distribution of std
+hgt_ERA5_SAH_std = hgt_ERA5_SAH_area.std(dim = "time", skipna=True)
+hgt_his_SAH_std = hgt_his_SAH_area.std(dim = "time", skipna=True)
+print(hgt_ERA5_SAH_std)
 
+# %%
+#   plot the distribution of std field
+reload(sepl)
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0
+proj = pplt.PlateCarree(central_longitude=cl)
+fig_std = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig_std.subplots(ncols=1, nrows=2, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.arange(startlon, endlon + 1, 10)
+yticks = np.arange(startlat, endlat + 1, 5)
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 2.5)
+std_levels = np.arange(4,41,2)
+coord = 0.05
+con = axs[0].contourf(hgt_ERA5_SAH_std, extend="both", cmap="Oranges", levels=std_levels, cmap_kw={'left':coord})
+axs[1].contourf(hgt_his_SAH_std, extend="both", cmap="Oranges", levels=std_levels, cmap_kw={'left':coord})
+axs[0].contour(hgt_cli_ERA5, levels=np.array([12500, 12540]), color="black", linestyle="--", lw=0.8, labels=False, extend="both")
+axs[0].contour(
+    hgt_cli_ERA5,
+    levels=np.arange(12500, 12541, 20),
+    extend="both",
+    color="grey7",
+    labels=False,
+    lw=0.8,
+    linestyle="--",
+)
+axs[1].contour(
+    hgt_cli_his,
+    levels=np.arange(12440, 12481, 20),
+    extend="both",
+    color="grey7",
+    labels=False,
+    lw=0.8,
+    linestyle="--",
+)
+axs[0].format(ltitle="std", rtitle="ERA5")
+axs[1].format(ltitle="std", rtitle="historical")
+
+fig_std.colorbar(con, loc='b', width=0.13, length=0.7, label="")
 
 # %%
 
