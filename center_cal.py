@@ -227,6 +227,8 @@ eastern_his_ridgelat, eastern_his_ridgelon = ca.cal_ridge_line(u_eastern_his_mea
 western_his_ridgelat, western_his_ridgelon = ca.cal_ridge_line(u_western_his_mean)
 
 # %%
+
+# %%
 reload(sepl)
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
@@ -391,4 +393,13 @@ axs[1].format(ltitle="std", rtitle="historical")
 fig_std.colorbar(con, loc='b', width=0.13, length=0.7, label="")
 
 # %%
+#   calculate the I_NS index
+def cal_SAHI_NS(da):
+    areaA = da.loc[:, 27.5:32.5, 50:100]
+    areaB = da.loc[:, 22.5:27.5, 50:100]
+    weights = np.cos(np.deg2rad(areaA.lat))
+    weights.name = "weights"
+    indA = areaA.weighted(weights).mean(("lon", "lat"), skipna=True)
+    indB = areaB.weighted(weights).mean(("lon", "lat"), skipna=True)
+    return indA - indB
 
