@@ -215,11 +215,11 @@ hgt_western_his_mean = hgt_western_his.mean(dim="time", skipna=True)
 u_eastern_his_mean = u_eastern_his.mean(dim="time", skipna=True)
 u_western_his_mean = u_western_his.mean(dim="time", skipna=True)
 
-eastern_ERA5_ridgelat, eastern_ERA5_ridgelon = ca.cal_ridge_line(hgt_eastern_ERA5_mean)
-western_ERA5_ridgelat, western_ERA5_ridgelon = ca.cal_ridge_line(hgt_western_ERA5_mean)
-eastern_his_ridgelat, eastern_his_ridgelon = ca.cal_ridge_line(hgt_eastern_his_mean)
-western_his_ridgelat, western_his_ridgelon = ca.cal_ridge_line(hgt_western_his_mean)
-print(cli_ERA5_ridgelon, cli_ERA5_ridgelat)
+eastern_ERA5_ridgelat, eastern_ERA5_ridgelon = ca.cal_ridge_line(u_eastern_ERA5_mean)
+western_ERA5_ridgelat, western_ERA5_ridgelon = ca.cal_ridge_line(u_western_ERA5_mean)
+eastern_his_ridgelat, eastern_his_ridgelon = ca.cal_ridge_line(u_eastern_his_mean)
+western_his_ridgelat, western_his_ridgelon = ca.cal_ridge_line(u_western_his_mean)
+
 # %%
 
 pplt.rc.grid = False
