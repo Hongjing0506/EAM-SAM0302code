@@ -187,31 +187,41 @@ western_year_his = SAHI_his.time.dt.year.where(SAHI_his <= -1.0, drop=True)
 # %%
 #   calculate the climatology SAH and eastern and western-type SAH and their ridge line
 #   calculate the climatology SAH
-cli_ERA5 = hgt_ERA5_SAH_area.mean(dim="time", skipna=True)
-cli_his = hgt_his_SAH_area.mean(dim="time", skipna=True)
+hgt_cli_ERA5 = hgt_ERA5_SAH_area.mean(dim="time", skipna=True)
+hgt_cli_his = hgt_his_SAH_area.mean(dim="time", skipna=True)
+u_cli_ERA5 = u_ERA5_SAH_area.mean(dim="time", skipna=True)
+u_cli_his = u_his_SAH_area.mean(dim="time", skipna=True)
 
-cli_ERA5_ridgelat, cli_ERA5_ridgelon = ca.cal_ridge_line(cli_ERA5)
-cli_his_ridgelat, cli_his_ridgelon = ca.cal_ridge_line(cli_his)
+cli_ERA5_ridgelat, cli_ERA5_ridgelon = ca.cal_ridge_line(u_cli_ERA5)
+cli_his_ridgelat, cli_his_ridgelon = ca.cal_ridge_line(u_cli_his)
 
 hgt_eastern_ERA5 = ca.year_choose(np.array(eastern_year_ERA5), hgt_ERA5_SAH_area)
 hgt_eastern_his = ca.year_choose(np.array(eastern_year_his), hgt_his_SAH_area)
+u_eastern_ERA5 = ca.year_choose(np.array(eastern_year_ERA5), u_ERA5_SAH_area)
+u_eastern_his = ca.year_choose(np.array(eastern_year_his), u_his_SAH_area)
 
 hgt_western_ERA5 = ca.year_choose(np.array(western_year_ERA5), hgt_ERA5_SAH_area)
 hgt_western_his = ca.year_choose(np.array(western_year_his), hgt_his_SAH_area)
+u_western_ERA5 = ca.year_choose(np.array(western_year_ERA5), u_ERA5_SAH_area)
+u_western_his = ca.year_choose(np.array(western_year_his), u_his_SAH_area)
 
 hgt_eastern_ERA5_mean = hgt_eastern_ERA5.mean(dim="time", skipna=True)
 hgt_western_ERA5_mean = hgt_western_ERA5.mean(dim="time", skipna=True)
+u_eastern_ERA5_mean = u_eastern_ERA5.mean(dim="time", skipna=True)
+u_western_ERA5_mean = u_western_ERA5.mean(dim="time", skipna=True)
 
 hgt_eastern_his_mean = hgt_eastern_his.mean(dim="time", skipna=True)
 hgt_western_his_mean = hgt_western_his.mean(dim="time", skipna=True)
+u_eastern_his_mean = u_eastern_his.mean(dim="time", skipna=True)
+u_western_his_mean = u_western_his.mean(dim="time", skipna=True)
 
 eastern_ERA5_ridgelat, eastern_ERA5_ridgelon = ca.cal_ridge_line(hgt_eastern_ERA5_mean)
 western_ERA5_ridgelat, western_ERA5_ridgelon = ca.cal_ridge_line(hgt_western_ERA5_mean)
 eastern_his_ridgelat, eastern_his_ridgelon = ca.cal_ridge_line(hgt_eastern_his_mean)
 western_his_ridgelat, western_his_ridgelon = ca.cal_ridge_line(hgt_western_his_mean)
+print(cli_ERA5_ridgelon, cli_ERA5_ridgelat)
 # %%
 
-# %%
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
 cl = 0
@@ -219,20 +229,23 @@ proj = pplt.PlateCarree(central_longitude=cl)
 fig_SAH = pplt.figure(
     span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
 )
-axs = fig_SAH.subplots(ncols=1, nrows=3, proj=proj)
+axs = fig_SAH.subplots(ncols=2, nrows=3, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
-xticks = np.arange(20, 141, 10)
-yticks = np.arange(5, 51, 5)
+xticks = np.arange(startlon, endlon + 1, 10)
+yticks = np.arange(startlat, endlat + 1, 5)
 sepl.geo_ticks(axs, xticks, yticks, cl, 5, 2.5)
 
-con = axs[0].contourf(
-    hgt_ERA5_JJA_200[-1, :, :],
-    values=np.arange(12100, 12581, 40),
+startrange = 12100
+endrange = 12580
+spacing = 40
+con = axs[0, 0].contour(
+    cli_ERA5,
+    values=np.arange(startrange, endrange + 0.5 * spacing, spacing),
     extend="both",
-    cmap="ColdHot",
+    color="black",
 )
-axs[0].line(ridgelon, ridgelat)
+axs[0, 0].scatter(cli_ERA5_ridgelon, cli_ERA5_ridgelat)
 
 # w, h = 0.12, 0.14
 # for i, ax in enumerate(axs):
@@ -311,7 +324,6 @@ axs[0].line(ridgelon, ridgelat)
 #     )
 
 fig_SAH.format(abcloc="l", abc="(a)")
-fig_SAH.colorbar(con, loc="b", width=0.13, length=0.5, label="")
 
 
 # %%
