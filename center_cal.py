@@ -248,85 +248,94 @@ endrange = 12500
 spacing = 80
 levels = np.array([12100, 12180, 12260, 12340, 12420, 12500, 12540])
 con_labels = levels
-axs[0,0].contour(
+axs[0, 0].contour(
     hgt_cli_ERA5,
     levels=levels,
     extend="both",
     color="black",
     labels=True,
-    labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
+    labels_kw={"fontsize": 7, "levels": con_labels, "inline_spacing": 3},
     lw=0.8,
 )
-axs[0,0].line(cli_ERA5_ridgelon, cli_ERA5_ridgelat, lw=0.8, color="grey7", linestyle = '--')
-axs[0,0].format(ltitle="climatology", rtitle="ERA5")
+axs[0, 0].line(
+    cli_ERA5_ridgelon, cli_ERA5_ridgelat, lw=0.8, color="grey7", linestyle="--"
+)
+axs[0, 0].format(ltitle="climatology", rtitle="ERA5")
 
-axs[1,0].contour(
+axs[1, 0].contour(
     hgt_eastern_ERA5_mean,
     levels=levels,
     extend="both",
     color="black",
     labels=True,
-    labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
+    labels_kw={"fontsize": 7, "levels": con_labels, "inline_spacing": 3},
     lw=0.8,
 )
-axs[1,0].line(eastern_ERA5_ridgelon, eastern_ERA5_ridgelat, lw=0.8, color="grey7", linestyle = '--')
-axs[1,0].format(ltitle="eastern-type", rtitle="ERA5")
+axs[1, 0].line(
+    eastern_ERA5_ridgelon, eastern_ERA5_ridgelat, lw=0.8, color="grey7", linestyle="--"
+)
+axs[1, 0].format(ltitle="eastern-type", rtitle="ERA5")
 
-axs[2,0].contour(
+axs[2, 0].contour(
     hgt_western_ERA5_mean,
     levels=levels,
     extend="both",
     color="black",
     labels=True,
-    labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
+    labels_kw={"fontsize": 7, "levels": con_labels, "inline_spacing": 3},
     lw=0.8,
 )
-axs[2,0].line(western_ERA5_ridgelon, western_ERA5_ridgelat, lw=0.8, color="grey7", linestyle = '--')
-axs[2,0].format(ltitle="western-type", rtitle="ERA5")
+axs[2, 0].line(
+    western_ERA5_ridgelon, western_ERA5_ridgelat, lw=0.8, color="grey7", linestyle="--"
+)
+axs[2, 0].format(ltitle="western-type", rtitle="ERA5")
 
-levels = np.array([12100, 12180, 12260, 12340, 12420, 12440, 12460, 12480, 12500, 12540])
+levels = np.array(
+    [12100, 12180, 12260, 12340, 12420, 12440, 12460, 12480, 12500, 12540]
+)
 con_labels = levels
-axs[0,1].contour(
+axs[0, 1].contour(
     hgt_cli_his,
     levels=levels,
     extend="both",
     color="black",
     labels=True,
-    labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
+    labels_kw={"fontsize": 7, "levels": con_labels, "inline_spacing": 3},
     lw=0.8,
 )
-axs[0,1].line(cli_his_ridgelon, cli_his_ridgelat, lw=0.8, color="grey7", linestyle = '--')
-axs[0,1].format(ltitle="climatology", rtitle="historical")
+axs[0, 1].line(
+    cli_his_ridgelon, cli_his_ridgelat, lw=0.8, color="grey7", linestyle="--"
+)
+axs[0, 1].format(ltitle="climatology", rtitle="historical")
 
-axs[1,1].contour(
+axs[1, 1].contour(
     hgt_eastern_his_mean,
     levels=levels,
     extend="both",
     color="black",
     labels=True,
-    labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
+    labels_kw={"fontsize": 7, "levels": con_labels, "inline_spacing": 3},
     lw=0.8,
 )
-axs[1,1].line(eastern_his_ridgelon, eastern_his_ridgelat, lw=0.8, color="grey7", linestyle = '--')
-axs[1,1].format(ltitle="eastern-type", rtitle="historical")
+axs[1, 1].line(
+    eastern_his_ridgelon, eastern_his_ridgelat, lw=0.8, color="grey7", linestyle="--"
+)
+axs[1, 1].format(ltitle="eastern-type", rtitle="historical")
 
-axs[2,1].contour(
+axs[2, 1].contour(
     hgt_western_his_mean,
     levels=levels,
     extend="both",
     color="black",
     labels=True,
-    labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
+    labels_kw={"fontsize": 7, "levels": con_labels, "inline_spacing": 3},
     lw=0.8,
 )
-axs[2,1].line(western_his_ridgelon, western_his_ridgelat, lw=0.8, color="grey7", linestyle = '--')
-axs[2,1].format(ltitle="western-type", rtitle="historical")
+axs[2, 1].line(
+    western_his_ridgelon, western_his_ridgelat, lw=0.8, color="grey7", linestyle="--"
+)
+axs[2, 1].format(ltitle="western-type", rtitle="historical")
 
-#     ax.format(
-#         ltitle=f"{ind} " + np.array(r_mon_hgt850.coords["x"])[0],
-#         rtitle="hgt850 & U850 " + np.array(r_mon_hgt850.coords["y"])[i],
-#         fontsize=8,
-#     )
 
 fig_SAH.format(abcloc="l", abc="(a)")
 
