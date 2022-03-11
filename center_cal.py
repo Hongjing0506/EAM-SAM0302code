@@ -88,11 +88,17 @@ endlon = 130.0
 startlat = 0.0
 endlat = 45.0
 
-hgt_ERA5_SAH_area = hgt_ERA5_JJA_200.loc[:, startlat-1.25:endlat+1.25, startlon:endlon]
-u_ERA5_SAH_area = u_ERA5_JJA_200.loc[:, startlat-1.25:endlat+1.25, startlon:endlon]
+hgt_ERA5_SAH_area = hgt_ERA5_JJA_200.loc[
+    :, startlat - 1.25 : endlat + 1.25, startlon:endlon
+]
+u_ERA5_SAH_area = u_ERA5_JJA_200.loc[
+    :, startlat - 1.25 : endlat + 1.25, startlon:endlon
+]
 
-hgt_his_SAH_area = hgt_his_JJA_200.loc[:, startlat-1.25:endlat+1.25, startlon:endlon]
-u_his_SAH_area = u_his_JJA_200.loc[:, startlat-1.25:endlat+1.25, startlon:endlon]
+hgt_his_SAH_area = hgt_his_JJA_200.loc[
+    :, startlat - 1.25 : endlat + 1.25, startlon:endlon
+]
+u_his_SAH_area = u_his_JJA_200.loc[:, startlat - 1.25 : endlat + 1.25, startlon:endlon]
 
 time = hgt_ERA5_SAH_area.coords["time"]
 lon = hgt_ERA5_SAH_area.coords["lon"]
@@ -184,11 +190,19 @@ axs[0].text(1952, 2.5, "SAHI ERA5 std : {:.2f}".format(np.array(SAHI_ERA5_std)),
 axs[0].text(1952, 2.2, "SAHI his std : {:.2f}".format(np.array(SAHI_his_std)), size=7)
 # %%
 #   choose the eastern-type and western-type
-eastern_year_ERA5 = SAHI_ERA5.time.dt.year.where(ca.standardize(SAHI_ERA5) >= 1.0, drop=True)
-western_year_ERA5 = SAHI_ERA5.time.dt.year.where(ca.standardize(SAHI_ERA5) <= -1.0, drop=True)
+eastern_year_ERA5 = SAHI_ERA5.time.dt.year.where(
+    ca.standardize(SAHI_ERA5) >= 1.0, drop=True
+)
+western_year_ERA5 = SAHI_ERA5.time.dt.year.where(
+    ca.standardize(SAHI_ERA5) <= -1.0, drop=True
+)
 
-eastern_year_his = SAHI_his.time.dt.year.where(ca.standardize(SAHI_his) >= 1.0, drop=True)
-western_year_his = SAHI_his.time.dt.year.where(ca.standardize(SAHI_his) <= -1.0, drop=True)
+eastern_year_his = SAHI_his.time.dt.year.where(
+    ca.standardize(SAHI_his) >= 1.0, drop=True
+)
+western_year_his = SAHI_his.time.dt.year.where(
+    ca.standardize(SAHI_his) <= -1.0, drop=True
+)
 
 # %%
 #   calculate the climatology SAH and eastern and western-type SAH and their ridge line
@@ -227,6 +241,36 @@ eastern_his_ridgelat, eastern_his_ridgelon = ca.cal_ridge_line(u_eastern_his_mea
 western_his_ridgelat, western_his_ridgelon = ca.cal_ridge_line(u_western_his_mean)
 
 # %%
+def patches(x0, y0, width, height, proj):
+    from matplotlib.patches import Rectangle
+
+    rect = Rectangle(
+        (x0, y0),
+        width,
+        height,
+        fc="none",
+        ec="grey5",
+        linewidth=1.0,
+        zorder=1.1,
+        transform=proj,
+        linestyle="--",
+    )
+    ax.add_patch(rect)
+
+
+def add_patches_for_EW(ax):
+    proj = pplt.PlateCarree(central_longitude=0)
+    x0 = 55.0
+    width = 20.0
+    y0 = 22.5
+    height = 10.0
+    patches(x0, y0, width, height, proj)
+    x0 = 85.0
+    width = 20.0
+    y0 = 22.5
+    height = 10.0
+    patches(x0, y0, width, height, proj)
+
 
 # %%
 reload(sepl)
@@ -292,6 +336,7 @@ axs[2, 0].line(
 )
 axs[2, 0].format(ltitle="western-type", rtitle="ERA5")
 
+
 levels = np.array(
     [12100, 12180, 12260, 12340, 12420, 12440, 12460, 12480, 12500, 12540]
 )
@@ -338,14 +383,16 @@ axs[2, 1].line(
 )
 axs[2, 1].format(ltitle="western-type", rtitle="historical")
 
+for ax in axs:
+    add_patches_for_EW(ax)
 
 fig_SAH.format(abcloc="l", abc="(a)")
 
 
 # %%
 #   calculate the distribution of std
-hgt_ERA5_SAH_std = hgt_ERA5_SAH_area.std(dim = "time", skipna=True)
-hgt_his_SAH_std = hgt_his_SAH_area.std(dim = "time", skipna=True)
+hgt_ERA5_SAH_std = hgt_ERA5_SAH_area.std(dim="time", skipna=True)
+hgt_his_SAH_std = hgt_his_SAH_area.std(dim="time", skipna=True)
 print(hgt_ERA5_SAH_std)
 
 # %%
@@ -364,11 +411,31 @@ axs = fig_std.subplots(ncols=1, nrows=2, proj=proj)
 xticks = np.arange(startlon, endlon + 1, 10)
 yticks = np.arange(startlat, endlat + 1, 5)
 sepl.geo_ticks(axs, xticks, yticks, cl, 5, 2.5)
-std_levels = np.arange(4,41,2)
+std_levels = np.arange(4, 41, 2)
 coord = 0.05
-con = axs[0].contourf(hgt_ERA5_SAH_std, extend="both", cmap="Oranges", levels=std_levels, cmap_kw={'left':coord})
-axs[1].contourf(hgt_his_SAH_std, extend="both", cmap="Oranges", levels=std_levels, cmap_kw={'left':coord})
-axs[0].contour(hgt_cli_ERA5, levels=np.array([12500, 12540]), color="black", linestyle="--", lw=0.8, labels=False, extend="both")
+con = axs[0].contourf(
+    hgt_ERA5_SAH_std,
+    extend="both",
+    cmap="Oranges",
+    levels=std_levels,
+    cmap_kw={"left": coord},
+)
+axs[1].contourf(
+    hgt_his_SAH_std,
+    extend="both",
+    cmap="Oranges",
+    levels=std_levels,
+    cmap_kw={"left": coord},
+)
+axs[0].contour(
+    hgt_cli_ERA5,
+    levels=np.array([12500, 12540]),
+    color="black",
+    linestyle="--",
+    lw=0.8,
+    labels=False,
+    extend="both",
+)
 axs[0].contour(
     hgt_cli_ERA5,
     levels=np.arange(12500, 12541, 20),
@@ -390,7 +457,7 @@ axs[1].contour(
 axs[0].format(ltitle="std", rtitle="ERA5")
 axs[1].format(ltitle="std", rtitle="historical")
 
-fig_std.colorbar(con, loc='b', width=0.13, length=0.7, label="")
+fig_std.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 
 # %%
 #   calculate the I_NS index
@@ -403,3 +470,16 @@ def cal_SAHI_NS(da):
     indB = areaB.weighted(weights).mean(("lon", "lat"), skipna=True)
     return indA - indB
 
+# %%
+def add_patches_for_NS(ax):
+    proj = pplt.PlateCarree(central_longitude=0)
+    x0 = 50.0
+    width = 50.0
+    y0 = 27.5
+    height = 5.0
+    patches(x0, y0, width, height, proj)
+    x0 = 50.0
+    width = 50.0
+    y0 = 22.5
+    height = 5.0
+    patches(x0, y0, width, height, proj)
