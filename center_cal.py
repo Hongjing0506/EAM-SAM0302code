@@ -240,10 +240,9 @@ sepl.add_shape(r"/home/ys17-23/chenhj/TP_shape/Qinghai-Tibet_Plateau.shp", axs, 
 startrange = 12100
 endrange = 12500
 spacing = 80
-levels = np.arange(startrange, endrange + 0.5 * spacing, spacing)
-levels = np.append(levels, np.array([12540, 12580]))
-con_labels = np.append(np.arange(startrange + spacing, endrange + 0.5*spacing, 2*spacing), np.array([12540, 12580]))
-con = axs[0, 0].contour(
+levels = np.array([12100, 12180, 12260, 12340, 12420, 12500, 12540])
+con_labels = levels
+axs[0,0].contour(
     hgt_cli_ERA5,
     levels=levels,
     extend="both",
@@ -252,9 +251,70 @@ con = axs[0, 0].contour(
     labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
     lw=0.8,
 )
+axs[0,0].line(cli_ERA5_ridgelon, cli_ERA5_ridgelat, lw=0.8, color="grey7", linestyle = '--')
+axs[0,0].format(ltitle="climatology", rtitle="ERA5")
 
-axs[0, 0].line(cli_ERA5_ridgelon, cli_ERA5_ridgelat, lw=0.8, color="grey7", linestyle = '--')
+axs[1,0].contour(
+    hgt_eastern_ERA5_mean,
+    levels=levels,
+    extend="both",
+    color="black",
+    labels=True,
+    labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
+    lw=0.8,
+)
+axs[1,0].line(eastern_ERA5_ridgelon, eastern_ERA5_ridgelat, lw=0.8, color="grey7", linestyle = '--')
+axs[1,0].format(ltitle="eastern-type", rtitle="ERA5")
 
+axs[2,0].contour(
+    hgt_western_ERA5_mean,
+    levels=levels,
+    extend="both",
+    color="black",
+    labels=True,
+    labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
+    lw=0.8,
+)
+axs[2,0].line(western_ERA5_ridgelon, western_ERA5_ridgelat, lw=0.8, color="grey7", linestyle = '--')
+axs[2,0].format(ltitle="western-type", rtitle="ERA5")
+
+levels = np.array([12100, 12180, 12260, 12340, 12420, 12440, 12460, 12480, 12500, 12540])
+con_labels = levels
+axs[0,1].contour(
+    hgt_cli_his,
+    levels=levels,
+    extend="both",
+    color="black",
+    labels=True,
+    labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
+    lw=0.8,
+)
+axs[0,1].line(cli_his_ridgelon, cli_his_ridgelat, lw=0.8, color="grey7", linestyle = '--')
+axs[0,1].format(ltitle="climatology", rtitle="historical")
+
+axs[1,1].contour(
+    hgt_eastern_his_mean,
+    levels=levels,
+    extend="both",
+    color="black",
+    labels=True,
+    labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
+    lw=0.8,
+)
+axs[1,1].line(eastern_his_ridgelon, eastern_his_ridgelat, lw=0.8, color="grey7", linestyle = '--')
+axs[1,1].format(ltitle="eastern-type", rtitle="historical")
+
+axs[2,1].contour(
+    hgt_western_his_mean,
+    levels=levels,
+    extend="both",
+    color="black",
+    labels=True,
+    labels_kw={'fontsize':7, 'levels':con_labels, 'inline_spacing': 3},
+    lw=0.8,
+)
+axs[2,1].line(western_his_ridgelon, western_his_ridgelat, lw=0.8, color="grey7", linestyle = '--')
+axs[2,1].format(ltitle="western-type", rtitle="historical")
 
 #     ax.format(
 #         ltitle=f"{ind} " + np.array(r_mon_hgt850.coords["x"])[0],
