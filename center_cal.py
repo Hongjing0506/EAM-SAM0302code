@@ -186,7 +186,30 @@ western_year_his = SAHI_his.time.dt.year.where(SAHI_his <= -1.0, drop=True)
 
 # %%
 #   calculate the climatology SAH and eastern and western-type SAH and their ridge line
+#   calculate the climatology SAH
+cli_ERA5 = hgt_ERA5_SAH_area.mean(dim="time", skipna=True)
+cli_his = hgt_his_SAH_area.mean(dim="time", skipna=True)
 
+cli_ERA5_ridgelat, cli_ERA5_ridgelon = ca.cal_ridge_line(cli_ERA5)
+cli_his_ridgelat, cli_his_ridgelon = ca.cal_ridge_line(cli_his)
+
+hgt_eastern_ERA5 = ca.year_choose(np.array(eastern_year_ERA5), hgt_ERA5_SAH_area)
+hgt_eastern_his = ca.year_choose(np.array(eastern_year_his), hgt_his_SAH_area)
+
+hgt_western_ERA5 = ca.year_choose(np.array(western_year_ERA5), hgt_ERA5_SAH_area)
+hgt_western_his = ca.year_choose(np.array(western_year_his), hgt_his_SAH_area)
+
+hgt_eastern_ERA5_mean = hgt_eastern_ERA5.mean(dim="time", skipna=True)
+hgt_western_ERA5_mean = hgt_western_ERA5.mean(dim="time", skipna=True)
+
+hgt_eastern_his_mean = hgt_eastern_his.mean(dim="time", skipna=True)
+hgt_western_his_mean = hgt_western_his.mean(dim="time", skipna=True)
+
+eastern_ERA5_ridgelat, eastern_ERA5_ridgelon = ca.cal_ridge_line(hgt_eastern_ERA5_mean)
+western_ERA5_ridgelat, western_ERA5_ridgelon = ca.cal_ridge_line(hgt_western_ERA5_mean)
+eastern_his_ridgelat, eastern_his_ridgelon = ca.cal_ridge_line(hgt_eastern_his_mean)
+western_his_ridgelat, western_his_ridgelon = ca.cal_ridge_line(hgt_western_his_mean)
+# %%
 
 # %%
 pplt.rc.grid = False
