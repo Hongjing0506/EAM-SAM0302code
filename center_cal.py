@@ -56,12 +56,12 @@ fu_ERA5 = xr.open_dataset(
 u_ERA5 = fu_ERA5["u"]
 
 fhgt_his = xr.open_dataset(
-    "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ens/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 hgt_his = fhgt_his["zg"]
 
 fu_his = xr.open_dataset(
-    "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ens/ua_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 u_his = fu_his["ua"]
 
@@ -648,3 +648,33 @@ for i in np.arange(0, 3):
 fig_his_eof.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig_his_eof.format(abcloc="l", abc="(a)")
 # %%
+#   read different models data
+hgt_his_path = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/zg"
+g = os.walk(hgt_his_path)
+filepath = []
+modelname_hgt = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_hgt.append(filename[loc[1]+1:loc[2]])
+hgt_ds_his = xr.open_mfdataset(filepath, concat_dim="models", combine='nested')
+hgt_his_ds = hgt_ds_his['zg']
+
+u_his_path = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ua"
+g = os.walk(u_his_path)
+filepath = []
+modelname_u = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_u.append(filename[loc[1]+1:loc[2]])
+u_ds_his = xr.open_mfdataset(filepath, concat_dim="models", combine='nested')
+u_his_ds = u_ds_his['ua']
+
+
+# %%
+#   calculate JJA
