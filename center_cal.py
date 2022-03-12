@@ -22,7 +22,7 @@ import cal as ca
 import pandas as pd
 from importlib import reload
 
-reload(ca)
+reload(sepl)
 
 # sd.path.append("/home/ys17-23/chenhj/1201code/self_def.py")
 
@@ -40,6 +40,8 @@ from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 from scipy import stats
 from scipy.stats import t
+from eofs.multivariate.standard import MultivariateEof
+from eofs.standard import Eof
 
 # %%
 #   read obs data
@@ -287,7 +289,8 @@ axs = fig_SAH.subplots(ncols=2, nrows=3, proj=proj)
 #   set the geo_ticks and map projection to the plots
 xticks = np.arange(startlon, endlon + 1, 10)
 yticks = np.arange(startlat, endlat + 1, 5)
-sepl.geo_ticks(axs, xticks, yticks, cl, 5, 2.5)
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 2.5, extents)
 sepl.add_shape(r"/home/ys17-23/chenhj/TP_shape/Qinghai-Tibet_Plateau.shp", axs, proj)
 
 startrange = 12100
@@ -411,7 +414,8 @@ axs = fig_std.subplots(ncols=1, nrows=2, proj=proj)
 #   set the geo_ticks and map projection to the plots
 xticks = np.arange(startlon, endlon + 1, 10)
 yticks = np.arange(startlat, endlat + 1, 5)
-sepl.geo_ticks(axs, xticks, yticks, cl, 5, 2.5)
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 2.5, extents)
 std_levels = np.arange(4, 41, 2)
 coord = 0.05
 con = axs[0].contourf(
@@ -514,4 +518,89 @@ axs[0].legend(loc="ll", ncols=1, labels=["ERA5", "historical"])
 axs[0].text(2000, 2.5, "SAHI ERA5 std : {:.2f}".format(np.array(SAHI_NS_ERA5_std)), size=7)
 axs[0].text(2000, 2.2, "SAHI his std : {:.2f}".format(np.array(SAHI_NS_his_std)), size=7)
 fig_SAHI_NS.format(title="SAHI-NS")
+# %%
+#   calculate the EOF of two hgt data
+
+hgt_ERA5_EOF_area = ca.standardize(hgt_ERA5_JJA_200.loc[:,13.75:41.25,25:130])
+hgt_his_EOF_area = ca.standardize(hgt_his_JJA_200.loc[:,13.75:41.25,25:130])
+
+hgt_ERA5_EOFs, hgt_ERA5_PCs, hgt_ERA5_percentContrib = ca.eof_analys(np.array(hgt_ERA5_EOF_area), np.array(hgt_ERA5_EOF_area.coords['lat']), 3)
+hgt_ERA5_pattern = xr.DataArray(hgt_ERA5_EOFs[:3, :, :], coords=[hgt_ERA5_percentContrib[:3], hgt_ERA5_EOF_area.coords['lat'], hgt_ERA5_EOF_area.coords['lon']], dims=["pers", "lat", "lon"])
+
+
+hgt_his_EOFs, hgt_his_PCs, hgt_his_percentContrib = ca.eof_analys(np.array(hgt_his_EOF_area), np.array(hgt_his_EOF_area.coords['lat']), 3)
+hgt_his_pattern = xr.DataArray(hgt_his_EOFs[:3, :, :], coords=[hgt_his_percentContrib[:3], hgt_his_EOF_area.coords['lat'], hgt_his_EOF_area.coords['lon']], dims=["pers", "lat", "lon"])
+print(hgt_ERA5_PCs[:,0])
+
+# %%
+#   plot the EOFs result
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0
+proj = pplt.PlateCarree(central_longitude=cl)
+fig_ERA5_eof = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig_ERA5_eof.subplots(ncols=2, nrows=3, proj=[proj, None, proj, None, proj, None])
+
+
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.arange(30, 120 + 1, 30)
+yticks = np.arange(20, 40 + 1, 10)
+extents = np.array([25, 130, 15, 40])
+sepl.geo_ticks(axs[:,0], xticks, yticks, cl, 10, 2, extents)
+
+levels = np.arange(-1.0, 1.1, 0.2)
+con = axs[0,0].contourf(
+    hgt_ERA5_pattern[0,:,:],
+    extend="both",
+    cmap="ColdHot",
+    levels=levels
+)
+
+# axs[1].contourf(
+#     hgt_his_SAH_std,
+#     extend="both",
+#     cmap="Oranges",
+#     levels=std_levels,
+#     cmap_kw={"left": coord},
+# )
+for i in np.arange(0,3):
+    axs[i,1].line(
+        hgt_ERA5_EOF_area.time.dt.year,
+        hgt_ERA5_PCs[:,i],
+        lw=0.8,
+        color="black")
+    axs[i,0].contour(
+        hgt_cli_ERA5,
+        levels=np.array([12500]),
+        color="red",
+        linestyle="--",
+        lw=0.8,
+        labels=False,
+        extend="both",
+    )
+# axs[0].contour(
+#     hgt_cli_ERA5,
+#     levels=np.arange(12500, 12541, 20),
+#     extend="both",
+#     color="grey7",
+#     labels=False,
+#     lw=0.8,
+#     linestyle="--",
+# )
+# axs[1].contour(
+#     hgt_cli_his,
+#     levels=np.arange(12440, 12481, 20),
+#     extend="both",
+#     color="grey7",
+#     labels=False,
+#     lw=0.8,
+#     linestyle="--",
+# )
+# axs[0].format(ltitle="std", rtitle="ERA5")
+# axs[1].format(ltitle="std", rtitle="historical")
+
+fig_ERA5_eof.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 # %%
