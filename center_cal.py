@@ -416,8 +416,8 @@ xticks = np.arange(startlon, endlon + 1, 10)
 yticks = np.arange(startlat, endlat + 1, 5)
 extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
 sepl.geo_ticks(axs, xticks, yticks, cl, 5, 2.5, extents)
-std_levels = np.arange(4, 41, 2)
-coord = 0.05
+std_levels = np.arange(0, 41, 2)
+coord = 0
 con = axs[0].contourf(
     hgt_ERA5_SAH_std,
     extend="both",
@@ -432,21 +432,13 @@ axs[1].contourf(
     levels=std_levels,
     cmap_kw={"left": coord},
 )
-axs[0].contour(
-    hgt_cli_ERA5,
-    levels=np.array([12500, 12540]),
-    color="black",
-    linestyle="--",
-    lw=0.8,
-    labels=False,
-    extend="both",
-)
+
 axs[0].contour(
     hgt_cli_ERA5,
     levels=np.arange(12500, 12541, 20),
     extend="both",
     color="grey7",
-    labels=False,
+    labels=True,
     lw=0.8,
     linestyle="--",
 )
@@ -455,7 +447,7 @@ axs[1].contour(
     levels=np.arange(12440, 12481, 20),
     extend="both",
     color="grey7",
-    labels=False,
+    labels=True,
     lw=0.8,
     linestyle="--",
 )
@@ -592,12 +584,13 @@ for i in np.arange(0, 3):
         hgt_ERA5_pattern[i, :, :], extend="both", cmap="ColdHot", levels=levels
     )
     axs[i, 0].format(
-        ltitle="Pattern {}".format(i+1), rtitle="{:.2f}%".format(hgt_ERA5_percentContrib[i])
+        ltitle="Pattern {}".format(i + 1),
+        rtitle="{:.2f}%".format(hgt_ERA5_percentContrib[i]),
     )
     axs[i, 1].line(
         hgt_ERA5_EOF_area.time.dt.year, hgt_ERA5_PCs[:, i], lw=0.8, color="black"
     )
-    axs[i, 1].format(ltitle="PC {}".format(i+1))
+    axs[i, 1].format(ltitle="PC {}".format(i + 1))
     axs[i, 0].contour(
         hgt_cli_ERA5,
         levels=np.array([12500]),
@@ -634,12 +627,13 @@ for i in np.arange(0, 3):
         hgt_his_pattern[i, :, :], extend="both", cmap="ColdHot", levels=levels
     )
     axs[i, 0].format(
-        ltitle="Pattern {}".format(i+1), rtitle="{:.2f}%".format(hgt_his_percentContrib[i])
+        ltitle="Pattern {}".format(i + 1),
+        rtitle="{:.2f}%".format(hgt_his_percentContrib[i]),
     )
     axs[i, 1].line(
         hgt_his_EOF_area.time.dt.year, hgt_his_PCs[:, i], lw=0.8, color="black"
     )
-    axs[i, 1].format(ltitle="PC {}".format(i+1))
+    axs[i, 1].format(ltitle="PC {}".format(i + 1))
     axs[i, 0].contour(
         hgt_cli_his,
         levels=np.array([12460]),
