@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-02 16:45:05
 LastEditors: ChenHJ
-LastEditTime: 2022-03-09 15:35:24
+LastEditTime: 2022-03-12 15:05:57
 FilePath: /chenhj/0302code/data_predealing.py
 Aim: 
 Mission: 
@@ -114,4 +114,16 @@ for var in variable:
     start = 2015
     end = 2099
     ca.p_year(srcPath, dstPath, start, end)
+# %%
+#   uniform the time of different models
+reload(ca)
+path1 = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/ssp585"
+variable = ["pr"]
+for var in variable:
+    varpath = os.path.join(path1, var)
+    g = os.walk(varpath)
+    for path, dir_list, file_list in g:
+        for filename in file_list:
+            print(filename)
+            ca.uniform_timestamp(os.path.join(path, filename), os.path.join("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/ssp5852", var, filename), var, "20150101", "20991201", "MS")
 # %%
