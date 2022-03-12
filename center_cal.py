@@ -56,12 +56,12 @@ fu_ERA5 = xr.open_dataset(
 u_ERA5 = fu_ERA5["u"]
 
 fhgt_his = xr.open_dataset(
-    "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ens/zg_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 hgt_his = fhgt_his["zg"]
 
 fu_his = xr.open_dataset(
-    "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ens/ua_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 u_his = fu_his["ua"]
 
@@ -660,7 +660,8 @@ for path, dir_list, file_name in g:
             loc = ca.retrieve_allstrindex(filename, "_")
             modelname_hgt.append(filename[loc[1]+1:loc[2]])
 hgt_ds_his = xr.open_mfdataset(filepath, concat_dim="models", combine='nested')
-hgt_his_ds = hgt_ds_his['zg']
+hgt_his_ds = xr.DataArray(hgt_ds_his['zg'])
+hgt_his_ds.coords["models"] = modelname_hgt
 
 u_his_path = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ua"
 g = os.walk(u_his_path)
@@ -673,8 +674,35 @@ for path, dir_list, file_name in g:
             loc = ca.retrieve_allstrindex(filename, "_")
             modelname_u.append(filename[loc[1]+1:loc[2]])
 u_ds_his = xr.open_mfdataset(filepath, concat_dim="models", combine='nested')
-u_his_ds = u_ds_his['ua']
-
+u_his_ds = xr.DataArray(u_ds_his['ua'])
+u_his_ds.coords["models"] = modelname_u
 
 # %%
 #   calculate JJA
+hgt_his_ds_JJA = ca.p_time(hgt_his_ds, 6, 8, True)
+u_his_ds_JJA = ca.p_time(u_his_ds, 6, 8, True)
+
+# %%
+hgt_his_ds_JJA_200 = hgt_his_ds_JJA.sel(plev=20000)
+u_his_ds_JJA_200 = u_his_ds_JJA.sel(plev=20000)
+
+# %%
+hgt_his_ds_SAH_area = hgt_his_ds_JJA_200.loc[:, 
+    :, startlat - 1.25 : endlat + 1.25, startlon:endlon
+]
+u_his_ds_SAH_area = u_his_ds_JJA_200.loc[:, 
+    :, startlat - 1.25 : endlat + 1.25, startlon:endlon
+]
+
+# %%
+center_loc_his_ds = np.zeros((27, len(lon)))
+for num_model, imodel in enumerate(modelname_hgt):
+    for t_his_ds in hgt_his_ds_SAH_area.time:
+        ridgelat_his_ds, ridgelon_his_ds = ca.cal_ridge_line(u_his_ds_SAH_area.sel(time=t_his_ds, models=imodel))
+        center_loc_his_ds[num_model, hgt_his_ds_SAH_area.sel(models=imodel, time=t_his_ds, lat=ridgelat_his_ds, lon=ridgelon_his_ds).argmax(dim=["lat", "lon"])["lon"]] += 1
+    print(u_his_ds_SAH_area.sel(models=imodel), hgt_his_ds_SAH_area.sel(models=imodel))
+    print(center_loc_his_ds[num_model,:])
+# %%
+#   plot the different models SAH center location distribution
+
+# %%
