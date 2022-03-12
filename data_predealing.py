@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-02 16:45:05
 LastEditors: ChenHJ
-LastEditTime: 2022-03-12 15:05:57
+LastEditTime: 2022-03-12 16:36:47
 FilePath: /chenhj/0302code/data_predealing.py
 Aim: 
 Mission: 
@@ -126,4 +126,21 @@ for var in variable:
         for filename in file_list:
             print(filename)
             ca.uniform_timestamp(os.path.join(path, filename), os.path.join("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/ssp5852", var, filename), var, "20150101", "20991201", "MS")
+# %%
+def uniform_plev(filepath, dstpath, var):
+    plev = np.array([100000.0, 92500.0, 85000.0, 70000.0, 60000.0, 50000.0, 40000.0, 30000.0, 25000.0, 20000.0, 15000.0, 10000.0, 7000.0, 5000.0, 3000.0, 2000.0, 1000.0, 500.0, 100.0])
+    f = xr.open_dataset(filepath)
+    fvar = f[var]
+    fvar.coords['plev'] = plev
+    fvar.to_netcdf(dstpath)
+
+path1 = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/ssp585"
+variable = ["zg", "ua", "va", "hus", "ta", "wap"]
+for var in variable:
+    varpath = os.path.join(path1, var)
+    g = os.walk(varpath)
+    for path, dir_list, file_list in g:
+        for filename in file_list:
+            print(filename)
+            uniform_plev(os.path.join(path, filename), os.path.join("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/ssp5852", var, filename), var)
 # %%
