@@ -704,5 +704,31 @@ for num_model, imodel in enumerate(modelname_hgt):
     print(center_loc_his_ds[num_model,:])
 # %%
 #   plot the different models SAH center location distribution
+fig_models = pplt.figure(refwidth=4.0, refheight=2.5, span=False, share=False)
+array = np.arange(1,31)
+array = array.reshape([5,6])
+array[4,5] = 0
+axs = fig_models.subplots(array)
+axs.format(
+    xformatter="deglon",
+    ylim=(0, 65),
+    xlim=(startlon, endlon),
+    ylocator=5,
+    xminorlocator=2.5,
+    xlabel="Longitude",
+    ylabel="Frequency",
+)
+axs[0].bar(frequency_ERA5, width=0.6, color="black")
+axs[1].bar(frequency_his, width=0.6, color="black")
 
+axs[0].format(
+    ltitle="ERA5",
+)
+axs[1].format(
+    ltitle="ens",
+)
+for num_model, imodel in enumerate(modelname_hgt):
+    axs[num_model+2].bar(lon, center_loc_his_ds[num_model,:], width=0.6, color="black")
+    axs[num_model+2].format(ltitle=imodel)
+fig_models.format(abcloc="l", abc="(a)")
 # %%
