@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-13 10:26:30
 LastEditors: ChenHJ
-LastEditTime: 2022-03-14 14:49:28
+LastEditTime: 2022-03-14 14:59:15
 FilePath: /chenhj/0302code/precip_reg.py
 Aim: 
 Mission: 
@@ -69,5 +69,9 @@ preGPCP_India_mean = ca.cal_lat_weighted_mean(preGPCP_India).mean(dim="lon", ski
 preGPCP_EA_mean = ca.cal_lat_weighted_mean(preGPCP_EA).mean(dim="lon", skipna=True)
 preGPCP_Japan_mean = ca.cal_lat_weighted_mean(preGPCP_Japan).mean(dim="lon", skipna=True)
 
+
+# %%
+#   calculate the regression distribution of the whole precipitation
+CRU_India_slope, CRU_India_intercept, CRU_India_rvalue, CRU_India_pvalue, CRU_India_hypothesis = ca.dim_linregress(preCRU_India_mean, preCRU)
 
 # %%
