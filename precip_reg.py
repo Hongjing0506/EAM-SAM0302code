@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-13 10:26:30
 LastEditors: ChenHJ
-LastEditTime: 2022-03-14 16:18:38
+LastEditTime: 2022-03-14 16:19:52
 FilePath: /chenhj/0302code/precip_reg.py
 Aim: 
 Mission: 
@@ -79,7 +79,15 @@ preGPCP_Japan_mean = ca.cal_lat_weighted_mean(preGPCP_Japan_JJA).mean(dim="lon",
 #   calculate the regression distribution of the whole precipitation
 CRU_India_slope, CRU_India_intercept, CRU_India_rvalue, CRU_India_pvalue, CRU_India_hypothesis = ca.dim_linregress(preCRU_India_mean, preCRU_JJA)
 
+CRU_EA_slope, CRU_EA_intercept, CRU_EA_rvalue, CRU_EA_pvalue, CRU_EA_hypothesis = ca.dim_linregress(preCRU_EA_mean, preCRU_JJA)
+
+CRU_Japan_slope, CRU_Japan_intercept, CRU_Japan_rvalue, CRU_Japan_pvalue, CRU_Japan_hypothesis = ca.dim_linregress(preCRU_India_mean, preCRU_JJA)
+
 GPCP_India_slope, GPCP_India_intercept, GPCP_India_rvalue, GPCP_India_pvalue, GPCP_India_hypothesis = ca.dim_linregress(preGPCP_India_mean, preGPCP_JJA)
+
+GPCP_EA_slope, GPCP_EA_intercept, GPCP_EA_rvalue, GPCP_EA_pvalue, GPCP_EA_hypothesis = ca.dim_linregress(preGPCP_EA_mean, preGPCP_JJA)
+
+GPCP_Japan_slope, GPCP_Japan_intercept, GPCP_Japan_rvalue, GPCP_Japan_pvalue, GPCP_Japan_hypothesis = ca.dim_linregress(preGPCP_India_mean, preGPCP_JJA)
 
 # %%
 #   plot the rvalue distribution for different area precipitation
