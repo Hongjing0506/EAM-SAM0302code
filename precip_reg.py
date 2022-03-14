@@ -391,4 +391,17 @@ fig_rvalue.format(abc="(a)", abcloc="l")
 # %%
 #   calculate the rolling correlation
 #   India precipitation & Northern China precipitation area mean
+reload(ca)
+window = 7
+India_EA_regress_7 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, window)
 
+window = 9
+India_EA_regress_9 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, window)
+
+window = 11
+India_EA_regress_11 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, window)
+
+# %%
+#   plot the rolling_reg_index
+fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=1, nrows=3)
