@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-13 10:26:30
 LastEditors: ChenHJ
-LastEditTime: 2022-03-14 14:41:58
+LastEditTime: 2022-03-14 14:49:28
 FilePath: /chenhj/0302code/precip_reg.py
 Aim: 
 Mission: 
@@ -59,4 +59,15 @@ preCRU_Japan = preCRU.loc[:, 31:36, 130:140]
 preGPCP_India = preGPCP.loc[:, 8:28, 70:86]
 preGPCP_EA = preGPCP.loc[:, 36:42, 108:118]
 preGPCP_Japan = preGPCP.loc[:, 31:36, 130:140]
+# %%
+#   calculate area mean precipitation
+preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India).mean(dim="lon", skipna=True)
+preCRU_EA_mean = ca.cal_lat_weighted_mean(preCRU_EA).mean(dim="lon", skipna=True)
+preCRU_Japan_mean = ca.cal_lat_weighted_mean(preCRU_Japan).mean(dim="lon", skipna=True)
+
+preGPCP_India_mean = ca.cal_lat_weighted_mean(preGPCP_India).mean(dim="lon", skipna=True)
+preGPCP_EA_mean = ca.cal_lat_weighted_mean(preGPCP_EA).mean(dim="lon", skipna=True)
+preGPCP_Japan_mean = ca.cal_lat_weighted_mean(preGPCP_Japan).mean(dim="lon", skipna=True)
+
+
 # %%
