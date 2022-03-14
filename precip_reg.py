@@ -393,15 +393,29 @@ fig_rvalue.format(abc="(a)", abcloc="l")
 #   India precipitation & Northern China precipitation area mean
 reload(ca)
 window = 7
-India_EA_regress_7 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, window)
+India_EA_regress_7 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, window, "AS-JUL", True)
+time = India_EA_regress_7.coords['time']
 
 window = 9
-India_EA_regress_9 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, window)
+India_EA_regress_9 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, window, "AS-JUL", True)
 
 window = 11
-India_EA_regress_11 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, window)
+India_EA_regress_11 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, window, "AS-JUL", True)
 
 # %%
 #   plot the rolling_reg_index
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
 axs = fig.subplots(ncols=1, nrows=3)
+lw = 0.8
+axs[0].line(India_EA_regress_7.time.dt.year, np.array(India_EA_regress_7["rvalue"]), lw=lw, color="blue") 
+axs[0].line(India_EA_regress_9.time.dt.year, np.array(India_EA_regress_9["rvalue"]), lw=lw, color="black") 
+axs[0].line(India_EA_regress_11.time.dt.year, np.array(India_EA_regress_11["rvalue"]), lw=lw, color="red") 
+axs.format(
+    ylim=(-1.0, 1.0),
+    ylocator=0.2,
+    yminorlocator=0.1,
+    xrotation=0,
+    xlim=(1950, 2014),
+    )
+# %%
+#   calculate the 
