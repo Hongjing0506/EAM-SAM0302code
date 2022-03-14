@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-13 10:26:30
 LastEditors: ChenHJ
-LastEditTime: 2022-03-14 16:19:52
+LastEditTime: 2022-03-14 16:54:17
 FilePath: /chenhj/0302code/precip_reg.py
 Aim: 
 Mission: 
@@ -87,7 +87,7 @@ GPCP_India_slope, GPCP_India_intercept, GPCP_India_rvalue, GPCP_India_pvalue, GP
 
 GPCP_EA_slope, GPCP_EA_intercept, GPCP_EA_rvalue, GPCP_EA_pvalue, GPCP_EA_hypothesis = ca.dim_linregress(preGPCP_EA_mean, preGPCP_JJA)
 
-GPCP_Japan_slope, GPCP_Japan_intercept, GPCP_Japan_rvalue, GPCP_Japan_pvalue, GPCP_Japan_hypothesis = ca.dim_linregress(preGPCP_India_mean, preGPCP_JJA)
+GPCP_Japan_slope, GPCP_Japan_intercept, GPCP_Japan_rvalue, GPCP_Japan_pvalue, GPCP_Japan_hypothesis = ca.dim_linregress(preGPCP_Japan_mean, preGPCP_JJA)
 
 # %%
 #   plot the rvalue distribution for different area precipitation
@@ -109,7 +109,7 @@ yticks = np.arange(10, 51, 10)						#设置经度刻度
 extents = [xticks[0], xticks[-1], 5, 55]
 sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
 n = 1
-
+#==========================
 con = axs[0,0].contourf(
     CRU_India_rvalue,
     cmap = "ColdHot",
@@ -125,10 +125,51 @@ sepl.plt_sig(CRU_India_pvalue, axs[0,0], n, np.where(CRU_India_pvalue[::n, ::n] 
 # )
 axs[0,0].format(
     title="Pr reg IndR",
-    rtitle="1950-2014"
+    rtitle="1950-2014",
+    ltitle="CRU TS4.01",
 )
 sepl.patches(axs[0,0], 70.0, 8.0, 16.0, 20.0, proj)
-
+#==========================
+axs[1,0].contourf(
+    CRU_EA_rvalue,
+    cmap = "ColdHot",
+    levels=np.arange(-1.0, 1.1, 0.1),
+    )
+sepl.plt_sig(CRU_EA_pvalue, axs[1,0], n, np.where(CRU_EA_pvalue[::n, ::n] <= 0.05), "denim", 3.0)
+# axs[0,0].contour(
+#     CRU_India_pvalue,
+#     color="black",
+#     vmin=0.05,
+#     vmax=0.05,
+#     lw=0.8
+# )
+axs[1,0].format(
+    title="Pr reg NCR",
+    rtitle="1950-2014",
+    ltitle="CRU TS4.01",
+)
+sepl.patches(axs[1,0], 108, 36, 10.0, 6.0, proj)
+#==========================
+axs[2,0].contourf(
+    CRU_Japan_rvalue,
+    cmap = "ColdHot",
+    levels=np.arange(-1.0, 1.1, 0.1),
+    )
+sepl.plt_sig(CRU_Japan_pvalue, axs[2,0], n, np.where(CRU_Japan_pvalue[::n, ::n] <= 0.05), "denim", 3.0)
+# axs[0,0].contour(
+#     CRU_India_pvalue,
+#     color="black",
+#     vmin=0.05,
+#     vmax=0.05,
+#     lw=0.8
+# )
+axs[2,0].format(
+    title="Pr reg SJR",
+    rtitle="1950-2014",
+    ltitle="CRU TS4.01",
+)
+sepl.patches(axs[2,0], 130, 31, 10.0, 5.0, proj)
+#==========================
 axs[0,1].contourf(
     GPCP_India_rvalue,
     cmap = "ColdHot",
@@ -142,10 +183,48 @@ axs[0,1].contourf(
 sepl.plt_sig(GPCP_India_pvalue, axs[0,1], n, np.where(GPCP_India_pvalue[::n, ::n] <= 0.05), "denim", 3.0)
 axs[0,1].format(
     title="Pr reg IndR",
-    rtitle="1979-2014"
+    rtitle="1979-2014",
+    ltitle="GPCP",
 )
 sepl.patches(axs[0,1], 70.0, 8.0, 16.0, 20.0, proj)
+#==========================
+axs[1,1].contourf(
+    GPCP_EA_rvalue,
+    cmap = "ColdHot",
+    levels=np.arange(-1.0, 1.1, 0.1),
+    )
+# axs[0,1].contour(
+#     GPCP_India_pvalue,
+#     color="black",
+#     levels=np.array([0.01, 0.05])
+# )
+sepl.plt_sig(GPCP_EA_pvalue, axs[1,1], n, np.where(GPCP_EA_pvalue[::n, ::n] <= 0.05), "denim", 3.0)
+axs[1,1].format(
+    title="Pr reg NCR",
+    rtitle="1979-2014",
+    ltitle="GPCP",
+)
+sepl.patches(axs[1,1], 108, 36, 10.0, 6.0, proj)
+#==========================
+axs[2,1].contourf(
+    GPCP_Japan_rvalue,
+    cmap = "ColdHot",
+    levels=np.arange(-1.0, 1.1, 0.1),
+    )
+# axs[0,1].contour(
+#     GPCP_India_pvalue,
+#     color="black",
+#     levels=np.array([0.01, 0.05])
+# )
+sepl.plt_sig(GPCP_Japan_pvalue, axs[2,1], n, np.where(GPCP_Japan_pvalue[::n, ::n] <= 0.05), "denim", 3.0)
+axs[2,1].format(
+    title="Pr reg SJR",
+    rtitle="1979-2014",
+    ltitle="GPCP",
+)
+sepl.patches(axs[2,1], 130, 31, 10.0, 5.0, proj)
 
 fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig_rvalue.format(abc="(a)", abcloc="l")
 # %%
+
