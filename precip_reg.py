@@ -61,6 +61,21 @@ fprehis = xr.open_dataset(
 )
 prehis = fprehis["pr"]
 
+pr_his_path = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/pr"
+g = os.walk(pr_his_path)
+filepath = []
+modelname_pr = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_pr.append(filename[loc[1]+1:loc[2]])
+preds_his = xr.open_mfdataset(filepath, concat_dim="models", combine='nested')
+prehis_ds = xr.DataArray(preds_his['pr'])
+prehis_ds.coords["models"] = modelname_pr
+print(prehis_ds)
+
 # %%
 preCRU_JJA = ca.p_time(preCRU, 6, 8, True)
 
@@ -454,24 +469,30 @@ m1 = axs[0].line(
     lw=lw,
     color="blue",
 )
+
 m2 = axs[0].line(
-    CRU_India_EA_regress_9.time.dt.year,
-    np.array(CRU_India_EA_regress_9["rvalue"]),
+    GPCP_India_EA_regress_7.time.dt.year,
+    np.array(GPCP_India_EA_regress_7["rvalue"]),
     lw=lw,
     color="black",
 )
+
 m3 = axs[0].line(
-    CRU_India_EA_regress_11.time.dt.year,
-    np.array(CRU_India_EA_regress_11["rvalue"]),
+    his_India_EA_regress_7.time.dt.year,
+    np.array(his_India_EA_regress_7["rvalue"]),
     lw=lw,
     color="red",
 )
-axs[0].format(ltitle="CRU", rtitle="1950-2014")
-axs[0].legend(handles=[m1,m2,m3], loc="ll", labels=["window=7", "window=9", "window=11"], ncols=1)
+
+axs[0].axhline(0, lw = 0.8, color="grey5", linestyle="--")
+axs[0].axhline(0.6664, lw = 0.8, color="grey5", linestyle="--")
+axs[0].axhline(-0.6664, lw = 0.8, color="grey5", linestyle="--")
+axs[0].format(ltitle="window=7", rtitle="1950-2014")
+axs[0].legend(handles=[m1,m2,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
 
 m1 = axs[1].line(
-    GPCP_India_EA_regress_7.time.dt.year,
-    np.array(GPCP_India_EA_regress_7["rvalue"]),
+    CRU_India_EA_regress_9.time.dt.year,
+    np.array(CRU_India_EA_regress_9["rvalue"]),
     lw=lw,
     color="blue",
 )
@@ -482,23 +503,26 @@ m2 = axs[1].line(
     color="black",
 )
 m3 = axs[1].line(
-    GPCP_India_EA_regress_11.time.dt.year,
-    np.array(GPCP_India_EA_regress_11["rvalue"]),
+    his_India_EA_regress_9.time.dt.year,
+    np.array(his_India_EA_regress_9["rvalue"]),
     lw=lw,
     color="red",
 )
-axs[1].format(ltitle="GPCP", rtitle="1979-2014")
-axs[1].legend(handles=[m1,m2,m3], loc="ll", labels=["window=7", "window=9", "window=11"], ncols=1)
+axs[1].format(ltitle="window=9", rtitle="1979-2014")
+axs[1].legend(handles=[m1,m2,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
+axs[1].axhline(0, lw = 0.8, color="grey5", linestyle="--")
+axs[1].axhline(0.6021, lw = 0.8, color="grey5", linestyle="--")
+axs[1].axhline(-0.6021, lw = 0.8, color="grey5", linestyle="--")
 
 m1 = axs[2].line(
-    his_India_EA_regress_7.time.dt.year,
-    np.array(his_India_EA_regress_7["rvalue"]),
+    CRU_India_EA_regress_11.time.dt.year,
+    np.array(CRU_India_EA_regress_11["rvalue"]),
     lw=lw,
     color="blue",
 )
 m2 = axs[2].line(
-    his_India_EA_regress_9.time.dt.year,
-    np.array(his_India_EA_regress_9["rvalue"]),
+    GPCP_India_EA_regress_11.time.dt.year,
+    np.array(GPCP_India_EA_regress_11["rvalue"]),
     lw=lw,
     color="black",
 )
@@ -508,8 +532,11 @@ m3 = axs[2].line(
     lw=lw,
     color="red",
 )
-axs[2].format(ltitle="historical", rtitle="1950-2014")
-axs[2].legend(handles=[m1,m2,m3], loc="ll", labels=["window=7", "window=9", "window=11"], ncols=1)
+axs[2].format(ltitle="window=11", rtitle="1950-2014")
+axs[2].legend(handles=[m1,m2,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
+axs[2].axhline(0, lw = 0.8, color="grey5", linestyle="--")
+axs[2].axhline(0.5529, lw = 0.8, color="grey5", linestyle="--")
+axs[2].axhline(-0.5529, lw = 0.8, color="grey5", linestyle="--")
 axs.format(
     ylim=(-1.0, 1.0), ylocator=0.2, yminorlocator=0.1, xrotation=0, xlim=(1950, 2014),
 )
