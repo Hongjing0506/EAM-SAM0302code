@@ -393,38 +393,99 @@ fig_rvalue.format(abc="(a)", abcloc="l")
 #   India precipitation & Northern China precipitation area mean
 reload(ca)
 window = 7
-time = preCRU_India_mean.coords['time']
-India_EA_regress_7 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, time, window, "AS-JUL", True)
+time = preCRU_India_mean.coords["time"]
+India_EA_regress_7 = ca.rolling_reg_index(
+    preCRU_India_mean, preCRU_EA_mean, time, window, "AS-JUL", True
+)
 
 window = 9
-India_EA_regress_9 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, time, window, "AS-JUL", True)
+India_EA_regress_9 = ca.rolling_reg_index(
+    preCRU_India_mean, preCRU_EA_mean, time, window, "AS-JUL", True
+)
 
 window = 11
-India_EA_regress_11 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, time, window, "AS-JUL", True)
+India_EA_regress_11 = ca.rolling_reg_index(
+    preCRU_India_mean, preCRU_EA_mean, time, window, "AS-JUL", True
+)
 
 # %%
 #   plot the rolling_reg_index
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
 axs = fig.subplots(ncols=1, nrows=3)
 lw = 0.8
-axs[0].line(India_EA_regress_7.time.dt.year, np.array(India_EA_regress_7["rvalue"]), lw=lw, color="blue") 
-axs[0].line(India_EA_regress_9.time.dt.year, np.array(India_EA_regress_9["rvalue"]), lw=lw, color="black") 
-axs[0].line(India_EA_regress_11.time.dt.year, np.array(India_EA_regress_11["rvalue"]), lw=lw, color="red") 
+axs[0].line(
+    India_EA_regress_7.time.dt.year,
+    np.array(India_EA_regress_7["rvalue"]),
+    lw=lw,
+    color="blue",
+)
+axs[0].line(
+    India_EA_regress_9.time.dt.year,
+    np.array(India_EA_regress_9["rvalue"]),
+    lw=lw,
+    color="black",
+)
+axs[0].line(
+    India_EA_regress_11.time.dt.year,
+    np.array(India_EA_regress_11["rvalue"]),
+    lw=lw,
+    color="red",
+)
 axs.format(
-    ylim=(-1.0, 1.0),
-    ylocator=0.2,
-    yminorlocator=0.1,
-    xrotation=0,
-    xlim=(1950, 2014),
-    )
+    ylim=(-1.0, 1.0), ylocator=0.2, yminorlocator=0.1, xrotation=0, xlim=(1950, 2014),
+)
 # %%
 #   calculate the rolling correlation pattern
 reload(ca)
-window=7
-freq="AS-JUL"
-CRUreg_Ind_avalue, CRUreg_Ind_bvalue, CRUreg_Ind_rvalue, CRUreg_Ind_pvalue, CRUreg_Ind_hyvalue = ca.rolling_regression_pattern(preCRU_India_mean , preCRU_JJA, np.array(preCRU_India_mean.coords["time"]), window, freq)
-print(CRUreg_Ind_rvalue)
+window = 7
+freq = "AS-JUL"
+(
+    CRUreg_Ind_avalue,
+    CRUreg_Ind_bvalue,
+    CRUreg_Ind_rvalue,
+    CRUreg_Ind_pvalue,
+    CRUreg_Ind_hyvalue,
+) = ca.rolling_regression_pattern(
+    preCRU_India_mean,
+    preCRU_JJA,
+    np.array(preCRU_India_mean.coords["time"]),
+    window,
+    freq,
+)
+
+(
+    GPCPreg_Ind_avalue,
+    GPCPreg_Ind_bvalue,
+    GPCPreg_Ind_rvalue,
+    GPCPreg_Ind_pvalue,
+    GPCPreg_Ind_hyvalue,
+) = ca.rolling_regression_pattern(
+    preGPCP_India_mean,
+    preGPCP_JJA,
+    np.array(preGPCP_India_mean.coords["time"]),
+    window,
+    freq,
+)
+
+(
+    hisreg_Ind_avalue,
+    hisreg_Ind_bvalue,
+    hisreg_Ind_rvalue,
+    hisreg_Ind_pvalue,
+    hisreg_Ind_hyvalue,
+) = ca.rolling_regression_pattern(
+    prehis_India_mean,
+    prehis_JJA,
+    np.array(prehis_India_mean.coords["time"]),
+    window,
+    freq,
+)
 
 # %%
+#   calculate the rolling correlation coefficient std distribution
+CRUreg_Ind_rvalue_std = CRUreg_Ind_rvalue.std(dim="time", skipna=True)
+GPCPreg_Ind_rvalue_std = GPCPreg_Ind_rvalue.std(dim="time", skipna=True)
+hisreg_Ind_rvalue_std = hisreg_Ind_rvalue.std(dim="time", skipna=True)
 
 # %%
+#   plot the rolling correlation coefficient std distribution
