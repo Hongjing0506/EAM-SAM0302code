@@ -74,7 +74,7 @@ for path, dir_list, file_name in g:
 preds_his = xr.open_mfdataset(filepath, concat_dim="models", combine='nested')
 prehis_ds = xr.DataArray(preds_his['pr'])
 prehis_ds.coords["models"] = modelname_pr
-print(prehis_ds)
+
 
 # %%
 preCRU_JJA = ca.p_time(preCRU, 6, 8, True)
@@ -98,6 +98,12 @@ prehis_India_JJA = ca.p_time(prehis.loc[:, 8:28, 70:86], 6, 8, True)
 prehis_EA_JJA = ca.p_time(prehis.loc[:, 36:42, 108:118], 6, 8, True)
 prehis_Japan_JJA = ca.p_time(prehis.loc[:, 31:36, 130:140], 6, 8, True)
 prehis_SC_JJA = ca.p_time(prehis.loc[:, 20:30, 100:120], 6, 8, True)
+
+prehis_ds_JJA = ca.p_time(prehis_ds, 6, 8, True)
+prehis_ds_India_JJA = ca.p_time(prehis_ds.loc[:, 8:28, 70:86], 6, 8, True)
+prehis_ds_EA_JJA = ca.p_time(prehis_ds.loc[:, 36:42, 108:118], 6, 8, True)
+prehis_ds_Japan_JJA = ca.p_time(prehis_ds.loc[:, 31:36, 130:140], 6, 8, True)
+prehis_ds_SC_JJA = ca.p_time(prehis_ds.loc[:, 20:30, 100:120], 6, 8, True)
 # %%
 #   calculate area mean precipitation
 preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
