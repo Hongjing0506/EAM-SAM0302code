@@ -139,6 +139,17 @@ prehis_SC_mean = ca.cal_lat_weighted_mean(prehis_SC_JJA).mean(
     dim="lon", skipna=True
 )
 
+prehis_ds_India_mean = ca.cal_lat_weighted_mean(prehis_ds_India_JJA).mean(
+    dim="lon", skipna=True
+)
+prehis_ds_EA_mean = ca.cal_lat_weighted_mean(prehis_ds_EA_JJA).mean(dim="lon", skipna=True)
+prehis_ds_Japan_mean = ca.cal_lat_weighted_mean(prehis_ds_Japan_JJA).mean(
+    dim="lon", skipna=True
+)
+prehis_ds_SC_mean = ca.cal_lat_weighted_mean(prehis_ds_SC_JJA).mean(
+    dim="lon", skipna=True
+)
+
 # %%
 #   calculate the regression distribution of the whole precipitation
 (
@@ -430,6 +441,7 @@ window = 7
 CRUtime = preCRU_India_mean.coords["time"]
 GPCPtime = preGPCP_India_mean.coords["time"]
 histime = prehis_India_mean.coords["time"]
+his_dstime = prehis_ds_India_mean.coords["time"]
 
 
 CRU_India_EA_regress_7 = ca.rolling_reg_index(
@@ -442,6 +454,10 @@ his_India_EA_regress_7 = ca.rolling_reg_index(
     prehis_India_mean, prehis_EA_mean, histime, window, freq, True
 )
 
+his_ds_India_EA_avalue_7, his_ds_India_EA_bvalue_7, his_ds_India_EA_rvalue_7, his_ds_India_EA_pvalue_7, his_ds_India_EA_hyvalue_7 = ca.rolling_regression_pattern(
+    prehis_ds_India_mean, prehis_ds_EA_mean, his_dstime, window, freq
+)
+
 window = 9
 CRU_India_EA_regress_9 = ca.rolling_reg_index(
     preCRU_India_mean, preCRU_EA_mean, CRUtime, window, freq, True
@@ -451,6 +467,9 @@ GPCP_India_EA_regress_9 = ca.rolling_reg_index(
 )
 his_India_EA_regress_9 = ca.rolling_reg_index(
     prehis_India_mean, prehis_EA_mean, histime, window, freq, True
+)
+his_ds_India_EA_avalue_9, his_ds_India_EA_bvalue_9, his_ds_India_EA_rvalue_9, his_ds_India_EA_pvalue_9, his_ds_India_EA_hyvalue_9 = ca.rolling_regression_pattern(
+    prehis_ds_India_mean, prehis_ds_EA_mean, his_dstime, window, freq
 )
 
 window = 11
@@ -463,6 +482,13 @@ GPCP_India_EA_regress_11 = ca.rolling_reg_index(
 his_India_EA_regress_11 = ca.rolling_reg_index(
     prehis_India_mean, prehis_EA_mean, histime, window, freq, True
 )
+his_ds_India_EA_avalue_11, his_ds_India_EA_bvalue_11, his_ds_India_EA_rvalue_11, his_ds_India_EA_pvalue_11, his_ds_India_EA_hyvalue_11 = ca.rolling_regression_pattern(
+    prehis_ds_India_mean, prehis_ds_EA_mean, his_dstime, window, freq
+)
+
+
+# %%
+
 
 # %%
 #   plot the rolling_reg_index
