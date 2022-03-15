@@ -393,14 +393,14 @@ fig_rvalue.format(abc="(a)", abcloc="l")
 #   India precipitation & Northern China precipitation area mean
 reload(ca)
 window = 7
-India_EA_regress_7 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, window, "AS-JUL", True)
-time = India_EA_regress_7.coords['time']
+time = preCRU_India_mean.coords['time']
+India_EA_regress_7 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, time, window, "AS-JUL", True)
 
 window = 9
-India_EA_regress_9 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, window, "AS-JUL", True)
+India_EA_regress_9 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, time, window, "AS-JUL", True)
 
 window = 11
-India_EA_regress_11 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, window, "AS-JUL", True)
+India_EA_regress_11 = ca.rolling_reg_index(preCRU_India_mean, preCRU_EA_mean, time, window, "AS-JUL", True)
 
 # %%
 #   plot the rolling_reg_index
@@ -418,4 +418,13 @@ axs.format(
     xlim=(1950, 2014),
     )
 # %%
-#   calculate the 
+#   calculate the rolling correlation pattern
+reload(ca)
+window=7
+freq="AS-JUL"
+CRUreg_Ind_avalue, CRUreg_Ind_bvalue, CRUreg_Ind_rvalue, CRUreg_Ind_pvalue, CRUreg_Ind_hyvalue = ca.rolling_regression_pattern(preCRU_India_mean , preCRU_JJA, np.array(preCRU_India_mean.coords["time"]), window, freq)
+print(CRUreg_Ind_rvalue)
+
+# %%
+
+# %%
