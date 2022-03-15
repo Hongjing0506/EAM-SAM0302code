@@ -489,3 +489,21 @@ hisreg_Ind_rvalue_std = hisreg_Ind_rvalue.std(dim="time", skipna=True)
 
 # %%
 #   plot the rolling correlation coefficient std distribution
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180	#设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig.subplots(ncols=3, nrows=3, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.arange(0, 360, 30)	#设置纬度刻度
+yticks = np.arange(-60, 61, 30)						#设置经度刻度
+#设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+#当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+
