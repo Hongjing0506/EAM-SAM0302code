@@ -67,12 +67,14 @@ preCRU_JJA = ca.p_time(preCRU, 6, 8, True)
 preCRU_India_JJA = ca.p_time(preCRU.loc[:, 8:28, 70:86], 6, 8, True)
 preCRU_EA_JJA = ca.p_time(preCRU.loc[:, 36:42, 108:118], 6, 8, True)
 preCRU_Japan_JJA = ca.p_time(preCRU.loc[:, 31:36, 130:140], 6, 8, True)
+preCRU_SC_JJA = ca.p_time(preCRU.loc[:, 20:30, 100:120], 6, 8, True)
 
 preGPCP_JJA = ca.p_time(preGPCP, 6, 8, True)
 
 preGPCP_India_JJA = ca.p_time(preGPCP.loc[:, 8:28, 70:86], 6, 8, True)
 preGPCP_EA_JJA = ca.p_time(preGPCP.loc[:, 36:42, 108:118], 6, 8, True)
 preGPCP_Japan_JJA = ca.p_time(preGPCP.loc[:, 31:36, 130:140], 6, 8, True)
+preGPCP_SC_JJA = ca.p_time(preGPCP.loc[:, 20:30, 100:120], 6, 8, True)
 
 
 prehis_JJA = ca.p_time(prehis, 6, 8, True)
@@ -80,6 +82,7 @@ prehis_JJA = ca.p_time(prehis, 6, 8, True)
 prehis_India_JJA = ca.p_time(prehis.loc[:, 8:28, 70:86], 6, 8, True)
 prehis_EA_JJA = ca.p_time(prehis.loc[:, 36:42, 108:118], 6, 8, True)
 prehis_Japan_JJA = ca.p_time(prehis.loc[:, 31:36, 130:140], 6, 8, True)
+prehis_SC_JJA = ca.p_time(prehis.loc[:, 20:30, 100:120], 6, 8, True)
 # %%
 #   calculate area mean precipitation
 preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
@@ -87,6 +90,9 @@ preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
 )
 preCRU_EA_mean = ca.cal_lat_weighted_mean(preCRU_EA_JJA).mean(dim="lon", skipna=True)
 preCRU_Japan_mean = ca.cal_lat_weighted_mean(preCRU_Japan_JJA).mean(
+    dim="lon", skipna=True
+)
+preCRU_SC_mean = ca.cal_lat_weighted_mean(preCRU_SC_JJA).mean(
     dim="lon", skipna=True
 )
 
@@ -97,12 +103,18 @@ preGPCP_EA_mean = ca.cal_lat_weighted_mean(preGPCP_EA_JJA).mean(dim="lon", skipn
 preGPCP_Japan_mean = ca.cal_lat_weighted_mean(preGPCP_Japan_JJA).mean(
     dim="lon", skipna=True
 )
+preGPCP_SC_mean = ca.cal_lat_weighted_mean(preGPCP_SC_JJA).mean(
+    dim="lon", skipna=True
+)
 
 prehis_India_mean = ca.cal_lat_weighted_mean(prehis_India_JJA).mean(
     dim="lon", skipna=True
 )
 prehis_EA_mean = ca.cal_lat_weighted_mean(prehis_EA_JJA).mean(dim="lon", skipna=True)
 prehis_Japan_mean = ca.cal_lat_weighted_mean(prehis_Japan_JJA).mean(
+    dim="lon", skipna=True
+)
+prehis_SC_mean = ca.cal_lat_weighted_mean(prehis_SC_JJA).mean(
     dim="lon", skipna=True
 )
 
@@ -392,20 +404,43 @@ fig_rvalue.format(abc="(a)", abcloc="l")
 #   calculate the rolling correlation
 #   India precipitation & Northern China precipitation area mean
 reload(ca)
+freq = "AS-JUL"
 window = 7
-time = preCRU_India_mean.coords["time"]
-India_EA_regress_7 = ca.rolling_reg_index(
-    preCRU_India_mean, preCRU_EA_mean, time, window, "AS-JUL", True
+CRUtime = preCRU_India_mean.coords["time"]
+GPCPtime = preGPCP_India_mean.coords["time"]
+histime = prehis_India_mean.coords["time"]
+
+
+CRU_India_EA_regress_7 = ca.rolling_reg_index(
+    preCRU_India_mean, preCRU_EA_mean, CRUtime, window, freq, True
+)
+GPCP_India_EA_regress_7 = ca.rolling_reg_index(
+    preGPCP_India_mean, preGPCP_EA_mean, GPCPtime, window, freq, True
+)
+his_India_EA_regress_7 = ca.rolling_reg_index(
+    prehis_India_mean, prehis_EA_mean, histime, window, freq, True
 )
 
 window = 9
-India_EA_regress_9 = ca.rolling_reg_index(
-    preCRU_India_mean, preCRU_EA_mean, time, window, "AS-JUL", True
+CRU_India_EA_regress_9 = ca.rolling_reg_index(
+    preCRU_India_mean, preCRU_EA_mean, CRUtime, window, freq, True
+)
+GPCP_India_EA_regress_9 = ca.rolling_reg_index(
+    preGPCP_India_mean, preGPCP_EA_mean, GPCPtime, window, freq, True
+)
+his_India_EA_regress_9 = ca.rolling_reg_index(
+    prehis_India_mean, prehis_EA_mean, histime, window, freq, True
 )
 
 window = 11
-India_EA_regress_11 = ca.rolling_reg_index(
-    preCRU_India_mean, preCRU_EA_mean, time, window, "AS-JUL", True
+CRU_India_EA_regress_11 = ca.rolling_reg_index(
+    preCRU_India_mean, preCRU_EA_mean, CRUtime, window, freq, True
+)
+GPCP_India_EA_regress_11 = ca.rolling_reg_index(
+    preGPCP_India_mean, preGPCP_EA_mean, GPCPtime, window, freq, True
+)
+his_India_EA_regress_11 = ca.rolling_reg_index(
+    prehis_India_mean, prehis_EA_mean, histime, window, freq, True
 )
 
 # %%
@@ -413,31 +448,76 @@ India_EA_regress_11 = ca.rolling_reg_index(
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
 axs = fig.subplots(ncols=1, nrows=3)
 lw = 0.8
-axs[0].line(
-    India_EA_regress_7.time.dt.year,
-    np.array(India_EA_regress_7["rvalue"]),
+m1 = axs[0].line(
+    CRU_India_EA_regress_7.time.dt.year,
+    np.array(CRU_India_EA_regress_7["rvalue"]),
     lw=lw,
     color="blue",
 )
-axs[0].line(
-    India_EA_regress_9.time.dt.year,
-    np.array(India_EA_regress_9["rvalue"]),
+m2 = axs[0].line(
+    CRU_India_EA_regress_9.time.dt.year,
+    np.array(CRU_India_EA_regress_9["rvalue"]),
     lw=lw,
     color="black",
 )
-axs[0].line(
-    India_EA_regress_11.time.dt.year,
-    np.array(India_EA_regress_11["rvalue"]),
+m3 = axs[0].line(
+    CRU_India_EA_regress_11.time.dt.year,
+    np.array(CRU_India_EA_regress_11["rvalue"]),
     lw=lw,
     color="red",
 )
+axs[0].format(ltitle="CRU", rtitle="1950-2014")
+axs[0].legend(handles=[m1,m2,m3], loc="ll", labels=["window=7", "window=9", "window=11"], ncols=1)
+
+m1 = axs[1].line(
+    GPCP_India_EA_regress_7.time.dt.year,
+    np.array(GPCP_India_EA_regress_7["rvalue"]),
+    lw=lw,
+    color="blue",
+)
+m2 = axs[1].line(
+    GPCP_India_EA_regress_9.time.dt.year,
+    np.array(GPCP_India_EA_regress_9["rvalue"]),
+    lw=lw,
+    color="black",
+)
+m3 = axs[1].line(
+    GPCP_India_EA_regress_11.time.dt.year,
+    np.array(GPCP_India_EA_regress_11["rvalue"]),
+    lw=lw,
+    color="red",
+)
+axs[1].format(ltitle="GPCP", rtitle="1979-2014")
+axs[1].legend(handles=[m1,m2,m3], loc="ll", labels=["window=7", "window=9", "window=11"], ncols=1)
+
+m1 = axs[2].line(
+    his_India_EA_regress_7.time.dt.year,
+    np.array(his_India_EA_regress_7["rvalue"]),
+    lw=lw,
+    color="blue",
+)
+m2 = axs[2].line(
+    his_India_EA_regress_9.time.dt.year,
+    np.array(his_India_EA_regress_9["rvalue"]),
+    lw=lw,
+    color="black",
+)
+m3 = axs[2].line(
+    his_India_EA_regress_11.time.dt.year,
+    np.array(his_India_EA_regress_11["rvalue"]),
+    lw=lw,
+    color="red",
+)
+axs[2].format(ltitle="historical", rtitle="1950-2014")
+axs[2].legend(handles=[m1,m2,m3], loc="ll", labels=["window=7", "window=9", "window=11"], ncols=1)
 axs.format(
     ylim=(-1.0, 1.0), ylocator=0.2, yminorlocator=0.1, xrotation=0, xlim=(1950, 2014),
 )
+fig.format(abc="(a)", abcloc="l")
 # %%
 #   calculate the rolling correlation pattern
 reload(ca)
-window = 7
+window = 11
 freq = "AS-JUL"
 (
     CRUreg_Ind_avalue,
@@ -491,19 +571,46 @@ hisreg_Ind_rvalue_std = hisreg_Ind_rvalue.std(dim="time", skipna=True)
 #   plot the rolling correlation coefficient std distribution
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
-cl = 180	#设置地图投影的中心纬度
+cl = 0	#设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(
+fig_std = pplt.figure(
     span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
 )
-axs = fig.subplots(ncols=3, nrows=3, proj=proj)
+axs = fig_std.subplots(ncols=3, nrows=3, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
-xticks = np.arange(0, 360, 30)	#设置纬度刻度
-yticks = np.arange(-60, 61, 30)						#设置经度刻度
+xticks = np.arange(0, 181, 30)	#设置纬度刻度
+yticks = np.arange(-30, 61, 30)						#设置经度刻度
 #设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
 #当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
 extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
 sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
 
+con = axs[0,0].contourf(
+    CRUreg_Ind_rvalue_std,
+    levels=np.arange(0.3,0.71,0.05),
+    cmap="Blues",
+    extend="both"
+    )
+sepl.patches(axs[0,0], 108, 36, 10.0, 6.0, proj)
+
+axs[0,1].contourf(
+    GPCPreg_Ind_rvalue_std,
+    levels=np.arange(0.3,0.71,0.05),
+    cmap="Blues",
+    extend="both"
+    )
+sepl.patches(axs[0,1], 108, 36, 10.0, 6.0, proj)
+
+axs[0,2].contourf(
+    hisreg_Ind_rvalue_std,
+    levels=np.arange(0.3,0.71,0.05),
+    cmap="Blues",
+    extend="both"
+    )
+sepl.patches(axs[0,2], 108, 36, 10.0, 6.0, proj)
+
+fig_std.colorbar(con, loc="b", width=0.13, length=0.7)
+fig_std.format(abc="(a)", abcloc="l")
+# %%
