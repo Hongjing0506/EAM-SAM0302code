@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-16 19:35:54
+LastEditTime: 2022-03-16 19:39:51
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -115,3 +115,20 @@ qhis_ver_EA_JJA = ca.p_time(qhis, 6, 8, True).loc[:, :10000.0, 36:42, 108:118]
 #   calculate the area mean
 uERA5_ver_India_JJA_mean = ca.cal_lat_weighted_mean(uERA5_ver_India_JJA).mean(dim="lon", skipna=True)
 uERA5_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(uERA5_ver_India_JJA).mean(dim="lon", skipna=True)
+
+vERA5_ver_India_JJA_mean = ca.cal_lat_weighted_mean(vERA5_ver_India_JJA).mean(dim="lon", skipna=True)
+vERA5_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(vERA5_ver_India_JJA).mean(dim="lon", skipna=True)
+
+qERA5_ver_India_JJA_mean = ca.cal_lat_weighted_mean(qERA5_ver_India_JJA).mean(dim="lon", skipna=True)
+qERA5_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(qERA5_ver_India_JJA).mean(dim="lon", skipna=True)
+
+uhis_ver_India_JJA_mean = ca.cal_lat_weighted_mean(uhis_ver_India_JJA).mean(dim="lon", skipna=True)
+uhis_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(uhis_ver_India_JJA).mean(dim="lon", skipna=True)
+
+vhis_ver_India_JJA_mean = ca.cal_lat_weighted_mean(vhis_ver_India_JJA).mean(dim="lon", skipna=True)
+vhis_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(vhis_ver_India_JJA).mean(dim="lon", skipna=True)
+
+qhis_ver_India_JJA_mean = ca.cal_lat_weighted_mean(qhis_ver_India_JJA).mean(dim="lon", skipna=True)
+qhis_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(qhis_ver_India_JJA).mean(dim="lon", skipna=True)
+
+# %%
