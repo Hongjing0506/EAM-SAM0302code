@@ -495,6 +495,9 @@ his_ds_India_EA_avalue_11, his_ds_India_EA_bvalue_11, his_ds_India_EA_rvalue_11,
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
 axs = fig.subplots(ncols=1, nrows=3)
 lw = 0.8
+# cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
+cycle = "Pastel1"
+
 m1 = axs[0].line(
     CRU_India_EA_regress_7.time.dt.year,
     np.array(CRU_India_EA_regress_7["rvalue"]),
@@ -515,6 +518,8 @@ m3 = axs[0].line(
     lw=lw,
     color="red",
 )
+
+lines = axs[0].line(his_ds_India_EA_rvalue_7.time.dt.year, his_ds_India_EA_rvalue_7, cycle=cycle, lw=lw)
 
 axs[0].axhline(0, lw = 0.8, color="grey5", linestyle="--")
 axs[0].axhline(0.6664, lw = 0.8, color="grey5", linestyle="--")
