@@ -505,12 +505,12 @@ m1 = axs[0].line(
     color="blue",
 )
 
-m2 = axs[0].line(
-    GPCP_India_EA_regress_7.time.dt.year,
-    np.array(GPCP_India_EA_regress_7["rvalue"]),
-    lw=lw,
-    color="black",
-)
+# m2 = axs[0].line(
+#     GPCP_India_EA_regress_7.time.dt.year,
+#     np.array(GPCP_India_EA_regress_7["rvalue"]),
+#     lw=lw,
+#     color="black",
+# )
 
 m3 = axs[0].line(
     his_India_EA_regress_7.time.dt.year,
@@ -519,13 +519,12 @@ m3 = axs[0].line(
     color="red",
 )
 
-lines = axs[0].line(his_ds_India_EA_rvalue_7.time.dt.year, his_ds_India_EA_rvalue_7, cycle=cycle, lw=lw)
 
 axs[0].axhline(0, lw = 0.8, color="grey5", linestyle="--")
 axs[0].axhline(0.6664, lw = 0.8, color="grey5", linestyle="--")
 axs[0].axhline(-0.6664, lw = 0.8, color="grey5", linestyle="--")
 axs[0].format(ltitle="window=7", rtitle="1950-2014")
-axs[0].legend(handles=[m1,m2,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
+axs[0].legend(handles=[m1,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
 
 m1 = axs[1].line(
     CRU_India_EA_regress_9.time.dt.year,
@@ -533,12 +532,12 @@ m1 = axs[1].line(
     lw=lw,
     color="blue",
 )
-m2 = axs[1].line(
-    GPCP_India_EA_regress_9.time.dt.year,
-    np.array(GPCP_India_EA_regress_9["rvalue"]),
-    lw=lw,
-    color="black",
-)
+# m2 = axs[1].line(
+#     GPCP_India_EA_regress_9.time.dt.year,
+#     np.array(GPCP_India_EA_regress_9["rvalue"]),
+#     lw=lw,
+#     color="black",
+# )
 m3 = axs[1].line(
     his_India_EA_regress_9.time.dt.year,
     np.array(his_India_EA_regress_9["rvalue"]),
@@ -546,7 +545,7 @@ m3 = axs[1].line(
     color="red",
 )
 axs[1].format(ltitle="window=9", rtitle="1979-2014")
-axs[1].legend(handles=[m1,m2,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
+axs[1].legend(handles=[m1,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
 axs[1].axhline(0, lw = 0.8, color="grey5", linestyle="--")
 axs[1].axhline(0.6021, lw = 0.8, color="grey5", linestyle="--")
 axs[1].axhline(-0.6021, lw = 0.8, color="grey5", linestyle="--")
@@ -557,12 +556,12 @@ m1 = axs[2].line(
     lw=lw,
     color="blue",
 )
-m2 = axs[2].line(
-    GPCP_India_EA_regress_11.time.dt.year,
-    np.array(GPCP_India_EA_regress_11["rvalue"]),
-    lw=lw,
-    color="black",
-)
+# m2 = axs[2].line(
+#     GPCP_India_EA_regress_11.time.dt.year,
+#     np.array(GPCP_India_EA_regress_11["rvalue"]),
+#     lw=lw,
+#     color="black",
+# )
 m3 = axs[2].line(
     his_India_EA_regress_11.time.dt.year,
     np.array(his_India_EA_regress_11["rvalue"]),
@@ -570,7 +569,7 @@ m3 = axs[2].line(
     color="red",
 )
 axs[2].format(ltitle="window=11", rtitle="1950-2014")
-axs[2].legend(handles=[m1,m2,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
+axs[2].legend(handles=[m1,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
 axs[2].axhline(0, lw = 0.8, color="grey5", linestyle="--")
 axs[2].axhline(0.5529, lw = 0.8, color="grey5", linestyle="--")
 axs[2].axhline(-0.5529, lw = 0.8, color="grey5", linestyle="--")
@@ -820,55 +819,3 @@ axs.format(
 )
 fig.format(abc="(a)", abcloc="l")
 # %%
-m1 = axs[1].line(
-    CRU_India_EA_regress_9.time.dt.year,
-    np.array(CRU_India_EA_regress_9["rvalue"]),
-    lw=lw,
-    color="blue",
-)
-m2 = axs[1].line(
-    GPCP_India_EA_regress_9.time.dt.year,
-    np.array(GPCP_India_EA_regress_9["rvalue"]),
-    lw=lw,
-    color="black",
-)
-m3 = axs[1].line(
-    his_India_EA_regress_9.time.dt.year,
-    np.array(his_India_EA_regress_9["rvalue"]),
-    lw=lw,
-    color="red",
-)
-axs[1].format(ltitle="window=9", rtitle="1979-2014")
-axs[1].legend(handles=[m1,m2,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
-axs[1].axhline(0, lw = 0.8, color="grey5", linestyle="--")
-axs[1].axhline(0.6021, lw = 0.8, color="grey5", linestyle="--")
-axs[1].axhline(-0.6021, lw = 0.8, color="grey5", linestyle="--")
-
-
-m1 = axs[2].line(
-    CRU_India_EA_regress_11.time.dt.year,
-    np.array(CRU_India_EA_regress_11["rvalue"]),
-    lw=lw,
-    color="blue",
-)
-m2 = axs[2].line(
-    GPCP_India_EA_regress_11.time.dt.year,
-    np.array(GPCP_India_EA_regress_11["rvalue"]),
-    lw=lw,
-    color="black",
-)
-m3 = axs[2].line(
-    his_India_EA_regress_11.time.dt.year,
-    np.array(his_India_EA_regress_11["rvalue"]),
-    lw=lw,
-    color="red",
-)
-axs[2].format(ltitle="window=11", rtitle="1950-2014")
-axs[2].legend(handles=[m1,m2,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
-axs[2].axhline(0, lw = 0.8, color="grey5", linestyle="--")
-axs[2].axhline(0.5529, lw = 0.8, color="grey5", linestyle="--")
-axs[2].axhline(-0.5529, lw = 0.8, color="grey5", linestyle="--")
-axs.format(
-    ylim=(-1.0, 1.0), ylocator=0.2, yminorlocator=0.1, xrotation=0, xlim=(1950, 2014),
-)
-fig.format(abc="(a)", abcloc="l")
