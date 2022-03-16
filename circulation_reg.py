@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-16 19:12:01
+LastEditTime: 2022-03-16 19:31:31
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -87,5 +87,24 @@ fqhis = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/hus/
 qhis = fqhis["hus"]
 # %%
 #   calculate the meridional water vapor transport
+#   select the level
+uERA5_ver_Indian_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, 8:28, 70:86]
+uERA5_ver_EA_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, 36:42, 108:118]
 
+vERA5_ver_Indian_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, 8:28, 70:86]
+vERA5_ver_EA_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, 36:42, 108:118]
+
+qERA5_ver_Indian_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, 8:28, 70:86]
+qERA5_ver_EA_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, 36:42, 108:118]
+
+
+uhis_ver_Indian_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :10000.0, 8:28, 70:86]
+uhis_ver_EA_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :10000.0, 36:42, 108:118]
+
+vhis_ver_Indian_JJA = ca.p_time(vhis, 6, 8, True).loc[:, :10000.0, 8:28, 70:86]
+vhis_ver_EA_JJA = ca.p_time(vhis, 6, 8, True).loc[:, :10000.0, 36:42, 108:118]
+
+qhis_ver_Indian_JJA = ca.p_time(qhis, 6, 8, True).loc[:, :10000.0, 8:28, 70:86]
+qhis_ver_EA_JJA = ca.p_time(qhis, 6, 8, True).loc[:, :10000.0, 36:42, 108:118]
 # %%
+#   calculate the area mean
