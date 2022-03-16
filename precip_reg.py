@@ -678,3 +678,131 @@ sepl.patches(axs[0,2], 108, 36, 10.0, 6.0, proj)
 fig_std.colorbar(con, loc="b", width=0.13, length=0.7)
 fig_std.format(abc="(a)", abcloc="l")
 # %%
+
+axs[2].line(
+    his_India_EA_regress_7.time.dt.year,
+    np.array(his_India_EA_regress_7["rvalue"]),
+    lw=lw,
+    color="black",
+)
+axs[2].format(title = "historical")
+
+for i, ax in enumerate(axs[3:]):
+    ax.line(his_ds_India_EA_rvalue_7.time.dt.year, his_ds_India_EA_rvalue_7[:,i], color="black", lw=lw)
+    ax.format(title=np.array(his_ds_India_EA_rvalue_7.coords["models"][i]))
+
+for ax in axs:
+    ax.axhline(0, lw = 0.8, color="grey5", linestyle="--")
+    ax.axhline(0.6664, lw = 0.8, color="grey5", linestyle="--")
+    ax.axhline(-0.6664, lw = 0.8, color="grey5", linestyle="--")
+    ax.axvline(1972, lw=0.8, color="grey5", linestyle="--")
+    ax.format(ltitle="window=7", rtitle="1950-2014")
+
+axs.format(
+    ylim=(-1.0, 1.0), ylocator=0.2, yminorlocator=0.1, xrotation=0, xlim=(1950, 2014),
+)
+fig.format(abc="(a)", abcloc="l")
+# %%
+
+fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=5, nrows=6)
+lw = 0.8
+# cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
+cycle = "Pastel1"
+
+axs[0].line(
+    CRU_India_EA_regress_7.time.dt.year,
+    np.array(CRU_India_EA_regress_7["rvalue"]),
+    lw=lw,
+    color="black",
+)
+axs[0].format(title = "CRU TS4.01")
+
+axs[1].line(
+    GPCP_India_EA_regress_7.time.dt.year,
+    np.array(GPCP_India_EA_regress_7["rvalue"]),
+    lw=lw,
+    color="black",
+)
+axs[1].format(title = "GPCP")
+
+axs[2].line(
+    his_India_EA_regress_7.time.dt.year,
+    np.array(his_India_EA_regress_7["rvalue"]),
+    lw=lw,
+    color="black",
+)
+axs[2].format(title = "historical")
+
+for i, ax in enumerate(axs[3:]):
+    ax.line(his_ds_India_EA_rvalue_7.time.dt.year, his_ds_India_EA_rvalue_7[:,i], color="black", lw=lw)
+    ax.format(title=np.array(his_ds_India_EA_rvalue_7.coords["models"][i]))
+
+for ax in axs:
+    ax.axhline(0, lw = 0.8, color="grey5", linestyle="--")
+    ax.axhline(0.6664, lw = 0.8, color="grey5", linestyle="--")
+    ax.axhline(-0.6664, lw = 0.8, color="grey5", linestyle="--")
+    ax.axvline(1972, lw=0.8, color="grey5", linestyle="--")
+    ax.format(ltitle="window=7", rtitle="1950-2014")
+
+axs.format(
+    ylim=(-1.0, 1.0), ylocator=0.2, yminorlocator=0.1, xrotation=0, xlim=(1950, 2014),
+)
+fig.format(abc="(a)", abcloc="l")
+
+
+# %%
+
+
+m1 = axs[1].line(
+    CRU_India_EA_regress_9.time.dt.year,
+    np.array(CRU_India_EA_regress_9["rvalue"]),
+    lw=lw,
+    color="blue",
+)
+m2 = axs[1].line(
+    GPCP_India_EA_regress_9.time.dt.year,
+    np.array(GPCP_India_EA_regress_9["rvalue"]),
+    lw=lw,
+    color="black",
+)
+m3 = axs[1].line(
+    his_India_EA_regress_9.time.dt.year,
+    np.array(his_India_EA_regress_9["rvalue"]),
+    lw=lw,
+    color="red",
+)
+axs[1].format(ltitle="window=9", rtitle="1979-2014")
+axs[1].legend(handles=[m1,m2,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
+axs[1].axhline(0, lw = 0.8, color="grey5", linestyle="--")
+axs[1].axhline(0.6021, lw = 0.8, color="grey5", linestyle="--")
+axs[1].axhline(-0.6021, lw = 0.8, color="grey5", linestyle="--")
+
+
+m1 = axs[2].line(
+    CRU_India_EA_regress_11.time.dt.year,
+    np.array(CRU_India_EA_regress_11["rvalue"]),
+    lw=lw,
+    color="blue",
+)
+m2 = axs[2].line(
+    GPCP_India_EA_regress_11.time.dt.year,
+    np.array(GPCP_India_EA_regress_11["rvalue"]),
+    lw=lw,
+    color="black",
+)
+m3 = axs[2].line(
+    his_India_EA_regress_11.time.dt.year,
+    np.array(his_India_EA_regress_11["rvalue"]),
+    lw=lw,
+    color="red",
+)
+axs[2].format(ltitle="window=11", rtitle="1950-2014")
+axs[2].legend(handles=[m1,m2,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
+axs[2].axhline(0, lw = 0.8, color="grey5", linestyle="--")
+axs[2].axhline(0.5529, lw = 0.8, color="grey5", linestyle="--")
+axs[2].axhline(-0.5529, lw = 0.8, color="grey5", linestyle="--")
+axs.format(
+    ylim=(-1.0, 1.0), ylocator=0.2, yminorlocator=0.1, xrotation=0, xlim=(1950, 2014),
+)
+fig.format(abc="(a)", abcloc="l")
