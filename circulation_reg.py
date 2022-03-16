@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-16 19:07:49
+LastEditTime: 2022-03-16 19:12:01
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -69,9 +69,23 @@ prehis_ds = xr.DataArray(preds_his['pr'])
 prehis_ds.coords["models"] = modelname_pr
 
 fvERA5 = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc")
-print(fvERA5)
-# vERA5 = fvERA5[""]
+vERA5 = fvERA5["v"]
 
 fvhis = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc")
 vhis = fvhis["va"]
+
+fuERA5 = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc")
+uERA5 = fuERA5["u"]
+
+fuhis = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc")
+uhis = fuhis["ua"]
+
+fqERA5 = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc")
+qERA5 = fqERA5["q"]
+
+fqhis = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc")
+qhis = fqhis["hus"]
+# %%
+#   calculate the meridional water vapor transport
+
 # %%
