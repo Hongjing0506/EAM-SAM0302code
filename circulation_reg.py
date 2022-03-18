@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 18:34:59
+LastEditTime: 2022-03-18 20:41:55
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -156,3 +156,23 @@ sphis_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(sphis_ver_India_JJA).mean(dim="
 
 # %%
 #   calculate the waver vapor vertical intergration
+ptop = 100*100
+g = 9.8
+ERA5level = qERA5_ver_JJA.coords["level"] * 100.0
+ERA5level.attrs["units"] = "Pa"
+ERA5dp = geocat.comp.dpres_plevel(ERA5level, spERA5_ver_JJA, ptop)
+ERA5dpg = dp/g
+ERA5dpg.attrs["units"] = "kg/m2"
+# calculate the water vapor
+uq_ERA5 = uERA5_ver_JJA * qERA5_ver_JJA * 1000.0
+vq_ERA5 = vERA5_ver_JJA * qERA5_ver_JJA * 1000.0
+uq_ERA5.attrs["units"] = "[m/s][g/kg]"
+vq_ERA5.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_ERA5 = (uq_ERA5 * ERA5dpg.data).sum(dim="level")
+vq_dpg_ERA5 = (vq_ERA5 * ERA5dpg.data).sum(dim="level")
+uq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
+vq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
+
+
+# qhis_ver_JJA.coords["plev"]
+# %%
