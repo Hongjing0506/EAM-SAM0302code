@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 18:21:51
+LastEditTime: 2022-03-18 18:23:46
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -109,9 +109,9 @@ qERA5_ver_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, :, :]
 qERA5_ver_India_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, 8:28, 70:86]
 qERA5_ver_EA_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, 36:42, 108:118]
 
-qERA5_ver_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, :, :]
-qERA5_ver_India_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, 8:28, 70:86]
-qERA5_ver_EA_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, 36:42, 108:118]
+spERA5_ver_JJA = ca.p_time(spERA5, 6, 8, True).loc[:, :, :]
+spERA5_ver_India_JJA = ca.p_time(spERA5, 6, 8, True).loc[:, 8:28, 70:86]
+spERA5_ver_EA_JJA = ca.p_time(spERA5, 6, 8, True).loc[:, 36:42, 108:118]
 
 uhis_ver_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :10000.0, :, :]
 uhis_ver_India_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :10000.0, 8:28, 70:86]
@@ -124,6 +124,10 @@ vhis_ver_EA_JJA = ca.p_time(vhis, 6, 8, True).loc[:, :10000.0, 36:42, 108:118]
 qhis_ver_JJA = ca.p_time(qhis, 6, 8, True).loc[:, :10000.0, :, :]
 qhis_ver_India_JJA = ca.p_time(qhis, 6, 8, True).loc[:, :10000.0, 8:28, 70:86]
 qhis_ver_EA_JJA = ca.p_time(qhis, 6, 8, True).loc[:, :10000.0, 36:42, 108:118]
+
+sphis_ver_JJA = ca.p_time(sphis, 6, 8, True).loc[:, :, :]
+sphis_ver_India_JJA = ca.p_time(sphis, 6, 8, True).loc[:, 8:28, 70:86]
+sphis_ver_EA_JJA = ca.p_time(sphis, 6, 8, True).loc[:, 36:42, 108:118]
 # %%
 #   calculate the area mean
 uERA5_ver_India_JJA_mean = ca.cal_lat_weighted_mean(uERA5_ver_India_JJA).mean(dim="lon", skipna=True)
