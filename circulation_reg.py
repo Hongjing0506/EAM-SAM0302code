@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 21:57:12
+LastEditTime: 2022-03-18 23:19:41
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -379,4 +379,37 @@ axs[1, 1].format(
 )
 sepl.patches(axs[1, 1], 70.0, 8.0, 16.0, 20.0, proj)
 sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
+# %%
+preCRU_EA_mean.coords['time'] = uq_dpg_ERA5.coords['time']
+(
+    uq_CRU_EA_slope,
+    uq_CRU_EA_intercept,
+    uq_CRU_EA_rvalue,
+    uq_CRU_EA_pvalue,
+    uq_CRU_EA_hypothesis,
+) = ca.dim_linregress(preCRU_EA_mean, uq_dpg_ERA5)
+
+(
+    vq_CRU_EA_slope,
+    vq_CRU_EA_intercept,
+    vq_CRU_EA_rvalue,
+    vq_CRU_EA_pvalue,
+    vq_CRU_EA_hypothesis,
+) = ca.dim_linregress(preCRU_EA_mean, vq_dpg_ERA5)
+
+(
+    uq_his_EA_slope,
+    uq_his_EA_intercept,
+    uq_his_EA_rvalue,
+    uq_his_EA_pvalue,
+    uq_his_EA_hypothesis,
+) = ca.dim_linregress(prehis_EA_mean, uq_dpg_his)
+
+(
+    vq_his_EA_slope,
+    vq_his_EA_intercept,
+    vq_his_EA_rvalue,
+    vq_his_EA_pvalue,
+    vq_his_EA_hypothesis,
+) = ca.dim_linregress(prehis_EA_mean, vq_dpg_his)
 # %%
