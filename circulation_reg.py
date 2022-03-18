@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-16 19:39:51
+LastEditTime: 2022-03-18 18:21:51
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -21,6 +21,9 @@ import plot as sepl
 import cal as ca
 import pandas as pd
 from importlib import reload
+
+import metpy.calc as mpcalc
+import geocat.comp
 
 reload(sepl)
 
@@ -80,6 +83,12 @@ uERA5 = fuERA5["u"]
 fuhis = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc")
 uhis = fuhis["ua"]
 
+fspERA5 = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc")
+spERA5 = fspERA5["sp"]
+
+fsphis = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc")
+sphis = fsphis["ps"]
+
 fqERA5 = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc")
 qERA5 = fqERA5["q"]
 
@@ -95,6 +104,10 @@ uERA5_ver_EA_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, 36:42, 108:118]
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
 vERA5_ver_India_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, 8:28, 70:86]
 vERA5_ver_EA_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, 36:42, 108:118]
+
+qERA5_ver_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, :, :]
+qERA5_ver_India_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, 8:28, 70:86]
+qERA5_ver_EA_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, 36:42, 108:118]
 
 qERA5_ver_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, :, :]
 qERA5_ver_India_JJA = ca.p_time(qERA5, 6, 8, True).loc[:, 100.0:, 8:28, 70:86]
@@ -132,3 +145,4 @@ qhis_ver_India_JJA_mean = ca.cal_lat_weighted_mean(qhis_ver_India_JJA).mean(dim=
 qhis_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(qhis_ver_India_JJA).mean(dim="lon", skipna=True)
 
 # %%
+#   calculate the waver vapor vertical intergration
