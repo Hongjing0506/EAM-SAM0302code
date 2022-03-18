@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 23:21:13
+LastEditTime: 2022-03-18 23:40:02
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -178,7 +178,7 @@ g = 9.8
 ERA5level = qERA5_ver_JJA.coords["level"] * 100.0
 ERA5level.attrs["units"] = "Pa"
 ERA5dp = geocat.comp.dpres_plevel(ERA5level, spERA5_ver_JJA, ptop)
-ERA5dpg = dp/g
+ERA5dpg = ERA5dp/g
 ERA5dpg.attrs["units"] = "kg/m2"
 # calculate the water vapor transport
 uq_ERA5 = uERA5_ver_JJA * qERA5_ver_JJA * 1000.0
@@ -195,7 +195,7 @@ vq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
 hislevel = qhis_ver_JJA.coords["plev"] * 100.0
 hislevel.attrs["units"] = "Pa"
 hisdp = geocat.comp.dpres_plevel(hislevel, sphis_ver_JJA, ptop)
-hisdpg = dp/g
+hisdpg = hisdp/g
 hisdpg.attrs["units"] = "kg/m2"
 # calculate the water vapor transport
 uq_his = uhis_ver_JJA * qhis_ver_JJA * 1000.0
@@ -213,10 +213,10 @@ vq_dpg_his.attrs["units"] = "[m/s][g/kg]"
 uq_dpg_ERA5_India = uq_dpg_ERA5.loc[:, 8:28, 70:86]
 vq_dpg_ERA5_India = vq_dpg_ERA5.loc[:, 8:28, 70:86]
 
-uq_dpg_ERA5_India_mean = ca.cal_lat_weighted_mean(uq_dpg_ERA5_India).mean(
+uq_dpg_ERA5_EA_mean = ca.cal_lat_weighted_mean(uq_dpg_ERA5_India).mean(
     dim="lon", skipna=True
 )
-vq_dpg_ERA5_India_mean = ca.cal_lat_weighted_mean(vq_dpg_ERA5_India).mean(
+vq_dpg_ERA5_EA_mean = ca.cal_lat_weighted_mean(vq_dpg_ERA5_India).mean(
     dim="lon", skipna=True
 )
 
@@ -528,3 +528,25 @@ axs[1, 1].format(
 sepl.patches(axs[1, 1], 70.0, 8.0, 16.0, 20.0, proj)
 sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
 # %%
+#   calculate the rolling correlation coefficient
+#   calculate the area mean
+
+uq_dpg_ERA5_EA = uq_dpg_ERA5.loc[:, 30:37.5, 112.5:120]
+vq_dpg_ERA5_EA = vq_dpg_ERA5.loc[:, 30:37.5, 112.5:120]
+
+uq_dpg_ERA5_EA_mean = ca.cal_lat_weighted_mean(uq_dpg_ERA5_EA).mean(
+    dim="lon", skipna=True
+)
+vq_dpg_ERA5_EA_mean = ca.cal_lat_weighted_mean(vq_dpg_ERA5_EA).mean(
+    dim="lon", skipna=True
+)
+
+uq_dpg_his_EA = uq_dpg_his.loc[:, 30:37.5, 112.5:120]
+vq_dpg_his_EA = vq_dpg_his.loc[:, 30:37.5, 112.5:120]
+
+uq_dpg_his_EA_mean = ca.cal_lat_weighted_mean(uq_dpg_his_EA).mean(
+    dim="lon", skipna=True
+)
+vq_dpg_his_EA_mean = ca.cal_lat_weighted_mean(vq_dpg_his_EA).mean(
+    dim="lon", skipna=True
+)
