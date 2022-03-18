@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 23:40:02
+LastEditTime: 2022-03-18 23:46:34
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -550,3 +550,21 @@ uq_dpg_his_EA_mean = ca.cal_lat_weighted_mean(uq_dpg_his_EA).mean(
 vq_dpg_his_EA_mean = ca.cal_lat_weighted_mean(vq_dpg_his_EA).mean(
     dim="lon", skipna=True
 )
+# %%
+preCRU_India_mean.coords['time'] = uq_dpg_ERA5.coords['time']
+(
+    uq_CRU_Indian_rolling_slope,
+    uq_CRU_Indian_rolling_intercept,
+    uq_CRU_Indian_rolling_rvalue,
+    uq_CRU_Indian_rolling_pvalue,
+    uq_CRU_Indian_rolling_hypothesis,
+) = ca.dim_linregress(preCRU_India_mean, uq_dpg_ERA5_EA_mean)
+
+(
+    vq_CRU_India_rolling_slope,
+    vq_CRU_India_rolling_intercept,
+    vq_CRU_India_rolling_rvalue,
+    vq_CRU_India_rolling_pvalue,
+    vq_CRU_India_rolling_hypothesis,
+) = ca.dim_linregress(preCRU_India_mean, vq_dpg_ERA5_EA_mean)
+# %%
