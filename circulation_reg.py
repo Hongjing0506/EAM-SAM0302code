@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 21:55:10
+LastEditTime: 2022-03-18 21:57:12
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -332,51 +332,51 @@ axs[0, 1].format(
 sepl.patches(axs[0, 1], 70.0, 8.0, 16.0, 20.0, proj)
 sepl.patches(axs[0, 1], 108, 36, 10.0, 6.0, proj)
 # ==========================
-con = axs[0, 0].contourf(
-    uq_CRU_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
+con = axs[1, 0].contourf(
+    uq_his_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
 )
 sepl.plt_sig(
-    uq_CRU_India_pvalue,
-    axs[0, 0],
+    uq_his_India_pvalue,
+    axs[1, 0],
     n,
-    np.where(uq_CRU_India_pvalue[::n, ::n] <= 0.05),
+    np.where(uq_his_India_pvalue[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
 # axs[0,0].contour(
-#     CRU_India_pvalue,
+#     his_India_pvalue,
 #     color="black",
 #     vmin=0.05,
 #     vmax=0.05,
 #     lw=0.8
 # )
-axs[0, 0].format(
-    title="Uq reg IndR", rtitle="1950-2014", ltitle="CRU TS4.01",
+axs[1, 0].format(
+    title="Uq reg IndR", rtitle="1950-2014", ltitle="historical",
 )
-sepl.patches(axs[0, 0], 70.0, 8.0, 16.0, 20.0, proj)
-sepl.patches(axs[0, 0], 108, 36, 10.0, 6.0, proj)
+sepl.patches(axs[1, 0], 70.0, 8.0, 16.0, 20.0, proj)
+sepl.patches(axs[1, 0], 108, 36, 10.0, 6.0, proj)
 # ==========================
-con = axs[0, 1].contourf(
-    vq_CRU_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
+con = axs[1, 1].contourf(
+    vq_his_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
 )
 sepl.plt_sig(
-    vq_CRU_India_pvalue,
-    axs[0, 1],
+    vq_his_India_pvalue,
+    axs[1, 1],
     n,
-    np.where(vq_CRU_India_pvalue[::n, ::n] <= 0.05),
+    np.where(vq_his_India_pvalue[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
 # axs[0,0].contour(
-#     CRU_India_pvalue,
+#     his_India_pvalue,
 #     color="black",
 #     vmin=0.05,
 #     vmax=0.05,
 #     lw=0.8
 # )
-axs[0, 1].format(
-    title="Vq reg IndR", rtitle="1950-2014", ltitle="CRU TS4.01",
+axs[1, 1].format(
+    title="Vq reg IndR", rtitle="1950-2014", ltitle="historical",
 )
-sepl.patches(axs[0, 1], 70.0, 8.0, 16.0, 20.0, proj)
-sepl.patches(axs[0, 1], 108, 36, 10.0, 6.0, proj)
+sepl.patches(axs[1, 1], 70.0, 8.0, 16.0, 20.0, proj)
+sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
 # %%
