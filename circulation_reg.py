@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 21:48:48
+LastEditTime: 2022-03-18 21:55:10
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -248,4 +248,135 @@ preCRU_India_mean.coords['time'] = uq_dpg_ERA5.coords['time']
     vq_CRU_India_hypothesis,
 ) = ca.dim_linregress(preCRU_India_mean, vq_dpg_ERA5)
 
+(
+    uq_his_India_slope,
+    uq_his_India_intercept,
+    uq_his_India_rvalue,
+    uq_his_India_pvalue,
+    uq_his_India_hypothesis,
+) = ca.dim_linregress(prehis_India_mean, uq_dpg_his)
+
+(
+    vq_his_India_slope,
+    vq_his_India_intercept,
+    vq_his_India_rvalue,
+    vq_his_India_pvalue,
+    vq_his_India_hypothesis,
+) = ca.dim_linregress(prehis_India_mean, vq_dpg_his)
+
+# %%
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig_rvalue = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig_rvalue.subplots(ncols=2, nrows=2, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.arange(50, 151, 10)  # 设置纬度刻度
+yticks = np.arange(10, 51, 10)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], 5, 55]
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+n = 1
+# ==========================
+con = axs[0, 0].contourf(
+    uq_CRU_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
+)
+sepl.plt_sig(
+    uq_CRU_India_pvalue,
+    axs[0, 0],
+    n,
+    np.where(uq_CRU_India_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+# axs[0,0].contour(
+#     CRU_India_pvalue,
+#     color="black",
+#     vmin=0.05,
+#     vmax=0.05,
+#     lw=0.8
+# )
+axs[0, 0].format(
+    title="Uq reg IndR", rtitle="1950-2014", ltitle="CRU TS4.01",
+)
+sepl.patches(axs[0, 0], 70.0, 8.0, 16.0, 20.0, proj)
+sepl.patches(axs[0, 0], 108, 36, 10.0, 6.0, proj)
+# ==========================
+con = axs[0, 1].contourf(
+    vq_CRU_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
+)
+sepl.plt_sig(
+    vq_CRU_India_pvalue,
+    axs[0, 1],
+    n,
+    np.where(vq_CRU_India_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+# axs[0,0].contour(
+#     CRU_India_pvalue,
+#     color="black",
+#     vmin=0.05,
+#     vmax=0.05,
+#     lw=0.8
+# )
+axs[0, 1].format(
+    title="Vq reg IndR", rtitle="1950-2014", ltitle="CRU TS4.01",
+)
+sepl.patches(axs[0, 1], 70.0, 8.0, 16.0, 20.0, proj)
+sepl.patches(axs[0, 1], 108, 36, 10.0, 6.0, proj)
+# ==========================
+con = axs[0, 0].contourf(
+    uq_CRU_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
+)
+sepl.plt_sig(
+    uq_CRU_India_pvalue,
+    axs[0, 0],
+    n,
+    np.where(uq_CRU_India_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+# axs[0,0].contour(
+#     CRU_India_pvalue,
+#     color="black",
+#     vmin=0.05,
+#     vmax=0.05,
+#     lw=0.8
+# )
+axs[0, 0].format(
+    title="Uq reg IndR", rtitle="1950-2014", ltitle="CRU TS4.01",
+)
+sepl.patches(axs[0, 0], 70.0, 8.0, 16.0, 20.0, proj)
+sepl.patches(axs[0, 0], 108, 36, 10.0, 6.0, proj)
+# ==========================
+con = axs[0, 1].contourf(
+    vq_CRU_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
+)
+sepl.plt_sig(
+    vq_CRU_India_pvalue,
+    axs[0, 1],
+    n,
+    np.where(vq_CRU_India_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+# axs[0,0].contour(
+#     CRU_India_pvalue,
+#     color="black",
+#     vmin=0.05,
+#     vmax=0.05,
+#     lw=0.8
+# )
+axs[0, 1].format(
+    title="Vq reg IndR", rtitle="1950-2014", ltitle="CRU TS4.01",
+)
+sepl.patches(axs[0, 1], 70.0, 8.0, 16.0, 20.0, proj)
+sepl.patches(axs[0, 1], 108, 36, 10.0, 6.0, proj)
 # %%
