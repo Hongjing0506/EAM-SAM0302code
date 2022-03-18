@@ -524,7 +524,7 @@ axs[0].axhline(0, lw = 0.8, color="grey5", linestyle="--")
 axs[0].axhline(0.6664, lw = 0.8, color="grey5", linestyle="--")
 axs[0].axhline(-0.6664, lw = 0.8, color="grey5", linestyle="--")
 axs[0].format(ltitle="window=7", rtitle="1950-2014")
-axs[0].legend(handles=[m1,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
+axs[0].legend(handles=[m1,m3], loc="ll", labels=["CRU", "historical"], ncols=1)
 
 m1 = axs[1].line(
     CRU_India_EA_regress_9.time.dt.year,
@@ -545,7 +545,7 @@ m3 = axs[1].line(
     color="red",
 )
 axs[1].format(ltitle="window=9", rtitle="1979-2014")
-axs[1].legend(handles=[m1,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
+axs[1].legend(handles=[m1,m3], loc="ll", labels=["CRU", "historical"], ncols=1)
 axs[1].axhline(0, lw = 0.8, color="grey5", linestyle="--")
 axs[1].axhline(0.6021, lw = 0.8, color="grey5", linestyle="--")
 axs[1].axhline(-0.6021, lw = 0.8, color="grey5", linestyle="--")
@@ -569,7 +569,7 @@ m3 = axs[2].line(
     color="red",
 )
 axs[2].format(ltitle="window=11", rtitle="1950-2014")
-axs[2].legend(handles=[m1,m3], loc="ll", labels=["CRU", "GPCP", "historical"], ncols=1)
+axs[2].legend(handles=[m1,m3], loc="ll", labels=["CRU", "historical"], ncols=1)
 axs[2].axhline(0, lw = 0.8, color="grey5", linestyle="--")
 axs[2].axhline(0.5529, lw = 0.8, color="grey5", linestyle="--")
 axs[2].axhline(-0.5529, lw = 0.8, color="grey5", linestyle="--")
@@ -679,7 +679,8 @@ fig_std.format(abc="(a)", abcloc="l")
 # %%
 #   plot the rolling_reg_index
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
-axs = fig.subplots(ncols=5, nrows=6)
+array = [[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20],[21,22,23,24,25],[26,27,28,29,0]]
+axs = fig.subplots(array)
 lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 cycle = "Pastel1"
@@ -726,7 +727,8 @@ fig.format(abc="(a)", abcloc="l")
 # %%
 
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
-axs = fig.subplots(ncols=5, nrows=6)
+array = [[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20],[21,22,23,24,25],[26,27,28,29,0]]
+axs = fig.subplots(array)
 lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 cycle = "Pastel1"
@@ -774,7 +776,8 @@ fig.format(abc="(a)", abcloc="l")
 
 # %%
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
-axs = fig.subplots(ncols=5, nrows=6)
+array = [[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20],[21,22,23,24,25],[26,27,28,29,0]]
+axs = fig.subplots(array)
 lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 cycle = "Pastel1"
