@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 23:46:34
+LastEditTime: 2022-03-19 00:01:32
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -551,20 +551,64 @@ vq_dpg_his_EA_mean = ca.cal_lat_weighted_mean(vq_dpg_his_EA).mean(
     dim="lon", skipna=True
 )
 # %%
-preCRU_India_mean.coords['time'] = uq_dpg_ERA5.coords['time']
-(
-    uq_CRU_Indian_rolling_slope,
-    uq_CRU_Indian_rolling_intercept,
-    uq_CRU_Indian_rolling_rvalue,
-    uq_CRU_Indian_rolling_pvalue,
-    uq_CRU_Indian_rolling_hypothesis,
-) = ca.dim_linregress(preCRU_India_mean, uq_dpg_ERA5_EA_mean)
+CRUtime = uq_dpg_ERA5.coords['time']
+histime = uq_dpg_his.coords['time']
+preCRU_India_mean.coords['time'] = CRUtime
+freq = "AS-JUL"
+window = 9
 
-(
-    vq_CRU_India_rolling_slope,
-    vq_CRU_India_rolling_intercept,
-    vq_CRU_India_rolling_rvalue,
-    vq_CRU_India_rolling_pvalue,
-    vq_CRU_India_rolling_hypothesis,
-) = ca.dim_linregress(preCRU_India_mean, vq_dpg_ERA5_EA_mean)
+uq_CRU_India_rolling_9 = ca.rolling_reg_index(preCRU_India_mean, uq_dpg_ERA5_EA_mean, CRUtime, window, freq, True)
+
+vq_CRU_India_rolling_9 = ca.rolling_reg_index(preCRU_India_mean, vq_dpg_ERA5_EA_mean, CRUtime, window, freq, True)
+
+uq_his_India_rolling_9 = ca.rolling_reg_index(prehis_India_mean, uq_dpg_his_EA_mean, histime, window, freq, True)
+
+vq_his_India_rolling_9 = ca.rolling_reg_index(prehis_India_mean, vq_dpg_his_EA_mean, histime, window, freq, True)
+# %%
+#   plot the rolling correlation coefficient
+fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=1, nrows=2)
+lw = 0.8
+# cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
+cycle = "Pastel1"
+
+m1 = axs[0].line(
+    CRUtime,
+    np.array(uq_CRU_India_rolling_9["rvalue"]),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[0].line(
+    histime,
+    np.array(uq_his_India_rolling_9["rvalue"]),
+    lw=lw,
+    color="red",
+)
+
+
+axs[0].axhline(0, lw = 0.8, color="grey5", linestyle="--")
+axs[0].axhline(0.6021, lw = 0.8, color="grey5", linestyle="--")
+axs[0].axhline(-0.6021, lw = 0.8, color="grey5", linestyle="--")
+axs[0].format(ltitle="window=9", rtitle="1950-2014", title="Uq reg IndR", xrotation=0, ymin=-1.0, ymax=1.0, ylocator=0.2, yminorlocator=0.1)
+axs[0].legend(handles=[m1,m3], loc="ll", labels=["CRU", "historical"], ncols=1)
+# ======================
+m1 = axs[1].line(
+    CRUtime,
+    np.array(vq_CRU_India_rolling_9["rvalue"]),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[1].line(
+    histime,
+    np.array(vq_his_India_rolling_9["rvalue"]),
+    lw=lw,
+    color="red",
+)
+
+
+axs[1].axhline(0, lw = 0.8, color="grey5", linestyle="--")
+axs[1].axhline(0.6021, lw = 0.8, color="grey5", linestyle="--")
+axs[1].axhline(-0.6021, lw = 0.8, color="grey5", linestyle="--")
+axs[1].format(ltitle="window=9", rtitle="1950-2014", title="Vq reg IndR", xrotation=0, ymin=-1.0, ymax=1.0, ylocator=0.2, yminorlocator=0.1)
+axs[1].legend(handles=[m1,m3], loc="ll", labels=["CRU", "historical"], ncols=1)
 # %%
