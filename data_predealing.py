@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-02 16:45:05
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 15:20:04
+LastEditTime: 2022-03-18 15:25:06
 FilePath: /chenhj/0302code/data_predealing.py
 Aim: 
 Mission: 
@@ -147,8 +147,9 @@ for var in variable:
 #   calculate the ensmean of different variables
 srcPath = ""
 dstPath = ""
-var = ["ua", "va", "hus", "ta", "wap", ]
-
+variables = ["ua", "va", "hus", "ta", "wap", "ps", "pr", "zg"]
+for var in variables:
+    def cdo_ensmean(srcPath, dstPath):
 
 # %%
 modelname = ["ACCESS-CM2", "BCC-CSM2-MR", "CAMS-CSM1-0", "CanESM5", "CESM2", "CESM2-WACCM", "CMCC-ESM2", "CNRM-CM6-1", "CNRM-ESM2-1", "EC-Earth3-Veg", "EC-Earth3", "FGOALS-g3", "GFDL-CM4", "HadGEM3-GC31-LL", "INM-CM4-8", "INM-CM5-0", "IPSL-CM6A-LR", "KACE-1-0-G", "MIROC-ES2L", "MIROC6", "MPI-ESM1-2-HR", "MRI-ESM2-0", "NESM3", "NorESM2-LM", "TaiESM1", "UKESM1-0-LL"]
@@ -170,4 +171,16 @@ for var in variable:
     start = 2015
     end = 2099
     ca.p_year(srcPath, dstPath, start, end)
+# %%
+#   uniform the time of different models
+reload(ca)
+path1 = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical"
+variable = ["ps"]
+for var in variable:
+    varpath = os.path.join(path1, var)
+    g = os.walk(varpath)
+    for path, dir_list, file_list in g:
+        for filename in file_list:
+            print(filename)
+            ca.uniform_timestamp(os.path.join(path, filename), os.path.join("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/", var + "2", filename), var, "19500101", "20141201", "MS")
 # %%
