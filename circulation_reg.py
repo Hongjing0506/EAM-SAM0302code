@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 18:23:46
+LastEditTime: 2022-03-18 18:34:59
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -139,6 +139,9 @@ vERA5_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(vERA5_ver_India_JJA).mean(dim="
 qERA5_ver_India_JJA_mean = ca.cal_lat_weighted_mean(qERA5_ver_India_JJA).mean(dim="lon", skipna=True)
 qERA5_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(qERA5_ver_India_JJA).mean(dim="lon", skipna=True)
 
+spERA5_ver_India_JJA_mean = ca.cal_lat_weighted_mean(spERA5_ver_India_JJA).mean(dim="lon", skipna=True)
+spERA5_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(spERA5_ver_India_JJA).mean(dim="lon", skipna=True)
+
 uhis_ver_India_JJA_mean = ca.cal_lat_weighted_mean(uhis_ver_India_JJA).mean(dim="lon", skipna=True)
 uhis_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(uhis_ver_India_JJA).mean(dim="lon", skipna=True)
 
@@ -147,6 +150,9 @@ vhis_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(vhis_ver_India_JJA).mean(dim="lo
 
 qhis_ver_India_JJA_mean = ca.cal_lat_weighted_mean(qhis_ver_India_JJA).mean(dim="lon", skipna=True)
 qhis_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(qhis_ver_India_JJA).mean(dim="lon", skipna=True)
+
+sphis_ver_India_JJA_mean = ca.cal_lat_weighted_mean(sphis_ver_India_JJA).mean(dim="lon", skipna=True)
+sphis_ver_EA_JJA_mean = ca.cal_lat_weighted_mean(sphis_ver_India_JJA).mean(dim="lon", skipna=True)
 
 # %%
 #   calculate the waver vapor vertical intergration
