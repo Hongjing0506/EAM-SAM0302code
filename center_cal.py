@@ -695,7 +695,7 @@ u_his_ds_SAH_area = u_his_ds_JJA_200.loc[:,
 ]
 
 # %%
-center_loc_his_ds = np.zeros((27, len(lon)))
+center_loc_his_ds = np.zeros((26, len(lon)))
 for num_model, imodel in enumerate(modelname_hgt):
     for t_his_ds in hgt_his_ds_SAH_area.time:
         ridgelat_his_ds, ridgelon_his_ds = ca.cal_ridge_line(u_his_ds_SAH_area.sel(time=t_his_ds, models=imodel))
@@ -708,6 +708,7 @@ fig_models = pplt.figure(refwidth=4.0, refheight=2.5, span=False, share=False)
 array = np.arange(1,31)
 array = array.reshape([5,6])
 array[4,5] = 0
+array[4,4] = 0
 axs = fig_models.subplots(array)
 axs.format(
     xformatter="deglon",
