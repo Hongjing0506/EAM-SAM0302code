@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 20:41:55
+LastEditTime: 2022-03-18 20:44:01
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -163,16 +163,31 @@ ERA5level.attrs["units"] = "Pa"
 ERA5dp = geocat.comp.dpres_plevel(ERA5level, spERA5_ver_JJA, ptop)
 ERA5dpg = dp/g
 ERA5dpg.attrs["units"] = "kg/m2"
-# calculate the water vapor
+# calculate the water vapor transport
 uq_ERA5 = uERA5_ver_JJA * qERA5_ver_JJA * 1000.0
 vq_ERA5 = vERA5_ver_JJA * qERA5_ver_JJA * 1000.0
 uq_ERA5.attrs["units"] = "[m/s][g/kg]"
 vq_ERA5.attrs["units"] = "[m/s][g/kg]"
+# calculate the whole levels water vapor transport
 uq_dpg_ERA5 = (uq_ERA5 * ERA5dpg.data).sum(dim="level")
 vq_dpg_ERA5 = (vq_ERA5 * ERA5dpg.data).sum(dim="level")
 uq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
 vq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
 
 
-# qhis_ver_JJA.coords["plev"]
+hislevel = qhis_ver_JJA.coords["plev"] * 100.0
+hislevel.attrs["units"] = "Pa"
+hisdp = geocat.comp.dpres_plevel(hislevel, sphis_ver_JJA, ptop)
+hisdpg = dp/g
+hisdpg.attrs["units"] = "kg/m2"
+# calculate the water vapor transport
+uq_his = uhis_ver_JJA * qhis_ver_JJA * 1000.0
+vq_his = vhis_ver_JJA * qhis_ver_JJA * 1000.0
+uq_his.attrs["units"] = "[m/s][g/kg]"
+vq_his.attrs["units"] = "[m/s][g/kg]"
+# calculate the whole levels water vapor transport
+uq_dpg_his = (uq_his * hisdpg.data).sum(dim="plev")
+vq_dpg_his = (vq_his * hisdpg.data).sum(dim="plev")
+uq_dpg_his.attrs["units"] = "[m/s][g/kg]"
+vq_dpg_his.attrs["units"] = "[m/s][g/kg]"
 # %%
