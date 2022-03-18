@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-02 16:45:05
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 15:04:46
+LastEditTime: 2022-03-18 15:20:04
 FilePath: /chenhj/0302code/data_predealing.py
 Aim: 
 Mission: 
@@ -165,9 +165,9 @@ for model,rl in zip(modelname, rlzn):
 #   select time
 variable = ["ps"]
 for var in variable:
-    srcPath = "/home/ys17-23/chenhj/CMIP6/historical/" + var
-    dstPath = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/" + var
-    start = 1950
-    end = 2014
+    srcPath = "/home/ys17-23/chenhj/CMIP6/ssp585/" + var
+    dstPath = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/ssp585/" + var
+    start = 2015
+    end = 2099
     ca.p_year(srcPath, dstPath, start, end)
 # %%
