@@ -640,5 +640,10 @@ uERA5_ver_JJA_p1 = uERA5_ver_JJA.sel(time=(uERA5_ver_JJA.time.dt.year < 1970))
 uERA5_ver_JJA_p2 = uERA5_ver_JJA.sel(time=((uERA5_ver_JJA.time.dt.year >= 1970) & (uERA5_ver_JJA.time.dt.year < 1984)))
 uERA5_ver_JJA_p3 = uERA5_ver_JJA.sel(time=(uERA5_ver_JJA.time.dt.year >= 1984))
 
+vERA5_ver_JJA_p1 = vERA5_ver_JJA.sel(time=(vERA5_ver_JJA.time.dt.year < 1970))
+vERA5_ver_JJA_p2 = vERA5_ver_JJA.sel(time=((vERA5_ver_JJA.time.dt.year >= 1970) & (vERA5_ver_JJA.time.dt.year < 1984)))
+vERA5_ver_JJA_p3 = vERA5_ver_JJA.sel(time=(vERA5_ver_JJA.time.dt.year >= 1984))
+
+
 
 # %%
