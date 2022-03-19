@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-19 17:51:13
+LastEditTime: 2022-03-19 18:03:39
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -635,3 +635,10 @@ axs[1].format(ltitle="window=9", rtitle="1950-2014", title="Vq reg IndR", xrotat
 axs[1].legend(handles=[m1,m3], loc="ll", labels=["CRU", "historical"], ncols=1)
 # %%
 #   pick up the different year to do the component analysis
+ERA5time = uERA5_ver_JJA.coords["time"]
+uERA5_ver_JJA_p1 = uERA5_ver_JJA.sel(time=(uERA5_ver_JJA.time.dt.year < 1970))
+uERA5_ver_JJA_p2 = uERA5_ver_JJA.sel(time=((uERA5_ver_JJA.time.dt.year >= 1970) & (uERA5_ver_JJA.time.dt.year < 1984)))
+uERA5_ver_JJA_p3 = uERA5_ver_JJA.sel(time=(uERA5_ver_JJA.time.dt.year >= 1984))
+
+
+# %%
