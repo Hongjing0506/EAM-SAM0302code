@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-19 18:03:39
+LastEditTime: 2022-03-19 22:49:35
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -94,6 +94,12 @@ qERA5 = fqERA5["q"]
 
 fqhis = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc")
 qhis = fqhis["hus"]
+
+fhgtERA5 = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc")
+hgtERA5 = fhgtERA5["z"]
+
+fhgthis = xr.open_dataset("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc")
+hgthis = fhgthis["zg"]
 # %%
 #   calculate the meridional water vapor transport
 #   select the level
