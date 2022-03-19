@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-19 00:01:32
+LastEditTime: 2022-03-19 17:51:13
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -379,6 +379,7 @@ axs[1, 1].format(
 )
 sepl.patches(axs[1, 1], 70.0, 8.0, 16.0, 20.0, proj)
 sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
+fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 # %%
 preCRU_EA_mean.coords['time'] = uq_dpg_ERA5.coords['time']
 (
@@ -527,11 +528,12 @@ axs[1, 1].format(
 )
 sepl.patches(axs[1, 1], 70.0, 8.0, 16.0, 20.0, proj)
 sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
+fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 # %%
 #   calculate the rolling correlation coefficient
 #   calculate the area mean
 
-uq_dpg_ERA5_EA = uq_dpg_ERA5.loc[:, 30:37.5, 112.5:120]
+uq_dpg_ERA5_EA = uq_dpg_ERA5.loc[:, 32:38, 95:118]
 vq_dpg_ERA5_EA = vq_dpg_ERA5.loc[:, 30:37.5, 112.5:120]
 
 uq_dpg_ERA5_EA_mean = ca.cal_lat_weighted_mean(uq_dpg_ERA5_EA).mean(
@@ -541,7 +543,7 @@ vq_dpg_ERA5_EA_mean = ca.cal_lat_weighted_mean(vq_dpg_ERA5_EA).mean(
     dim="lon", skipna=True
 )
 
-uq_dpg_his_EA = uq_dpg_his.loc[:, 30:37.5, 112.5:120]
+uq_dpg_his_EA = uq_dpg_his.loc[:, 32:38, 95:118]
 vq_dpg_his_EA = vq_dpg_his.loc[:, 30:37.5, 112.5:120]
 
 uq_dpg_his_EA_mean = ca.cal_lat_weighted_mean(uq_dpg_his_EA).mean(
@@ -564,13 +566,21 @@ vq_CRU_India_rolling_9 = ca.rolling_reg_index(preCRU_India_mean, vq_dpg_ERA5_EA_
 uq_his_India_rolling_9 = ca.rolling_reg_index(prehis_India_mean, uq_dpg_his_EA_mean, histime, window, freq, True)
 
 vq_his_India_rolling_9 = ca.rolling_reg_index(prehis_India_mean, vq_dpg_his_EA_mean, histime, window, freq, True)
+
+# %%
+window = 9
+CRU_India_EA_regress_9 = ca.rolling_reg_index(
+    preCRU_India_mean, preCRU_EA_mean, CRUtime, window, freq, True
+)
+his_India_EA_regress_9 = ca.rolling_reg_index(
+    prehis_India_mean, prehis_EA_mean, histime, window, freq, True
+)
 # %%
 #   plot the rolling correlation coefficient
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
 axs = fig.subplots(ncols=1, nrows=2)
 lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
-cycle = "Pastel1"
 
 m1 = axs[0].line(
     CRUtime,
@@ -584,7 +594,13 @@ m3 = axs[0].line(
     lw=lw,
     color="red",
 )
-
+axs[0].line(
+    CRUtime,
+    np.array(CRU_India_EA_regress_9["rvalue"]),
+    lw=lw,
+    color="grey6",
+    linestyle="--",
+)
 
 axs[0].axhline(0, lw = 0.8, color="grey5", linestyle="--")
 axs[0].axhline(0.6021, lw = 0.8, color="grey5", linestyle="--")
@@ -604,7 +620,13 @@ m3 = axs[1].line(
     lw=lw,
     color="red",
 )
-
+axs[1].line(
+    CRUtime,
+    np.array(CRU_India_EA_regress_9["rvalue"]),
+    lw=lw,
+    color="grey6",
+    linestyle="--",
+)
 
 axs[1].axhline(0, lw = 0.8, color="grey5", linestyle="--")
 axs[1].axhline(0.6021, lw = 0.8, color="grey5", linestyle="--")
@@ -612,3 +634,4 @@ axs[1].axhline(-0.6021, lw = 0.8, color="grey5", linestyle="--")
 axs[1].format(ltitle="window=9", rtitle="1950-2014", title="Vq reg IndR", xrotation=0, ymin=-1.0, ymax=1.0, ylocator=0.2, yminorlocator=0.1)
 axs[1].legend(handles=[m1,m3], loc="ll", labels=["CRU", "historical"], ncols=1)
 # %%
+#   pick up the different year to do the component analysis
