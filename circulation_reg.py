@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-20 23:38:18
+LastEditTime: 2022-03-20 23:49:46
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -724,12 +724,12 @@ hlim_200 = 12540
 spacing_200 = 40
 
 llim_500 = 5600
-hlim_500 = 5960
+hlim_500 = 5920
 spacing_500 = 40
 
 llim_850 = 1320
-hlim_850 = 1520
-spacing_850 = 40
+hlim_850 = 1560
+spacing_850 = 20
 
 ski = 2
 w, h = 0.12, 0.14
@@ -895,7 +895,7 @@ m = axs[1,0].quiver(
     headlength=2.3,
     headaxislength=2.3,
     scale_units="xy",
-    scale=2.0,
+    scale=1.3,
     pivot="mid",
     color="black",
 )
@@ -930,7 +930,7 @@ m = axs[1,1].quiver(
     headlength=2.3,
     headaxislength=2.3,
     scale_units="xy",
-    scale=2.0,
+    scale=1.3,
     pivot="mid",
     color="black",
 )
@@ -965,7 +965,7 @@ m = axs[1,2].quiver(
     headlength=2.3,
     headaxislength=2.3,
     scale_units="xy",
-    scale=2.0,
+    scale=1.3,
     pivot="mid",
     color="black",
 )
@@ -983,4 +983,112 @@ qk = axs[1,2].quiverkey(
 )
 
 axs[1,2].colorbar(con, loc="r", ticklen=0, label="gpm")
+#===========================================
+#   850 hPa
+con = axs[2,0].contourf(
+    hgtERA5_ver_JJA_p1_mean.sel(level=850.0),
+    cmap = "YlOrRd",
+    cmap_kw = {'right': 0.77},
+    extend = "both",
+    levels = np.arange(llim_850, hlim_850+spacing_850/2, spacing_850),
+    zorder=0.8
+)
+
+
+m = axs[2,0].quiver(
+    uERA5_ver_JJA_p1_mean.sel(level=850.0)[::ski,::ski],
+    vERA5_ver_JJA_p1_mean.sel(level=850.0)[::ski,::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=1.5,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[2,0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=5,
+    label="5 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+#===========================================
+con = axs[2,1].contourf(
+    hgtERA5_ver_JJA_p2_mean.sel(level=850.0),
+    cmap = "YlOrRd",
+    cmap_kw = {'right': 0.77},
+    extend = "both",
+    levels = np.arange(llim_850, hlim_850+spacing_850/2, spacing_850),
+    zorder=0.8
+)
+
+
+m = axs[2,1].quiver(
+    uERA5_ver_JJA_p2_mean.sel(level=850.0)[::ski,::ski],
+    vERA5_ver_JJA_p2_mean.sel(level=850.0)[::ski,::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=1.5,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[2,1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=5,
+    label="5 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+#===========================================
+con = axs[2,2].contourf(
+    hgtERA5_ver_JJA_p3_mean.sel(level=850.0),
+    cmap = "YlOrRd",
+    cmap_kw = {'right': 0.77},
+    extend = "both",
+    levels = np.arange(llim_850, hlim_850+spacing_850/2, spacing_850),
+    zorder=0.8
+)
+
+
+m = axs[2,2].quiver(
+    uERA5_ver_JJA_p3_mean.sel(level=850.0)[::ski,::ski],
+    vERA5_ver_JJA_p3_mean.sel(level=850.0)[::ski,::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=1.5,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[2,2].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=5,
+    label="5 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+
+axs[2,2].colorbar(con, loc="r", ticklen=0, label="gpm")
 # %%
