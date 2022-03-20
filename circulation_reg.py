@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-20 12:27:54
+LastEditTime: 2022-03-20 12:55:45
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -668,9 +668,30 @@ vq_dpg_ERA5_ver_JJA_p2 = vq_dpg_ERA5.sel(time=((vq_dpg_ERA5.time.dt.year >= 1970
 vq_dpg_ERA5_ver_JJA_p3 = vq_dpg_ERA5.sel(time=(vq_dpg_ERA5.time.dt.year >= 1984))
 
 # %%
+#   calculate the composite mean
+uERA5_ver_JJA_p1_mean = uERA5_ver_JJA_p1.mean(dim="time", skipna=True)
+uERA5_ver_JJA_p2_mean = uERA5_ver_JJA_p2.mean(dim="time", skipna=True)
+uERA5_ver_JJA_p3_mean = uERA5_ver_JJA_p3.mean(dim="time", skipna=True)
+
+vERA5_ver_JJA_p1_mean = vERA5_ver_JJA_p1.mean(dim="time", skipna=True)
+vERA5_ver_JJA_p2_mean = vERA5_ver_JJA_p2.mean(dim="time", skipna=True)
+vERA5_ver_JJA_p3_mean = vERA5_ver_JJA_p3.mean(dim="time", skipna=True)
+
+hgtERA5_ver_JJA_p1_mean = hgtERA5_ver_JJA_p1.mean(dim="time", skipna=True)
+hgtERA5_ver_JJA_p2_mean = hgtERA5_ver_JJA_p2.mean(dim="time", skipna=True)
+hgtERA5_ver_JJA_p3_mean = hgtERA5_ver_JJA_p3.mean(dim="time", skipna=True)
+
+uq_dpg_ERA5_ver_JJA_p1_mean = uq_dpg_ERA5_ver_JJA_p1.mean(dim="time", skipna=True)
+uq_dpg_ERA5_ver_JJA_p2_mean = uq_dpg_ERA5_ver_JJA_p2.mean(dim="time", skipna=True)
+uq_dpg_ERA5_ver_JJA_p3_mean = uq_dpg_ERA5_ver_JJA_p3.mean(dim="time", skipna=True)
+
+vq_dpg_ERA5_ver_JJA_p1_mean = vq_dpg_ERA5_ver_JJA_p1.mean(dim="time", skipna=True)
+vq_dpg_ERA5_ver_JJA_p2_mean = vq_dpg_ERA5_ver_JJA_p2.mean(dim="time", skipna=True)
+vq_dpg_ERA5_ver_JJA_p3_mean = vq_dpg_ERA5_ver_JJA_p3.mean(dim="time", skipna=True)
+
+# %%
 #   calculate the divergence of water vapor flux
 reload(ca)
-div_uqvq_ERA5 = ca.cal_divergence(uq_dpg_ERA5_ver_JJA_p1.mean(dim="time", skipna=True), vq_dpg_ERA5_ver_JJA_p1.mean(dim="time", skipna=True))
-print(div_uqvq_ERA5)
+# div_uqvq_ERA5 = ca.cal_divergence(uERA5_ver_JJA_p1_mean, )
 
 # %%
