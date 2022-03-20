@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-20 23:49:46
+LastEditTime: 2022-03-20 23:56:16
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -803,6 +803,7 @@ qk = axs[0,0].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
+axs[0,0].format(ltitle="1950-1969", rtitle="200hPa")
 #===========================================
 con = axs[0,1].contourf(
     hgtERA5_ver_JJA_p2_mean.sel(level=200.0),
@@ -838,6 +839,7 @@ qk = axs[0,1].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
+axs[0,1].format(ltitle="1970-1983", rtitle="200hPa")
 #===========================================
 con = axs[0,2].contourf(
     hgtERA5_ver_JJA_p3_mean.sel(level=200.0),
@@ -873,7 +875,7 @@ qk = axs[0,2].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-
+axs[0,2].format(ltitle="1984-2014", rtitle="200hPa")
 axs[0,2].colorbar(con, loc="r", ticklen=0, label="gpm")
 #===========================================
 #   500 hPa
@@ -911,6 +913,7 @@ qk = axs[1,0].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
+axs[1,0].format(ltitle="1950-1969", rtitle="500hPa")
 #===========================================
 con = axs[1,1].contourf(
     hgtERA5_ver_JJA_p2_mean.sel(level=500.0),
@@ -946,6 +949,7 @@ qk = axs[1,1].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
+axs[1,1].format(ltitle="1970-1983", rtitle="500hPa")
 #===========================================
 con = axs[1,2].contourf(
     hgtERA5_ver_JJA_p3_mean.sel(level=500.0),
@@ -981,7 +985,7 @@ qk = axs[1,2].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-
+axs[1,2].format(ltitle="1984-2014", rtitle="500hPa")
 axs[1,2].colorbar(con, loc="r", ticklen=0, label="gpm")
 #===========================================
 #   850 hPa
@@ -1019,6 +1023,7 @@ qk = axs[2,0].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
+axs[2,0].format(ltitle="1950-1969", rtitle="850hPa")
 #===========================================
 con = axs[2,1].contourf(
     hgtERA5_ver_JJA_p2_mean.sel(level=850.0),
@@ -1054,6 +1059,7 @@ qk = axs[2,1].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
+axs[2,1].format(ltitle="1970-1983", rtitle="850hPa")
 #===========================================
 con = axs[2,2].contourf(
     hgtERA5_ver_JJA_p3_mean.sel(level=850.0),
@@ -1089,6 +1095,9 @@ qk = axs[2,2].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-
+axs[2,2].format(ltitle="1984-2014", rtitle="850hPa")
 axs[2,2].colorbar(con, loc="r", ticklen=0, label="gpm")
+#========================================
+fig.format(abc="(a)", abcloc="l", suptitle="hgt & UV")
 # %%
+#   plot the div_uqvq and uqvq_dpg in different periods
