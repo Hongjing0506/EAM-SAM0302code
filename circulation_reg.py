@@ -805,7 +805,7 @@ qk = axs[0,0].quiverkey(
 )
 #===========================================
 con = axs[0,1].contourf(
-    hgtERA5_ver_JJA_p1_mean.sel(level=200.0),
+    hgtERA5_ver_JJA_p2_mean.sel(level=200.0),
     cmap = "YlOrRd",
     cmap_kw = {'right': 0.77},
     extend = "both",
@@ -815,8 +815,8 @@ con = axs[0,1].contourf(
 
 
 m = axs[0,1].quiver(
-    uERA5_ver_JJA_p1_mean.sel(level=200.0)[::ski,::ski],
-    vERA5_ver_JJA_p1_mean.sel(level=200.0)[::ski,::ski],
+    uERA5_ver_JJA_p2_mean.sel(level=200.0)[::ski,::ski],
+    vERA5_ver_JJA_p2_mean.sel(level=200.0)[::ski,::ski],
     zorder=1,
     headwidth=2.6,
     headlength=2.3,
@@ -828,6 +828,41 @@ m = axs[0,1].quiver(
 )
 
 qk = axs[0,1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=10,
+    label="10 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+#===========================================
+con = axs[0,2].contourf(
+    hgtERA5_ver_JJA_p3_mean.sel(level=200.0),
+    cmap = "YlOrRd",
+    cmap_kw = {'right': 0.77},
+    extend = "both",
+    levels = np.arange(llim_200, hlim_200+spacing_200/2, spacing),
+    zorder=0.8
+)
+
+
+m = axs[0,2].quiver(
+    uERA5_ver_JJA_p3_mean.sel(level=200.0)[::ski,::ski],
+    vERA5_ver_JJA_p3_mean.sel(level=200.0)[::ski,::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=2.0,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0,2].quiverkey(
     m,
     X=1 - w / 2,
     Y=0.7 * h,
