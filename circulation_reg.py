@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-20 12:55:45
+LastEditTime: 2022-03-20 12:56:45
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -691,7 +691,8 @@ vq_dpg_ERA5_ver_JJA_p3_mean = vq_dpg_ERA5_ver_JJA_p3.mean(dim="time", skipna=Tru
 
 # %%
 #   calculate the divergence of water vapor flux
-reload(ca)
-# div_uqvq_ERA5 = ca.cal_divergence(uERA5_ver_JJA_p1_mean, )
+div_uqvq_ERA5_p1 = ca.cal_divergence(uq_dpg_ERA5_ver_JJA_p1_mean, vq_dpg_ERA5_ver_JJA_p1_mean)
+div_uqvq_ERA5_p2 = ca.cal_divergence(uq_dpg_ERA5_ver_JJA_p2_mean, vq_dpg_ERA5_ver_JJA_p2_mean)
+div_uqvq_ERA5_p3 = ca.cal_divergence(uq_dpg_ERA5_ver_JJA_p3_mean, vq_dpg_ERA5_ver_JJA_p3_mean)
 
 # %%
