@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-20 12:15:44
+LastEditTime: 2022-03-20 12:27:54
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -23,6 +23,7 @@ import pandas as pd
 from importlib import reload
 
 import metpy.calc as mpcalc
+import metpy.constants as constants
 import geocat.comp
 
 reload(sepl)
@@ -668,3 +669,8 @@ vq_dpg_ERA5_ver_JJA_p3 = vq_dpg_ERA5.sel(time=(vq_dpg_ERA5.time.dt.year >= 1984)
 
 # %%
 #   calculate the divergence of water vapor flux
+reload(ca)
+div_uqvq_ERA5 = ca.cal_divergence(uq_dpg_ERA5_ver_JJA_p1.mean(dim="time", skipna=True), vq_dpg_ERA5_ver_JJA_p1.mean(dim="time", skipna=True))
+print(div_uqvq_ERA5)
+
+# %%
