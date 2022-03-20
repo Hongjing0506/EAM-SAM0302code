@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-19 22:49:35
+LastEditTime: 2022-03-20 11:04:04
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -119,6 +119,8 @@ spERA5_ver_JJA = ca.p_time(spERA5, 6, 8, True).loc[:, :, :]
 spERA5_ver_India_JJA = ca.p_time(spERA5, 6, 8, True).loc[:, 8:28, 70:86]
 spERA5_ver_EA_JJA = ca.p_time(spERA5, 6, 8, True).loc[:, 36:42, 108:118]
 
+hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
+
 uhis_ver_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :10000.0, :, :]
 uhis_ver_India_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :10000.0, 8:28, 70:86]
 uhis_ver_EA_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :10000.0, 36:42, 108:118]
@@ -142,6 +144,8 @@ preCRU_EA_JJA = ca.p_time(preCRU.loc[:, 36:42, 108:118], 6, 8, True)
 prehis_JJA = ca.p_time(prehis, 6, 8, True)
 prehis_India_JJA = ca.p_time(prehis.loc[:, 8:28, 70:86], 6, 8, True)
 prehis_EA_JJA = ca.p_time(prehis.loc[:, 36:42, 108:118], 6, 8, True)
+
+hgthis_ver_JJA = ca.p_time(hgthis, 6, 8, True).loc[:, :10000.0, :, :]
 # %%
 #   calculate the area mean
 uERA5_ver_India_JJA_mean = ca.cal_lat_weighted_mean(uERA5_ver_India_JJA).mean(dim="lon", skipna=True)
@@ -650,6 +654,8 @@ vERA5_ver_JJA_p1 = vERA5_ver_JJA.sel(time=(vERA5_ver_JJA.time.dt.year < 1970))
 vERA5_ver_JJA_p2 = vERA5_ver_JJA.sel(time=((vERA5_ver_JJA.time.dt.year >= 1970) & (vERA5_ver_JJA.time.dt.year < 1984)))
 vERA5_ver_JJA_p3 = vERA5_ver_JJA.sel(time=(vERA5_ver_JJA.time.dt.year >= 1984))
 
-
+hgtERA5_ver_JJA_p1 = hgtERA5_ver_JJA.sel(time=(hgtERA5_ver_JJA.time.dt.year < 1970))
+hgtERA5_ver_JJA_p2 = hgtERA5_ver_JJA.sel(time=((hgtERA5_ver_JJA.time.dt.year >= 1970) & (hgtERA5_ver_JJA.time.dt.year < 1984)))
+hgtERA5_ver_JJA_p3 = hgtERA5_ver_JJA.sel(time=(hgtERA5_ver_JJA.time.dt.year >= 1984))
 
 # %%
