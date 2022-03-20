@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-16 17:42:02
 LastEditors: ChenHJ
-LastEditTime: 2022-03-20 23:25:47
+LastEditTime: 2022-03-20 23:29:51
 FilePath: /chenhj/0302code/circulation_reg.py
 Aim: 
 Mission: 
@@ -722,6 +722,15 @@ sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
 llim_200 = 12100
 hlim_200 = 12540
 spacing_200 = 40
+
+llim_500 = 5120
+hlim_500 = 5880
+spacing_500 = 40
+
+llim_850 = 1320
+hlim_850 = 1520
+spacing_850 = 40
+
 ski = 2
 w, h = 0.12, 0.14
 #===================================================
@@ -740,20 +749,20 @@ for ax in axs[:3]:
         linestyle = "--",
         zorder=0.9
         )
-for ax in axs[:3]:
+for ax in axs[3:6]:
     ax.contour(
-        hgtERA5_ver_JJA.sel(level=200.0).mean(dim="time",skipna=True),
-        levels = np.arange(llim_200, hlim_200+spacing_200/2, spacing),
+        hgtERA5_ver_JJA.sel(level=500.0).mean(dim="time",skipna=True),
+        levels = np.arange(llim_500, hlim_500+spacing_500/2, spacing),
         lw = 0.8,
         color = "grey5",
         linestyle = "--",
         zorder=0.9
         )
     
-for ax in axs[:3]:
+for ax in axs[6:9]:
     ax.contour(
-        hgtERA5_ver_JJA.sel(level=200.0).mean(dim="time",skipna=True),
-        levels = np.arange(llim_200, hlim_200+spacing_200/2, spacing),
+        hgtERA5_ver_JJA.sel(level=850.0).mean(dim="time",skipna=True),
+        levels = np.arange(llim_850, hlim_850+spacing_850/2, spacing),
         lw = 0.8,
         color = "grey5",
         linestyle = "--",
@@ -794,7 +803,41 @@ qk = axs[0,0].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
+#===========================================
+con = axs[0,1].contourf(
+    hgtERA5_ver_JJA_p1_mean.sel(level=200.0),
+    cmap = "YlOrRd",
+    cmap_kw = {'right': 0.77},
+    extend = "both",
+    levels = np.arange(llim_200, hlim_200+spacing_200/2, spacing),
+    zorder=0.8
+)
 
+
+m = axs[0,1].quiver(
+    uERA5_ver_JJA_p1_mean.sel(level=200.0)[::ski,::ski],
+    vERA5_ver_JJA_p1_mean.sel(level=200.0)[::ski,::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=2.0,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0,1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=10,
+    label="10 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
 
 axs[0,2].colorbar(con, loc="r", ticklen=0)
 # %%
