@@ -49,30 +49,33 @@ fhgt_ERA5 = xr.open_dataset(
     "/home/ys17-23/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc"
 )
 hgt_ERA5 = fhgt_ERA5["z"]
+hgt_ERA5 = ca.detrend_dim(hgt_ERA5, "time", deg=1, demean=False)
 
 fu_ERA5 = xr.open_dataset(
     "/home/ys17-23/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
 )
 u_ERA5 = fu_ERA5["u"]
+u_ERA5 = ca.detrend_dim(u_ERA5, "time", deg=1, demean=False)
 
 fhgt_his = xr.open_dataset(
     "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 hgt_his = fhgt_his["zg"]
+hgt_his = ca.detrend_dim(hgt_his, "time", deg=1, demean=False)
 
 fu_his = xr.open_dataset(
     "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 u_his = fu_his["ua"]
+u_his = ca.detrend_dim(u_his, "time", deg=1, demean=False)
 
 # %%
-#   calculate JJA
+#   calculate JJA and detrend
 hgt_ERA5_JJA = ca.p_time(hgt_ERA5, 6, 8, True)
 u_ERA5_JJA = ca.p_time(u_ERA5, 6, 8, True)
 
 hgt_his_JJA = ca.p_time(hgt_his, 6, 8, True)
 u_his_JJA = ca.p_time(u_his, 6, 8, True)
-print(hgt_his_JJA)
 
 # %%
 #   select the 200hPa data and calculate the center of SAH and detrend
@@ -521,15 +524,22 @@ fig_SAHI_NS.format(title="SAHI-NS")
 # %%
 #   calculate the EOF of two hgt data
 
+# hgt_ERA5_EOF_area = ca.standardize(
+#     ca.detrend_dim(
+#         hgt_ERA5_JJA_200.loc[:, 13.75:41.25, 25:130], "time", deg=1, demean=False
+#     )
+# )
+# hgt_his_EOF_area = ca.standardize(
+#     ca.detrend_dim(
+#         hgt_his_JJA_200.loc[:, 13.75:41.25, 25:130], "time", deg=1, demean=False
+#     )
+# )
+
 hgt_ERA5_EOF_area = ca.standardize(
-    ca.detrend_dim(
-        hgt_ERA5_JJA_200.loc[:, 13.75:41.25, 25:130], "time", deg=1, demean=False
-    )
+        hgt_ERA5_JJA_200.loc[:, 13.75:41.25, 25:130]
 )
 hgt_his_EOF_area = ca.standardize(
-    ca.detrend_dim(
-        hgt_his_JJA_200.loc[:, 13.75:41.25, 25:130], "time", deg=1, demean=False
-    )
+        hgt_his_JJA_200.loc[:, 13.75:41.25, 25:130]
 )
 
 hgt_ERA5_EOFs, hgt_ERA5_PCs, hgt_ERA5_percentContrib = ca.eof_analys(
