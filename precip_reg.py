@@ -49,17 +49,20 @@ fpreCRU = xr.open_dataset(
     "/home/ys17-23/chenhj/SAM_EAM_data/obs/cru_ts4.01_r144x72_195001-201412.nc"
 )
 preCRU = fpreCRU["pre"]
+preCRU = ca.detrend_dim(preCRU, "time", deg=1, demean=False)
 
 # GPCP data just have 1979-2014 year
 fpreGPCP = xr.open_dataset(
     "/home/ys17-23/chenhj/SAM_EAM_data/obs/GPCP_r144x72_197901-201412.nc"
 )
 preGPCP = fpreGPCP["precip"]
+preGPCP = ca.detrend_dim(preGPCP, "time", deg=1, demean=False)
 
 fprehis = xr.open_dataset(
     "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 prehis = fprehis["pr"]
+prehis = ca.detrend_dim(prehis, "time", deg=1, demean=False)
 
 pr_his_path = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/pr"
 g = os.walk(pr_his_path)
