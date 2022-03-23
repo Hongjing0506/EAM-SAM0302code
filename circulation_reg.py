@@ -837,7 +837,7 @@ for ax in axs:
 for ax in axs[:3]:
     ax.contour(
         hgtERA5_ver_JJA.sel(level=200.0).mean(dim="time", skipna=True),
-        levels=np.arange(llim_200, hlim_200 + spacing_200 / 2, spacing),
+        levels=np.arange(llim_200, hlim_200 + spacing_200 / 2, spacing_200),
         lw=0.8,
         color="grey5",
         linestyle="--",
@@ -846,7 +846,7 @@ for ax in axs[:3]:
 for ax in axs[3:6]:
     ax.contour(
         hgtERA5_ver_JJA.sel(level=500.0).mean(dim="time", skipna=True),
-        levels=np.arange(llim_500, hlim_500 + spacing_500 / 2, spacing),
+        levels=np.arange(llim_500, hlim_500 + spacing_500 / 2, spacing_200),
         lw=0.8,
         color="grey5",
         linestyle="--",
@@ -856,7 +856,7 @@ for ax in axs[3:6]:
 for ax in axs[6:9]:
     ax.contour(
         hgtERA5_ver_JJA.sel(level=850.0).mean(dim="time", skipna=True),
-        levels=np.arange(llim_850, hlim_850 + spacing_850 / 2, spacing),
+        levels=np.arange(llim_850, hlim_850 + spacing_850 / 2, spacing_200),
         lw=0.8,
         color="grey5",
         linestyle="--",
