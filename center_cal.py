@@ -46,25 +46,25 @@ from eofs.standard import Eof
 # %%
 #   read obs data
 fhgt_ERA5 = xr.open_dataset(
-    "/home/ys17-23/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc"
 )
 hgt_ERA5 = fhgt_ERA5["z"]
 hgt_ERA5 = ca.detrend_dim(hgt_ERA5, "time", deg=1, demean=False)
 
 fu_ERA5 = xr.open_dataset(
-    "/home/ys17-23/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
 )
 u_ERA5 = fu_ERA5["u"]
 u_ERA5 = ca.detrend_dim(u_ERA5, "time", deg=1, demean=False)
 
 fhgt_his = xr.open_dataset(
-    "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 hgt_his = fhgt_his["zg"]
 hgt_his = ca.detrend_dim(hgt_his, "time", deg=1, demean=False)
 
 fu_his = xr.open_dataset(
-    "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 u_his = fu_his["ua"]
 u_his = ca.detrend_dim(u_his, "time", deg=1, demean=False)
@@ -659,7 +659,7 @@ fig_his_eof.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig_his_eof.format(abcloc="l", abc="(a)")
 # %%
 #   read different models data
-hgt_his_path = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/zg"
+hgt_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg"
 g = os.walk(hgt_his_path)
 filepath = []
 modelname_hgt = []
@@ -673,7 +673,7 @@ hgt_ds_his = xr.open_mfdataset(filepath, concat_dim="models", combine='nested')
 hgt_his_ds = xr.DataArray(hgt_ds_his['zg'])
 hgt_his_ds.coords["models"] = modelname_hgt
 
-u_his_path = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/ua"
+u_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua"
 g = os.walk(u_his_path)
 filepath = []
 modelname_u = []
