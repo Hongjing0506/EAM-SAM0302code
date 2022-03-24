@@ -284,56 +284,66 @@ sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
 fig_rvalue.format(abc="(a)", abcloc="l")
 
 # %%
-window = 7
+window = 11
 freq = "AS-JUL"
 CRUtime = preCRU_India_mean.coords["time"]
 histime = prehis_India_mean.coords["time"]
-CRU_India_EA_regress_7 = ca.rolling_reg_index(
+CRU_India_EA_regress = ca.rolling_reg_index(
     preCRU_India_mean, preCRU_EA_mean, CRUtime, window, freq, True
 )
-
-window = 9
-CRU_India_EA_regress_9 = ca.rolling_reg_index(
-    preCRU_India_mean, preCRU_EA_mean, CRUtime, window, freq, True
-)
-his_India_EA_regress_9 = ca.rolling_reg_index(
+his_India_EA_regress = ca.rolling_reg_index(
     prehis_India_mean, prehis_EA_mean, histime, window, freq, True
 )
 
-window = 11
-CRU_India_EA_regress_11 = ca.rolling_reg_index(
-    preCRU_India_mean, preCRU_EA_mean, CRUtime, window, freq, True
-)
-his_India_EA_regress_11 = ca.rolling_reg_index(
-    prehis_India_mean, prehis_EA_mean, histime, window, freq, True
-)
 
 # %%
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
 axs = fig.subplots(ncols=2, nrows=1)
 
 lw = 1.0
-
-m1 = axs[0].line(preCRU_India_mean, color="grey7", lw=lw)
-m2 = axs[0].line(preCRU_EA_mean, color="grey7", linestyle="--", lw=lw)
-m3 = axs[0].line(
-    CRU_India_EA_regress_7.time,
-    np.array(CRU_India_EA_regress_7["rvalue"]),
+# ========================================
+m1 = axs[0, 0].line(preCRU_India_mean, color="grey7", lw=lw)
+m2 = axs[0, 0].line(preCRU_EA_mean, color="grey7", linestyle="--", lw=lw)
+m3 = axs[0, 0].line(
+    CRU_India_EA_regress.time,
+    np.array(CRU_India_EA_regress["rvalue"]),
     lw=lw,
     color="blue",
 )
-axs[0].axhline(0.6664, lw=0.8, color="grey5", linestyle="--")
-axs[0].axhline(-0.6664, lw=0.8, color="grey5", linestyle="--")
-axs[0].legend(handles=[m1, m2, m3], loc="ll", labels=["IndR", "NCR", "r"], ncols=1)
-axs[0].format(
+axs[0, 0].axhline(0.6664, lw=0.8, color="grey5", linestyle="--")
+axs[0, 0].axhline(-0.6664, lw=0.8, color="grey5", linestyle="--")
+axs[0, 0].legend(handles=[m1, m2, m3], loc="ll", labels=["IndR", "NCR", "r"], ncols=1)
+axs[0, 0].format(
     xrotation=0,
     ylim=(-2, 2),
     ylocator=0.5,
     yminorlocator=0.25,
     ylabel="precip",
     xlabel="time",
-    rtitle="window= {} yr".format(window),
+    rtitle="{} yr".format(window),
     ltitle="CRU TS4.01",
+)
+# ===============================
+m1 = axs[0, 1].line(prehis_India_mean, color="grey7", lw=lw)
+m2 = axs[0, 1].line(prehis_EA_mean, color="grey7", linestyle="--", lw=lw)
+m3 = axs[0, 1].line(
+    his_India_EA_regress.time,
+    np.array(his_India_EA_regress["rvalue"]),
+    lw=lw,
+    color="blue",
+)
+axs[0, 1].axhline(0.6664, lw=0.8, color="grey5", linestyle="--")
+axs[0, 1].axhline(-0.6664, lw=0.8, color="grey5", linestyle="--")
+axs[0, 1].legend(handles=[m1, m2, m3], loc="ll", labels=["IndR", "NCR", "r"], ncols=1)
+axs[0, 1].format(
+    xrotation=0,
+    ylim=(-2, 2),
+    ylocator=0.5,
+    yminorlocator=0.25,
+    ylabel="precip",
+    xlabel="time",
+    rtitle="{} yr".format(window),
+    ltitle="historical",
 )
 
 
