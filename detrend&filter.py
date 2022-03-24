@@ -128,7 +128,13 @@ prehis_ds_filt = ca.butterworth_filter(
 )
 
 # %%
+preCRU_JJA = ca.standardize((ca.p_time(preCRU_filt, 6, 8, True)))
+preCRU_India_JJA = preCRU.loc[:, 8:28, 70:86]
+preCRU_EA_JJA = preCRU.loc[:, 8:28, 70:86]
 
+prehis_JJA = ca.standardize((ca.p_time(prehis_filt, 6, 8, True)))
+prehis_India_JJA = prehis.loc[:, 8:28, 70:86]
+prehis_EA_JJA = prehis.loc[:, 8:28, 70:86]
 
 # %%
 
