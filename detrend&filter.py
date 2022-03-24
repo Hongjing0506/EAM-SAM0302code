@@ -1,12 +1,12 @@
-'''
+"""
 Author: ChenHJ
 Date: 2022-03-21 21:07:17
 LastEditors: ChenHJ
-LastEditTime: 2022-03-24 20:01:40
+LastEditTime: 2022-03-24 20:03:34
 FilePath: /chenhj/0302code/detrend&filter.py
 Aim: 
 Mission: 
-'''
+"""
 # %%
 import numpy as np
 import xarray as xr
@@ -47,6 +47,7 @@ from scipy.stats import t
 from scipy import signal
 from eofs.multivariate.standard import MultivariateEof
 from eofs.standard import Eof
+
 # %%
 #   the args of butterworth bandpass
 ya = 2
@@ -58,32 +59,76 @@ fhgt_ERA5 = xr.open_dataset(
 )
 hgt_ERA5 = fhgt_ERA5["z"]
 hgt_ERA5 = ca.detrend_dim(hgt_ERA5, "time", deg=1, demean=False)
-hgt_ERA5_filt = ca.butterworth_filter(hgt_ERA5 - hgt_ERA5.mean(dim="time", skipna=True), 8, ya*12, yb*12, "bandpass")
+hgt_ERA5_filt = ca.butterworth_filter(
+    hgt_ERA5 - hgt_ERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
 
 fu_ERA5 = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
 )
 u_ERA5 = fu_ERA5["u"]
 u_ERA5 = ca.detrend_dim(u_ERA5, "time", deg=1, demean=False)
-u_ERA5_filt = ca.butterworth_filter(u_ERA5 - u_ERA5.mean(dim="time", skipna=True), 8, ya*12, yb*12, "bandpass")
+u_ERA5_filt = ca.butterworth_filter(
+    u_ERA5 - u_ERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
 
 fhgt_his = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 hgt_his = fhgt_his["zg"]
 hgt_his = ca.detrend_dim(hgt_his, "time", deg=1, demean=False)
-hgt_his_filt = ca.butterworth_filter(hgt_his - hgt_his.mean(dim="time", skipna=True), 8, ya*12, yb*12, "bandpass")
+hgt_his_filt = ca.butterworth_filter(
+    hgt_his - hgt_his.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
 
 fu_his = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 u_his = fu_his["ua"]
 u_his = ca.detrend_dim(u_his, "time", deg=1, demean=False)
-u_his_filt = ca.butterworth_filter(u_his - u_his.mean(dim="time", skipna=True), 8, ya*12, yb*12, "bandpass")
+u_his_filt = ca.butterworth_filter(
+    u_his - u_his.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
+
+fpreCRU = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/cru_ts4.01_r144x72_195001-201412.nc"
+)
+preCRU = fpreCRU["pre"]
+preCRU = ca.detrend_dim(preCRU, "time", deg=1, demean=False)
+preCRU_filt = ca.butterworth_filter(
+    preCRU - preCRU.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
+
+fprehis = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+prehis = fprehis["pr"]
+prehis = ca.detrend_dim(prehis, "time", deg=1, demean=False)
+prehis_filt = ca.butterworth_filter(
+    prehis - prehis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
+
+pr_his_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr"
+)
+g = os.walk(pr_his_path)
+filepath = []
+modelname_pr = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_pr.append(filename[loc[1] + 1 : loc[2]])
+preds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+prehis_ds = xr.DataArray(preds_his["pr"])
+prehis_ds.coords["models"] = modelname_pr
+prehis_ds_filt = ca.butterworth_filter(
+    prehis_ds - prehis_ds.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
 
 # %%
-hgt_ERA5_JJA = ca.p_time(hgt_ERA5, 6, 8, True)
-hgt_ERA5_JJA_filt = ca.p_time(hgt_ERA5_filt, 6, 8, True) + hgt_ERA5_JJA.mean(dim="time", skipna=True)
+
 
 # %%
 
