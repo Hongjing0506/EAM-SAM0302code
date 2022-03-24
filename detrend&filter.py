@@ -129,12 +129,12 @@ prehis_ds_filt = ca.butterworth_filter(
 
 # %%
 preCRU_JJA = ca.standardize((ca.p_time(preCRU_filt, 6, 8, True)))
-preCRU_India_JJA = preCRU.loc[:, 8:28, 70:86]
-preCRU_EA_JJA = preCRU.loc[:, 8:28, 70:86]
+preCRU_India_JJA = preCRU_JJA.loc[:, 8:28, 70:86]
+preCRU_EA_JJA = preCRU_JJA.loc[:, 8:28, 70:86]
 
 prehis_JJA = ca.standardize((ca.p_time(prehis_filt, 6, 8, True)))
-prehis_India_JJA = prehis.loc[:, 8:28, 70:86]
-prehis_EA_JJA = prehis.loc[:, 8:28, 70:86]
+prehis_India_JJA = prehis_JJA.loc[:, 8:28, 70:86]
+prehis_EA_JJA = prehis_JJA.loc[:, 8:28, 70:86]
 
 # %%
 preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
@@ -148,5 +148,6 @@ prehis_India_mean = ca.cal_lat_weighted_mean(prehis_India_JJA).mean(
 prehis_EA_mean = ca.cal_lat_weighted_mean(prehis_EA_JJA).mean(dim="lon", skipna=True)
 
 # %%
+
 
 # %%
