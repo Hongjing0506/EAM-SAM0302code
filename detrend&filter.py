@@ -130,11 +130,11 @@ prehis_ds_filt = ca.butterworth_filter(
 # %%
 preCRU_JJA = ca.standardize((ca.p_time(preCRU_filt, 6, 8, True)))
 preCRU_India_JJA = preCRU_JJA.loc[:, 8:28, 70:86]
-preCRU_EA_JJA = preCRU_JJA.loc[:, 8:28, 70:86]
+preCRU_EA_JJA = preCRU_JJA.loc[:, 36:42, 108:118]
 
 prehis_JJA = ca.standardize((ca.p_time(prehis_filt, 6, 8, True)))
 prehis_India_JJA = prehis_JJA.loc[:, 8:28, 70:86]
-prehis_EA_JJA = prehis_JJA.loc[:, 8:28, 70:86]
+prehis_EA_JJA = prehis_JJA.loc[:, 36:42, 108:118]
 
 # %%
 preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
@@ -148,6 +148,15 @@ prehis_India_mean = ca.cal_lat_weighted_mean(prehis_India_JJA).mean(
 prehis_EA_mean = ca.cal_lat_weighted_mean(prehis_EA_JJA).mean(dim="lon", skipna=True)
 
 # %%
-
+fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=1, nrows=1)
+axs[0].line(preCRU_India_mean, color="grey6", lw=1.0)
+axs[0].line(preCRU_EA_mean, color="grey6", linestyle="--", lw=1.0)
+axs.format(
+    xrotation=0,
+    ylim=(-2,2),
+    ylocator=0.5,
+    yminorlocator=0.25
+    )
 
 # %%
