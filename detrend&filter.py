@@ -292,6 +292,21 @@ CRU_India_EA_regress_7 = ca.rolling_reg_index(
     preCRU_India_mean, preCRU_EA_mean, CRUtime, window, freq, True
 )
 
+window = 9
+CRU_India_EA_regress_9 = ca.rolling_reg_index(
+    preCRU_India_mean, preCRU_EA_mean, CRUtime, window, freq, True
+)
+his_India_EA_regress_9 = ca.rolling_reg_index(
+    prehis_India_mean, prehis_EA_mean, histime, window, freq, True
+)
+
+window = 11
+CRU_India_EA_regress_11 = ca.rolling_reg_index(
+    preCRU_India_mean, preCRU_EA_mean, CRUtime, window, freq, True
+)
+his_India_EA_regress_11 = ca.rolling_reg_index(
+    prehis_India_mean, prehis_EA_mean, histime, window, freq, True
+)
 
 # %%
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
