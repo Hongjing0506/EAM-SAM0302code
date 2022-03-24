@@ -148,10 +148,31 @@ prehis_India_mean = ca.cal_lat_weighted_mean(prehis_India_JJA).mean(
 prehis_EA_mean = ca.cal_lat_weighted_mean(prehis_EA_JJA).mean(dim="lon", skipna=True)
 
 # %%
+window = 7
+freq = "AS-JUL"
+CRUtime = preCRU_India_mean.coords["time"]
+histime = prehis_India_mean.coords["time"]
+CRU_India_EA_regress_7 = ca.rolling_reg_index(
+    preCRU_India_mean, preCRU_EA_mean, CRUtime, window, freq, True
+)
+
+
+# %%
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
 axs = fig.subplots(ncols=1, nrows=1)
-axs[0].line(preCRU_India_mean, color="grey6", lw=1.0)
-axs[0].line(preCRU_EA_mean, color="grey6", linestyle="--", lw=1.0)
+
+lw = 1.0
+
+axs[0].line(preCRU_India_mean, color="grey7", lw=lw)
+axs[0].line(preCRU_EA_mean, color="grey7", linestyle="--", lw=lw)
+axs[0].line(
+    CRU_India_EA_regress_7.time,
+    np.array(CRU_India_EA_regress_7["rvalue"]),
+    lw=lw,
+    color="blue",
+)
+axs[0].axhline(0.6664, lw = 0.8, color="grey5", linestyle="--")
+axs[0].axhline(-0.6664, lw = 0.8, color="grey5", linestyle="--")
 axs.format(
     xrotation=0,
     ylim=(-2,2),
