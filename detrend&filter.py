@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-21 21:07:17
 LastEditors: ChenHJ
-LastEditTime: 2022-03-24 19:15:15
+LastEditTime: 2022-03-24 20:01:40
 FilePath: /chenhj/0302code/detrend&filter.py
 Aim: 
 Mission: 
@@ -58,30 +58,36 @@ fhgt_ERA5 = xr.open_dataset(
 )
 hgt_ERA5 = fhgt_ERA5["z"]
 hgt_ERA5 = ca.detrend_dim(hgt_ERA5, "time", deg=1, demean=False)
-hgt_ERA5 = ca.butterworth_filter(hgt_ERA5, 8, ya*12, yb*12, "bandpass")
+hgt_ERA5_filt = ca.butterworth_filter(hgt_ERA5 - hgt_ERA5.mean(dim="time", skipna=True), 8, ya*12, yb*12, "bandpass")
 
 fu_ERA5 = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
 )
 u_ERA5 = fu_ERA5["u"]
 u_ERA5 = ca.detrend_dim(u_ERA5, "time", deg=1, demean=False)
-u_ERA5 = ca.butterworth_filter(u_ERA5, 8, ya*12, yb*12, "bandpass")
+u_ERA5_filt = ca.butterworth_filter(u_ERA5 - u_ERA5.mean(dim="time", skipna=True), 8, ya*12, yb*12, "bandpass")
 
 fhgt_his = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 hgt_his = fhgt_his["zg"]
 hgt_his = ca.detrend_dim(hgt_his, "time", deg=1, demean=False)
-hgt_his = ca.butterworth_filter(hgt_his, 8, ya*12, yb*12, "bandpass")
+hgt_his_filt = ca.butterworth_filter(hgt_his - hgt_his.mean(dim="time", skipna=True), 8, ya*12, yb*12, "bandpass")
 
 fu_his = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 u_his = fu_his["ua"]
 u_his = ca.detrend_dim(u_his, "time", deg=1, demean=False)
-u_his = ca.butterworth_filter(u_his, 8, ya*12, yb*12, "bandpass")
+u_his_filt = ca.butterworth_filter(u_his - u_his.mean(dim="time", skipna=True), 8, ya*12, yb*12, "bandpass")
 
 # %%
 hgt_ERA5_JJA = ca.p_time(hgt_ERA5, 6, 8, True)
+hgt_ERA5_JJA_filt = ca.p_time(hgt_ERA5_filt, 6, 8, True) + hgt_ERA5_JJA.mean(dim="time", skipna=True)
+
+# %%
+
+
+# %%
 
 # %%
