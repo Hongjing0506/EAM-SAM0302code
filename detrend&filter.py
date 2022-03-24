@@ -137,7 +137,15 @@ prehis_India_JJA = prehis.loc[:, 8:28, 70:86]
 prehis_EA_JJA = prehis.loc[:, 8:28, 70:86]
 
 # %%
+preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
+    dim="lon", skipna=True
+)
+preCRU_EA_mean = ca.cal_lat_weighted_mean(preCRU_EA_JJA).mean(dim="lon", skipna=True)
 
+prehis_India_mean = ca.cal_lat_weighted_mean(prehis_India_JJA).mean(
+    dim="lon", skipna=True
+)
+prehis_EA_mean = ca.cal_lat_weighted_mean(prehis_EA_JJA).mean(dim="lon", skipna=True)
 
 # %%
 
