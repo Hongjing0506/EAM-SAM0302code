@@ -164,13 +164,6 @@ prehis_EA_mean = ca.cal_lat_weighted_mean(prehis_EA_JJA).mean(dim="lon", skipna=
     CRU_EA_hypothesis,
 ) = ca.dim_linregress(preCRU_EA_mean, preCRU_JJA)
 
-(
-    CRU_Japan_slope,
-    CRU_Japan_intercept,
-    CRU_Japan_rvalue,
-    CRU_Japan_pvalue,
-    CRU_Japan_hypothesis,
-) = ca.dim_linregress(preCRU_Japan_mean, preCRU_JJA)
 
 (
     his_India_slope,
@@ -188,13 +181,6 @@ prehis_EA_mean = ca.cal_lat_weighted_mean(prehis_EA_JJA).mean(dim="lon", skipna=
     his_EA_hypothesis,
 ) = ca.dim_linregress(prehis_EA_mean, prehis_JJA)
 
-(
-    his_Japan_slope,
-    his_Japan_intercept,
-    his_Japan_rvalue,
-    his_Japan_pvalue,
-    his_Japan_hypothesis,
-) = ca.dim_linregress(prehis_Japan_mean, prehis_JJA)
 
 # %%
 #   plot the rvalue distribution for different area precipitation
@@ -206,7 +192,7 @@ proj = pplt.PlateCarree(central_longitude=cl)
 fig_rvalue = pplt.figure(
     span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
 )
-axs = fig_rvalue.subplots(ncols=3, nrows=2, proj=proj)
+axs = fig_rvalue.subplots(ncols=2, nrows=2, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
 xticks = np.arange(50, 151, 10)  # 设置纬度刻度
@@ -258,29 +244,6 @@ axs[1, 0].format(
 )
 sepl.patches(axs[1, 0], 108, 36, 10.0, 6.0, proj)
 # ==========================
-axs[2, 0].contourf(
-    CRU_Japan_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
-)
-sepl.plt_sig(
-    CRU_Japan_pvalue,
-    axs[2, 0],
-    n,
-    np.where(CRU_Japan_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
-)
-# axs[0,0].contour(
-#     CRU_India_pvalue,
-#     color="black",
-#     vmin=0.05,
-#     vmax=0.05,
-#     lw=0.8
-# )
-axs[2, 0].format(
-    title="Pr reg SJR", rtitle="1950-2014", ltitle="CRU TS4.01",
-)
-sepl.patches(axs[2, 0], 130, 31, 10.0, 5.0, proj)
-# ==========================
 axs[0, 1].contourf(
     his_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
 )
@@ -318,30 +281,7 @@ axs[1, 1].format(
 )
 sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
 # ==========================
-axs[2, 1].contourf(
-    his_Japan_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
-)
-# axs[0,2].contour(
-#     his_India_pvalue,
-#     color="black",
-#     levels=np.array([0.01, 0.05])
-# )
-sepl.plt_sig(
-    his_Japan_pvalue,
-    axs[2, 1],
-    n,
-    np.where(his_Japan_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
-)
-axs[2, 1].format(
-    title="Pr reg SJR", rtitle="1950-2014", ltitle="historical",
-)
-sepl.patches(axs[2, 1], 130, 31, 10.0, 5.0, proj)
-
-fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig_rvalue.format(abc="(a)", abcloc="l")
-
 
 # %%
 window = 7
@@ -355,25 +295,34 @@ CRU_India_EA_regress_7 = ca.rolling_reg_index(
 
 # %%
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
-axs = fig.subplots(ncols=1, nrows=1)
+axs = fig.subplots(ncols=2, nrows=1)
 
 lw = 1.0
 
-axs[0].line(preCRU_India_mean, color="grey7", lw=lw)
-axs[0].line(preCRU_EA_mean, color="grey7", linestyle="--", lw=lw)
-axs[0].line(
+m1 = axs[0].line(preCRU_India_mean, color="grey7", lw=lw)
+m2 = axs[0].line(preCRU_EA_mean, color="grey7", linestyle="--", lw=lw)
+m3 = axs[0].line(
     CRU_India_EA_regress_7.time,
     np.array(CRU_India_EA_regress_7["rvalue"]),
     lw=lw,
     color="blue",
 )
-axs[0].axhline(0.6664, lw = 0.8, color="grey5", linestyle="--")
-axs[0].axhline(-0.6664, lw = 0.8, color="grey5", linestyle="--")
-axs.format(
+axs[0].axhline(0.6664, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(-0.6664, lw=0.8, color="grey5", linestyle="--")
+axs[0].legend(handles=[m1, m2, m3], loc="ll", labels=["IndR", "NCR", "r"], ncols=1)
+axs[0].format(
     xrotation=0,
-    ylim=(-2,2),
+    ylim=(-2, 2),
     ylocator=0.5,
-    yminorlocator=0.25
-    )
+    yminorlocator=0.25,
+    ylabel="precip",
+    xlabel="time",
+    rtitle="window= {} yr".format(window),
+    ltitle="CRU TS4.01",
+)
+
+
+fig.format(abc="(a)", abcloc="l")
 
 # %%
+
