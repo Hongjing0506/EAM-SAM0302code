@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-21 21:07:17
 LastEditors: ChenHJ
-LastEditTime: 2022-03-24 15:37:28
+LastEditTime: 2022-03-24 19:15:15
 FilePath: /chenhj/0302code/detrend&filter.py
 Aim: 
 Mission: 
@@ -48,8 +48,40 @@ from scipy import signal
 from eofs.multivariate.standard import MultivariateEof
 from eofs.standard import Eof
 # %%
-#   butterworth bandpass filter for 2-8yr
-highfreq = 2.0*1/24
-lowfreq = 2.0*1/(8.0*12.0)
-b, a = signal.butter(8, [highfreq, lowfreq], btype="bandpass")
-filtedData = signal.filtfilt(b, a, data, axis=0)
+#   the args of butterworth bandpass
+ya = 2
+yb = 8
+# %%
+#   read obs data
+fhgt_ERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc"
+)
+hgt_ERA5 = fhgt_ERA5["z"]
+hgt_ERA5 = ca.detrend_dim(hgt_ERA5, "time", deg=1, demean=False)
+hgt_ERA5 = ca.butterworth_filter(hgt_ERA5, 8, ya*12, yb*12, "bandpass")
+
+fu_ERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
+)
+u_ERA5 = fu_ERA5["u"]
+u_ERA5 = ca.detrend_dim(u_ERA5, "time", deg=1, demean=False)
+u_ERA5 = ca.butterworth_filter(u_ERA5, 8, ya*12, yb*12, "bandpass")
+
+fhgt_his = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+hgt_his = fhgt_his["zg"]
+hgt_his = ca.detrend_dim(hgt_his, "time", deg=1, demean=False)
+hgt_his = ca.butterworth_filter(hgt_his, 8, ya*12, yb*12, "bandpass")
+
+fu_his = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+u_his = fu_his["ua"]
+u_his = ca.detrend_dim(u_his, "time", deg=1, demean=False)
+u_his = ca.butterworth_filter(u_his, 8, ya*12, yb*12, "bandpass")
+
+# %%
+hgt_ERA5_JJA = ca.p_time(hgt_ERA5, 6, 8, True)
+
+# %%
