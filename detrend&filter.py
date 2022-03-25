@@ -758,29 +758,29 @@ fig.format(abc="(a)", abcloc="l")
 
 # %%
 ERA5time = uERA5_ver_JJA.coords["time"]
-uERA5_ver_JJA_p1 = uERA5_ver_JJA.sel(time=(uERA5_ver_JJA.time.dt.year < 1970))
+uERA5_ver_JJA_p1 = uERA5_ver_JJA.sel(time=(uERA5_ver_JJA.time.dt.year <= 1966))
 uERA5_ver_JJA_p2 = uERA5_ver_JJA.sel(
-    time=((uERA5_ver_JJA.time.dt.year >= 1970) & (uERA5_ver_JJA.time.dt.year < 1984))
+    time=(uERA5_ver_JJA.time.dt.year >= 1967)
 )
 
-vERA5_ver_JJA_p1 = vERA5_ver_JJA.sel(time=(vERA5_ver_JJA.time.dt.year < 1970))
+vERA5_ver_JJA_p1 = vERA5_ver_JJA.sel(time=(vERA5_ver_JJA.time.dt.year <= 1966))
 vERA5_ver_JJA_p2 = vERA5_ver_JJA.sel(
-    time=((vERA5_ver_JJA.time.dt.year >= 1970) & (vERA5_ver_JJA.time.dt.year < 1984))
+    time=(vERA5_ver_JJA.time.dt.year >= 1967)
 )
 
-hgtERA5_ver_JJA_p1 = hgtERA5_ver_JJA.sel(time=(hgtERA5_ver_JJA.time.dt.year < 1970))
+hgtERA5_ver_JJA_p1 = hgtERA5_ver_JJA.sel(time=(hgtERA5_ver_JJA.time.dt.year <= 1966))
 hgtERA5_ver_JJA_p2 = hgtERA5_ver_JJA.sel(
     time=(
-        (hgtERA5_ver_JJA.time.dt.year >= 1970) & (hgtERA5_ver_JJA.time.dt.year < 1984)
+        hgtERA5_ver_JJA.time.dt.year >= 1967
     )
 )
 
-uq_dpg_ERA5_ver_JJA_p1 = uq_dpg_ERA5.sel(time=(uq_dpg_ERA5.time.dt.year < 1970))
+uq_dpg_ERA5_ver_JJA_p1 = uq_dpg_ERA5.sel(time=(uq_dpg_ERA5.time.dt.year <= 1966))
 uq_dpg_ERA5_ver_JJA_p2 = uq_dpg_ERA5.sel(
-    time=((uq_dpg_ERA5.time.dt.year >= 1970) & (uq_dpg_ERA5.time.dt.year < 1984))
+    time=(uq_dpg_ERA5.time.dt.year >= 1967)
 )
 
-vq_dpg_ERA5_ver_JJA_p1 = vq_dpg_ERA5.sel(time=(vq_dpg_ERA5.time.dt.year < 1970))
+vq_dpg_ERA5_ver_JJA_p1 = vq_dpg_ERA5.sel(time=(vq_dpg_ERA5.time.dt.year <= 1966))
 vq_dpg_ERA5_ver_JJA_p2 = vq_dpg_ERA5.sel(
-    time=((vq_dpg_ERA5.time.dt.year >= 1970) & (vq_dpg_ERA5.time.dt.year < 1984))
+    time=(vq_dpg_ERA5.time.dt.year >= 1967)
 )
