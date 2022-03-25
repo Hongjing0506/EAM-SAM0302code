@@ -284,7 +284,7 @@ sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
 fig_rvalue.format(abc="(a)", abcloc="l")
 
 # %%
-window = 11
+window = 7
 freq = "AS-JUL"
 CRUtime = preCRU_India_mean.coords["time"]
 histime = prehis_India_mean.coords["time"]
@@ -302,10 +302,10 @@ axs = fig.subplots(ncols=2, nrows=1)
 
 lw = 1.0
 # ========================================
-m1 = axs[0, 0].line(preCRU_India_mean, color="grey7", lw=lw)
-m2 = axs[0, 0].line(preCRU_EA_mean, color="grey7", linestyle="--", lw=lw)
-m3 = axs[0, 0].line(
-    CRU_India_EA_regress.time,
+m1 = axs[0, 0].line(preCRU_India_mean.time.dt.year, preCRU_India_mean, color="grey7", lw=lw)
+m2 = axs[0, 0].line(preCRU_India_mean.time.dt.year, preCRU_EA_mean, color="grey7", linestyle="--", lw=lw)
+m3 = axs[0, 0].line( 
+    CRU_India_EA_regress.time.dt.year,
     np.array(CRU_India_EA_regress["rvalue"]),
     lw=lw,
     color="blue",
@@ -324,10 +324,10 @@ axs[0, 0].format(
     ltitle="CRU TS4.01",
 )
 # ===============================
-m1 = axs[0, 1].line(prehis_India_mean, color="grey7", lw=lw)
-m2 = axs[0, 1].line(prehis_EA_mean, color="grey7", linestyle="--", lw=lw)
+m1 = axs[0, 1].line(preCRU_India_mean.time.dt.year, prehis_India_mean, color="grey7", lw=lw)
+m2 = axs[0, 1].line(preCRU_India_mean.time.dt.year, prehis_EA_mean, color="grey7", linestyle="--", lw=lw)
 m3 = axs[0, 1].line(
-    his_India_EA_regress.time,
+    his_India_EA_regress.time.dt.year,
     np.array(his_India_EA_regress["rvalue"]),
     lw=lw,
     color="blue",
@@ -346,7 +346,7 @@ axs[0, 1].format(
     ltitle="historical",
 )
 
-
+axs.format(xlocator=5)
 fig.format(abc="(a)", abcloc="l")
 
 # %%
