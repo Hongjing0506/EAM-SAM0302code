@@ -59,54 +59,42 @@ fhgtERA5 = xr.open_dataset(
 )
 hgtERA5 = fhgtERA5["z"]
 hgtERA5 = ca.detrend_dim(hgtERA5, "time", deg=1, demean=False)
-hgtERA5_filt = ca.butterworth_filter(
-    hgtERA5 - hgtERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+hgtERA5_filt = ca.butterworth_filter(hgtERA5, 8, ya * 12, yb * 12, "bandpass")
 
 fuERA5 = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
 )
 uERA5 = fuERA5["u"]
 uERA5 = ca.detrend_dim(uERA5, "time", deg=1, demean=False)
-uERA5_filt = ca.butterworth_filter(
-    uERA5 - uERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+uERA5_filt = ca.butterworth_filter(uERA5, 8, ya * 12, yb * 12, "bandpass")
 
 fvERA5 = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc"
 )
 vERA5 = fvERA5["v"]
 vERA5 = ca.detrend_dim(vERA5, "time", deg=1, demean=False)
-vERA5_filt = ca.butterworth_filter(
-    vERA5 - vERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+vERA5_filt = ca.butterworth_filter(vERA5, 8, ya * 12, yb * 12, "bandpass")
 
 fhgthis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 hgthis = fhgthis["zg"]
 hgthis = ca.detrend_dim(hgthis, "time", deg=1, demean=False)
-hgthis_filt = ca.butterworth_filter(
-    hgthis - hgthis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+hgthis_filt = ca.butterworth_filter(hgthis, 8, ya * 12, yb * 12, "bandpass")
 
 fuhis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 uhis = fuhis["ua"]
 uhis = ca.detrend_dim(uhis, "time", deg=1, demean=False)
-uhis_filt = ca.butterworth_filter(
-    uhis - uhis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+uhis_filt = ca.butterworth_filter(uhis, 8, ya * 12, yb * 12, "bandpass")
 
 fvhis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 vhis = fvhis["va"]
 vhis = ca.detrend_dim(vhis, "time", deg=1, demean=False)
-vhis_filt = ca.butterworth_filter(
-    vhis - vhis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+vhis_filt = ca.butterworth_filter(vhis, 8, ya * 12, yb * 12, "bandpass")
 
 
 fpreCRU = xr.open_dataset(
@@ -114,18 +102,14 @@ fpreCRU = xr.open_dataset(
 )
 preCRU = fpreCRU["pre"]
 preCRU = ca.detrend_dim(preCRU, "time", deg=1, demean=False)
-preCRU_filt = ca.butterworth_filter(
-    preCRU - preCRU.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+preCRU_filt = ca.butterworth_filter(preCRU, 8, ya * 12, yb * 12, "bandpass")
 
 fprehis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 prehis = fprehis["pr"]
 prehis = ca.detrend_dim(prehis, "time", deg=1, demean=False)
-prehis_filt = ca.butterworth_filter(
-    prehis - prehis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+prehis_filt = ca.butterworth_filter(prehis, 8, ya * 12, yb * 12, "bandpass")
 
 prhis_path = (
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr"
@@ -142,45 +126,35 @@ for path, dir_list, file_name in g:
 predshis = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 prehis_ds = xr.DataArray(predshis["pr"])
 prehis_ds.coords["models"] = modelname_pr
-prehis_ds_filt = ca.butterworth_filter(
-    prehis_ds - prehis_ds.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+prehis_ds_filt = ca.butterworth_filter(prehis_ds, 8, ya * 12, yb * 12, "bandpass")
 
 fspERA5 = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
 )
 spERA5 = fspERA5["sp"]
 spERA5 = ca.detrend_dim(spERA5, "time", deg=1, demean=False)
-spERA5_filt = ca.butterworth_filter(
-    spERA5 - spERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+spERA5_filt = ca.butterworth_filter(spERA5, 8, ya * 12, yb * 12, "bandpass")
 
 fsphis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 sphis = fsphis["ps"]
 sphis = ca.detrend_dim(sphis, "time", deg=1, demean=False)
-sphis_filt = ca.butterworth_filter(
-    sphis - sphis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+sphis_filt = ca.butterworth_filter(sphis, 8, ya * 12, yb * 12, "bandpass")
 
 fqERA5 = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc"
 )
 qERA5 = fqERA5["q"]
 qERA5 = ca.detrend_dim(qERA5, "time", deg=1, demean=False)
-qERA5_filt = ca.butterworth_filter(
-    qERA5 - qERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+qERA5_filt = ca.butterworth_filter(qERA5, 8, ya * 12, yb * 12, "bandpass")
 
 fqhis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 qhis = fqhis["hus"]
 qhis = ca.detrend_dim(qhis, "time", deg=1, demean=False)
-qhis_filt = ca.butterworth_filter(
-    qhis - qhis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
-)
+qhis_filt = ca.butterworth_filter(qhis, 8, ya * 12, yb * 12, "bandpass")
 
 # %%
 preCRU_JJA = ca.standardize((ca.p_time(preCRU_filt, 6, 8, True)))
@@ -203,8 +177,18 @@ qhis_ver_JJA = ca.p_time(qhis_filt, 6, 8, True).loc[:, 100.0:, :, :]
 sphis_ver_JJA = ca.p_time(sphis_filt, 6, 8, True).loc[:, :, :]
 hgthis_ver_JJA = ca.p_time(hgthis_filt, 6, 8, True).loc[:, 100.0:, :, :]
 
+preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
+    dim="lon", skipna=True
+)
+preCRU_EA_mean = ca.cal_lat_weighted_mean(preCRU_EA_JJA).mean(dim="lon", skipna=True)
+
+prehis_India_mean = ca.cal_lat_weighted_mean(prehis_India_JJA).mean(
+    dim="lon", skipna=True
+)
+prehis_EA_mean = ca.cal_lat_weighted_mean(prehis_EA_JJA).mean(dim="lon", skipna=True)
+
 # %%
-#   calculate the waver vapor vertical intergration
+#   calculate the water vapor vertical intergration
 ptop = 100 * 100
 g = 9.8
 ERA5level = qERA5_ver_JJA.coords["level"] * 100.0
@@ -218,7 +202,7 @@ vq_ERA5 = vERA5_ver_JJA * qERA5_ver_JJA * 1000.0
 uq_ERA5.attrs["units"] = "[m/s][g/kg]"
 vq_ERA5.attrs["units"] = "[m/s][g/kg]"
 # calculate the whole levels water vapor transport
-uq_dpg_ERA5 = (uq_ERA5 * ERA5dpg.data).sum(dim="level")
+uq_dpg_ERA5 = (uq_ERA5 * ERA5dpg.data).sum(dim="level", skipna=True)
 vq_dpg_ERA5 = (vq_ERA5 * ERA5dpg.data).sum(dim="level")
 uq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
 vq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
@@ -239,17 +223,158 @@ uq_dpg_his = (uq_his * hisdpg.data).sum(dim="plev")
 vq_dpg_his = (vq_his * hisdpg.data).sum(dim="plev")
 uq_dpg_his.attrs["units"] = "[m/s][g/kg]"
 vq_dpg_his.attrs["units"] = "[m/s][g/kg]"
+
 # %%
-preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
-    dim="lon", skipna=True
-)
-preCRU_EA_mean = ca.cal_lat_weighted_mean(preCRU_EA_JJA).mean(dim="lon", skipna=True)
+print(spERA5_ver_JJA)
+# %%
+preCRU_India_mean.coords["time"] = uq_dpg_ERA5.coords["time"]
+(
+    uq_CRU_India_slope,
+    uq_CRU_India_intercept,
+    uq_CRU_India_rvalue,
+    uq_CRU_India_pvalue,
+    uq_CRU_India_hypothesis,
+) = ca.dim_linregress(preCRU_India_mean, ca.standardize(uq_dpg_ERA5))
 
-prehis_India_mean = ca.cal_lat_weighted_mean(prehis_India_JJA).mean(
-    dim="lon", skipna=True
-)
-prehis_EA_mean = ca.cal_lat_weighted_mean(prehis_EA_JJA).mean(dim="lon", skipna=True)
+(
+    vq_CRU_India_slope,
+    vq_CRU_India_intercept,
+    vq_CRU_India_rvalue,
+    vq_CRU_India_pvalue,
+    vq_CRU_India_hypothesis,
+) = ca.dim_linregress(preCRU_India_mean, vq_dpg_ERA5)
 
+(
+    uq_his_India_slope,
+    uq_his_India_intercept,
+    uq_his_India_rvalue,
+    uq_his_India_pvalue,
+    uq_his_India_hypothesis,
+) = ca.dim_linregress(prehis_India_mean, uq_dpg_his)
+
+(
+    vq_his_India_slope,
+    vq_his_India_intercept,
+    vq_his_India_rvalue,
+    vq_his_India_pvalue,
+    vq_his_India_hypothesis,
+) = ca.dim_linregress(prehis_India_mean, vq_dpg_his)
+# %%
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig_rvalue = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig_rvalue.subplots(ncols=2, nrows=2, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.arange(50, 151, 10)  # 设置纬度刻度
+yticks = np.arange(10, 51, 10)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], 5, 55]
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+n = 1
+# ==========================
+con = axs[0, 0].contourf(
+    uq_CRU_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
+)
+sepl.plt_sig(
+    uq_CRU_India_pvalue,
+    axs[0, 0],
+    n,
+    np.where(uq_CRU_India_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+# axs[0,0].contour(
+#     CRU_India_pvalue,
+#     color="black",
+#     vmin=0.05,
+#     vmax=0.05,
+#     lw=0.8
+# )
+axs[0, 0].format(
+    title="Uq reg IndR", rtitle="1950-2014", ltitle="CRU TS4.01",
+)
+sepl.patches(axs[0, 0], 70.0, 8.0, 16.0, 20.0, proj)
+sepl.patches(axs[0, 0], 108, 36, 10.0, 6.0, proj)
+# ==========================
+con = axs[0, 1].contourf(
+    vq_CRU_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
+)
+sepl.plt_sig(
+    vq_CRU_India_pvalue,
+    axs[0, 1],
+    n,
+    np.where(vq_CRU_India_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+# axs[0,0].contour(
+#     CRU_India_pvalue,
+#     color="black",
+#     vmin=0.05,
+#     vmax=0.05,
+#     lw=0.8
+# )
+axs[0, 1].format(
+    title="Vq reg IndR", rtitle="1950-2014", ltitle="CRU TS4.01",
+)
+sepl.patches(axs[0, 1], 70.0, 8.0, 16.0, 20.0, proj)
+sepl.patches(axs[0, 1], 108, 36, 10.0, 6.0, proj)
+# ==========================
+con = axs[1, 0].contourf(
+    uq_his_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
+)
+sepl.plt_sig(
+    uq_his_India_pvalue,
+    axs[1, 0],
+    n,
+    np.where(uq_his_India_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+# axs[0,0].contour(
+#     his_India_pvalue,
+#     color="black",
+#     vmin=0.05,
+#     vmax=0.05,
+#     lw=0.8
+# )
+axs[1, 0].format(
+    title="Uq reg IndR", rtitle="1950-2014", ltitle="historical",
+)
+sepl.patches(axs[1, 0], 70.0, 8.0, 16.0, 20.0, proj)
+sepl.patches(axs[1, 0], 108, 36, 10.0, 6.0, proj)
+# ==========================
+con = axs[1, 1].contourf(
+    vq_his_India_rvalue, cmap="ColdHot", levels=np.arange(-1.0, 1.1, 0.1),
+)
+sepl.plt_sig(
+    vq_his_India_pvalue,
+    axs[1, 1],
+    n,
+    np.where(vq_his_India_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+# axs[0,0].contour(
+#     his_India_pvalue,
+#     color="black",
+#     vmin=0.05,
+#     vmax=0.05,
+#     lw=0.8
+# )
+axs[1, 1].format(
+    title="Vq reg IndR", rtitle="1950-2014", ltitle="historical",
+)
+sepl.patches(axs[1, 1], 70.0, 8.0, 16.0, 20.0, proj)
+sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
+fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 # %%
 (
     CRU_India_slope,
@@ -405,9 +530,13 @@ axs = fig.subplots(ncols=2, nrows=1)
 
 lw = 1.0
 # ========================================
-m1 = axs[0, 0].line(preCRU_India_mean.time.dt.year, preCRU_India_mean, color="grey7", lw=lw)
-m2 = axs[0, 0].line(preCRU_India_mean.time.dt.year, preCRU_EA_mean, color="grey7", linestyle="--", lw=lw)
-m3 = axs[0, 0].line( 
+m1 = axs[0, 0].line(
+    preCRU_India_mean.time.dt.year, preCRU_India_mean, color="grey7", lw=lw
+)
+m2 = axs[0, 0].line(
+    preCRU_India_mean.time.dt.year, preCRU_EA_mean, color="grey7", linestyle="--", lw=lw
+)
+m3 = axs[0, 0].line(
     CRU_India_EA_regress.time.dt.year,
     np.array(CRU_India_EA_regress["rvalue"]),
     lw=lw,
@@ -427,8 +556,12 @@ axs[0, 0].format(
     ltitle="CRU TS4.01",
 )
 # ===============================
-m1 = axs[0, 1].line(preCRU_India_mean.time.dt.year, prehis_India_mean, color="grey7", lw=lw)
-m2 = axs[0, 1].line(preCRU_India_mean.time.dt.year, prehis_EA_mean, color="grey7", linestyle="--", lw=lw)
+m1 = axs[0, 1].line(
+    preCRU_India_mean.time.dt.year, prehis_India_mean, color="grey7", lw=lw
+)
+m2 = axs[0, 1].line(
+    preCRU_India_mean.time.dt.year, prehis_EA_mean, color="grey7", linestyle="--", lw=lw
+)
 m3 = axs[0, 1].line(
     his_India_EA_regress.time.dt.year,
     np.array(his_India_EA_regress["rvalue"]),
