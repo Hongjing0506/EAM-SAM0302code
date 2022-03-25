@@ -50,18 +50,18 @@ from eofs.standard import Eof
 # %%
 #   read the data file
 fpreCRU = xr.open_dataset(
-    "/home/ys17-23/chenhj/SAM_EAM_data/obs/cru_ts4.01_r144x72_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/cru_ts4.01_r144x72_195001-201412.nc"
 )
 preCRU = fpreCRU["pre"]
 preCRU = ca.detrend_dim(preCRU, "time", deg=1, demean=False)
 
 fprehis = xr.open_dataset(
-    "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 prehis = fprehis["pr"]
 prehis = ca.detrend_dim(prehis, "time", deg=1, demean=False)
 
-pr_his_path = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/pr"
+pr_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr"
 g = os.walk(pr_his_path)
 filepath = []
 modelname_pr = []
@@ -77,61 +77,61 @@ prehis_ds = ca.detrend_dim(prehis_ds, "time", deg=1, demean=False)
 prehis_ds.coords["models"] = modelname_pr
 
 fvERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc"
 )
 vERA5 = fvERA5["v"]
 vERA5 = ca.detrend_dim(vERA5, "time", deg=1, demean=False)
 
 fvhis = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/CMIP6/historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 vhis = fvhis["va"]
 vhis = ca.detrend_dim(vhis, "time", deg=1, demean=False)
 
 fuERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
 )
 uERA5 = fuERA5["u"]
 uERA5 = ca.detrend_dim(uERA5, "time", deg=1, demean=False)
 
 fuhis = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 uhis = fuhis["ua"]
 uhis = ca.detrend_dim(uhis, "time", deg=1, demean=False)
 
 fspERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
 )
 spERA5 = fspERA5["sp"]
 spERA5 = ca.detrend_dim(spERA5, "time", deg=1, demean=False)
 
 fsphis = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/CMIP6/historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 sphis = fsphis["ps"]
 sphis = ca.detrend_dim(sphis, "time", deg=1, demean=False)
 
 fqERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc"
 )
 qERA5 = fqERA5["q"]
 qERA5 = ca.detrend_dim(qERA5, "time", deg=1, demean=False)
 
 fqhis = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 qhis = fqhis["hus"]
 qhis = ca.detrend_dim(qhis, "time", deg=1, demean=False)
 
 fhgtERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc"
 )
 hgtERA5 = fhgtERA5["z"]
 hgtERA5 = ca.detrend_dim(hgtERA5, "time", deg=1, demean=False)
 
 fhgthis = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 hgthis = fhgthis["zg"]
 hgthis = ca.detrend_dim(hgthis, "time", deg=1, demean=False)
@@ -269,7 +269,7 @@ uq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
 vq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
 
 
-hislevel = qhis_ver_JJA.coords["plev"] * 100.0
+hislevel = qhis_ver_JJA.coords["plev"]
 hislevel.attrs["units"] = "Pa"
 hisdp = geocat.comp.dpres_plevel(hislevel, sphis_ver_JJA, ptop)
 hisdpg = hisdp / g
@@ -290,10 +290,10 @@ vq_dpg_his.attrs["units"] = "[m/s][g/kg]"
 uq_dpg_ERA5_India = uq_dpg_ERA5.loc[:, 8:28, 70:86]
 vq_dpg_ERA5_India = vq_dpg_ERA5.loc[:, 8:28, 70:86]
 
-uq_dpg_ERA5_EA_mean = ca.cal_lat_weighted_mean(uq_dpg_ERA5_India).mean(
+uq_dpg_ERA5_India_mean = ca.cal_lat_weighted_mean(uq_dpg_ERA5_India).mean(
     dim="lon", skipna=True
 )
-vq_dpg_ERA5_EA_mean = ca.cal_lat_weighted_mean(vq_dpg_ERA5_India).mean(
+vq_dpg_ERA5_India_mean = ca.cal_lat_weighted_mean(vq_dpg_ERA5_India).mean(
     dim="lon", skipna=True
 )
 
