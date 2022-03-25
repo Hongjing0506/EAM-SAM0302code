@@ -64,7 +64,9 @@ fprehis = xr.open_dataset(
 prehis = fprehis["pr"]
 prehis = ca.detrend_dim(prehis, "time", deg=1, demean=False)
 
-pr_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr"
+pr_his_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr"
+)
 g = os.walk(pr_his_path)
 filepath = []
 modelname_pr = []
@@ -73,9 +75,9 @@ for path, dir_list, file_name in g:
         if re.search("ensemble", filename) == None:
             filepath.append(os.path.join(path, filename))
             loc = ca.retrieve_allstrindex(filename, "_")
-            modelname_pr.append(filename[loc[1]+1:loc[2]])
-preds_his = xr.open_mfdataset(filepath, concat_dim="models", combine='nested')
-prehis_ds = xr.DataArray(preds_his['pr'])
+            modelname_pr.append(filename[loc[1] + 1 : loc[2]])
+preds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+prehis_ds = xr.DataArray(preds_his["pr"])
 prehis_ds.coords["models"] = modelname_pr
 
 
@@ -116,9 +118,7 @@ preCRU_EA_mean = ca.cal_lat_weighted_mean(preCRU_EA_JJA).mean(dim="lon", skipna=
 preCRU_Japan_mean = ca.cal_lat_weighted_mean(preCRU_Japan_JJA).mean(
     dim="lon", skipna=True
 )
-preCRU_SC_mean = ca.cal_lat_weighted_mean(preCRU_SC_JJA).mean(
-    dim="lon", skipna=True
-)
+preCRU_SC_mean = ca.cal_lat_weighted_mean(preCRU_SC_JJA).mean(dim="lon", skipna=True)
 
 preGPCP_India_mean = ca.cal_lat_weighted_mean(preGPCP_India_JJA).mean(
     dim="lon", skipna=True
@@ -127,9 +127,7 @@ preGPCP_EA_mean = ca.cal_lat_weighted_mean(preGPCP_EA_JJA).mean(dim="lon", skipn
 preGPCP_Japan_mean = ca.cal_lat_weighted_mean(preGPCP_Japan_JJA).mean(
     dim="lon", skipna=True
 )
-preGPCP_SC_mean = ca.cal_lat_weighted_mean(preGPCP_SC_JJA).mean(
-    dim="lon", skipna=True
-)
+preGPCP_SC_mean = ca.cal_lat_weighted_mean(preGPCP_SC_JJA).mean(dim="lon", skipna=True)
 
 prehis_India_mean = ca.cal_lat_weighted_mean(prehis_India_JJA).mean(
     dim="lon", skipna=True
@@ -138,14 +136,14 @@ prehis_EA_mean = ca.cal_lat_weighted_mean(prehis_EA_JJA).mean(dim="lon", skipna=
 prehis_Japan_mean = ca.cal_lat_weighted_mean(prehis_Japan_JJA).mean(
     dim="lon", skipna=True
 )
-prehis_SC_mean = ca.cal_lat_weighted_mean(prehis_SC_JJA).mean(
-    dim="lon", skipna=True
-)
+prehis_SC_mean = ca.cal_lat_weighted_mean(prehis_SC_JJA).mean(dim="lon", skipna=True)
 
 prehis_ds_India_mean = ca.cal_lat_weighted_mean(prehis_ds_India_JJA).mean(
     dim="lon", skipna=True
 )
-prehis_ds_EA_mean = ca.cal_lat_weighted_mean(prehis_ds_EA_JJA).mean(dim="lon", skipna=True)
+prehis_ds_EA_mean = ca.cal_lat_weighted_mean(prehis_ds_EA_JJA).mean(
+    dim="lon", skipna=True
+)
 prehis_ds_Japan_mean = ca.cal_lat_weighted_mean(prehis_ds_Japan_JJA).mean(
     dim="lon", skipna=True
 )
@@ -457,7 +455,13 @@ his_India_EA_regress_7 = ca.rolling_reg_index(
     prehis_India_mean, prehis_EA_mean, histime, window, freq, True
 )
 
-his_ds_India_EA_avalue_7, his_ds_India_EA_bvalue_7, his_ds_India_EA_rvalue_7, his_ds_India_EA_pvalue_7, his_ds_India_EA_hyvalue_7 = ca.rolling_regression_pattern(
+(
+    his_ds_India_EA_avalue_7,
+    his_ds_India_EA_bvalue_7,
+    his_ds_India_EA_rvalue_7,
+    his_ds_India_EA_pvalue_7,
+    his_ds_India_EA_hyvalue_7,
+) = ca.rolling_regression_pattern(
     prehis_ds_India_mean, prehis_ds_EA_mean, his_dstime, window, freq
 )
 
@@ -471,7 +475,13 @@ GPCP_India_EA_regress_9 = ca.rolling_reg_index(
 his_India_EA_regress_9 = ca.rolling_reg_index(
     prehis_India_mean, prehis_EA_mean, histime, window, freq, True
 )
-his_ds_India_EA_avalue_9, his_ds_India_EA_bvalue_9, his_ds_India_EA_rvalue_9, his_ds_India_EA_pvalue_9, his_ds_India_EA_hyvalue_9 = ca.rolling_regression_pattern(
+(
+    his_ds_India_EA_avalue_9,
+    his_ds_India_EA_bvalue_9,
+    his_ds_India_EA_rvalue_9,
+    his_ds_India_EA_pvalue_9,
+    his_ds_India_EA_hyvalue_9,
+) = ca.rolling_regression_pattern(
     prehis_ds_India_mean, prehis_ds_EA_mean, his_dstime, window, freq
 )
 
@@ -485,7 +495,13 @@ GPCP_India_EA_regress_11 = ca.rolling_reg_index(
 his_India_EA_regress_11 = ca.rolling_reg_index(
     prehis_India_mean, prehis_EA_mean, histime, window, freq, True
 )
-his_ds_India_EA_avalue_11, his_ds_India_EA_bvalue_11, his_ds_India_EA_rvalue_11, his_ds_India_EA_pvalue_11, his_ds_India_EA_hyvalue_11 = ca.rolling_regression_pattern(
+(
+    his_ds_India_EA_avalue_11,
+    his_ds_India_EA_bvalue_11,
+    his_ds_India_EA_rvalue_11,
+    his_ds_India_EA_pvalue_11,
+    his_ds_India_EA_hyvalue_11,
+) = ca.rolling_regression_pattern(
     prehis_ds_India_mean, prehis_ds_EA_mean, his_dstime, window, freq
 )
 
@@ -501,85 +517,89 @@ lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 cycle = "Pastel1"
 
-m1 = axs[0].line(
-    CRU_India_EA_regress_7.time.dt.year,
+
+m3 = axs[0].line(
+    CRU_India_EA_regress_7.time,
     np.array(CRU_India_EA_regress_7["rvalue"]),
     lw=lw,
     color="blue",
 )
 
 # m2 = axs[0].line(
-#     GPCP_India_EA_regress_7.time.dt.year,
+#     GPCP_India_EA_regress_7.time,
 #     np.array(GPCP_India_EA_regress_7["rvalue"]),
 #     lw=lw,
 #     color="black",
 # )
 
-m3 = axs[0].line(
-    his_India_EA_regress_7.time.dt.year,
+m4 = axs[0].line(
+    his_India_EA_regress_7.time,
     np.array(his_India_EA_regress_7["rvalue"]),
     lw=lw,
     color="red",
 )
 
 
-axs[0].axhline(0, lw = 0.8, color="grey5", linestyle="--")
-axs[0].axhline(0.6664, lw = 0.8, color="grey5", linestyle="--")
-axs[0].axhline(-0.6664, lw = 0.8, color="grey5", linestyle="--")
+axs[0].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(0.6664, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(-0.6664, lw=0.8, color="grey5", linestyle="--")
 axs[0].format(ltitle="window=7", rtitle="1950-2014")
-axs[0].legend(handles=[m1,m3], loc="ll", labels=["CRU", "historical"], ncols=1)
+axs[0].legend(handles=[m3, m4], loc="ll", labels=["r_CRU", "r_historical"], ncols=1)
 
-m1 = axs[1].line(
-    CRU_India_EA_regress_9.time.dt.year,
+
+m3 = axs[1].line(
+    CRU_India_EA_regress_9.time,
     np.array(CRU_India_EA_regress_9["rvalue"]),
     lw=lw,
     color="blue",
 )
 # m2 = axs[1].line(
-#     GPCP_India_EA_regress_9.time.dt.year,
+#     GPCP_India_EA_regress_9.time,
 #     np.array(GPCP_India_EA_regress_9["rvalue"]),
 #     lw=lw,
 #     color="black",
 # )
-m3 = axs[1].line(
-    his_India_EA_regress_9.time.dt.year,
+m4 = axs[1].line(
+    his_India_EA_regress_9.time,
     np.array(his_India_EA_regress_9["rvalue"]),
     lw=lw,
     color="red",
 )
 axs[1].format(ltitle="window=9", rtitle="1979-2014")
-axs[1].legend(handles=[m1,m3], loc="ll", labels=["CRU", "historical"], ncols=1)
-axs[1].axhline(0, lw = 0.8, color="grey5", linestyle="--")
-axs[1].axhline(0.6021, lw = 0.8, color="grey5", linestyle="--")
-axs[1].axhline(-0.6021, lw = 0.8, color="grey5", linestyle="--")
+axs[1].legend(handles=[m3, m4], loc="ll", labels=["r_CRU", "r_historical"], ncols=1)
+axs[1].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[1].axhline(0.6021, lw=0.8, color="grey5", linestyle="--")
+axs[1].axhline(-0.6021, lw=0.8, color="grey5", linestyle="--")
 
-m1 = axs[2].line(
-    CRU_India_EA_regress_11.time.dt.year,
+
+m3 = axs[2].line(
+    CRU_India_EA_regress_11.time,
     np.array(CRU_India_EA_regress_11["rvalue"]),
     lw=lw,
     color="blue",
 )
 # m2 = axs[2].line(
-#     GPCP_India_EA_regress_11.time.dt.year,
+#     GPCP_India_EA_regress_11.time,
 #     np.array(GPCP_India_EA_regress_11["rvalue"]),
 #     lw=lw,
 #     color="black",
 # )
-m3 = axs[2].line(
-    his_India_EA_regress_11.time.dt.year,
+m4 = axs[2].line(
+    his_India_EA_regress_11.time,
     np.array(his_India_EA_regress_11["rvalue"]),
     lw=lw,
     color="red",
 )
 axs[2].format(ltitle="window=11", rtitle="1950-2014")
-axs[2].legend(handles=[m1,m3], loc="ll", labels=["CRU", "historical"], ncols=1)
-axs[2].axhline(0, lw = 0.8, color="grey5", linestyle="--")
-axs[2].axhline(0.5529, lw = 0.8, color="grey5", linestyle="--")
-axs[2].axhline(-0.5529, lw = 0.8, color="grey5", linestyle="--")
+axs[2].legend(handles=[m3, m4], loc="ll", labels=["r_CRU", "r_historical"], ncols=1)
+axs[2].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[2].axhline(0.5529, lw=0.8, color="grey5", linestyle="--")
+axs[2].axhline(-0.5529, lw=0.8, color="grey5", linestyle="--")
 axs.format(
-    ylim=(-1.0, 1.0), ylocator=0.2, yminorlocator=0.1, xrotation=0, xlim=(1950, 2014),
+    ylim=(-1.0, 1.0), ylocator=0.5, yminorlocator=0.25, xrotation=0,
 )
 fig.format(abc="(a)", abcloc="l")
+
 # %%
 #   calculate the rolling correlation pattern
 reload(ca)
@@ -637,7 +657,7 @@ hisreg_Ind_rvalue_std = hisreg_Ind_rvalue.std(dim="time", skipna=True)
 #   plot the rolling correlation coefficient std distribution
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
-cl = 0	#设置地图投影的中心纬度
+cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
 fig_std = pplt.figure(
@@ -646,43 +666,50 @@ fig_std = pplt.figure(
 axs = fig_std.subplots(ncols=3, nrows=3, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
-xticks = np.arange(0, 181, 30)	#设置纬度刻度
-yticks = np.arange(-30, 61, 30)						#设置经度刻度
-#设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
-#当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+xticks = np.arange(0, 181, 30)  # 设置纬度刻度
+yticks = np.arange(-30, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
 extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
 sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
 
-con = axs[0,0].contourf(
+con = axs[0, 0].contourf(
     CRUreg_Ind_rvalue_std,
-    levels=np.arange(0.3,0.71,0.05),
+    levels=np.arange(0.3, 0.71, 0.05),
     cmap="Blues",
-    extend="both"
-    )
-sepl.patches(axs[0,0], 108, 36, 10.0, 6.0, proj)
+    extend="both",
+)
+sepl.patches(axs[0, 0], 108, 36, 10.0, 6.0, proj)
 
-axs[0,1].contourf(
+axs[0, 1].contourf(
     GPCPreg_Ind_rvalue_std,
-    levels=np.arange(0.3,0.71,0.05),
+    levels=np.arange(0.3, 0.71, 0.05),
     cmap="Blues",
-    extend="both"
-    )
-sepl.patches(axs[0,1], 108, 36, 10.0, 6.0, proj)
+    extend="both",
+)
+sepl.patches(axs[0, 1], 108, 36, 10.0, 6.0, proj)
 
-axs[0,2].contourf(
+axs[0, 2].contourf(
     hisreg_Ind_rvalue_std,
-    levels=np.arange(0.3,0.71,0.05),
+    levels=np.arange(0.3, 0.71, 0.05),
     cmap="Blues",
-    extend="both"
-    )
-sepl.patches(axs[0,2], 108, 36, 10.0, 6.0, proj)
+    extend="both",
+)
+sepl.patches(axs[0, 2], 108, 36, 10.0, 6.0, proj)
 
 fig_std.colorbar(con, loc="b", width=0.13, length=0.7)
 fig_std.format(abc="(a)", abcloc="l")
 # %%
 #   plot the rolling_reg_index
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
-array = [[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20],[21,22,23,24,25],[26,27,28,29,0]]
+array = [
+    [1, 2, 3, 4, 5],
+    [6, 7, 8, 9, 10],
+    [11, 12, 13, 14, 15],
+    [16, 17, 18, 19, 20],
+    [21, 22, 23, 24, 25],
+    [26, 27, 28, 29, 0],
+]
 axs = fig.subplots(array)
 lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
@@ -694,7 +721,7 @@ axs[0].line(
     lw=lw,
     color="black",
 )
-axs[0].format(title = "CRU TS4.01")
+axs[0].format(title="CRU TS4.01")
 
 axs[1].line(
     GPCP_India_EA_regress_7.time.dt.year,
@@ -702,7 +729,7 @@ axs[1].line(
     lw=lw,
     color="black",
 )
-axs[1].format(title = "GPCP")
+axs[1].format(title="GPCP")
 
 axs[2].line(
     his_India_EA_regress_7.time.dt.year,
@@ -710,16 +737,21 @@ axs[2].line(
     lw=lw,
     color="black",
 )
-axs[2].format(title = "historical")
+axs[2].format(title="historical")
 
 for i, ax in enumerate(axs[3:]):
-    ax.line(his_ds_India_EA_rvalue_7.time.dt.year, his_ds_India_EA_rvalue_7[:,i], color="black", lw=lw)
+    ax.line(
+        his_ds_India_EA_rvalue_7.time.dt.year,
+        his_ds_India_EA_rvalue_7[:, i],
+        color="black",
+        lw=lw,
+    )
     ax.format(title=np.array(his_ds_India_EA_rvalue_7.coords["models"][i]))
 
 for ax in axs:
-    ax.axhline(0, lw = 0.8, color="grey5", linestyle="--")
-    ax.axhline(0.6664, lw = 0.8, color="grey5", linestyle="--")
-    ax.axhline(-0.6664, lw = 0.8, color="grey5", linestyle="--")
+    ax.axhline(0, lw=0.8, color="grey5", linestyle="--")
+    ax.axhline(0.6664, lw=0.8, color="grey5", linestyle="--")
+    ax.axhline(-0.6664, lw=0.8, color="grey5", linestyle="--")
     ax.axvline(1972, lw=0.8, color="grey5", linestyle="--")
     ax.format(ltitle="window=7", rtitle="1950-2014")
 
@@ -730,7 +762,14 @@ fig.format(abc="(a)", abcloc="l")
 # %%
 
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
-array = [[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20],[21,22,23,24,25],[26,27,28,29,0]]
+array = [
+    [1, 2, 3, 4, 5],
+    [6, 7, 8, 9, 10],
+    [11, 12, 13, 14, 15],
+    [16, 17, 18, 19, 20],
+    [21, 22, 23, 24, 25],
+    [26, 27, 28, 29, 0],
+]
 axs = fig.subplots(array)
 lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
@@ -742,7 +781,7 @@ axs[0].line(
     lw=lw,
     color="black",
 )
-axs[0].format(title = "CRU TS4.01")
+axs[0].format(title="CRU TS4.01")
 
 axs[1].line(
     GPCP_India_EA_regress_9.time.dt.year,
@@ -750,7 +789,7 @@ axs[1].line(
     lw=lw,
     color="black",
 )
-axs[1].format(title = "GPCP")
+axs[1].format(title="GPCP")
 
 axs[2].line(
     his_India_EA_regress_9.time.dt.year,
@@ -758,16 +797,21 @@ axs[2].line(
     lw=lw,
     color="black",
 )
-axs[2].format(title = "historical")
+axs[2].format(title="historical")
 
 for i, ax in enumerate(axs[3:]):
-    ax.line(his_ds_India_EA_rvalue_9.time.dt.year, his_ds_India_EA_rvalue_9[:,i], color="black", lw=lw)
+    ax.line(
+        his_ds_India_EA_rvalue_9.time.dt.year,
+        his_ds_India_EA_rvalue_9[:, i],
+        color="black",
+        lw=lw,
+    )
     ax.format(title=np.array(his_ds_India_EA_rvalue_9.coords["models"][i]))
 
 for ax in axs:
-    ax.axhline(0, lw = 0.8, color="grey5", linestyle="--")
-    ax.axhline(0.6021, lw = 0.8, color="grey5", linestyle="--")
-    ax.axhline(-0.6021, lw = 0.8, color="grey5", linestyle="--")
+    ax.axhline(0, lw=0.8, color="grey5", linestyle="--")
+    ax.axhline(0.6021, lw=0.8, color="grey5", linestyle="--")
+    ax.axhline(-0.6021, lw=0.8, color="grey5", linestyle="--")
     ax.axvline(1972, lw=0.8, color="grey5", linestyle="--")
     ax.format(ltitle="window=9", rtitle="1950-2014")
 
@@ -779,7 +823,14 @@ fig.format(abc="(a)", abcloc="l")
 
 # %%
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
-array = [[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20],[21,22,23,24,25],[26,27,28,29,0]]
+array = [
+    [1, 2, 3, 4, 5],
+    [6, 7, 8, 9, 10],
+    [11, 12, 13, 14, 15],
+    [16, 17, 18, 19, 20],
+    [21, 22, 23, 24, 25],
+    [26, 27, 28, 29, 0],
+]
 axs = fig.subplots(array)
 lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
@@ -791,7 +842,7 @@ axs[0].line(
     lw=lw,
     color="black",
 )
-axs[0].format(title = "CRU TS4.01")
+axs[0].format(title="CRU TS4.01")
 
 axs[1].line(
     GPCP_India_EA_regress_11.time.dt.year,
@@ -799,7 +850,7 @@ axs[1].line(
     lw=lw,
     color="black",
 )
-axs[1].format(title = "GPCP")
+axs[1].format(title="GPCP")
 
 axs[2].line(
     his_India_EA_regress_11.time.dt.year,
@@ -807,16 +858,21 @@ axs[2].line(
     lw=lw,
     color="black",
 )
-axs[2].format(title = "historical")
+axs[2].format(title="historical")
 
 for i, ax in enumerate(axs[3:]):
-    ax.line(his_ds_India_EA_rvalue_11.time.dt.year, his_ds_India_EA_rvalue_11[:,i], color="black", lw=lw)
+    ax.line(
+        his_ds_India_EA_rvalue_11.time.dt.year,
+        his_ds_India_EA_rvalue_11[:, i],
+        color="black",
+        lw=lw,
+    )
     ax.format(title=np.array(his_ds_India_EA_rvalue_11.coords["models"][i]))
 
 for ax in axs:
-    ax.axhline(0, lw = 0.8, color="grey5", linestyle="--")
-    ax.axhline(0.5529, lw = 0.8, color="grey5", linestyle="--")
-    ax.axhline(-0.5529, lw = 0.8, color="grey5", linestyle="--")
+    ax.axhline(0, lw=0.8, color="grey5", linestyle="--")
+    ax.axhline(0.5529, lw=0.8, color="grey5", linestyle="--")
+    ax.axhline(-0.5529, lw=0.8, color="grey5", linestyle="--")
     ax.axvline(1972, lw=0.8, color="grey5", linestyle="--")
     ax.format(ltitle="window=11", rtitle="1950-2014")
 
