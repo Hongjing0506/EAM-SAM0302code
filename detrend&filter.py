@@ -165,21 +165,37 @@ prehis_JJA = ca.standardize((ca.p_time(prehis_filt, 6, 8, True)))
 prehis_India_JJA = prehis_JJA.loc[:, 8:28, 70:86]
 prehis_EA_JJA = prehis_JJA.loc[:, 36:42, 108:118]
 
-uERA5_ver_JJA = ca.p_time(uERA5_filt, 6, 8, True).loc[:, 100.0:, :, :]
-vERA5_ver_JJA = ca.p_time(vERA5_filt, 6, 8, True).loc[:, 100.0:, :, :]
-qERA5_ver_JJA = ca.p_time(qERA5_filt, 6, 8, True).loc[:, 100.0:, :, :]
+uERA5_ver_JJA = (ca.p_time(uERA5_filt, 6, 8, True) + ca.p_time(uERA5, 6, 8, True)).loc[
+    :, 100.0:, :, :
+]
+vERA5_ver_JJA = (ca.p_time(vERA5_filt, 6, 8, True) + ca.p_time(vERA5, 6, 8, True)).loc[
+    :, 100.0:, :, :
+]
+qERA5_ver_JJA = (ca.p_time(qERA5_filt, 6, 8, True) + ca.p_time(qERA5, 6, 8, True)).loc[
+    :, 100.0:, :, :
+]
 spERA5_ver_JJA = (
     ca.p_time(spERA5_filt, 6, 8, True) + ca.p_time(spERA5, 6, 8, True)
 ).loc[:, :, :]
-hgtERA5_ver_JJA = ca.p_time(hgtERA5_filt, 6, 8, True).loc[:, 100.0:, :, :]
+hgtERA5_ver_JJA = (
+    ca.p_time(hgtERA5_filt, 6, 8, True) + ca.p_time(hgtERA5, 6, 8, True)
+).loc[:, 100.0:, :, :]
 
-uhis_ver_JJA = ca.p_time(uhis_filt, 6, 8, True).loc[:, :10000.0, :, :]
-vhis_ver_JJA = ca.p_time(vhis_filt, 6, 8, True).loc[:, :10000.0, :, :]
-qhis_ver_JJA = ca.p_time(qhis_filt, 6, 8, True).loc[:, :10000.0, :, :]
+uhis_ver_JJA = (ca.p_time(uhis_filt, 6, 8, True) + ca.p_time(uhis, 6, 8, True)).loc[
+    :, :10000.0, :, :
+]
+vhis_ver_JJA = (ca.p_time(vhis_filt, 6, 8, True) + ca.p_time(vhis, 6, 8, True)).loc[
+    :, :10000.0, :, :
+]
+qhis_ver_JJA = (ca.p_time(qhis_filt, 6, 8, True) + ca.p_time(qhis, 6, 8, True)).loc[
+    :, :10000.0, :, :
+]
 sphis_ver_JJA = (ca.p_time(sphis_filt, 6, 8, True) + ca.p_time(sphis, 6, 8, True)).loc[
     :, :, :
 ]
-hgthis_ver_JJA = ca.p_time(hgthis_filt, 6, 8, True).loc[:, :10000.0, :, :]
+hgthis_ver_JJA = (
+    ca.p_time(hgthis_filt, 6, 8, True) + ca.p_time(hgthis, 6, 8, True)
+).loc[:, :10000.0, :, :]
 
 preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
     dim="lon", skipna=True
@@ -190,6 +206,7 @@ prehis_India_mean = ca.cal_lat_weighted_mean(prehis_India_JJA).mean(
     dim="lon", skipna=True
 )
 prehis_EA_mean = ca.cal_lat_weighted_mean(prehis_EA_JJA).mean(dim="lon", skipna=True)
+
 
 # %%
 #   calculate the water vapor vertical intergration
@@ -212,7 +229,7 @@ uq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
 vq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
 
 
-hislevel = qhis_ver_JJA.coords["plev"] * 100.0
+hislevel = qhis_ver_JJA.coords["plev"]
 hislevel.attrs["units"] = "Pa"
 hisdp = geocat.comp.dpres_plevel(hislevel, sphis_ver_JJA, ptop)
 hisdpg = hisdp / g
@@ -227,7 +244,8 @@ uq_dpg_his = (uq_his * hisdpg.data).sum(dim="plev")
 vq_dpg_his = (vq_his * hisdpg.data).sum(dim="plev")
 uq_dpg_his.attrs["units"] = "[m/s][g/kg]"
 vq_dpg_his.attrs["units"] = "[m/s][g/kg]"
-
+# %%
+print(ERA5level, hislevel)
 # %%
 preCRU_India_mean.coords["time"] = uq_dpg_ERA5.coords["time"]
 (
@@ -739,4 +757,30 @@ axs.format(xlocator=5)
 fig.format(abc="(a)", abcloc="l")
 
 # %%
+ERA5time = uERA5_ver_JJA.coords["time"]
+uERA5_ver_JJA_p1 = uERA5_ver_JJA.sel(time=(uERA5_ver_JJA.time.dt.year < 1970))
+uERA5_ver_JJA_p2 = uERA5_ver_JJA.sel(
+    time=((uERA5_ver_JJA.time.dt.year >= 1970) & (uERA5_ver_JJA.time.dt.year < 1984))
+)
 
+vERA5_ver_JJA_p1 = vERA5_ver_JJA.sel(time=(vERA5_ver_JJA.time.dt.year < 1970))
+vERA5_ver_JJA_p2 = vERA5_ver_JJA.sel(
+    time=((vERA5_ver_JJA.time.dt.year >= 1970) & (vERA5_ver_JJA.time.dt.year < 1984))
+)
+
+hgtERA5_ver_JJA_p1 = hgtERA5_ver_JJA.sel(time=(hgtERA5_ver_JJA.time.dt.year < 1970))
+hgtERA5_ver_JJA_p2 = hgtERA5_ver_JJA.sel(
+    time=(
+        (hgtERA5_ver_JJA.time.dt.year >= 1970) & (hgtERA5_ver_JJA.time.dt.year < 1984)
+    )
+)
+
+uq_dpg_ERA5_ver_JJA_p1 = uq_dpg_ERA5.sel(time=(uq_dpg_ERA5.time.dt.year < 1970))
+uq_dpg_ERA5_ver_JJA_p2 = uq_dpg_ERA5.sel(
+    time=((uq_dpg_ERA5.time.dt.year >= 1970) & (uq_dpg_ERA5.time.dt.year < 1984))
+)
+
+vq_dpg_ERA5_ver_JJA_p1 = vq_dpg_ERA5.sel(time=(vq_dpg_ERA5.time.dt.year < 1970))
+vq_dpg_ERA5_ver_JJA_p2 = vq_dpg_ERA5.sel(
+    time=((vq_dpg_ERA5.time.dt.year >= 1970) & (vq_dpg_ERA5.time.dt.year < 1984))
+)
