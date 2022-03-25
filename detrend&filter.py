@@ -168,14 +168,18 @@ prehis_EA_JJA = prehis_JJA.loc[:, 36:42, 108:118]
 uERA5_ver_JJA = ca.p_time(uERA5_filt, 6, 8, True).loc[:, 100.0:, :, :]
 vERA5_ver_JJA = ca.p_time(vERA5_filt, 6, 8, True).loc[:, 100.0:, :, :]
 qERA5_ver_JJA = ca.p_time(qERA5_filt, 6, 8, True).loc[:, 100.0:, :, :]
-spERA5_ver_JJA = ca.p_time(spERA5_filt, 6, 8, True).loc[:, :, :]
+spERA5_ver_JJA = (
+    ca.p_time(spERA5_filt, 6, 8, True) + ca.p_time(spERA5, 6, 8, True)
+).loc[:, :, :]
 hgtERA5_ver_JJA = ca.p_time(hgtERA5_filt, 6, 8, True).loc[:, 100.0:, :, :]
 
-uhis_ver_JJA = ca.p_time(uhis_filt, 6, 8, True).loc[:, 100.0:, :, :]
-vhis_ver_JJA = ca.p_time(vhis_filt, 6, 8, True).loc[:, 100.0:, :, :]
-qhis_ver_JJA = ca.p_time(qhis_filt, 6, 8, True).loc[:, 100.0:, :, :]
-sphis_ver_JJA = ca.p_time(sphis_filt, 6, 8, True).loc[:, :, :]
-hgthis_ver_JJA = ca.p_time(hgthis_filt, 6, 8, True).loc[:, 100.0:, :, :]
+uhis_ver_JJA = ca.p_time(uhis_filt, 6, 8, True).loc[:, :10000.0, :, :]
+vhis_ver_JJA = ca.p_time(vhis_filt, 6, 8, True).loc[:, :10000.0, :, :]
+qhis_ver_JJA = ca.p_time(qhis_filt, 6, 8, True).loc[:, :10000.0, :, :]
+sphis_ver_JJA = (ca.p_time(sphis_filt, 6, 8, True) + ca.p_time(sphis, 6, 8, True)).loc[
+    :, :, :
+]
+hgthis_ver_JJA = ca.p_time(hgthis_filt, 6, 8, True).loc[:, :10000.0, :, :]
 
 preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
     dim="lon", skipna=True
@@ -225,8 +229,6 @@ uq_dpg_his.attrs["units"] = "[m/s][g/kg]"
 vq_dpg_his.attrs["units"] = "[m/s][g/kg]"
 
 # %%
-print(spERA5_ver_JJA)
-# %%
 preCRU_India_mean.coords["time"] = uq_dpg_ERA5.coords["time"]
 (
     uq_CRU_India_slope,
@@ -242,7 +244,7 @@ preCRU_India_mean.coords["time"] = uq_dpg_ERA5.coords["time"]
     vq_CRU_India_rvalue,
     vq_CRU_India_pvalue,
     vq_CRU_India_hypothesis,
-) = ca.dim_linregress(preCRU_India_mean, vq_dpg_ERA5)
+) = ca.dim_linregress(preCRU_India_mean, ca.standardize(vq_dpg_ERA5))
 
 (
     uq_his_India_slope,
@@ -250,7 +252,7 @@ preCRU_India_mean.coords["time"] = uq_dpg_ERA5.coords["time"]
     uq_his_India_rvalue,
     uq_his_India_pvalue,
     uq_his_India_hypothesis,
-) = ca.dim_linregress(prehis_India_mean, uq_dpg_his)
+) = ca.dim_linregress(prehis_India_mean, ca.standardize(uq_dpg_his))
 
 (
     vq_his_India_slope,
@@ -258,7 +260,7 @@ preCRU_India_mean.coords["time"] = uq_dpg_ERA5.coords["time"]
     vq_his_India_rvalue,
     vq_his_India_pvalue,
     vq_his_India_hypothesis,
-) = ca.dim_linregress(prehis_India_mean, vq_dpg_his)
+) = ca.dim_linregress(prehis_India_mean, ca.standardize(vq_dpg_his))
 # %%
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
@@ -375,6 +377,7 @@ axs[1, 1].format(
 sepl.patches(axs[1, 1], 70.0, 8.0, 16.0, 20.0, proj)
 sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
 fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig_rvalue.format(abc="(a)", abcloc="l")
 # %%
 (
     CRU_India_slope,
@@ -510,6 +513,7 @@ axs[1, 1].format(
 sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
 # ==========================
 fig_rvalue.format(abc="(a)", abcloc="l")
+
 
 # %%
 window = 11
