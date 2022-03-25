@@ -73,7 +73,7 @@ uERA5_filt = ca.butterworth_filter(
 )
 
 fvERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc"
 )
 vERA5 = fvERA5["v"]
 vERA5 = ca.detrend_dim(vERA5, "time", deg=1, demean=False)
@@ -100,7 +100,7 @@ uhis_filt = ca.butterworth_filter(
 )
 
 fvhis = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/CMIP6/historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 vhis = fvhis["va"]
 vhis = ca.detrend_dim(vhis, "time", deg=1, demean=False)
@@ -147,7 +147,7 @@ prehis_ds_filt = ca.butterworth_filter(
 )
 
 fspERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
 )
 spERA5 = fspERA5["sp"]
 spERA5 = ca.detrend_dim(spERA5, "time", deg=1, demean=False)
@@ -156,7 +156,7 @@ spERA5_filt = ca.butterworth_filter(
 )
 
 fsphis = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/CMIP6/historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 sphis = fsphis["ps"]
 sphis = ca.detrend_dim(sphis, "time", deg=1, demean=False)
@@ -165,7 +165,7 @@ sphis_filt = ca.butterworth_filter(
 )
 
 fqERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc"
 )
 qERA5 = fqERA5["q"]
 qERA5 = ca.detrend_dim(qERA5, "time", deg=1, demean=False)
@@ -174,7 +174,7 @@ qERA5_filt = ca.butterworth_filter(
 )
 
 fqhis = xr.open_dataset(
-    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 qhis = fqhis["hus"]
 qhis = ca.detrend_dim(qhis, "time", deg=1, demean=False)
@@ -191,8 +191,17 @@ prehis_JJA = ca.standardize((ca.p_time(prehis_filt, 6, 8, True)))
 prehis_India_JJA = prehis_JJA.loc[:, 8:28, 70:86]
 prehis_EA_JJA = prehis_JJA.loc[:, 36:42, 108:118]
 
-uERA5_ver_JJA = ca.p_time(uERA5filt, 6, 8, True).loc[:, 100.0:, :, :]
+uERA5_ver_JJA = ca.p_time(uERA5_filt, 6, 8, True).loc[:, 100.0:, :, :]
+vERA5_ver_JJA = ca.p_time(vERA5_filt, 6, 8, True).loc[:, 100.0:, :, :]
+qERA5_ver_JJA = ca.p_time(qERA5_filt, 6, 8, True).loc[:, 100.0:, :, :]
+spERA5_ver_JJA = ca.p_time(spERA5_filt, 6, 8, True).loc[:, :, :]
+hgtERA5_ver_JJA = ca.p_time(hgtERA5_filt, 6, 8, True).loc[:, 100.0:, :, :]
 
+uhis_ver_JJA = ca.p_time(uhis_filt, 6, 8, True).loc[:, 100.0:, :, :]
+vhis_ver_JJA = ca.p_time(vhis_filt, 6, 8, True).loc[:, 100.0:, :, :]
+qhis_ver_JJA = ca.p_time(qhis_filt, 6, 8, True).loc[:, 100.0:, :, :]
+sphis_ver_JJA = ca.p_time(sphis_filt, 6, 8, True).loc[:, :, :]
+hgthis_ver_JJA = ca.p_time(hgthis_filt, 6, 8, True).loc[:, 100.0:, :, :]
 # %%
 preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
     dim="lon", skipna=True
