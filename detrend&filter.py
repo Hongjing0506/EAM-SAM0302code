@@ -54,22 +54,22 @@ ya = 2
 yb = 8
 # %%
 #   read obs data
-fhgt_ERA5 = xr.open_dataset(
+fhgtERA5 = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc"
 )
-hgt_ERA5 = fhgt_ERA5["z"]
-hgt_ERA5 = ca.detrend_dim(hgt_ERA5, "time", deg=1, demean=False)
-hgt_ERA5_filt = ca.butterworth_filter(
-    hgt_ERA5 - hgt_ERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+hgtERA5 = fhgtERA5["z"]
+hgtERA5 = ca.detrend_dim(hgtERA5, "time", deg=1, demean=False)
+hgtERA5_filt = ca.butterworth_filter(
+    hgtERA5 - hgtERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
 )
 
-fu_ERA5 = xr.open_dataset(
+fuERA5 = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
 )
-u_ERA5 = fu_ERA5["u"]
-u_ERA5 = ca.detrend_dim(u_ERA5, "time", deg=1, demean=False)
-u_ERA5_filt = ca.butterworth_filter(
-    u_ERA5 - u_ERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+uERA5 = fuERA5["u"]
+uERA5 = ca.detrend_dim(uERA5, "time", deg=1, demean=False)
+uERA5_filt = ca.butterworth_filter(
+    uERA5 - uERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
 )
 
 fvERA5 = xr.open_dataset(
@@ -77,26 +77,26 @@ fvERA5 = xr.open_dataset(
 )
 vERA5 = fvERA5["v"]
 vERA5 = ca.detrend_dim(vERA5, "time", deg=1, demean=False)
-v_ERA5_filt = ca.butterworth_filter(
-    v_ERA5 - v_ERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+vERA5_filt = ca.butterworth_filter(
+    vERA5 - vERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
 )
 
-fhgt_his = xr.open_dataset(
+fhgthis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
-hgt_his = fhgt_his["zg"]
-hgt_his = ca.detrend_dim(hgt_his, "time", deg=1, demean=False)
-hgt_his_filt = ca.butterworth_filter(
-    hgt_his - hgt_his.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+hgthis = fhgthis["zg"]
+hgthis = ca.detrend_dim(hgthis, "time", deg=1, demean=False)
+hgthis_filt = ca.butterworth_filter(
+    hgthis - hgthis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
 )
 
-fu_his = xr.open_dataset(
+fuhis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
 )
-u_his = fu_his["ua"]
-u_his = ca.detrend_dim(u_his, "time", deg=1, demean=False)
-u_his_filt = ca.butterworth_filter(
-    u_his - u_his.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+uhis = fuhis["ua"]
+uhis = ca.detrend_dim(uhis, "time", deg=1, demean=False)
+uhis_filt = ca.butterworth_filter(
+    uhis - uhis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
 )
 
 fvhis = xr.open_dataset(
@@ -104,8 +104,8 @@ fvhis = xr.open_dataset(
 )
 vhis = fvhis["va"]
 vhis = ca.detrend_dim(vhis, "time", deg=1, demean=False)
-v_his_filt = ca.butterworth_filter(
-    v_his - v_his.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+vhis_filt = ca.butterworth_filter(
+    vhis - vhis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
 )
 
 
@@ -127,10 +127,10 @@ prehis_filt = ca.butterworth_filter(
     prehis - prehis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
 )
 
-pr_his_path = (
+prhis_path = (
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr"
 )
-g = os.walk(pr_his_path)
+g = os.walk(prhis_path)
 filepath = []
 modelname_pr = []
 for path, dir_list, file_name in g:
@@ -139,8 +139,8 @@ for path, dir_list, file_name in g:
             filepath.append(os.path.join(path, filename))
             loc = ca.retrieve_allstrindex(filename, "_")
             modelname_pr.append(filename[loc[1] + 1 : loc[2]])
-preds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-prehis_ds = xr.DataArray(preds_his["pr"])
+predshis = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+prehis_ds = xr.DataArray(predshis["pr"])
 prehis_ds.coords["models"] = modelname_pr
 prehis_ds_filt = ca.butterworth_filter(
     prehis_ds - prehis_ds.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
@@ -190,6 +190,8 @@ preCRU_EA_JJA = preCRU_JJA.loc[:, 36:42, 108:118]
 prehis_JJA = ca.standardize((ca.p_time(prehis_filt, 6, 8, True)))
 prehis_India_JJA = prehis_JJA.loc[:, 8:28, 70:86]
 prehis_EA_JJA = prehis_JJA.loc[:, 36:42, 108:118]
+
+uERA5_ver_JJA = ca.p_time(uERA5filt, 6, 8, True).loc[:, 100.0:, :, :]
 
 # %%
 preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
