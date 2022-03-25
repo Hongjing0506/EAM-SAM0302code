@@ -202,6 +202,43 @@ vhis_ver_JJA = ca.p_time(vhis_filt, 6, 8, True).loc[:, 100.0:, :, :]
 qhis_ver_JJA = ca.p_time(qhis_filt, 6, 8, True).loc[:, 100.0:, :, :]
 sphis_ver_JJA = ca.p_time(sphis_filt, 6, 8, True).loc[:, :, :]
 hgthis_ver_JJA = ca.p_time(hgthis_filt, 6, 8, True).loc[:, 100.0:, :, :]
+
+# %%
+#   calculate the waver vapor vertical intergration
+ptop = 100 * 100
+g = 9.8
+ERA5level = qERA5_ver_JJA.coords["level"] * 100.0
+ERA5level.attrs["units"] = "Pa"
+ERA5dp = geocat.comp.dpres_plevel(ERA5level, spERA5_ver_JJA, ptop)
+ERA5dpg = ERA5dp / g
+ERA5dpg.attrs["units"] = "kg/m2"
+# calculate the water vapor transport
+uq_ERA5 = uERA5_ver_JJA * qERA5_ver_JJA * 1000.0
+vq_ERA5 = vERA5_ver_JJA * qERA5_ver_JJA * 1000.0
+uq_ERA5.attrs["units"] = "[m/s][g/kg]"
+vq_ERA5.attrs["units"] = "[m/s][g/kg]"
+# calculate the whole levels water vapor transport
+uq_dpg_ERA5 = (uq_ERA5 * ERA5dpg.data).sum(dim="level")
+vq_dpg_ERA5 = (vq_ERA5 * ERA5dpg.data).sum(dim="level")
+uq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
+vq_dpg_ERA5.attrs["units"] = "[m/s][g/kg]"
+
+
+hislevel = qhis_ver_JJA.coords["plev"] * 100.0
+hislevel.attrs["units"] = "Pa"
+hisdp = geocat.comp.dpres_plevel(hislevel, sphis_ver_JJA, ptop)
+hisdpg = hisdp / g
+hisdpg.attrs["units"] = "kg/m2"
+# calculate the water vapor transport
+uq_his = uhis_ver_JJA * qhis_ver_JJA * 1000.0
+vq_his = vhis_ver_JJA * qhis_ver_JJA * 1000.0
+uq_his.attrs["units"] = "[m/s][g/kg]"
+vq_his.attrs["units"] = "[m/s][g/kg]"
+# calculate the whole levels water vapor transport
+uq_dpg_his = (uq_his * hisdpg.data).sum(dim="plev")
+vq_dpg_his = (vq_his * hisdpg.data).sum(dim="plev")
+uq_dpg_his.attrs["units"] = "[m/s][g/kg]"
+vq_dpg_his.attrs["units"] = "[m/s][g/kg]"
 # %%
 preCRU_India_mean = ca.cal_lat_weighted_mean(preCRU_India_JJA).mean(
     dim="lon", skipna=True
