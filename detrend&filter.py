@@ -784,3 +784,19 @@ vq_dpg_ERA5_ver_JJA_p1 = vq_dpg_ERA5.sel(time=(vq_dpg_ERA5.time.dt.year <= 1966)
 vq_dpg_ERA5_ver_JJA_p2 = vq_dpg_ERA5.sel(
     time=(vq_dpg_ERA5.time.dt.year >= 1967)
 )
+
+# %%
+uERA5_ver_JJA_p1_mean = uERA5_ver_JJA_p1.mean(dim="time", skipna=True)
+uERA5_ver_JJA_p2_mean = uERA5_ver_JJA_p2.mean(dim="time", skipna=True)
+
+vERA5_ver_JJA_p1_mean = vERA5_ver_JJA_p1.mean(dim="time", skipna=True)
+vERA5_ver_JJA_p2_mean = vERA5_ver_JJA_p2.mean(dim="time", skipna=True)
+
+hgtERA5_ver_JJA_p1_mean = hgtERA5_ver_JJA_p1.mean(dim="time", skipna=True)
+hgtERA5_ver_JJA_p2_mean = hgtERA5_ver_JJA_p2.mean(dim="time", skipna=True)
+
+uq_dpg_ERA5_ver_JJA_p1_mean = uq_dpg_ERA5_ver_JJA_p1.mean(dim="time", skipna=True)
+uq_dpg_ERA5_ver_JJA_p2_mean = uq_dpg_ERA5_ver_JJA_p2.mean(dim="time", skipna=True)
+
+vq_dpg_ERA5_ver_JJA_p1_mean = vq_dpg_ERA5_ver_JJA_p1.mean(dim="time", skipna=True)
+vq_dpg_ERA5_ver_JJA_p2_mean = vq_dpg_ERA5_ver_JJA_p2.mean(dim="time", skipna=True)
