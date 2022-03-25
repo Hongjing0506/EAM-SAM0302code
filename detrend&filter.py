@@ -72,6 +72,15 @@ u_ERA5_filt = ca.butterworth_filter(
     u_ERA5 - u_ERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
 )
 
+fvERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc"
+)
+vERA5 = fvERA5["v"]
+vERA5 = ca.detrend_dim(vERA5, "time", deg=1, demean=False)
+v_ERA5_filt = ca.butterworth_filter(
+    v_ERA5 - v_ERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
+
 fhgt_his = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
@@ -89,6 +98,16 @@ u_his = ca.detrend_dim(u_his, "time", deg=1, demean=False)
 u_his_filt = ca.butterworth_filter(
     u_his - u_his.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
 )
+
+fvhis = xr.open_dataset(
+    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/CMIP6/historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+vhis = fvhis["va"]
+vhis = ca.detrend_dim(vhis, "time", deg=1, demean=False)
+v_his_filt = ca.butterworth_filter(
+    v_his - v_his.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
+
 
 fpreCRU = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/cru_ts4.01_r144x72_195001-201412.nc"
@@ -125,6 +144,42 @@ prehis_ds = xr.DataArray(preds_his["pr"])
 prehis_ds.coords["models"] = modelname_pr
 prehis_ds_filt = ca.butterworth_filter(
     prehis_ds - prehis_ds.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
+
+fspERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
+)
+spERA5 = fspERA5["sp"]
+spERA5 = ca.detrend_dim(spERA5, "time", deg=1, demean=False)
+spERA5_filt = ca.butterworth_filter(
+    spERA5 - spERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
+
+fsphis = xr.open_dataset(
+    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/CMIP6/historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+sphis = fsphis["ps"]
+sphis = ca.detrend_dim(sphis, "time", deg=1, demean=False)
+sphis_filt = ca.butterworth_filter(
+    sphis - sphis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
+
+fqERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc"
+)
+qERA5 = fqERA5["q"]
+qERA5 = ca.detrend_dim(qERA5, "time", deg=1, demean=False)
+qERA5_filt = ca.butterworth_filter(
+    qERA5 - qERA5.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
+)
+
+fqhis = xr.open_dataset(
+    "/home/ys17-23/Extension/persenal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+qhis = fqhis["hus"]
+qhis = ca.detrend_dim(qhis, "time", deg=1, demean=False)
+qhis_filt = ca.butterworth_filter(
+    qhis - qhis.mean(dim="time", skipna=True), 8, ya * 12, yb * 12, "bandpass"
 )
 
 # %%
@@ -284,7 +339,7 @@ sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
 fig_rvalue.format(abc="(a)", abcloc="l")
 
 # %%
-window = 7
+window = 11
 freq = "AS-JUL"
 CRUtime = preCRU_India_mean.coords["time"]
 histime = prehis_India_mean.coords["time"]
