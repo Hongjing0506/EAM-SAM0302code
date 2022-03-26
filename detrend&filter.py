@@ -1106,6 +1106,67 @@ qk = axs[1, 1].quiverkey(
 axs[1, 1].format(ltitle="1967-2001", rtitle="500hPa")
 axs[1, 1].colorbar(con, loc="r", ticklen=0, labelsize=7, label="gpm", ticklabelsize=6, width=0.14, pad=0.8)
 # ===========================================
+#   the difference of 500hPa hgt and uv
+con = axs[1, 2].contourf(
+    hgtERA5_ver_JJA_diff_mean.sel(level=500.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    extend="both",
+    zorder=0.8,
+    levels=np.arange(-30, 31, 3)
+)
+axs[1, 2].contour(
+    hgtERA5_mask.sel(level=500.0),
+    color="grey7",
+    vmin=1.0,
+    vmax=1.0,
+    lw=1.0,
+    linestyle="--"
+)
+
+axs[1, 2].quiver(
+    uERA5_ver_JJA_diff_mean.sel(level=500.0)[::ski, ::ski],
+    vERA5_ver_JJA_diff_mean.sel(level=500.0)[::ski, ::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.7,
+    pivot="mid",
+    color="grey6",
+)
+m = axs[1, 2].quiver(
+    (uERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=500.0)[::ski, ::ski],
+    (vERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=500.0)[::ski, ::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.7,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[1, 2].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=3,
+    label="3 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+
+axs[1, 2].format(ltitle="diff P2-P1", rtitle="500hPa")
+cb = axs[1, 2].colorbar(con, loc="r", ticklen=0, labelsize=7, label="gpm", ticklabelsize=6, width=0.14, pad=0.8)
+cb.set_ticks(np.arange(-30, 31, 6))
+
+
+# ===========================================
 #   850 hPa
 con = axs[2, 0].contourf(
     hgtERA5_ver_JJA_p1_mean.sel(level=850.0),
@@ -1180,6 +1241,65 @@ qk = axs[2, 1].quiverkey(
 axs[2, 1].format(ltitle="1967-2001", rtitle="850hPa")
 axs[2, 1].colorbar(con, loc="r", ticklen=0, labelsize=7, label="gpm", ticklabelsize=6, width=0.14, pad=0.8)
 # ========================================
+
+#   the difference of 850hPa hgt and uv
+con = axs[2, 2].contourf(
+    hgtERA5_ver_JJA_diff_mean.sel(level=850.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    extend="both",
+    zorder=0.8,
+    levels=np.arange(-10, 11, 2)
+)
+axs[2, 2].contour(
+    hgtERA5_mask.sel(level=850.0),
+    color="grey7",
+    vmin=1.0,
+    vmax=1.0,
+    lw=1.0,
+    linestyle="--"
+)
+
+axs[2, 2].quiver(
+    uERA5_ver_JJA_diff_mean.sel(level=850.0)[::ski, ::ski],
+    vERA5_ver_JJA_diff_mean.sel(level=850.0)[::ski, ::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.6,
+    pivot="mid",
+    color="grey6",
+)
+m = axs[2, 2].quiver(
+    (uERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=850.0)[::ski, ::ski],
+    (vERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=850.0)[::ski, ::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.6,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[2, 2].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=3,
+    label="3 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+
+axs[2, 2].format(ltitle="diff P2-P1", rtitle="850hPa")
+cb = axs[2, 2].colorbar(con, loc="r", ticklen=0, labelsize=7, label="gpm", ticklabelsize=6, width=0.14, pad=0.8)
+cb.set_ticks(np.arange(-10, 11, 2))
 fig.format(abc="(a)", abcloc="l", suptitle="hgt & UV")
 # %%
 utmp = uERA5_mask.where(abs(uERA5_mask) >= uERA5_mask)
