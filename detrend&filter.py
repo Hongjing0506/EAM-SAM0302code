@@ -806,6 +806,15 @@ div_uqvq_ERA5_p2 = ca.cal_divergence(
     uq_dpg_ERA5_ver_JJA_p2_mean, vq_dpg_ERA5_ver_JJA_p2_mean
 )
 # %%
+#   calculate the difference of P1 and P2
+uERA5_ver_JJA_diff_mean = uERA5_ver_JJA_p2_mean - uERA5_ver_JJA_p1_mean
+vERA5_ver_JJA_diff_mean = vERA5_ver_JJA_p2_mean - vERA5_ver_JJA_p1_mean
+hgtERA5_ver_JJA_diff_mean = hgtERA5_ver_JJA_p2_mean - hgtERA5_ver_JJA_p1_mean
+uq_dpg_ERA5_ver_JJA_diff_mean = uq_dpg_ERA5_ver_JJA_p2_mean - uq_dpg_ERA5_ver_JJA_p1_mean
+vq_dpg_ERA5_ver_JJA_diff_mean = vq_dpg_ERA5_ver_JJA_p2_mean - vq_dpg_ERA5_ver_JJA_p1_mean
+# %%
+
+# %%
 #   plot the different periods plots
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
@@ -815,7 +824,7 @@ proj = pplt.PlateCarree(central_longitude=cl)
 fig = pplt.figure(
     span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
 )
-axs = fig.subplots(ncols=2, nrows=3, proj=proj)
+axs = fig.subplots(ncols=3, nrows=3, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
 xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
