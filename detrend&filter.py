@@ -878,7 +878,7 @@ for ax in axs[:2]:
         linestyle="--",
         zorder=0.9,
     )
-for ax in axs[2:4]:
+for ax in axs[3:5]:
     ax.contour(
         hgtERA5_ver_JJA.sel(level=500.0).mean(dim="time", skipna=True),
         levels=np.arange(llim_500, hlim_500 + spacing_500 / 2, spacing_200),
@@ -888,7 +888,7 @@ for ax in axs[2:4]:
         zorder=0.9,
     )
 
-for ax in axs[4:6]:
+for ax in axs[6:8]:
     ax.contour(
         hgtERA5_ver_JJA.sel(level=850.0).mean(dim="time", skipna=True),
         levels=np.arange(llim_850, hlim_850 + spacing_850 / 2, spacing_200),
@@ -969,6 +969,56 @@ qk = axs[0, 1].quiverkey(
     zorder=3.1,
 )
 axs[0, 1].format(ltitle="1967-2001", rtitle="200hPa")
+axs[0, 1].colorbar(con, loc="r", ticklen=0, label="gpm")
+# ===========================================
+#   the difference of 200hPa hgt and uv
+con = axs[0, 2].contourf(
+    hgtERA5_ver_JJA_diff_mean.sel(level=200.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    extend="both",
+    zorder=0.8,
+    levels=np.arange(-60, 61, 6)
+)
+axs[0, 2].contour(
+    hgtERA5_mask.sel(level=200.0),
+    color="grey7",
+    vmin=1.0,
+    vmax=1.0,
+    lw=1.0,
+    linestyle="--"
+)
+
+
+# m = axs[0, 1].quiver(
+#     uERA5_ver_JJA_p2_mean.sel(level=200.0)[::ski, ::ski],
+#     vERA5_ver_JJA_p2_mean.sel(level=200.0)[::ski, ::ski],
+#     zorder=1,
+#     headwidth=2.6,
+#     headlength=2.3,
+#     headaxislength=2.3,
+#     scale_units="xy",
+#     scale=2.0,
+#     pivot="mid",
+#     color="black",
+# )
+
+# qk = axs[0, 1].quiverkey(
+#     m,
+#     X=1 - w / 2,
+#     Y=0.7 * h,
+#     U=10,
+#     label="10 m/s",
+#     labelpos="S",
+#     labelsep=0.05,
+#     fontproperties={"size": 5},
+#     zorder=3.1,
+# )
+
+axs[0, 2].format(ltitle="diff P2-P2", rtitle="200hPa")
+axs[0, 2].colorbar(con, loc="r", ticklen=0, label="gpm")
+
+
 # ===========================================
 #   500 hPa
 con = axs[1, 0].contourf(
@@ -1042,6 +1092,7 @@ qk = axs[1, 1].quiverkey(
     zorder=3.1,
 )
 axs[1, 1].format(ltitle="1967-2001", rtitle="500hPa")
+axs[1, 1].colorbar(con, loc="r", ticklen=0, label="gpm")
 # ===========================================
 #   850 hPa
 con = axs[2, 0].contourf(
@@ -1115,6 +1166,7 @@ qk = axs[2, 1].quiverkey(
     zorder=3.1,
 )
 axs[2, 1].format(ltitle="1967-2001", rtitle="850hPa")
+axs[2, 1].colorbar(con, loc="r", ticklen=0, label="gpm")
 # ========================================
 fig.format(abc="(a)", abcloc="l", suptitle="hgt & UV")
 # %%
