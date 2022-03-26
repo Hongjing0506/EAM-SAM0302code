@@ -545,6 +545,8 @@ sepl.patches(axs[1, 1], 70.0, 8.0, 16.0, 20.0, proj)
 sepl.patches(axs[1, 1], 108, 36, 10.0, 6.0, proj)
 fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 # %%
+preCRU_JJA.coords["time"] = preCRU_India_mean.time
+
 (
     CRU_India_slope,
     CRU_India_intercept,
@@ -813,6 +815,18 @@ hgtERA5_ver_JJA_diff_mean = hgtERA5_ver_JJA_p2_mean - hgtERA5_ver_JJA_p1_mean
 uq_dpg_ERA5_ver_JJA_diff_mean = uq_dpg_ERA5_ver_JJA_p2_mean - uq_dpg_ERA5_ver_JJA_p1_mean
 vq_dpg_ERA5_ver_JJA_diff_mean = vq_dpg_ERA5_ver_JJA_p2_mean - vq_dpg_ERA5_ver_JJA_p1_mean
 # %%
+#   calculate the check
+clevel = 0.95
+uERA5_mask = ca.generate_tmask(uERA5_ver_JJA_p1, uERA5_ver_JJA_p2, clevel)
+vERA5_mask = ca.generate_tmask(vERA5_ver_JJA_p1, vERA5_ver_JJA_p2, clevel)
+hgtERA5_mask = ca.generate_tmask(hgtERA5_ver_JJA_p1, hgtERA5_ver_JJA_p2, clevel)
+uq_dpg_ERA5_mask = ca.generate_tmask(uq_dpg_ERA5_ver_JJA_p1, uq_dpg_ERA5_ver_JJA_p2, clevel)
+vq_dpg_ERA5_mask = ca.generate_tmask(vq_dpg_ERA5_ver_JJA_p1, vq_dpg_ERA5_ver_JJA_p2, clevel)
+# %%
+#   calculate the wind check
+wind_ERA5_mask = ca.wind_check(uERA5_mask, vERA5_mask, uERA5_mask, vERA5_mask)
+vq_ERA5_mask = ca.wind_check(uq_dpg_ERA5_mask, vq_dpg_ERA5_mask, uq_dpg_ERA5_mask, vq_dpg_ERA5_mask)
+
 
 # %%
 #   plot the different periods plots
@@ -1103,4 +1117,6 @@ qk = axs[2, 1].quiverkey(
 axs[2, 1].format(ltitle="1967-2001", rtitle="850hPa")
 # ========================================
 fig.format(abc="(a)", abcloc="l", suptitle="hgt & UV")
+# %%
+print(preCRU_India_mean)
 # %%
