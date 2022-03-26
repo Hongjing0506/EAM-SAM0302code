@@ -244,8 +244,7 @@ uq_dpg_his = (uq_his * hisdpg.data).sum(dim="plev")
 vq_dpg_his = (vq_his * hisdpg.data).sum(dim="plev")
 uq_dpg_his.attrs["units"] = "[m/s][g/kg]"
 vq_dpg_his.attrs["units"] = "[m/s][g/kg]"
-# %%
-print(ERA5level, hislevel)
+
 # %%
 preCRU_India_mean.coords["time"] = uq_dpg_ERA5.coords["time"]
 (
@@ -760,29 +759,27 @@ fig.format(abc="(a)", abcloc="l")
 ERA5time = uERA5_ver_JJA.coords["time"]
 uERA5_ver_JJA_p1 = uERA5_ver_JJA.sel(time=(uERA5_ver_JJA.time.dt.year <= 1966))
 uERA5_ver_JJA_p2 = uERA5_ver_JJA.sel(
-    time=(uERA5_ver_JJA.time.dt.year >= 1967)
+    time=((uq_dpg_ERA5.time.dt.year >= 1967) & (uq_dpg_ERA5.time.dt.year <= 2001))
 )
 
 vERA5_ver_JJA_p1 = vERA5_ver_JJA.sel(time=(vERA5_ver_JJA.time.dt.year <= 1966))
 vERA5_ver_JJA_p2 = vERA5_ver_JJA.sel(
-    time=(vERA5_ver_JJA.time.dt.year >= 1967)
+    time=(uq_dpg_ERA5.time.dt.year >= 1967) & (uq_dpg_ERA5.time.dt.year <= 2001)
 )
 
 hgtERA5_ver_JJA_p1 = hgtERA5_ver_JJA.sel(time=(hgtERA5_ver_JJA.time.dt.year <= 1966))
 hgtERA5_ver_JJA_p2 = hgtERA5_ver_JJA.sel(
-    time=(
-        hgtERA5_ver_JJA.time.dt.year >= 1967
-    )
+    time=((uq_dpg_ERA5.time.dt.year >= 1967) & (uq_dpg_ERA5.time.dt.year <= 2001))
 )
 
 uq_dpg_ERA5_ver_JJA_p1 = uq_dpg_ERA5.sel(time=(uq_dpg_ERA5.time.dt.year <= 1966))
 uq_dpg_ERA5_ver_JJA_p2 = uq_dpg_ERA5.sel(
-    time=(uq_dpg_ERA5.time.dt.year >= 1967)
+    time=((uq_dpg_ERA5.time.dt.year >= 1967) & (uq_dpg_ERA5.time.dt.year <= 2001))
 )
 
 vq_dpg_ERA5_ver_JJA_p1 = vq_dpg_ERA5.sel(time=(vq_dpg_ERA5.time.dt.year <= 1966))
 vq_dpg_ERA5_ver_JJA_p2 = vq_dpg_ERA5.sel(
-    time=(vq_dpg_ERA5.time.dt.year >= 1967)
+    time=((uq_dpg_ERA5.time.dt.year >= 1967) & (uq_dpg_ERA5.time.dt.year <= 2001))
 )
 
 # %%
@@ -800,3 +797,301 @@ uq_dpg_ERA5_ver_JJA_p2_mean = uq_dpg_ERA5_ver_JJA_p2.mean(dim="time", skipna=Tru
 
 vq_dpg_ERA5_ver_JJA_p1_mean = vq_dpg_ERA5_ver_JJA_p1.mean(dim="time", skipna=True)
 vq_dpg_ERA5_ver_JJA_p2_mean = vq_dpg_ERA5_ver_JJA_p2.mean(dim="time", skipna=True)
+# %%
+#   calculate the divergence of water vapor flux
+div_uqvq_ERA5_p1 = ca.cal_divergence(
+    uq_dpg_ERA5_ver_JJA_p1_mean, vq_dpg_ERA5_ver_JJA_p1_mean
+)
+div_uqvq_ERA5_p2 = ca.cal_divergence(
+    uq_dpg_ERA5_ver_JJA_p2_mean, vq_dpg_ERA5_ver_JJA_p2_mean
+)
+# %%
+#   plot the different periods plots
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig.subplots(ncols=2, nrows=3, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+llim_200 = 12100
+hlim_200 = 12540
+spacing_200 = 40
+
+llim_500 = 5600
+hlim_500 = 5920
+spacing_500 = 40
+
+llim_850 = 1320
+hlim_850 = 1560
+spacing_850 = 20
+
+ski = 2
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    rect = Rectangle(
+        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
+    )
+    ax.add_patch(rect)
+for ax in axs[:2]:
+    ax.contour(
+        hgtERA5_ver_JJA.sel(level=200.0).mean(dim="time", skipna=True),
+        levels=np.arange(llim_200, hlim_200 + spacing_200 / 2, spacing_200),
+        lw=0.8,
+        color="grey5",
+        linestyle="--",
+        zorder=0.9,
+    )
+for ax in axs[2:4]:
+    ax.contour(
+        hgtERA5_ver_JJA.sel(level=500.0).mean(dim="time", skipna=True),
+        levels=np.arange(llim_500, hlim_500 + spacing_500 / 2, spacing_200),
+        lw=0.8,
+        color="grey5",
+        linestyle="--",
+        zorder=0.9,
+    )
+
+for ax in axs[4:6]:
+    ax.contour(
+        hgtERA5_ver_JJA.sel(level=850.0).mean(dim="time", skipna=True),
+        levels=np.arange(llim_850, hlim_850 + spacing_850 / 2, spacing_200),
+        lw=0.8,
+        color="grey5",
+        linestyle="--",
+        zorder=0.9,
+    )
+# ===================================================
+con = axs[0, 0].contourf(
+    hgtERA5_ver_JJA_p1_mean.sel(level=200.0),
+    cmap="YlOrRd",
+    cmap_kw={"right": 0.77},
+    extend="both",
+    levels=np.arange(llim_200, hlim_200 + spacing_200 / 2, spacing_200),
+    zorder=0.8,
+)
+
+
+m = axs[0, 0].quiver(
+    uERA5_ver_JJA_p1_mean.sel(level=200.0)[::ski, ::ski],
+    vERA5_ver_JJA_p1_mean.sel(level=200.0)[::ski, ::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=2.0,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0, 0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=10,
+    label="10 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[0, 0].format(ltitle="1950-1966", rtitle="200hPa")
+# ===========================================
+con = axs[0, 1].contourf(
+    hgtERA5_ver_JJA_p2_mean.sel(level=200.0),
+    cmap="YlOrRd",
+    cmap_kw={"right": 0.77},
+    extend="both",
+    levels=np.arange(llim_200, hlim_200 + spacing_200 / 2, spacing_200),
+    zorder=0.8,
+)
+
+
+m = axs[0, 1].quiver(
+    uERA5_ver_JJA_p2_mean.sel(level=200.0)[::ski, ::ski],
+    vERA5_ver_JJA_p2_mean.sel(level=200.0)[::ski, ::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=2.0,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0, 1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=10,
+    label="10 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[0, 1].format(ltitle="1967-2001", rtitle="200hPa")
+# ===========================================
+#   500 hPa
+con = axs[1, 0].contourf(
+    hgtERA5_ver_JJA_p1_mean.sel(level=500.0),
+    cmap="YlOrRd",
+    cmap_kw={"right": 0.77},
+    extend="both",
+    levels=np.arange(llim_500, hlim_500 + spacing_500 / 2, spacing_500),
+    zorder=0.8,
+)
+
+
+m = axs[1, 0].quiver(
+    uERA5_ver_JJA_p1_mean.sel(level=500.0)[::ski, ::ski],
+    vERA5_ver_JJA_p1_mean.sel(level=500.0)[::ski, ::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=1.3,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[1, 0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=8,
+    label="8 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[1, 0].format(ltitle="1950-1966", rtitle="500hPa")
+# ===========================================
+con = axs[1, 1].contourf(
+    hgtERA5_ver_JJA_p2_mean.sel(level=500.0),
+    cmap="YlOrRd",
+    cmap_kw={"right": 0.77},
+    extend="both",
+    levels=np.arange(llim_500, hlim_500 + spacing_500 / 2, spacing_500),
+    zorder=0.8,
+)
+
+
+m = axs[1, 1].quiver(
+    uERA5_ver_JJA_p2_mean.sel(level=500.0)[::ski, ::ski],
+    vERA5_ver_JJA_p2_mean.sel(level=500.0)[::ski, ::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=1.3,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[1, 1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=8,
+    label="8 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[1, 1].format(ltitle="1967-2001", rtitle="500hPa")
+# ===========================================
+#   850 hPa
+con = axs[2, 0].contourf(
+    hgtERA5_ver_JJA_p1_mean.sel(level=850.0),
+    cmap="YlOrRd",
+    cmap_kw={"right": 0.77},
+    extend="both",
+    levels=np.arange(llim_850, hlim_850 + spacing_850 / 2, spacing_850),
+    zorder=0.8,
+)
+
+
+m = axs[2, 0].quiver(
+    uERA5_ver_JJA_p1_mean.sel(level=850.0)[::ski, ::ski],
+    vERA5_ver_JJA_p1_mean.sel(level=850.0)[::ski, ::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=1.5,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[2, 0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=5,
+    label="5 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[2, 0].format(ltitle="1950-1966", rtitle="850hPa")
+# ===========================================
+con = axs[2, 1].contourf(
+    hgtERA5_ver_JJA_p2_mean.sel(level=850.0),
+    cmap="YlOrRd",
+    cmap_kw={"right": 0.77},
+    extend="both",
+    levels=np.arange(llim_850, hlim_850 + spacing_850 / 2, spacing_850),
+    zorder=0.8,
+)
+
+
+m = axs[2, 1].quiver(
+    uERA5_ver_JJA_p2_mean.sel(level=850.0)[::ski, ::ski],
+    vERA5_ver_JJA_p2_mean.sel(level=850.0)[::ski, ::ski],
+    zorder=1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=1.5,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[2, 1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=5,
+    label="5 m/s",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[2, 1].format(ltitle="1967-2001", rtitle="850hPa")
+# ========================================
+fig.format(abc="(a)", abcloc="l", suptitle="hgt & UV")
+# %%
