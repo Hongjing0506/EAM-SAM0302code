@@ -345,7 +345,7 @@ sepl.plt_sig(
 axs[0, 0].quiver(
     u_ERA5_EAM_rvalue.sel(level=200.0)[::ski, ::ski],
     v_ERA5_EAM_rvalue.sel(level=200.0)[::ski, ::ski],
-    zorder=2.0,
+    zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
     headaxislength=2.3,
@@ -358,7 +358,7 @@ axs[0, 0].quiver(
 m = axs[0, 0].quiver(
     u_ERA5_EAM_rvalue.where(wind_ERA5_EAM_mask > 0.0).sel(level=200.0)[::ski, ::ski],
     v_ERA5_EAM_rvalue.where(wind_ERA5_EAM_mask > 0.0).sel(level=200.0)[::ski, ::ski],
-    zorder=2.0,
+    zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
     headaxislength=2.3,
@@ -381,430 +381,286 @@ qk = axs[0, 0].quiverkey(
 )
 axs[0, 0].format(ltitle="EAM index", rtitle="ERA5 200hPa")
 # ===========================================
-# con = axs[0, 1].contourf(
-#     hgtERA5_ver_JJA_p2_mean.sel(level=200.0),
-#     cmap="ColdHot",
-#     cmap_kw={"right": 0.77},
-#     levels=np.arange(-1.0, 1.1, 0.1),
-#     zorder=0.8,
-# )
+
+con = axs[1, 0].contourf(
+    hgt_ERA5_EAM_rvalue.sel(level=500.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    hgt_ERA5_EAM_pvalue.sel(level=500.0),
+    axs[1, 0],
+    n,
+    np.where(hgt_ERA5_EAM_pvalue.sel(level=500.0)[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[1, 0].quiver(
+    u_ERA5_EAM_rvalue.sel(level=500.0)[::ski, ::ski],
+    v_ERA5_EAM_rvalue.sel(level=500.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[1, 0].quiver(
+    u_ERA5_EAM_rvalue.where(wind_ERA5_EAM_mask > 0.0).sel(level=500.0)[::ski, ::ski],
+    v_ERA5_EAM_rvalue.where(wind_ERA5_EAM_mask > 0.0).sel(level=500.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[1, 0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[1, 0].format(ltitle="EAM index", rtitle="ERA5 500hPa")
+# ===================================================
+con = axs[2, 0].contourf(
+    hgt_ERA5_EAM_rvalue.sel(level=850.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    hgt_ERA5_EAM_pvalue.sel(level=850.0),
+    axs[2, 0],
+    n,
+    np.where(hgt_ERA5_EAM_pvalue.sel(level=850.0)[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[2, 0].quiver(
+    u_ERA5_EAM_rvalue.sel(level=850.0)[::ski, ::ski],
+    v_ERA5_EAM_rvalue.sel(level=850.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[2, 0].quiver(
+    u_ERA5_EAM_rvalue.where(wind_ERA5_EAM_mask > 0.0).sel(level=850.0)[::ski, ::ski],
+    v_ERA5_EAM_rvalue.where(wind_ERA5_EAM_mask > 0.0).sel(level=850.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[2, 0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[2, 0].format(ltitle="EAM index", rtitle="ERA5 850hPa")
+# ===================================================
+#   plot the historical run result
+con = axs[0, 1].contourf(
+    hgt_his_EAM_rvalue.sel(level=200.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    hgt_his_EAM_pvalue.sel(level=200.0),
+    axs[0, 1],
+    n,
+    np.where(hgt_his_EAM_pvalue.sel(level=200.0)[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[0, 1].quiver(
+    u_his_EAM_rvalue.sel(level=200.0)[::ski, ::ski],
+    v_his_EAM_rvalue.sel(level=200.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[0, 1].quiver(
+    u_his_EAM_rvalue.where(wind_his_EAM_mask > 0.0).sel(level=200.0)[::ski, ::ski],
+    v_his_EAM_rvalue.where(wind_his_EAM_mask > 0.0).sel(level=200.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0, 1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[0, 1].format(ltitle="EAM index", rtitle="historical 200hPa")
+# ===========================================
+
+con = axs[1, 1].contourf(
+    hgt_his_EAM_rvalue.sel(level=500.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    hgt_his_EAM_pvalue.sel(level=500.0),
+    axs[1, 1],
+    n,
+    np.where(hgt_his_EAM_pvalue.sel(level=500.0)[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[1, 1].quiver(
+    u_his_EAM_rvalue.sel(level=500.0)[::ski, ::ski],
+    v_his_EAM_rvalue.sel(level=500.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[1, 1].quiver(
+    u_his_EAM_rvalue.where(wind_his_EAM_mask > 0.0).sel(level=500.0)[::ski, ::ski],
+    v_his_EAM_rvalue.where(wind_his_EAM_mask > 0.0).sel(level=500.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[1, 1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[1, 1].format(ltitle="EAM index", rtitle="historical 500hPa")
+# ===================================================
+con = axs[2, 1].contourf(
+    hgt_his_EAM_rvalue.sel(level=850.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    hgt_his_EAM_pvalue.sel(level=850.0),
+    axs[2, 1],
+    n,
+    np.where(hgt_his_EAM_pvalue.sel(level=850.0)[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[2, 1].quiver(
+    u_his_EAM_rvalue.sel(level=850.0)[::ski, ::ski],
+    v_his_EAM_rvalue.sel(level=850.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[2, 1].quiver(
+    u_his_EAM_rvalue.where(wind_his_EAM_mask > 0.0).sel(level=850.0)[::ski, ::ski],
+    v_his_EAM_rvalue.where(wind_his_EAM_mask > 0.0).sel(level=850.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[2, 1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[2, 1].format(ltitle="EAM index", rtitle="historical 850hPa")
+# ===================================================
 
 
-# m = axs[0, 1].quiver(
-#     uERA5_ver_JJA_p2_mean.sel(level=200.0)[::ski, ::ski],
-#     vERA5_ver_JJA_p2_mean.sel(level=200.0)[::ski, ::ski],
-#     zorder=1,
-#     headwidth=2.6,
-#     headlength=2.3,
-#     headaxislength=2.3,
-#     scale_units="xy",
-#     scale=2.0,
-#     pivot="mid",
-#     color="black",
-# )
-
-# qk = axs[0, 1].quiverkey(
-#     m,
-#     X=1 - w / 2,
-#     Y=0.7 * h,
-#     U=10,
-#     label="10 m/s",
-#     labelpos="S",
-#     labelsep=0.05,
-#     fontproperties={"size": 5},
-#     zorder=3.1,
-# )
-# axs[0, 1].format(ltitle="1967-2001", rtitle="200hPa")
-# axs[0, 1].colorbar(
-#     con,
-#     loc="r",
-#     ticklen=0,
-#     labelsize=7,
-#     label="gpm",
-#     ticklabelsize=6,
-#     width=0.14,
-#     pad=0.8,
-# )
-# # ===========================================
-# #   the difference of 200hPa hgt and uv
-# con = axs[0, 2].contourf(
-#     hgtERA5_ver_JJA_diff_mean.sel(level=200.0),
-#     cmap="ColdHot",
-#     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-#     zorder=0.8,
-#     levels=np.arange(-60, 61, 6),
-# )
-# axs[0, 2].contour(
-#     hgtERA5_mask.sel(level=200.0),
-#     color="grey7",
-#     vmin=1.0,
-#     vmax=1.0,
-#     lw=1.0,
-#     linestyle="--",
-# )
-
-# axs[0, 2].quiver(
-#     uERA5_ver_JJA_diff_mean.sel(level=200.0)[::ski, ::ski],
-#     vERA5_ver_JJA_diff_mean.sel(level=200.0)[::ski, ::ski],
-#     zorder=1,
-#     headwidth=2.6,
-#     headlength=2.3,
-#     headaxislength=2.3,
-#     scale_units="xy",
-#     scale=1.0,
-#     pivot="mid",
-#     color="grey6",
-# )
-# m = axs[0, 2].quiver(
-#     (uERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=200.0)[
-#         ::ski, ::ski
-#     ],
-#     (vERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=200.0)[
-#         ::ski, ::ski
-#     ],
-#     zorder=1,
-#     headwidth=2.6,
-#     headlength=2.3,
-#     headaxislength=2.3,
-#     scale_units="xy",
-#     scale=1.0,
-#     pivot="mid",
-#     color="black",
-# )
-
-# qk = axs[0, 2].quiverkey(
-#     m,
-#     X=1 - w / 2,
-#     Y=0.7 * h,
-#     U=3,
-#     label="3 m/s",
-#     labelpos="S",
-#     labelsep=0.05,
-#     fontproperties={"size": 5},
-#     zorder=3.1,
-# )
-
-# axs[0, 2].format(ltitle="diff P2-P1", rtitle="200hPa")
-# cb = axs[0, 2].colorbar(
-#     con,
-#     loc="r",
-#     ticklen=0,
-#     labelsize=7,
-#     label="gpm",
-#     ticklabelsize=6,
-#     width=0.14,
-#     pad=0.8,
-# )
-# cb.set_ticks(np.arange(-60, 61, 12))
-
-
-# # ===========================================
-# #   500 hPa
-# con = axs[1, 0].contourf(
-#     hgtERA5_ver_JJA_p1_mean.sel(level=500.0),
-#     cmap="ColdHot",
-#     cmap_kw={"right": 0.77},
-#     levels=np.arange(llim_500, hlim_500 + spacing_500 / 2, spacing_500),
-#     zorder=0.8,
-# )
-
-
-# m = axs[1, 0].quiver(
-#     uERA5_ver_JJA_p1_mean.sel(level=500.0)[::ski, ::ski],
-#     vERA5_ver_JJA_p1_mean.sel(level=500.0)[::ski, ::ski],
-#     zorder=1,
-#     headwidth=2.6,
-#     headlength=2.3,
-#     headaxislength=2.3,
-#     scale_units="xy",
-#     scale=1.3,
-#     pivot="mid",
-#     color="black",
-# )
-
-# qk = axs[1, 0].quiverkey(
-#     m,
-#     X=1 - w / 2,
-#     Y=0.7 * h,
-#     U=8,
-#     label="8 m/s",
-#     labelpos="S",
-#     labelsep=0.05,
-#     fontproperties={"size": 5},
-#     zorder=3.1,
-# )
-# axs[1, 0].format(ltitle="1950-1966", rtitle="500hPa")
-# # ===========================================
-# con = axs[1, 1].contourf(
-#     hgtERA5_ver_JJA_p2_mean.sel(level=500.0),
-#     cmap="ColdHot",
-#     cmap_kw={"right": 0.77},
-#     levels=np.arange(llim_500, hlim_500 + spacing_500 / 2, spacing_500),
-#     zorder=0.8,
-# )
-
-
-# m = axs[1, 1].quiver(
-#     uERA5_ver_JJA_p2_mean.sel(level=500.0)[::ski, ::ski],
-#     vERA5_ver_JJA_p2_mean.sel(level=500.0)[::ski, ::ski],
-#     zorder=1,
-#     headwidth=2.6,
-#     headlength=2.3,
-#     headaxislength=2.3,
-#     scale_units="xy",
-#     scale=1.3,
-#     pivot="mid",
-#     color="black",
-# )
-
-# qk = axs[1, 1].quiverkey(
-#     m,
-#     X=1 - w / 2,
-#     Y=0.7 * h,
-#     U=8,
-#     label="8 m/s",
-#     labelpos="S",
-#     labelsep=0.05,
-#     fontproperties={"size": 5},
-#     zorder=3.1,
-# )
-# axs[1, 1].format(ltitle="1967-2001", rtitle="500hPa")
-# axs[1, 1].colorbar(
-#     con,
-#     loc="r",
-#     ticklen=0,
-#     labelsize=7,
-#     label="gpm",
-#     ticklabelsize=6,
-#     width=0.14,
-#     pad=0.8,
-# )
-# # ===========================================
-# #   the difference of 500hPa hgt and uv
-# con = axs[1, 2].contourf(
-#     hgtERA5_ver_JJA_diff_mean.sel(level=500.0),
-#     cmap="ColdHot",
-#     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-#     zorder=0.8,
-#     levels=np.arange(-30, 31, 3),
-# )
-# axs[1, 2].contour(
-#     hgtERA5_mask.sel(level=500.0),
-#     color="grey7",
-#     vmin=1.0,
-#     vmax=1.0,
-#     lw=1.0,
-#     linestyle="--",
-# )
-
-# axs[1, 2].quiver(
-#     uERA5_ver_JJA_diff_mean.sel(level=500.0)[::ski, ::ski],
-#     vERA5_ver_JJA_diff_mean.sel(level=500.0)[::ski, ::ski],
-#     zorder=1,
-#     headwidth=2.6,
-#     headlength=2.3,
-#     headaxislength=2.3,
-#     scale_units="xy",
-#     scale=0.7,
-#     pivot="mid",
-#     color="grey6",
-# )
-# m = axs[1, 2].quiver(
-#     (uERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=500.0)[
-#         ::ski, ::ski
-#     ],
-#     (vERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=500.0)[
-#         ::ski, ::ski
-#     ],
-#     zorder=1,
-#     headwidth=2.6,
-#     headlength=2.3,
-#     headaxislength=2.3,
-#     scale_units="xy",
-#     scale=0.7,
-#     pivot="mid",
-#     color="black",
-# )
-
-# qk = axs[1, 2].quiverkey(
-#     m,
-#     X=1 - w / 2,
-#     Y=0.7 * h,
-#     U=3,
-#     label="3 m/s",
-#     labelpos="S",
-#     labelsep=0.05,
-#     fontproperties={"size": 5},
-#     zorder=3.1,
-# )
-
-# axs[1, 2].format(ltitle="diff P2-P1", rtitle="500hPa")
-# cb = axs[1, 2].colorbar(
-#     con,
-#     loc="r",
-#     ticklen=0,
-#     labelsize=7,
-#     label="gpm",
-#     ticklabelsize=6,
-#     width=0.14,
-#     pad=0.8,
-# )
-# cb.set_ticks(np.arange(-30, 31, 6))
-
-
-# # ===========================================
-# #   850 hPa
-# con = axs[2, 0].contourf(
-#     hgtERA5_ver_JJA_p1_mean.sel(level=850.0),
-#     cmap="ColdHot",
-#     cmap_kw={"right": 0.77},
-#     levels=np.arange(llim_850, hlim_850 + spacing_850 / 2, spacing_850),
-#     zorder=0.8,
-# )
-
-
-# m = axs[2, 0].quiver(
-#     uERA5_ver_JJA_p1_mean.sel(level=850.0)[::ski, ::ski],
-#     vERA5_ver_JJA_p1_mean.sel(level=850.0)[::ski, ::ski],
-#     zorder=1,
-#     headwidth=2.6,
-#     headlength=2.3,
-#     headaxislength=2.3,
-#     scale_units="xy",
-#     scale=1.5,
-#     pivot="mid",
-#     color="black",
-# )
-
-# qk = axs[2, 0].quiverkey(
-#     m,
-#     X=1 - w / 2,
-#     Y=0.7 * h,
-#     U=5,
-#     label="5 m/s",
-#     labelpos="S",
-#     labelsep=0.05,
-#     fontproperties={"size": 5},
-#     zorder=3.1,
-# )
-# axs[2, 0].format(ltitle="1950-1966", rtitle="850hPa")
-# # ===========================================
-# con = axs[2, 1].contourf(
-#     hgtERA5_ver_JJA_p2_mean.sel(level=850.0),
-#     cmap="ColdHot",
-#     cmap_kw={"right": 0.77},
-#     levels=np.arange(llim_850, hlim_850 + spacing_850 / 2, spacing_850),
-#     zorder=0.8,
-# )
-
-
-# m = axs[2, 1].quiver(
-#     uERA5_ver_JJA_p2_mean.sel(level=850.0)[::ski, ::ski],
-#     vERA5_ver_JJA_p2_mean.sel(level=850.0)[::ski, ::ski],
-#     zorder=1,
-#     headwidth=2.6,
-#     headlength=2.3,
-#     headaxislength=2.3,
-#     scale_units="xy",
-#     scale=1.5,
-#     pivot="mid",
-#     color="black",
-# )
-
-# qk = axs[2, 1].quiverkey(
-#     m,
-#     X=1 - w / 2,
-#     Y=0.7 * h,
-#     U=5,
-#     label="5 m/s",
-#     labelpos="S",
-#     labelsep=0.05,
-#     fontproperties={"size": 5},
-#     zorder=3.1,
-# )
-# axs[2, 1].format(ltitle="1967-2001", rtitle="850hPa")
-# axs[2, 1].colorbar(
-#     con,
-#     loc="r",
-#     ticklen=0,
-#     labelsize=7,
-#     label="gpm",
-#     ticklabelsize=6,
-#     width=0.14,
-#     pad=0.8,
-# )
-# # ========================================
-
-# #   the difference of 850hPa hgt and uv
-# con = axs[2, 2].contourf(
-#     hgtERA5_ver_JJA_diff_mean.sel(level=850.0),
-#     cmap="ColdHot",
-#     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-#     zorder=0.8,
-#     levels=np.arange(-10, 11, 2),
-# )
-# axs[2, 2].contour(
-#     hgtERA5_mask.sel(level=850.0),
-#     color="grey7",
-#     vmin=1.0,
-#     vmax=1.0,
-#     lw=1.0,
-#     linestyle="--",
-# )
-
-# axs[2, 2].quiver(
-#     uERA5_ver_JJA_diff_mean.sel(level=850.0)[::ski, ::ski],
-#     vERA5_ver_JJA_diff_mean.sel(level=850.0)[::ski, ::ski],
-#     zorder=1,
-#     headwidth=2.6,
-#     headlength=2.3,
-#     headaxislength=2.3,
-#     scale_units="xy",
-#     scale=0.6,
-#     pivot="mid",
-#     color="grey6",
-# )
-# m = axs[2, 2].quiver(
-#     (uERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=850.0)[
-#         ::ski, ::ski
-#     ],
-#     (vERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=850.0)[
-#         ::ski, ::ski
-#     ],
-#     zorder=1,
-#     headwidth=2.6,
-#     headlength=2.3,
-#     headaxislength=2.3,
-#     scale_units="xy",
-#     scale=0.6,
-#     pivot="mid",
-#     color="black",
-# )
-
-# qk = axs[2, 2].quiverkey(
-#     m,
-#     X=1 - w / 2,
-#     Y=0.7 * h,
-#     U=3,
-#     label="3 m/s",
-#     labelpos="S",
-#     labelsep=0.05,
-#     fontproperties={"size": 5},
-#     zorder=3.1,
-# )
-
-# axs[2, 2].format(ltitle="diff P2-P1", rtitle="850hPa")
-# cb = axs[2, 2].colorbar(
-#     con,
-#     loc="r",
-#     ticklen=0,
-#     labelsize=7,
-#     label="gpm",
-#     ticklabelsize=6,
-#     width=0.14,
-#     pad=0.8,
-# )
-# cb.set_ticks(np.arange(-10, 11, 2))
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 
