@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-27 11:46:10
 LastEditors: ChenHJ
-LastEditTime: 2022-03-27 11:59:57
+LastEditTime: 2022-03-27 13:18:28
 FilePath: /chenhj/0302code/mon_index.py
 Aim: 
 Mission: 
@@ -73,17 +73,29 @@ fhgthis = xr.open_dataset(
 )
 hgthis = fhgthis["zg"]
 hgthis = ca.detrend_dim(hgthis, "time", deg=1, demean=False)
+hgthis.coords["plev"] = hgthis.coords["plev"]/100.0
+hgthis = hgthis.rename({"plev":"level"})
 
 fuhis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 uhis = fuhis["ua"]
 uhis = ca.detrend_dim(uhis, "time", deg=1, demean=False)
+uhis.coords["plev"] = uhis.coords["plev"]/100.0
+uhis = uhis.rename({"plev":"level"})
 
 fvhis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 vhis = fvhis["va"]
 vhis = ca.detrend_dim(vhis, "time", deg=1, demean=False)
+vhis.coords["plev"] = vhis.coords["plev"]/100.0
+vhis = vhis.rename({"plev":"level"})
 
+# %%
+ERA5_SAM_index = ca.SAM(vERA5)
+his_SAM_index = ca.SAM(vhis)
+
+ERA5_EAM_index = ca.EAM(uERA5)
+his_EAM_index = ca.EAM(uhis)
 # %%
