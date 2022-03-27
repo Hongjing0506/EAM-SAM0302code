@@ -93,7 +93,17 @@ vhis.coords["plev"] = vhis.coords["plev"] / 100.0
 vhis = vhis.rename({"plev": "level"})
 
 # %%
+#   pick up the JJA
 
+hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
+
+uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
+vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
+
+hgthis_ver_JJA = ca.p_time(hgthis, 6, 8, True).loc[:, :100, :, :]
+
+uhis_ver_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :100, :, :]
+vhis_ver_JJA = ca.p_time(vhis, 6, 8, True).loc[:, :100, :, :]
 
 
 
