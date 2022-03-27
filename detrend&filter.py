@@ -812,20 +812,30 @@ div_uqvq_ERA5_p2 = ca.cal_divergence(
 uERA5_ver_JJA_diff_mean = uERA5_ver_JJA_p2_mean - uERA5_ver_JJA_p1_mean
 vERA5_ver_JJA_diff_mean = vERA5_ver_JJA_p2_mean - vERA5_ver_JJA_p1_mean
 hgtERA5_ver_JJA_diff_mean = hgtERA5_ver_JJA_p2_mean - hgtERA5_ver_JJA_p1_mean
-uq_dpg_ERA5_ver_JJA_diff_mean = uq_dpg_ERA5_ver_JJA_p2_mean - uq_dpg_ERA5_ver_JJA_p1_mean
-vq_dpg_ERA5_ver_JJA_diff_mean = vq_dpg_ERA5_ver_JJA_p2_mean - vq_dpg_ERA5_ver_JJA_p1_mean
+uq_dpg_ERA5_ver_JJA_diff_mean = (
+    uq_dpg_ERA5_ver_JJA_p2_mean - uq_dpg_ERA5_ver_JJA_p1_mean
+)
+vq_dpg_ERA5_ver_JJA_diff_mean = (
+    vq_dpg_ERA5_ver_JJA_p2_mean - vq_dpg_ERA5_ver_JJA_p1_mean
+)
 # %%
 #   calculate the check
 clevel = 0.95
 uERA5_mask = ca.generate_tmask(uERA5_ver_JJA_p1, uERA5_ver_JJA_p2, clevel)
 vERA5_mask = ca.generate_tmask(vERA5_ver_JJA_p1, vERA5_ver_JJA_p2, clevel)
 hgtERA5_mask = ca.generate_tmask(hgtERA5_ver_JJA_p1, hgtERA5_ver_JJA_p2, clevel)
-uq_dpg_ERA5_mask = ca.generate_tmask(uq_dpg_ERA5_ver_JJA_p1, uq_dpg_ERA5_ver_JJA_p2, clevel)
-vq_dpg_ERA5_mask = ca.generate_tmask(vq_dpg_ERA5_ver_JJA_p1, vq_dpg_ERA5_ver_JJA_p2, clevel)
+uq_dpg_ERA5_mask = ca.generate_tmask(
+    uq_dpg_ERA5_ver_JJA_p1, uq_dpg_ERA5_ver_JJA_p2, clevel
+)
+vq_dpg_ERA5_mask = ca.generate_tmask(
+    vq_dpg_ERA5_ver_JJA_p1, vq_dpg_ERA5_ver_JJA_p2, clevel
+)
 # %%
 #   calculate the wind check
 wind_ERA5_mask = ca.wind_check(uERA5_mask, vERA5_mask, uERA5_mask, vERA5_mask)
-vq_ERA5_mask = ca.wind_check(uq_dpg_ERA5_mask, vq_dpg_ERA5_mask, uq_dpg_ERA5_mask, vq_dpg_ERA5_mask)
+vq_ERA5_mask = ca.wind_check(
+    uq_dpg_ERA5_mask, vq_dpg_ERA5_mask, uq_dpg_ERA5_mask, vq_dpg_ERA5_mask
+)
 
 
 # %%
@@ -969,7 +979,16 @@ qk = axs[0, 1].quiverkey(
     zorder=3.1,
 )
 axs[0, 1].format(ltitle="1967-2001", rtitle="200hPa")
-axs[0, 1].colorbar(con, loc="r", ticklen=0, labelsize=7, label="gpm", ticklabelsize=6, width=0.14, pad=0.8)
+axs[0, 1].colorbar(
+    con,
+    loc="r",
+    ticklen=0,
+    labelsize=7,
+    label="gpm",
+    ticklabelsize=6,
+    width=0.14,
+    pad=0.8,
+)
 # ===========================================
 #   the difference of 200hPa hgt and uv
 con = axs[0, 2].contourf(
@@ -978,7 +997,7 @@ con = axs[0, 2].contourf(
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     extend="both",
     zorder=0.8,
-    levels=np.arange(-60, 61, 6)
+    levels=np.arange(-60, 61, 6),
 )
 axs[0, 2].contour(
     hgtERA5_mask.sel(level=200.0),
@@ -986,7 +1005,7 @@ axs[0, 2].contour(
     vmin=1.0,
     vmax=1.0,
     lw=1.0,
-    linestyle="--"
+    linestyle="--",
 )
 
 axs[0, 2].quiver(
@@ -1002,8 +1021,12 @@ axs[0, 2].quiver(
     color="grey6",
 )
 m = axs[0, 2].quiver(
-    (uERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=200.0)[::ski, ::ski],
-    (vERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=200.0)[::ski, ::ski],
+    (uERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=200.0)[
+        ::ski, ::ski
+    ],
+    (vERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=200.0)[
+        ::ski, ::ski
+    ],
     zorder=1,
     headwidth=2.6,
     headlength=2.3,
@@ -1027,7 +1050,16 @@ qk = axs[0, 2].quiverkey(
 )
 
 axs[0, 2].format(ltitle="diff P2-P1", rtitle="200hPa")
-cb = axs[0, 2].colorbar(con, loc="r", ticklen=0, labelsize=7, label="gpm", ticklabelsize=6, width=0.14, pad=0.8)
+cb = axs[0, 2].colorbar(
+    con,
+    loc="r",
+    ticklen=0,
+    labelsize=7,
+    label="gpm",
+    ticklabelsize=6,
+    width=0.14,
+    pad=0.8,
+)
 cb.set_ticks(np.arange(-60, 61, 12))
 
 
@@ -1104,7 +1136,16 @@ qk = axs[1, 1].quiverkey(
     zorder=3.1,
 )
 axs[1, 1].format(ltitle="1967-2001", rtitle="500hPa")
-axs[1, 1].colorbar(con, loc="r", ticklen=0, labelsize=7, label="gpm", ticklabelsize=6, width=0.14, pad=0.8)
+axs[1, 1].colorbar(
+    con,
+    loc="r",
+    ticklen=0,
+    labelsize=7,
+    label="gpm",
+    ticklabelsize=6,
+    width=0.14,
+    pad=0.8,
+)
 # ===========================================
 #   the difference of 500hPa hgt and uv
 con = axs[1, 2].contourf(
@@ -1113,7 +1154,7 @@ con = axs[1, 2].contourf(
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     extend="both",
     zorder=0.8,
-    levels=np.arange(-30, 31, 3)
+    levels=np.arange(-30, 31, 3),
 )
 axs[1, 2].contour(
     hgtERA5_mask.sel(level=500.0),
@@ -1121,7 +1162,7 @@ axs[1, 2].contour(
     vmin=1.0,
     vmax=1.0,
     lw=1.0,
-    linestyle="--"
+    linestyle="--",
 )
 
 axs[1, 2].quiver(
@@ -1137,8 +1178,12 @@ axs[1, 2].quiver(
     color="grey6",
 )
 m = axs[1, 2].quiver(
-    (uERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=500.0)[::ski, ::ski],
-    (vERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=500.0)[::ski, ::ski],
+    (uERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=500.0)[
+        ::ski, ::ski
+    ],
+    (vERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=500.0)[
+        ::ski, ::ski
+    ],
     zorder=1,
     headwidth=2.6,
     headlength=2.3,
@@ -1162,7 +1207,16 @@ qk = axs[1, 2].quiverkey(
 )
 
 axs[1, 2].format(ltitle="diff P2-P1", rtitle="500hPa")
-cb = axs[1, 2].colorbar(con, loc="r", ticklen=0, labelsize=7, label="gpm", ticklabelsize=6, width=0.14, pad=0.8)
+cb = axs[1, 2].colorbar(
+    con,
+    loc="r",
+    ticklen=0,
+    labelsize=7,
+    label="gpm",
+    ticklabelsize=6,
+    width=0.14,
+    pad=0.8,
+)
 cb.set_ticks(np.arange(-30, 31, 6))
 
 
@@ -1239,7 +1293,16 @@ qk = axs[2, 1].quiverkey(
     zorder=3.1,
 )
 axs[2, 1].format(ltitle="1967-2001", rtitle="850hPa")
-axs[2, 1].colorbar(con, loc="r", ticklen=0, labelsize=7, label="gpm", ticklabelsize=6, width=0.14, pad=0.8)
+axs[2, 1].colorbar(
+    con,
+    loc="r",
+    ticklen=0,
+    labelsize=7,
+    label="gpm",
+    ticklabelsize=6,
+    width=0.14,
+    pad=0.8,
+)
 # ========================================
 
 #   the difference of 850hPa hgt and uv
@@ -1249,7 +1312,7 @@ con = axs[2, 2].contourf(
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     extend="both",
     zorder=0.8,
-    levels=np.arange(-10, 11, 2)
+    levels=np.arange(-10, 11, 2),
 )
 axs[2, 2].contour(
     hgtERA5_mask.sel(level=850.0),
@@ -1257,7 +1320,7 @@ axs[2, 2].contour(
     vmin=1.0,
     vmax=1.0,
     lw=1.0,
-    linestyle="--"
+    linestyle="--",
 )
 
 axs[2, 2].quiver(
@@ -1273,8 +1336,12 @@ axs[2, 2].quiver(
     color="grey6",
 )
 m = axs[2, 2].quiver(
-    (uERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=850.0)[::ski, ::ski],
-    (vERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=850.0)[::ski, ::ski],
+    (uERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=850.0)[
+        ::ski, ::ski
+    ],
+    (vERA5_ver_JJA_diff_mean.where(wind_ERA5_mask > 0.0)).sel(level=850.0)[
+        ::ski, ::ski
+    ],
     zorder=1,
     headwidth=2.6,
     headlength=2.3,
@@ -1298,11 +1365,18 @@ qk = axs[2, 2].quiverkey(
 )
 
 axs[2, 2].format(ltitle="diff P2-P1", rtitle="850hPa")
-cb = axs[2, 2].colorbar(con, loc="r", ticklen=0, labelsize=7, label="gpm", ticklabelsize=6, width=0.14, pad=0.8)
+cb = axs[2, 2].colorbar(
+    con,
+    loc="r",
+    ticklen=0,
+    labelsize=7,
+    label="gpm",
+    ticklabelsize=6,
+    width=0.14,
+    pad=0.8,
+)
 cb.set_ticks(np.arange(-10, 11, 2))
 fig.format(abc="(a)", abcloc="l", suptitle="hgt & UV")
 # %%
-utmp = uERA5_mask.where(abs(uERA5_mask) >= uERA5_mask)
-vtmp = vERA5_mask.where(abs(vERA5_mask) >= vERA5_mask)
-print((utmp + vtmp).sel(level=200.0).data)
+
 # %%
