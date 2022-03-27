@@ -120,8 +120,6 @@ his_EAM_index = ca.EAM(uhis_ver_JJA)
 ERA5_regress = stats.linregress(ERA5_SAM_index, ERA5_EAM_index)
 his_regress = stats.linregress(his_SAM_index, his_EAM_index)
 # %%
-print(ERA5_SAM_index)
-# %%
 #   plot the monsoon index
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
 axs = fig.subplots(ncols=1, nrows=2)
@@ -131,7 +129,23 @@ lw = 1.0
 m1 = axs[0].line(ERA5_EAM_index.time.dt.year, ca.standardize(ERA5_EAM_index), color="blue", lw=lw)
 m2 = axs[0].line(ERA5_SAM_index.time.dt.year, ca.standardize(ERA5_SAM_index), color="red", lw=lw)
 
+axs[0].legend(handles=[m1, m2], loc="ll", labels=["EAM_index", "SAM_index"], ncols=1)
+axs[0].format(ltitle="ERA5", rtitle="r = {:.2f}".format(ERA5_regress[2]))
+#========================================
+m1 = axs[1].line(his_EAM_index.time.dt.year, ca.standardize(his_EAM_index), color="blue", lw=lw)
+m2 = axs[1].line(his_SAM_index.time.dt.year, ca.standardize(his_SAM_index), color="red", lw=lw)
 
+axs[1].legend(handles=[m1, m2], loc="ll", labels=["EAM_index", "SAM_index"], ncols=1)
+axs[1].format(ltitle="historical", rtitle="r = {:.2f}".format(his_regress[2]))
+#========================================
+axs.format(
+    ylim=(-3.0, 3.0),
+    ylocator=1.0,
+    yminorlocator=0.2,
+    ylabel="",
+    xlabel=""
+)
+fig.format(abc="(a)", abcloc="l")
 # %%
 #   calculate the hgt and u,v regress into the monsoon index
 
