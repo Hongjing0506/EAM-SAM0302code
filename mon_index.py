@@ -109,11 +109,11 @@ vhis_ver_JJA = ca.p_time(vhis, 6, 8, True).loc[:, :100, :, :]
 
 # %%
 #   calculate the monsoon index
-ERA5_SAM_index = ca.SAM(vERA5)
-his_SAM_index = ca.SAM(vhis)
+ERA5_SAM_index = ca.SAM(vERA5_ver_JJA)
+his_SAM_index = ca.SAM(vhis_ver_JJA)
 
-ERA5_EAM_index = ca.EAM(uERA5)
-his_EAM_index = ca.EAM(uhis)
+ERA5_EAM_index = ca.EAM(uERA5_ver_JJA)
+his_EAM_index = ca.EAM(uhis_ver_JJA)
 
 # %%
 #   calculate the regression of two monsoon index
