@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-27 11:46:10
 LastEditors: ChenHJ
-LastEditTime: 2022-03-27 13:18:28
+LastEditTime: 2022-03-27 14:01:42
 FilePath: /chenhj/0302code/mon_index.py
 Aim: 
 Mission: 
@@ -93,9 +93,23 @@ vhis.coords["plev"] = vhis.coords["plev"]/100.0
 vhis = vhis.rename({"plev":"level"})
 
 # %%
+#   calculate the monsoon index
 ERA5_SAM_index = ca.SAM(vERA5)
 his_SAM_index = ca.SAM(vhis)
 
 ERA5_EAM_index = ca.EAM(uERA5)
 his_EAM_index = ca.EAM(uhis)
 # %%
+#   plot the monsoon index
+fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=2, nrows=1)
+
+lw = 1.0
+# ========================================
+m1 = axs[0, 0].line(
+    preCRU_India_mean.time.dt.year, preCRU_India_mean, color="grey7", lw=lw
+)
+
+# %%
+#   calculate the hgt and u,v regress into the monsoon index
+
