@@ -48,6 +48,22 @@ from scipy import signal
 from eofs.multivariate.standard import MultivariateEof
 from eofs.standard import Eof
 
+
+def patches(ax, x0, y0, width, height, proj):
+    from matplotlib.patches import Rectangle
+
+    rect = Rectangle(
+        (x0, y0),
+        width,
+        height,
+        fc="none",
+        ec="grey7",
+        linewidth=0.8,
+        zorder=1.1,
+        transform=proj,
+        linestyle="--",
+    )
+    ax.add_patch(rect)
 # %%
 #   read obs data
 fhgtERA5 = xr.open_dataset(
@@ -275,7 +291,7 @@ cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
 fig = pplt.figure(
-    span=False, share=False, refwidth=4.0, wspace=(4.0, 7.0), hspace=3.5, outerpad=2.0
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
 )
 axs = fig.subplots(ncols=2, nrows=3, proj=proj)
 
@@ -297,11 +313,23 @@ for ax in axs:
         (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
     )
     ax.add_patch(rect)
+        #region 1
+    x0 = 110
+    y0 = 40
+    width = 40
+    height = 10
+    patches(ax, x0-cl, y0, width, height, proj)
+    # region 2
+    x0 = 110
+    y0 = 25
+    width = 40
+    height = 10
+    patches(ax, x0-cl, y0, width, height, proj)
 # ===================================================
 con = axs[0, 0].contourf(
     hgt_ERA5_EAM_rvalue.sel(level=200.0),
     cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.77, "cut": -0.1},
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
 )
@@ -317,12 +345,12 @@ sepl.plt_sig(
 axs[0, 0].quiver(
     u_ERA5_EAM_rvalue.sel(level=200.0)[::ski, ::ski],
     v_ERA5_EAM_rvalue.sel(level=200.0)[::ski, ::ski],
-    zorder=1,
+    zorder=2.0,
     headwidth=2.6,
     headlength=2.3,
     headaxislength=2.3,
     scale_units="xy",
-    scale=0.6,
+    scale=0.17,
     pivot="mid",
     color="grey6",
 )
@@ -330,12 +358,12 @@ axs[0, 0].quiver(
 m = axs[0, 0].quiver(
     u_ERA5_EAM_rvalue.where(wind_ERA5_EAM_mask > 0.0).sel(level=200.0)[::ski, ::ski],
     v_ERA5_EAM_rvalue.where(wind_ERA5_EAM_mask > 0.0).sel(level=200.0)[::ski, ::ski],
-    zorder=1,
+    zorder=2.0,
     headwidth=2.6,
     headlength=2.3,
     headaxislength=2.3,
     scale_units="xy",
-    scale=0.6,
+    scale=0.17,
     pivot="mid",
     color="black",
 )
@@ -777,4 +805,7 @@ axs[0, 0].format(ltitle="EAM index", rtitle="ERA5 200hPa")
 #     pad=0.8,
 # )
 # cb.set_ticks(np.arange(-10, 11, 2))
-fig.format(abc="(a)", abcloc="l", suptitle="hgt & UV")
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l")
+
+# %%
