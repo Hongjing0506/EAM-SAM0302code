@@ -192,3 +192,47 @@ fig.format(abc="(a)", abcloc="l")
     v_his_EAM_hypothesis,
 ) = ca.dim_linregress(his_EAM_index, vhis_ver_JJA)
 # %%
+(
+    hgt_ERA5_SAM_slope,
+    hgt_ERA5_SAM_intercept,
+    hgt_ERA5_SAM_rvalue,
+    hgt_ERA5_SAM_pvalue,
+    hgt_ERA5_SAM_hypothesis,
+) = ca.dim_linregress(ERA5_SAM_index, hgtERA5_ver_JJA)
+(
+    u_ERA5_SAM_slope,
+    u_ERA5_SAM_intercept,
+    u_ERA5_SAM_rvalue,
+    u_ERA5_SAM_pvalue,
+    u_ERA5_SAM_hypothesis,
+) = ca.dim_linregress(ERA5_SAM_index, uERA5_ver_JJA)
+(
+    v_ERA5_SAM_slope,
+    v_ERA5_SAM_intercept,
+    v_ERA5_SAM_rvalue,
+    v_ERA5_SAM_pvalue,
+    v_ERA5_SAM_hypothesis,
+) = ca.dim_linregress(ERA5_SAM_index, vERA5_ver_JJA)
+
+(
+    hgt_his_SAM_slope,
+    hgt_his_SAM_intercept,
+    hgt_his_SAM_rvalue,
+    hgt_his_SAM_pvalue,
+    hgt_his_SAM_hypothesis,
+) = ca.dim_linregress(his_SAM_index, hgthis_ver_JJA)
+(
+    u_his_SAM_slope,
+    u_his_SAM_intercept,
+    u_his_SAM_rvalue,
+    u_his_SAM_pvalue,
+    u_his_SAM_hypothesis,
+) = ca.dim_linregress(his_SAM_index, uhis_ver_JJA)
+(
+    v_his_SAM_slope,
+    v_his_SAM_intercept,
+    v_his_SAM_rvalue,
+    v_his_SAM_pvalue,
+    v_his_SAM_hypothesis,
+) = ca.dim_linregress(his_SAM_index, vhis_ver_JJA)
+# %%
