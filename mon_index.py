@@ -243,7 +243,12 @@ ERA5_his_IWF_regress = stats.linregress(ERA5_IWF_index, his_IWF_index)
 
 # %%
 # print(ERA5_his_IWF_regress)
-print(ERA5_his_EAM_regress, ERA5_his_SAM_regress, ERA5_his_WY_regress, ERA5_his_IWF_regress)
+print(
+    ERA5_his_EAM_regress,
+    ERA5_his_SAM_regress,
+    ERA5_his_WY_regress,
+    ERA5_his_IWF_regress,
+)
 # %%
 #   plot the monsoon index
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
@@ -2017,7 +2022,9 @@ print(uq_dpg_ERA5_JJA)
 #   calculate the precipitation regress into IWF index
 #   ERA5
 preCRU_JJA.coords["time"] = ERA5_IWF_index.coords["time"]
-preGPCP_JJA.coords["time"] = ERA5_IWF_index.coords["time"].sel(time=ERA5_IWF_index.time.dt.year >= 1979)
+preGPCP_JJA.coords["time"] = ERA5_IWF_index.coords["time"].sel(
+    time=ERA5_IWF_index.time.dt.year >= 1979
+)
 prehis_JJA.coords["time"] = his_IWF_index.coords["time"]
 (
     pre_CRU_IWF_slope,
@@ -2033,7 +2040,9 @@ prehis_JJA.coords["time"] = his_IWF_index.coords["time"]
     pre_GPCP_IWF_rvalue,
     pre_GPCP_IWF_pvalue,
     pre_GPCP_IWF_hypothesis,
-) = ca.dim_linregress(ERA5_IWF_index.sel(time=ERA5_IWF_index.time.dt.year >= 1979), preGPCP_JJA)
+) = ca.dim_linregress(
+    ERA5_IWF_index.sel(time=ERA5_IWF_index.time.dt.year >= 1979), preGPCP_JJA
+)
 
 (
     uq_dpg_ERA5_IWF_slope,
@@ -2304,9 +2313,195 @@ vshearhis_JJA = vhis_ver_JJA.sel(level=850.0) - vhis_ver_JJA.sel(level=200.0)
 
 # %%
 #   calculate the vorticity
-windERA5 = VectorWind(uERA5_ver_JJA.sel(level=850.0), vERA5_ver_JJA.sel(level=850.0))
-vorERA5 = windERA5.vorticity()
+windERA5_JJA = VectorWind(
+    uERA5_ver_JJA.sel(level=850.0), vERA5_ver_JJA.sel(level=850.0)
+)
+vorERA5_JJA = windERA5_JJA.vorticity()
 
-windhis = VectorWind(uhis_ver_JJA.sel(level=850.0), vhis_ver_JJA.sel(level=850.0))
-vorhis = windhis.vorticity()
+windhis_JJA = VectorWind(uhis_ver_JJA.sel(level=850.0), vhis_ver_JJA.sel(level=850.0))
+vorhis_JJA = windhis_JJA.vorticity()
+# %%
+#   calculate the regression of windshear and windvorticity into the IWF
+#   ERA5
+(
+    ushear_ERA5_IWF_slope,
+    ushear_ERA5_IWF_intercept,
+    ushear_ERA5_IWF_rvalue,
+    ushear_ERA5_IWF_pvalue,
+    ushear_ERA5_IWF_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index, ushearERA5_JJA)
+
+(
+    vshear_ERA5_IWF_slope,
+    vshear_ERA5_IWF_intercept,
+    vshear_ERA5_IWF_rvalue,
+    vshear_ERA5_IWF_pvalue,
+    vshear_ERA5_IWF_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index, vshearERA5_JJA)
+
+(
+    vor_ERA5_IWF_slope,
+    vor_ERA5_IWF_intercept,
+    vor_ERA5_IWF_rvalue,
+    vor_ERA5_IWF_pvalue,
+    vor_ERA5_IWF_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index, vorERA5_JJA)
+#   historical run
+(
+    ushear_his_IWF_slope,
+    ushear_his_IWF_intercept,
+    ushear_his_IWF_rvalue,
+    ushear_his_IWF_pvalue,
+    ushear_his_IWF_hypothesis,
+) = ca.dim_linregress(his_IWF_index, ushearhis_JJA)
+
+(
+    vshear_his_IWF_slope,
+    vshear_his_IWF_intercept,
+    vshear_his_IWF_rvalue,
+    vshear_his_IWF_pvalue,
+    vshear_his_IWF_hypothesis,
+) = ca.dim_linregress(his_IWF_index, vshearhis_JJA)
+
+(
+    vor_his_IWF_slope,
+    vor_his_IWF_intercept,
+    vor_his_IWF_rvalue,
+    vor_his_IWF_pvalue,
+    vor_his_IWF_hypothesis,
+) = ca.dim_linregress(his_IWF_index, vorhis_JJA)
+
+# %%
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig.subplots(ncols=2, nrows=3, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    x0 = 90.0
+    y0 = 5.0
+    width = 50.0
+    height = 27.5
+    patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0, 0].contourf(
+    ushear_ERA5_IWF_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    ushear_ERA5_IWF_pvalue,
+    axs[0, 0],
+    n,
+    np.where(ushear_ERA5_IWF_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+axs[0, 0].format(ltitle="ERA5", rtitle="U850-U200 reg IWF")
+# ===================================================
+con = axs[1, 0].contourf(
+    vshear_ERA5_IWF_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    vshear_ERA5_IWF_pvalue,
+    axs[1, 0],
+    n,
+    np.where(vshear_ERA5_IWF_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+axs[1, 0].format(ltitle="ERA5", rtitle="V850-V200 reg IWF")
+# ===================================================
+con = axs[2, 0].contourf(
+    vor_ERA5_IWF_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    vor_ERA5_IWF_pvalue,
+    axs[2, 0],
+    n,
+    np.where(vor_ERA5_IWF_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+axs[2, 0].format(ltitle="ERA5", rtitle="vorticity reg IWF")
+# ===================================================
+#   historical run
+con = axs[0, 1].contourf(
+    ushear_his_IWF_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    ushear_his_IWF_pvalue,
+    axs[0, 1],
+    n,
+    np.where(ushear_his_IWF_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+axs[0, 1].format(ltitle="historical", rtitle="U850-U200 reg IWF")
+# ===================================================
+con = axs[1, 1].contourf(
+    vshear_his_IWF_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    vshear_his_IWF_pvalue,
+    axs[1, 1],
+    n,
+    np.where(vshear_his_IWF_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+axs[1, 1].format(ltitle="historical", rtitle="V850-V200 reg IWF")
+# ===================================================
+con = axs[2, 1].contourf(
+    vor_his_IWF_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    vor_his_IWF_pvalue,
+    axs[2, 1],
+    n,
+    np.where(vor_his_IWF_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+axs[2, 1].format(ltitle="historical", rtitle="vorticity reg IWF")
 # %%
