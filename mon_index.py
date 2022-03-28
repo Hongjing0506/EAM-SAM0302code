@@ -2505,3 +2505,13 @@ sepl.plt_sig(
 )
 axs[2, 1].format(ltitle="historical", rtitle="vorticity reg IWF")
 # %%
+#   calculate the Indian JJA mean rainfall and its water vapor source mean
+preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 8:28, 70:86]).mean(
+    dim="lon", skipna=True
+)
+uq_dpg_ERA5_India_JJA = ca.cal_lat_weighted_mean(uq_dpg_ERA5_JJA.loc[:, 5:25, 50:80]).mean(
+    dim="lon", skipna=True
+)
+
+
+# %%
