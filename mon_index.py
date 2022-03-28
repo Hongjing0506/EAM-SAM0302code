@@ -25,6 +25,7 @@ from importlib import reload
 import metpy.calc as mpcalc
 import metpy.constants as constants
 import geocat.comp
+from windspharm.xarray import VectorWind
 
 reload(sepl)
 
@@ -86,6 +87,18 @@ fvERA5 = xr.open_dataset(
 vERA5 = fvERA5["v"]
 vERA5 = ca.detrend_dim(vERA5, "time", deg=1, demean=False)
 
+fspERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
+)
+spERA5 = fspERA5["sp"]
+spERA5 = ca.detrend_dim(spERA5, "time", deg=1, demean=False)
+
+fqERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc"
+)
+qERA5 = fqERA5["q"]
+qERA5 = ca.detrend_dim(qERA5, "time", deg=1, demean=False)
+
 fhgthis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
@@ -109,6 +122,22 @@ vhis = fvhis["va"]
 vhis = ca.detrend_dim(vhis, "time", deg=1, demean=False)
 vhis.coords["plev"] = vhis.coords["plev"] / 100.0
 vhis = vhis.rename({"plev": "level"})
+
+fsphis = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+sphis = fsphis["ps"]
+sphis = ca.detrend_dim(sphis, "time", deg=1, demean=False)
+sphis.coords["plev"] = sphis.coords["plev"] / 100.0
+sphis = sphis.rename({"plev": "level"})
+
+fqhis = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+qhis = fqhis["hus"]
+qhis = ca.detrend_dim(qhis, "time", deg=1, demean=False)
+qhis.coords["plev"] = qhis.coords["plev"] / 100.0
+qhis = qhis.rename({"plev": "level"})
 
 # %%
 #   pick up the JJA
@@ -134,19 +163,28 @@ his_EAM_index = ca.EAM(uhis_ver_JJA)
 
 ERA5_WY_index = ca.WY(uERA5_ver_JJA)
 his_WY_index = ca.WY(uhis_ver_JJA)
+
+ERA5_IWF_index = ca.IWF(uERA5_ver_JJA, vERA5_ver_JJA)
+his_IWF_index = ca.IWF(uhis_ver_JJA, vhis_ver_JJA)
 # %%
 #   calculate the regression of two monsoon index
 ERA5_regress = stats.linregress(ERA5_SAM_index, ERA5_EAM_index)
 his_regress = stats.linregress(his_SAM_index, his_EAM_index)
 ERA5_WY_EAM_regress = stats.linregress(ERA5_WY_index, ERA5_EAM_index)
 his_WY_EAM_regress = stats.linregress(his_WY_index, his_EAM_index)
+ERA5_IWF_EAM_regress = stats.linregress(ERA5_IWF_index, ERA5_EAM_index)
+his_IWF_EAM_regress = stats.linregress(his_IWF_index, his_EAM_index)
+ERA5_IWF_SAM_regress = stats.linregress(ERA5_IWF_index, ERA5_SAM_index)
+his_IWF_SAM_regress = stats.linregress(his_IWF_index, his_SAM_index)
 # %%
 ERA5_his_EAM_regress = stats.linregress(ERA5_EAM_index, his_EAM_index)
 ERA5_his_SAM_regress = stats.linregress(ERA5_SAM_index, his_SAM_index)
 ERA5_his_WY_regress = stats.linregress(ERA5_WY_index, his_WY_index)
+ERA5_his_IWF_regress = stats.linregress(ERA5_IWF_index, his_IWF_index)
 
 # %%
-print(ERA5_his_EAM_regress, ERA5_his_SAM_regress, ERA5_his_WY_regress)
+# print(ERA5_his_IWF_regress)
+print(ERA5_IWF_SAM_regress, his_IWF_SAM_regress)
 # %%
 #   plot the monsoon index
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
@@ -266,7 +304,50 @@ fig.format(abc="(a)", abcloc="l")
     v_his_SAM_hypothesis,
 ) = ca.dim_linregress(his_SAM_index, vhis_ver_JJA)
 
+# %%
+(
+    hgt_ERA5_WY_slope,
+    hgt_ERA5_WY_intercept,
+    hgt_ERA5_WY_rvalue,
+    hgt_ERA5_WY_pvalue,
+    hgt_ERA5_WY_hypothesis,
+) = ca.dim_linregress(ERA5_WY_index, hgtERA5_ver_JJA)
+(
+    u_ERA5_WY_slope,
+    u_ERA5_WY_intercept,
+    u_ERA5_WY_rvalue,
+    u_ERA5_WY_pvalue,
+    u_ERA5_WY_hypothesis,
+) = ca.dim_linregress(ERA5_WY_index, uERA5_ver_JJA)
+(
+    v_ERA5_WY_slope,
+    v_ERA5_WY_intercept,
+    v_ERA5_WY_rvalue,
+    v_ERA5_WY_pvalue,
+    v_ERA5_WY_hypothesis,
+) = ca.dim_linregress(ERA5_WY_index, vERA5_ver_JJA)
 
+(
+    hgt_his_WY_slope,
+    hgt_his_WY_intercept,
+    hgt_his_WY_rvalue,
+    hgt_his_WY_pvalue,
+    hgt_his_WY_hypothesis,
+) = ca.dim_linregress(his_WY_index, hgthis_ver_JJA)
+(
+    u_his_WY_slope,
+    u_his_WY_intercept,
+    u_his_WY_rvalue,
+    u_his_WY_pvalue,
+    u_his_WY_hypothesis,
+) = ca.dim_linregress(his_WY_index, uhis_ver_JJA)
+(
+    v_his_WY_slope,
+    v_his_WY_intercept,
+    v_his_WY_rvalue,
+    v_his_WY_pvalue,
+    v_his_WY_hypothesis,
+) = ca.dim_linregress(his_WY_index, vhis_ver_JJA)
 # %%
 #  wind check
 wind_ERA5_EAM_mask = ca.wind_check(
@@ -283,6 +364,13 @@ wind_ERA5_SAM_mask = ca.wind_check(
     xr.where(v_ERA5_SAM_pvalue <= 0.05, 1.0, 0.0),
 )
 
+wind_ERA5_WY_mask = ca.wind_check(
+    xr.where(u_ERA5_WY_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_ERA5_WY_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_ERA5_WY_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_ERA5_WY_pvalue <= 0.05, 1.0, 0.0),
+)
+
 wind_his_EAM_mask = ca.wind_check(
     xr.where(u_his_EAM_pvalue <= 0.05, 1.0, 0.0),
     xr.where(v_his_EAM_pvalue <= 0.05, 1.0, 0.0),
@@ -297,6 +385,12 @@ wind_his_SAM_mask = ca.wind_check(
     xr.where(v_his_SAM_pvalue <= 0.05, 1.0, 0.0),
 )
 
+wind_his_WY_mask = ca.wind_check(
+    xr.where(u_his_WY_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_WY_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_his_WY_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_WY_pvalue <= 0.05, 1.0, 0.0),
+)
 # %%
 #   plot the linear regression between monsoon index and hgt, u, v
 pplt.rc.grid = False
