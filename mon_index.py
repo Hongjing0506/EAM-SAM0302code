@@ -2602,3 +2602,51 @@ prehis_India_JJA.coords["time"] = ushearhis_JJA.coords["time"]
 ) = ca.dim_linregress(prehis_India_JJA, vorhis_JJA)
 
 # %%
+(
+    ushear_ERA5_uqIndia_slope,
+    ushear_ERA5_uqIndia_intercept,
+    ushear_ERA5_uqIndia_rvalue,
+    ushear_ERA5_uqIndia_pvalue,
+    ushear_ERA5_uqIndia_hypothesis,
+) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, ushearERA5_JJA)
+
+(
+    ushear_his_uqIndia_slope,
+    ushear_his_uqIndia_intercept,
+    ushear_his_uqIndia_rvalue,
+    ushear_his_uqIndia_pvalue,
+    ushear_his_uqIndia_hypothesis,
+) = ca.dim_linregress(uq_dpg_his_India_JJA, ushearhis_JJA)
+
+(
+    vshear_ERA5_uqIndia_slope,
+    vshear_ERA5_uqIndia_intercept,
+    vshear_ERA5_uqIndia_rvalue,
+    vshear_ERA5_uqIndia_pvalue,
+    vshear_ERA5_uqIndia_hypothesis,
+) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, vshearERA5_JJA)
+
+(
+    vshear_his_uqIndia_slope,
+    vshear_his_uqIndia_intercept,
+    vshear_his_uqIndia_rvalue,
+    vshear_his_uqIndia_pvalue,
+    vshear_his_uqIndia_hypothesis,
+) = ca.dim_linregress(uq_dpg_his_India_JJA, vshearhis_JJA)
+
+(
+    vor_ERA5_uqIndia_slope,
+    vor_ERA5_uqIndia_intercept,
+    vor_ERA5_uqIndia_rvalue,
+    vor_ERA5_uqIndia_pvalue,
+    vor_ERA5_uqIndia_hypothesis,
+) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, vorERA5_JJA)
+
+(
+    vor_his_uqIndia_slope,
+    vor_his_uqIndia_intercept,
+    vor_his_uqIndia_rvalue,
+    vor_his_uqIndia_pvalue,
+    vor_his_uqIndia_hypothesis,
+) = ca.dim_linregress(uq_dpg_his_India_JJA, vorhis_JJA)
+# %%
