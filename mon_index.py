@@ -151,6 +151,13 @@ fprehis = xr.open_dataset(
 prehis = fprehis["pr"]
 prehis = ca.detrend_dim(prehis, "time", deg=1, demean=False)
 
+# GPCP data just have 1979-2014 year
+fpreGPCP = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/GPCP_r144x72_197901-201412.nc"
+)
+preGPCP = fpreGPCP["precip"]
+preGPCP = ca.detrend_dim(preGPCP, "time", deg=1, demean=False)
+
 # %%
 #   pick up the JJA
 
@@ -169,6 +176,8 @@ vhis_ver_JJA = ca.p_time(vhis, 6, 8, True).loc[:, :100, :, :]
 qhis_ver_JJA = ca.p_time(qhis, 6, 8, True).loc[:, :100, :, :]
 prehis_JJA = ca.p_time(prehis, 6, 8, True)
 sphis_JJA = ca.p_time(sphis, 6, 8, True)
+
+preGPCP_JJA = ca.p_time(preGPCP, 6, 8, True)
 # %%
 #   calculate the whole levels water vapor flux
 ptop = 100 * 100
@@ -2008,6 +2017,7 @@ print(uq_dpg_ERA5_JJA)
 #   calculate the precipitation regress into IWF index
 #   ERA5
 preCRU_JJA.coords["time"] = ERA5_IWF_index.coords["time"]
+preGPCP_JJA.coords["time"] = ERA5_IWF_index.coords["time"].sel(time=ERA5_IWF_index.time.dt.year >= 1979)
 prehis_JJA.coords["time"] = his_IWF_index.coords["time"]
 (
     pre_CRU_IWF_slope,
@@ -2016,6 +2026,14 @@ prehis_JJA.coords["time"] = his_IWF_index.coords["time"]
     pre_CRU_IWF_pvalue,
     pre_CRU_IWF_hypothesis,
 ) = ca.dim_linregress(ERA5_IWF_index, preCRU_JJA)
+
+(
+    pre_GPCP_IWF_slope,
+    pre_GPCP_IWF_intercept,
+    pre_GPCP_IWF_rvalue,
+    pre_GPCP_IWF_pvalue,
+    pre_GPCP_IWF_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index.sel(time=ERA5_IWF_index.time.dt.year >= 1979), preGPCP_JJA)
 
 (
     uq_dpg_ERA5_IWF_slope,
@@ -2082,7 +2100,7 @@ proj = pplt.PlateCarree(central_longitude=cl)
 fig = pplt.figure(
     span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
 )
-axs = fig.subplots(ncols=2, nrows=1, proj=proj)
+axs = fig.subplots(ncols=3, nrows=1, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
 xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
@@ -2162,27 +2180,27 @@ qk = axs[0, 0].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-axs[0, 0].format(ltitle="ERA5", rtitle="precip&Uq reg IWF")
+axs[0, 0].format(ltitle="CRU & ERA5", rtitle="precip&Uq reg IWF")
 # ===================================================
 con = axs[0, 1].contourf(
-    pre_his_IWF_rvalue,
+    pre_GPCP_IWF_rvalue,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
 )
 sepl.plt_sig(
-    pre_his_IWF_pvalue,
+    pre_GPCP_IWF_pvalue,
     axs[0, 1],
     n,
-    np.where(pre_his_IWF_pvalue[::n, ::n] <= 0.05),
+    np.where(pre_GPCP_IWF_pvalue[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
 
 axs[0, 1].quiver(
-    uq_dpg_his_IWF_rvalue[::ski, ::ski],
-    vq_dpg_his_IWF_rvalue[::ski, ::ski],
+    uq_dpg_ERA5_IWF_rvalue[::ski, ::ski],
+    vq_dpg_ERA5_IWF_rvalue[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -2194,8 +2212,8 @@ axs[0, 1].quiver(
 )
 
 m = axs[0, 1].quiver(
-    uq_dpg_his_IWF_rvalue.where(uqvq_his_IWF_mask > 0.0)[::ski, ::ski],
-    vq_dpg_his_IWF_rvalue.where(uqvq_his_IWF_mask > 0.0)[::ski, ::ski],
+    uq_dpg_ERA5_IWF_rvalue.where(uqvq_ERA5_IWF_mask > 0.0)[::ski, ::ski],
+    vq_dpg_ERA5_IWF_rvalue.where(uqvq_ERA5_IWF_mask > 0.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -2217,8 +2235,63 @@ qk = axs[0, 1].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-axs[0, 1].format(ltitle="historical", rtitle="precip&Uq reg IWF")
+axs[0, 1].format(ltitle="GPCP & ERA5", rtitle="precip&Uq reg IWF")
 # ===================================================
-fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+con = axs[0, 2].contourf(
+    pre_his_IWF_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    pre_his_IWF_pvalue,
+    axs[0, 2],
+    n,
+    np.where(pre_his_IWF_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[0, 2].quiver(
+    uq_dpg_his_IWF_rvalue[::ski, ::ski],
+    vq_dpg_his_IWF_rvalue[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[0, 2].quiver(
+    uq_dpg_his_IWF_rvalue.where(uqvq_his_IWF_mask > 0.0)[::ski, ::ski],
+    vq_dpg_his_IWF_rvalue.where(uqvq_his_IWF_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0, 2].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[0, 2].format(ltitle="historical", rtitle="precip&Uq reg IWF")
+# ===================================================
+fig.colorbar(con, loc="b", width=0.13, length=0.5, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
