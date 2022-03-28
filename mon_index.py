@@ -128,8 +128,6 @@ fsphis = xr.open_dataset(
 )
 sphis = fsphis["ps"]
 sphis = ca.detrend_dim(sphis, "time", deg=1, demean=False)
-sphis.coords["plev"] = sphis.coords["plev"] / 100.0
-sphis = sphis.rename({"plev": "level"})
 
 fqhis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
@@ -176,6 +174,10 @@ ERA5_IWF_EAM_regress = stats.linregress(ERA5_IWF_index, ERA5_EAM_index)
 his_IWF_EAM_regress = stats.linregress(his_IWF_index, his_EAM_index)
 ERA5_IWF_SAM_regress = stats.linregress(ERA5_IWF_index, ERA5_SAM_index)
 his_IWF_SAM_regress = stats.linregress(his_IWF_index, his_SAM_index)
+ERA5_IWF_WY_regress = stats.linregress(ERA5_IWF_index, ERA5_WY_index)
+his_IWF_WY_regress = stats.linregress(his_IWF_index, his_WY_index)
+ERA5_WY_SAM_regress = stats.linregress(ERA5_WY_index, ERA5_SAM_index)
+his_WY_SAM_regress = stats.linregress(his_WY_index, his_SAM_index)
 # %%
 ERA5_his_EAM_regress = stats.linregress(ERA5_EAM_index, his_EAM_index)
 ERA5_his_SAM_regress = stats.linregress(ERA5_SAM_index, his_SAM_index)
@@ -184,7 +186,7 @@ ERA5_his_IWF_regress = stats.linregress(ERA5_IWF_index, his_IWF_index)
 
 # %%
 # print(ERA5_his_IWF_regress)
-print(ERA5_IWF_SAM_regress, his_IWF_SAM_regress)
+print(ERA5_his_EAM_regress, ERA5_his_SAM_regress, ERA5_his_WY_regress, ERA5_his_IWF_regress)
 # %%
 #   plot the monsoon index
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
