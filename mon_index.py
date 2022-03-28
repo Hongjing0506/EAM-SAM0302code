@@ -138,6 +138,20 @@ qhis.coords["plev"] = qhis.coords["plev"] / 100.0
 qhis = qhis.rename({"plev": "level"})
 
 # %%
+#   read the precipitation data
+fpreCRU = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/cru_ts4.01_r144x72_195001-201412.nc"
+)
+preCRU = fpreCRU["pre"]
+preCRU = ca.detrend_dim(preCRU, "time", deg=1, demean=False)
+
+fprehis = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+prehis = fprehis["pr"]
+prehis = ca.detrend_dim(prehis, "time", deg=1, demean=False)
+
+# %%
 #   pick up the JJA
 
 hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
@@ -145,10 +159,13 @@ hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
 uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
 
+preCRU_JJA = ca.p_time(preCRU, 6, 8, True)
+
 hgthis_ver_JJA = ca.p_time(hgthis, 6, 8, True).loc[:, :100, :, :]
 
 uhis_ver_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :100, :, :]
 vhis_ver_JJA = ca.p_time(vhis, 6, 8, True).loc[:, :100, :, :]
+prehis_JJA = ca.p_time(prehis, 6, 8, True)
 
 
 # %%
