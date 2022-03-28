@@ -216,7 +216,7 @@ his_SAM_index = ca.SAM(vhis_ver_JJA)
 ERA5_EAM_index = ca.EAM(uERA5_ver_JJA)
 his_EAM_index = ca.EAM(uhis_ver_JJA)
 
-ERA5_IWF_index = ca.IWF(uERA5_ver_JJA)
+ERA5_WY_index = ca.WY(uERA5_ver_JJA)
 his_WY_index = ca.WY(uhis_ver_JJA)
 
 ERA5_IWF_index = ca.IWF(uERA5_ver_JJA, vERA5_ver_JJA)
@@ -2294,4 +2294,19 @@ axs[0, 2].format(ltitle="historical", rtitle="precip&Uq reg IWF")
 # ===================================================
 fig.colorbar(con, loc="b", width=0.13, length=0.5, label="")
 fig.format(abc="(a)", abcloc="l")
+# %%
+#   calculate the wind shear
+ushearERA5_JJA = uERA5_ver_JJA.sel(level=850.0) - uERA5_ver_JJA.sel(level=200.0)
+vshearERA5_JJA = vERA5_ver_JJA.sel(level=850.0) - vERA5_ver_JJA.sel(level=200.0)
+
+ushearhis_JJA = uhis_ver_JJA.sel(level=850.0) - uhis_ver_JJA.sel(level=200.0)
+vshearhis_JJA = vhis_ver_JJA.sel(level=850.0) - vhis_ver_JJA.sel(level=200.0)
+
+# %%
+#   calculate the vorticity
+windERA5 = VectorWind(uERA5_ver_JJA.sel(level=850.0), vERA5_ver_JJA.sel(level=850.0))
+vorERA5 = windERA5.vorticity()
+
+windhis = VectorWind(uhis_ver_JJA.sel(level=850.0), vhis_ver_JJA.sel(level=850.0))
+vorhis = windhis.vorticity()
 # %%
