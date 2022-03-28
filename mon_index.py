@@ -158,15 +158,44 @@ hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
 
 uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
-
+qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True).loc[:, 100.0:, :, :]
 preCRU_JJA = ca.p_time(preCRU, 6, 8, True)
+spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
 
 hgthis_ver_JJA = ca.p_time(hgthis, 6, 8, True).loc[:, :100, :, :]
 
 uhis_ver_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :100, :, :]
 vhis_ver_JJA = ca.p_time(vhis, 6, 8, True).loc[:, :100, :, :]
+qhis_ver_JJA = ca.p_time(qhis, 6, 8, True).loc[:, :100, :, :]
 prehis_JJA = ca.p_time(prehis, 6, 8, True)
+sphis_JJA = ca.p_time(sphis, 6, 8, True)
+# %%
+#   calculate the whole levels water vapor flux
+ptop = 100 * 100
+g = 9.8
+#   ERA5 data
+ERA5level = qERA5_ver_JJA.coords["level"] * 100.0
+ERA5level.attrs["units"] = "Pa"
+ERA5dp = geocat.comp.dpres_plevel(ERA5level, spERA5_JJA, ptop)
+ERA5dpg = ERA5dp / g
+ERA5dpg.attrs["units"] = "kg/m2"
+uqERA5_ver_JJA = uERA5_ver_JJA * qERA5_ver_JJA * 1000.0
+vqERA5_ver_JJA = vERA5_ver_JJA * qERA5_ver_JJA * 1000.0
+uqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_ERA5 = (uqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True)
 
+#   historical run data
+hislevel = qhis_ver_JJA.coords["level"] * 100.0
+hislevel.attrs["units"] = "Pa"
+hisdp = geocat.comp.dpres_plevel(hislevel, sphis_JJA, ptop)
+hisdpg = hisdp / g
+hisdpg.attrs["units"] = "kg/m2"
+uqhis_ver_JJA = uhis_ver_JJA * qhis_ver_JJA * 1000.0
+vqhis_ver_JJA = vhis_ver_JJA * qhis_ver_JJA * 1000.0
+uqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_his = (uqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True)
 
 # %%
 #   calculate the monsoon index
