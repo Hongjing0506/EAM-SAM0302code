@@ -2509,9 +2509,96 @@ axs[2, 1].format(ltitle="historical", rtitle="vorticity reg IWF")
 preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 8:28, 70:86]).mean(
     dim="lon", skipna=True
 )
+preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 8:28, 70:86]).mean(
+    dim="lon", skipna=True
+)
 uq_dpg_ERA5_India_JJA = ca.cal_lat_weighted_mean(uq_dpg_ERA5_JJA.loc[:, 5:25, 50:80]).mean(
     dim="lon", skipna=True
 )
+prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 8:28, 70:86]).mean(
+    dim="lon", skipna=True
+)
+uq_dpg_his_India_JJA = ca.cal_lat_weighted_mean(uq_dpg_his_JJA.loc[:, 5:25, 50:80]).mean(
+    dim="lon", skipna=True
+)
 
+# %%
+#   calculate the correlation of windshear and vorticity to Indian precipitation and water vapor source
+preCRU_India_JJA.coords["time"] = ushearERA5_JJA.coords["time"]
+preGPCP_India_JJA.coords["time"] = ushearERA5_JJA.coords["time"].sel(
+    time=ERA5_IWF_index.time.dt.year >= 1979
+)
+prehis_India_JJA.coords["time"] = ushearhis_JJA.coords["time"]
+(
+    ushear_CRU_India_slope,
+    ushear_CRU_India_intercept,
+    ushear_CRU_India_rvalue,
+    ushear_CRU_India_pvalue,
+    ushear_CRU_India_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, ushearERA5_JJA)
+
+(
+    ushear_GPCP_India_slope,
+    ushear_GPCP_India_intercept,
+    ushear_GPCP_India_rvalue,
+    ushear_GPCP_India_pvalue,
+    ushear_GPCP_India_hypothesis,
+) = ca.dim_linregress(preGPCP_India_JJA, ushearERA5_JJA.sel(time=ushearERA5_JJA.time.dt.year>=1979))
+
+(
+    ushear_his_India_slope,
+    ushear_his_India_intercept,
+    ushear_his_India_rvalue,
+    ushear_his_India_pvalue,
+    ushear_his_India_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, ushearhis_JJA)
+
+(
+    vshear_CRU_India_slope,
+    vshear_CRU_India_intercept,
+    vshear_CRU_India_rvalue,
+    vshear_CRU_India_pvalue,
+    vshear_CRU_India_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, vshearERA5_JJA)
+
+(
+    vshear_GPCP_India_slope,
+    vshear_GPCP_India_intercept,
+    vshear_GPCP_India_rvalue,
+    vshear_GPCP_India_pvalue,
+    vshear_GPCP_India_hypothesis,
+) = ca.dim_linregress(preGPCP_India_JJA, vshearERA5_JJA.sel(time=vshearERA5_JJA.time.dt.year>=1979))
+
+(
+    vshear_his_India_slope,
+    vshear_his_India_intercept,
+    vshear_his_India_rvalue,
+    vshear_his_India_pvalue,
+    vshear_his_India_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, vshearhis_JJA)
+
+(
+    vor_CRU_India_slope,
+    vor_CRU_India_intercept,
+    vor_CRU_India_rvalue,
+    vor_CRU_India_pvalue,
+    vor_CRU_India_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, vorERA5_JJA)
+
+(
+    vor_GPCP_India_slope,
+    vor_GPCP_India_intercept,
+    vor_GPCP_India_rvalue,
+    vor_GPCP_India_pvalue,
+    vor_GPCP_India_hypothesis,
+) = ca.dim_linregress(preGPCP_India_JJA, vorERA5_JJA.sel(time=vorERA5_JJA.time.dt.year>=1979))
+
+(
+    vor_his_India_slope,
+    vor_his_India_intercept,
+    vor_his_India_rvalue,
+    vor_his_India_pvalue,
+    vor_his_India_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, vorhis_JJA)
 
 # %%
