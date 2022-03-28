@@ -179,8 +179,8 @@ ERA5level.attrs["units"] = "Pa"
 ERA5dp = geocat.comp.dpres_plevel(ERA5level, spERA5_JJA, ptop)
 ERA5dpg = ERA5dp / g
 ERA5dpg.attrs["units"] = "kg/m2"
-uqERA5_ver_JJA = uERA5_ver_JJA * qERA5_ver_JJA * 1000.0
-vqERA5_ver_JJA = vERA5_ver_JJA * qERA5_ver_JJA * 1000.0
+uqERA5_ver_JJA = uERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
+vqERA5_ver_JJA = vERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
 uqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 vqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 uq_dpg_ERA5 = (uqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True)
@@ -191,8 +191,8 @@ hislevel.attrs["units"] = "Pa"
 hisdp = geocat.comp.dpres_plevel(hislevel, sphis_JJA, ptop)
 hisdpg = hisdp / g
 hisdpg.attrs["units"] = "kg/m2"
-uqhis_ver_JJA = uhis_ver_JJA * qhis_ver_JJA * 1000.0
-vqhis_ver_JJA = vhis_ver_JJA * qhis_ver_JJA * 1000.0
+uqhis_ver_JJA = uhis_ver_JJA * qhis_ver_JJA.data * 1000.0
+vqhis_ver_JJA = vhis_ver_JJA * qhis_ver_JJA.data * 1000.0
 uqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 vqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 uq_dpg_his = (uqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True)
