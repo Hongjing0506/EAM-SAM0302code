@@ -1285,10 +1285,10 @@ for ax in axs:
     )
     ax.add_patch(rect)
 
-    x0 = 70
-    y0 = 10
-    width = 40
-    height = 20
+    x0 = 90
+    y0 = 5
+    width = 50
+    height = 27.5
     patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0, 0].contourf(
@@ -1659,31 +1659,31 @@ for ax in axs:
     )
     ax.add_patch(rect)
 
-    x0 = 70
-    y0 = 10
-    width = 40
-    height = 20
+    x0 = 40.0
+    y0 = 5.0
+    width = 70.0
+    height = 15.0
     patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0, 0].contourf(
-    hgt_ERA5_SAM_rvalue.sel(level=200.0),
+    hgt_ERA5_WY_rvalue.sel(level=200.0),
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
 )
 sepl.plt_sig(
-    hgt_ERA5_SAM_pvalue.sel(level=200.0),
+    hgt_ERA5_WY_pvalue.sel(level=200.0),
     axs[0, 0],
     n,
-    np.where(hgt_ERA5_SAM_pvalue.sel(level=200.0)[::n, ::n] <= 0.05),
+    np.where(hgt_ERA5_WY_pvalue.sel(level=200.0)[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
 
 axs[0, 0].quiver(
-    u_ERA5_SAM_rvalue.sel(level=200.0)[::ski, ::ski],
-    v_ERA5_SAM_rvalue.sel(level=200.0)[::ski, ::ski],
+    u_ERA5_WY_rvalue.sel(level=200.0)[::ski, ::ski],
+    v_ERA5_WY_rvalue.sel(level=200.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -1695,8 +1695,8 @@ axs[0, 0].quiver(
 )
 
 m = axs[0, 0].quiver(
-    u_ERA5_SAM_rvalue.where(wind_ERA5_SAM_mask > 0.0).sel(level=200.0)[::ski, ::ski],
-    v_ERA5_SAM_rvalue.where(wind_ERA5_SAM_mask > 0.0).sel(level=200.0)[::ski, ::ski],
+    u_ERA5_WY_rvalue.where(wind_ERA5_WY_mask > 0.0).sel(level=200.0)[::ski, ::ski],
+    v_ERA5_WY_rvalue.where(wind_ERA5_WY_mask > 0.0).sel(level=200.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -1718,28 +1718,28 @@ qk = axs[0, 0].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-axs[0, 0].format(ltitle="SAM index", rtitle="ERA5 200hPa")
+axs[0, 0].format(ltitle="WY index", rtitle="ERA5 200hPa")
 # ===========================================
 
 con = axs[1, 0].contourf(
-    hgt_ERA5_SAM_rvalue.sel(level=500.0),
+    hgt_ERA5_WY_rvalue.sel(level=500.0),
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
 )
 sepl.plt_sig(
-    hgt_ERA5_SAM_pvalue.sel(level=500.0),
+    hgt_ERA5_WY_pvalue.sel(level=500.0),
     axs[1, 0],
     n,
-    np.where(hgt_ERA5_SAM_pvalue.sel(level=500.0)[::n, ::n] <= 0.05),
+    np.where(hgt_ERA5_WY_pvalue.sel(level=500.0)[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
 
 axs[1, 0].quiver(
-    u_ERA5_SAM_rvalue.sel(level=500.0)[::ski, ::ski],
-    v_ERA5_SAM_rvalue.sel(level=500.0)[::ski, ::ski],
+    u_ERA5_WY_rvalue.sel(level=500.0)[::ski, ::ski],
+    v_ERA5_WY_rvalue.sel(level=500.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -1751,8 +1751,8 @@ axs[1, 0].quiver(
 )
 
 m = axs[1, 0].quiver(
-    u_ERA5_SAM_rvalue.where(wind_ERA5_SAM_mask > 0.0).sel(level=500.0)[::ski, ::ski],
-    v_ERA5_SAM_rvalue.where(wind_ERA5_SAM_mask > 0.0).sel(level=500.0)[::ski, ::ski],
+    u_ERA5_WY_rvalue.where(wind_ERA5_WY_mask > 0.0).sel(level=500.0)[::ski, ::ski],
+    v_ERA5_WY_rvalue.where(wind_ERA5_WY_mask > 0.0).sel(level=500.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -1774,27 +1774,27 @@ qk = axs[1, 0].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-axs[1, 0].format(ltitle="SAM index", rtitle="ERA5 500hPa")
+axs[1, 0].format(ltitle="WY index", rtitle="ERA5 500hPa")
 # ===================================================
 con = axs[2, 0].contourf(
-    hgt_ERA5_SAM_rvalue.sel(level=850.0),
+    hgt_ERA5_WY_rvalue.sel(level=850.0),
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
 )
 sepl.plt_sig(
-    hgt_ERA5_SAM_pvalue.sel(level=850.0),
+    hgt_ERA5_WY_pvalue.sel(level=850.0),
     axs[2, 0],
     n,
-    np.where(hgt_ERA5_SAM_pvalue.sel(level=850.0)[::n, ::n] <= 0.05),
+    np.where(hgt_ERA5_WY_pvalue.sel(level=850.0)[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
 
 axs[2, 0].quiver(
-    u_ERA5_SAM_rvalue.sel(level=850.0)[::ski, ::ski],
-    v_ERA5_SAM_rvalue.sel(level=850.0)[::ski, ::ski],
+    u_ERA5_WY_rvalue.sel(level=850.0)[::ski, ::ski],
+    v_ERA5_WY_rvalue.sel(level=850.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -1806,8 +1806,8 @@ axs[2, 0].quiver(
 )
 
 m = axs[2, 0].quiver(
-    u_ERA5_SAM_rvalue.where(wind_ERA5_SAM_mask > 0.0).sel(level=850.0)[::ski, ::ski],
-    v_ERA5_SAM_rvalue.where(wind_ERA5_SAM_mask > 0.0).sel(level=850.0)[::ski, ::ski],
+    u_ERA5_WY_rvalue.where(wind_ERA5_WY_mask > 0.0).sel(level=850.0)[::ski, ::ski],
+    v_ERA5_WY_rvalue.where(wind_ERA5_WY_mask > 0.0).sel(level=850.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -1829,28 +1829,28 @@ qk = axs[2, 0].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-axs[2, 0].format(ltitle="SAM index", rtitle="ERA5 850hPa")
+axs[2, 0].format(ltitle="WY index", rtitle="ERA5 850hPa")
 # ===================================================
 #   plot the historical run result
 con = axs[0, 1].contourf(
-    hgt_his_SAM_rvalue.sel(level=200.0),
+    hgt_his_WY_rvalue.sel(level=200.0),
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
 )
 sepl.plt_sig(
-    hgt_his_SAM_pvalue.sel(level=200.0),
+    hgt_his_WY_pvalue.sel(level=200.0),
     axs[0, 1],
     n,
-    np.where(hgt_his_SAM_pvalue.sel(level=200.0)[::n, ::n] <= 0.05),
+    np.where(hgt_his_WY_pvalue.sel(level=200.0)[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
 
 axs[0, 1].quiver(
-    u_his_SAM_rvalue.sel(level=200.0)[::ski, ::ski],
-    v_his_SAM_rvalue.sel(level=200.0)[::ski, ::ski],
+    u_his_WY_rvalue.sel(level=200.0)[::ski, ::ski],
+    v_his_WY_rvalue.sel(level=200.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -1862,8 +1862,8 @@ axs[0, 1].quiver(
 )
 
 m = axs[0, 1].quiver(
-    u_his_SAM_rvalue.where(wind_his_SAM_mask > 0.0).sel(level=200.0)[::ski, ::ski],
-    v_his_SAM_rvalue.where(wind_his_SAM_mask > 0.0).sel(level=200.0)[::ski, ::ski],
+    u_his_WY_rvalue.where(wind_his_WY_mask > 0.0).sel(level=200.0)[::ski, ::ski],
+    v_his_WY_rvalue.where(wind_his_WY_mask > 0.0).sel(level=200.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -1885,28 +1885,28 @@ qk = axs[0, 1].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-axs[0, 1].format(ltitle="SAM index", rtitle="historical 200hPa")
+axs[0, 1].format(ltitle="WY index", rtitle="historical 200hPa")
 # ===========================================
 
 con = axs[1, 1].contourf(
-    hgt_his_SAM_rvalue.sel(level=500.0),
+    hgt_his_WY_rvalue.sel(level=500.0),
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
 )
 sepl.plt_sig(
-    hgt_his_SAM_pvalue.sel(level=500.0),
+    hgt_his_WY_pvalue.sel(level=500.0),
     axs[1, 1],
     n,
-    np.where(hgt_his_SAM_pvalue.sel(level=500.0)[::n, ::n] <= 0.05),
+    np.where(hgt_his_WY_pvalue.sel(level=500.0)[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
 
 axs[1, 1].quiver(
-    u_his_SAM_rvalue.sel(level=500.0)[::ski, ::ski],
-    v_his_SAM_rvalue.sel(level=500.0)[::ski, ::ski],
+    u_his_WY_rvalue.sel(level=500.0)[::ski, ::ski],
+    v_his_WY_rvalue.sel(level=500.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -1918,8 +1918,8 @@ axs[1, 1].quiver(
 )
 
 m = axs[1, 1].quiver(
-    u_his_SAM_rvalue.where(wind_his_SAM_mask > 0.0).sel(level=500.0)[::ski, ::ski],
-    v_his_SAM_rvalue.where(wind_his_SAM_mask > 0.0).sel(level=500.0)[::ski, ::ski],
+    u_his_WY_rvalue.where(wind_his_WY_mask > 0.0).sel(level=500.0)[::ski, ::ski],
+    v_his_WY_rvalue.where(wind_his_WY_mask > 0.0).sel(level=500.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -1941,27 +1941,27 @@ qk = axs[1, 1].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-axs[1, 1].format(ltitle="SAM index", rtitle="historical 500hPa")
+axs[1, 1].format(ltitle="WY index", rtitle="historical 500hPa")
 # ===================================================
 con = axs[2, 1].contourf(
-    hgt_his_SAM_rvalue.sel(level=850.0),
+    hgt_his_WY_rvalue.sel(level=850.0),
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
 )
 sepl.plt_sig(
-    hgt_his_SAM_pvalue.sel(level=850.0),
+    hgt_his_WY_pvalue.sel(level=850.0),
     axs[2, 1],
     n,
-    np.where(hgt_his_SAM_pvalue.sel(level=850.0)[::n, ::n] <= 0.05),
+    np.where(hgt_his_WY_pvalue.sel(level=850.0)[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
 
 axs[2, 1].quiver(
-    u_his_SAM_rvalue.sel(level=850.0)[::ski, ::ski],
-    v_his_SAM_rvalue.sel(level=850.0)[::ski, ::ski],
+    u_his_WY_rvalue.sel(level=850.0)[::ski, ::ski],
+    v_his_WY_rvalue.sel(level=850.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -1973,8 +1973,8 @@ axs[2, 1].quiver(
 )
 
 m = axs[2, 1].quiver(
-    u_his_SAM_rvalue.where(wind_his_SAM_mask > 0.0).sel(level=850.0)[::ski, ::ski],
-    v_his_SAM_rvalue.where(wind_his_SAM_mask > 0.0).sel(level=850.0)[::ski, ::ski],
+    u_his_WY_rvalue.where(wind_his_WY_mask > 0.0).sel(level=850.0)[::ski, ::ski],
+    v_his_WY_rvalue.where(wind_his_WY_mask > 0.0).sel(level=850.0)[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -1996,22 +1996,26 @@ qk = axs[2, 1].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-axs[2, 1].format(ltitle="SAM index", rtitle="historical 850hPa")
+axs[2, 1].format(ltitle="WY index", rtitle="historical 850hPa")
 # ===================================================
 
 
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
+print(uq_dpg_ERA5_JJA)
+# %%
 #   calculate the precipitation regress into IWF index
 #   ERA5
+preCRU_JJA.coords["time"] = ERA5_IWF_index.coords["time"]
+prehis_JJA.coords["time"] = his_IWF_index.coords["time"]
 (
     pre_CRU_IWF_slope,
     pre_CRU_IWF_intercept,
     pre_CRU_IWF_rvalue,
     pre_CRU_IWF_pvalue,
     pre_CRU_IWF_hypothesis,
-) = ca.dim_linregress(preCRU_JJA, ERA5_IWF_index)
+) = ca.dim_linregress(ERA5_IWF_index, preCRU_JJA)
 
 (
     uq_dpg_ERA5_IWF_slope,
@@ -2019,7 +2023,7 @@ fig.format(abc="(a)", abcloc="l")
     uq_dpg_ERA5_IWF_rvalue,
     uq_dpg_ERA5_IWF_pvalue,
     uq_dpg_ERA5_IWF_hypothesis,
-) = ca.dim_linregress(uq_dpg_ERA5, ERA5_IWF_index)
+) = ca.dim_linregress(ERA5_IWF_index, uq_dpg_ERA5_JJA)
 
 (
     vq_dpg_ERA5_IWF_slope,
@@ -2027,7 +2031,7 @@ fig.format(abc="(a)", abcloc="l")
     vq_dpg_ERA5_IWF_rvalue,
     vq_dpg_ERA5_IWF_pvalue,
     vq_dpg_ERA5_IWF_hypothesis,
-) = ca.dim_linregress(vq_dpg_ERA5, ERA5_IWF_index)
+) = ca.dim_linregress(ERA5_IWF_index, vq_dpg_ERA5_JJA)
 
 #   historical run
 (
@@ -2036,7 +2040,7 @@ fig.format(abc="(a)", abcloc="l")
     pre_his_IWF_rvalue,
     pre_his_IWF_pvalue,
     pre_his_IWF_hypothesis,
-) = ca.dim_linregress(prehis_JJA, his_IWF_index)
+) = ca.dim_linregress(his_IWF_index, prehis_JJA)
 
 (
     uq_dpg_his_IWF_slope,
@@ -2044,7 +2048,7 @@ fig.format(abc="(a)", abcloc="l")
     uq_dpg_his_IWF_rvalue,
     uq_dpg_his_IWF_pvalue,
     uq_dpg_his_IWF_hypothesis,
-) = ca.dim_linregress(uq_dpg_his, his_IWF_index)
+) = ca.dim_linregress(his_IWF_index, uq_dpg_his_JJA)
 
 (
     vq_dpg_his_IWF_slope,
@@ -2052,4 +2056,19 @@ fig.format(abc="(a)", abcloc="l")
     vq_dpg_his_IWF_rvalue,
     vq_dpg_his_IWF_pvalue,
     vq_dpg_his_IWF_hypothesis,
-) = ca.dim_linregress(vq_dpg_his, his_IWF_index)
+) = ca.dim_linregress(his_IWF_index, vq_dpg_his_JJA)
+# %%
+#   check the uq and vq
+uqvq_ERA5_IWF_mask = ca.wind_check(
+    xr.where(uq_dpg_ERA5_IWF_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(vq_dpg_ERA5_IWF_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(uq_dpg_ERA5_IWF_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(vq_dpg_ERA5_IWF_pvalue <= 0.05, 1.0, 0.0),
+)
+
+uqvq_his_IWF_mask = ca.wind_check(
+    xr.where(uq_dpg_his_IWF_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(vq_dpg_his_IWF_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(uq_dpg_his_IWF_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(vq_dpg_his_IWF_pvalue <= 0.05, 1.0, 0.0),
+)
