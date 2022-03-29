@@ -3861,6 +3861,68 @@ axs[2, 1].format(ltitle="India uq index", rtitle="historical 850hPa")
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
-uERA5_ver_India_JJA = ca.cal_lat_weighted_mean(uq_dpg_ERA5_JJA.loc[:, 5:25, 50:80]).mean(
+uERA5_ver_India_JJA = ca.cal_lat_weighted_mean(uERA5_ver_JJA.sel(level=850.0).loc[:, 5:25, 50:80]).mean(
     dim="lon", skipna=True
 )
+uhis_ver_India_JJA = ca.cal_lat_weighted_mean(uhis_ver_JJA.sel(level=850.0).loc[:, 5:25, 50:80]).mean(
+    dim="lon", skipna=True
+)
+# %%
+(
+    hgt_ERA5_India_u_slope,
+    hgt_ERA5_India_u_intercept,
+    hgt_ERA5_India_u_rvalue,
+    hgt_ERA5_India_u_pvalue,
+    hgt_ERA5_India_u_hypothesis,
+) = ca.dim_linregress(uERA5_ver_India_JJA, hgtERA5_ver_JJA)
+(
+    u_ERA5_India_u_slope,
+    u_ERA5_India_u_intercept,
+    u_ERA5_India_u_rvalue,
+    u_ERA5_India_u_pvalue,
+    u_ERA5_India_u_hypothesis,
+) = ca.dim_linregress(uERA5_ver_India_JJA, uERA5_ver_JJA)
+(
+    v_ERA5_India_u_slope,
+    v_ERA5_India_u_intercept,
+    v_ERA5_India_u_rvalue,
+    v_ERA5_India_u_pvalue,
+    v_ERA5_India_u_hypothesis,
+) = ca.dim_linregress(uERA5_ver_India_JJA, vERA5_ver_JJA)
+
+(
+    hgt_his_India_u_slope,
+    hgt_his_India_u_intercept,
+    hgt_his_India_u_rvalue,
+    hgt_his_India_u_pvalue,
+    hgt_his_India_u_hypothesis,
+) = ca.dim_linregress(uhis_ver_India_JJA, hgthis_ver_JJA)
+(
+    u_his_India_u_slope,
+    u_his_India_u_intercept,
+    u_his_India_u_rvalue,
+    u_his_India_u_pvalue,
+    u_his_India_u_hypothesis,
+) = ca.dim_linregress(uhis_ver_India_JJA, uhis_ver_JJA)
+(
+    v_his_India_u_slope,
+    v_his_India_u_intercept,
+    v_his_India_u_rvalue,
+    v_his_India_u_pvalue,
+    v_his_India_u_hypothesis,
+) = ca.dim_linregress(uhis_ver_India_JJA, vhis_ver_JJA)
+# %%
+#   calculate wind check
+wind_ERA5_India_u_mask = ca.wind_check(
+    xr.where(u_ERA5_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_ERA5_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_ERA5_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_ERA5_India_u_pvalue <= 0.05, 1.0, 0.0),
+)
+wind_his_India_u_mask = ca.wind_check(
+    xr.where(u_his_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_his_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_India_u_pvalue <= 0.05, 1.0, 0.0),
+)
+# %%
