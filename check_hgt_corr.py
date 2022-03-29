@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-29 23:37:08
 LastEditors: ChenHJ
-LastEditTime: 2022-03-30 00:31:12
+LastEditTime: 2022-03-30 00:39:08
 FilePath: /chenhj/0302code/check_hgt_corr.py
 Aim: 
 Mission: 
@@ -228,4 +228,49 @@ uhis_ver_JJA = ca.detrend_dim(uhis_ver_JJA, "time", deg=1, demean=False)
 vhis_ver_JJA = ca.detrend_dim(vhis_ver_JJA, "time", deg=1, demean=False)
 qhis_ver_JJA = ca.detrend_dim(qhis_ver_JJA, "time", deg=1, demean=False)
 sphis_JJA = ca.detrend_dim(sphis_JJA, "time", deg=1, demean=False)
+# %%
+hgthis_ds_ver_JJA = ca.p_time(hgthis_ds, 6, 8, True).loc[:, :, :100, :, :]
+
+uhis_ds_ver_JJA = ca.p_time(uhis_ds, 6, 8, True).loc[:, :, :100, :, :]
+vhis_ds_ver_JJA = ca.p_time(vhis_ds, 6, 8, True).loc[:, :, :100, :, :]
+qhis_ds_ver_JJA = ca.p_time(qhis_ds, 6, 8, True).loc[:, :, :100, :, :]
+sphis_ds_JJA = ca.p_time(sphis_ds, 6, 8, True)
+
+hgthis_ds_ver_JJA = ca.detrend_dim(hgthis_ds_ver_JJA, "time", deg=1, demean=False)
+uhis_ds_ver_JJA = ca.detrend_dim(uhis_ds_ver_JJA, "time", deg=1, demean=False)
+vhis_ds_ver_JJA = ca.detrend_dim(vhis_ds_ver_JJA, "time", deg=1, demean=False)
+qhis_ds_ver_JJA = ca.detrend_dim(qhis_ds_ver_JJA, "time", deg=1, demean=False)
+sphis_ds_JJA = ca.detrend_dim(sphis_ds_JJA, "time", deg=1, demean=False)
+# %%
+#   calculate the whole levels water vapor flux
+ptop = 100 * 100
+g = 9.8
+#   ERA5 data
+ERA5level = qERA5_ver_JJA.coords["level"] * 100.0
+ERA5level.attrs["units"] = "Pa"
+ERA5dp = geocat.comp.dpres_plevel(ERA5level, spERA5_JJA, ptop)
+ERA5dpg = ERA5dp / g
+ERA5dpg.attrs["units"] = "kg/m2"
+uqERA5_ver_JJA = uERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
+# vqERA5_ver_JJA = vERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
+uqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+# vqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_ERA5_JJA = (uqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True)
+# vq_dpg_ERA5_JJA = (vqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True)
+uq_dpg_ERA5_JJA = ca.detrend_dim(uq_dpg_ERA5_JJA, "time", deg=1, demean=False)
+# vq_dpg_ERA5_JJA = ca.detrend_dim(vq_dpg_ERA5_JJA, "time", deg=1, demean=False)
+
+hislevel = qhis_ver_JJA.coords["level"] * 100.0
+hislevel.attrs["units"] = "Pa"
+hisdp = geocat.comp.dpres_plevel(hislevel, sphis_JJA, ptop)
+hisdpg = hisdp / g
+hisdpg.attrs["units"] = "kg/m2"
+uqhis_ver_JJA = uhis_ver_JJA * qhis_ver_JJA.data * 1000.0
+# vqhis_ver_JJA = vhis_ver_JJA * qhis_ver_JJA.data * 1000.0
+uqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+# vqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_his_JJA = (uqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True)
+# vq_dpg_his_JJA = (vqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True)
+uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
+# vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
 # %%
