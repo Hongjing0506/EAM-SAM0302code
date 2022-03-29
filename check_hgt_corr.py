@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-29 23:37:08
 LastEditors: ChenHJ
-LastEditTime: 2022-03-30 00:28:47
+LastEditTime: 2022-03-30 00:30:08
 FilePath: /chenhj/0302code/check_hgt_corr.py
 Aim: 
 Mission: 
@@ -144,3 +144,63 @@ vhis_ds.coords["plev"] = vhis_ds["plev"] / 100.0
 vhis_ds = vhis_ds.rename({"plev": "level"})
 qhis_ds.coords["plev"] = qhis_ds["plev"] / 100.0
 qhis_ds = qhis_ds.rename({"plev": "level"})
+# %%
+fhgtERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc"
+)
+hgtERA5 = fhgtERA5["z"]
+
+
+fuERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
+)
+uERA5 = fuERA5["u"]
+
+fvERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc"
+)
+vERA5 = fvERA5["v"]
+
+fspERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
+)
+spERA5 = fspERA5["sp"]
+
+fqERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc"
+)
+qERA5 = fqERA5["q"]
+
+fhgthis = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+hgthis = fhgthis["zg"]
+hgthis.coords["plev"] = hgthis.coords["plev"] / 100.0
+hgthis = hgthis.rename({"plev": "level"})
+
+fuhis = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+uhis = fuhis["ua"]
+uhis.coords["plev"] = uhis.coords["plev"] / 100.0
+uhis = uhis.rename({"plev": "level"})
+
+fvhis = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+vhis = fvhis["va"]
+vhis.coords["plev"] = vhis.coords["plev"] / 100.0
+vhis = vhis.rename({"plev": "level"})
+
+fsphis = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+sphis = fsphis["ps"]
+
+fqhis = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+qhis = fqhis["hus"]
+qhis.coords["plev"] = qhis.coords["plev"] / 100.0
+qhis = qhis.rename({"plev": "level"})
+# %%
