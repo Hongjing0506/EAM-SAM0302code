@@ -59,7 +59,7 @@ def patches(ax, x0, y0, width, height, proj):
         height,
         fc="none",
         ec="grey7",
-        linewidth=0.8,
+        liIndia_uqdth=0.8,
         zorder=1.1,
         transform=proj,
         linestyle="--",
@@ -3488,3 +3488,379 @@ wind_his_India_uq_mask = ca.wind_check(
     xr.where(v_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
 )
 # %%
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig.subplots(ncols=2, nrows=3, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    rect = Rectangle(
+        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
+    )
+    ax.add_patch(rect)
+    # region 1
+    x0 = 50
+    y0 = 5.0
+    width = 30
+    height = 20.0
+    patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0, 0].contourf(
+    hgt_ERA5_India_uq_rvalue.sel(level=200.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    hgt_ERA5_India_uq_pvalue.sel(level=200.0),
+    axs[0, 0],
+    n,
+    np.where(hgt_ERA5_India_uq_pvalue.sel(level=200.0)[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[0, 0].quiver(
+    u_ERA5_India_uq_rvalue.sel(level=200.0)[::ski, ::ski],
+    v_ERA5_India_uq_rvalue.sel(level=200.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[0, 0].quiver(
+    u_ERA5_India_uq_rvalue.where(wind_ERA5_India_uq_mask > 0.0).sel(level=200.0)[::ski, ::ski],
+    v_ERA5_India_uq_rvalue.where(wind_ERA5_India_uq_mask > 0.0).sel(level=200.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0, 0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[0, 0].format(ltitle="India uq index", rtitle="ERA5 200hPa")
+# ===========================================
+
+con = axs[1, 0].contourf(
+    hgt_ERA5_India_uq_rvalue.sel(level=500.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    hgt_ERA5_India_uq_pvalue.sel(level=500.0),
+    axs[1, 0],
+    n,
+    np.where(hgt_ERA5_India_uq_pvalue.sel(level=500.0)[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[1, 0].quiver(
+    u_ERA5_India_uq_rvalue.sel(level=500.0)[::ski, ::ski],
+    v_ERA5_India_uq_rvalue.sel(level=500.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[1, 0].quiver(
+    u_ERA5_India_uq_rvalue.where(wind_ERA5_India_uq_mask > 0.0).sel(level=500.0)[::ski, ::ski],
+    v_ERA5_India_uq_rvalue.where(wind_ERA5_India_uq_mask > 0.0).sel(level=500.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[1, 0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[1, 0].format(ltitle="India uq index", rtitle="ERA5 500hPa")
+# ===================================================
+con = axs[2, 0].contourf(
+    hgt_ERA5_India_uq_rvalue.sel(level=850.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    hgt_ERA5_India_uq_pvalue.sel(level=850.0),
+    axs[2, 0],
+    n,
+    np.where(hgt_ERA5_India_uq_pvalue.sel(level=850.0)[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[2, 0].quiver(
+    u_ERA5_India_uq_rvalue.sel(level=850.0)[::ski, ::ski],
+    v_ERA5_India_uq_rvalue.sel(level=850.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[2, 0].quiver(
+    u_ERA5_India_uq_rvalue.where(wind_ERA5_India_uq_mask > 0.0).sel(level=850.0)[::ski, ::ski],
+    v_ERA5_India_uq_rvalue.where(wind_ERA5_India_uq_mask > 0.0).sel(level=850.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[2, 0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[2, 0].format(ltitle="India uq index", rtitle="ERA5 850hPa")
+# ===================================================
+#   plot the historical run result
+con = axs[0, 1].contourf(
+    hgt_his_India_uq_rvalue.sel(level=200.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    hgt_his_India_uq_pvalue.sel(level=200.0),
+    axs[0, 1],
+    n,
+    np.where(hgt_his_India_uq_pvalue.sel(level=200.0)[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[0, 1].quiver(
+    u_his_India_uq_rvalue.sel(level=200.0)[::ski, ::ski],
+    v_his_India_uq_rvalue.sel(level=200.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[0, 1].quiver(
+    u_his_India_uq_rvalue.where(wind_his_India_uq_mask > 0.0).sel(level=200.0)[::ski, ::ski],
+    v_his_India_uq_rvalue.where(wind_his_India_uq_mask > 0.0).sel(level=200.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0, 1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[0, 1].format(ltitle="India uq index", rtitle="historical 200hPa")
+# ===========================================
+
+con = axs[1, 1].contourf(
+    hgt_his_India_uq_rvalue.sel(level=500.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    hgt_his_India_uq_pvalue.sel(level=500.0),
+    axs[1, 1],
+    n,
+    np.where(hgt_his_India_uq_pvalue.sel(level=500.0)[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[1, 1].quiver(
+    u_his_India_uq_rvalue.sel(level=500.0)[::ski, ::ski],
+    v_his_India_uq_rvalue.sel(level=500.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[1, 1].quiver(
+    u_his_India_uq_rvalue.where(wind_his_India_uq_mask > 0.0).sel(level=500.0)[::ski, ::ski],
+    v_his_India_uq_rvalue.where(wind_his_India_uq_mask > 0.0).sel(level=500.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[1, 1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[1, 1].format(ltitle="India uq index", rtitle="historical 500hPa")
+# ===================================================
+con = axs[2, 1].contourf(
+    hgt_his_India_uq_rvalue.sel(level=850.0),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    hgt_his_India_uq_pvalue.sel(level=850.0),
+    axs[2, 1],
+    n,
+    np.where(hgt_his_India_uq_pvalue.sel(level=850.0)[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[2, 1].quiver(
+    u_his_India_uq_rvalue.sel(level=850.0)[::ski, ::ski],
+    v_his_India_uq_rvalue.sel(level=850.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[2, 1].quiver(
+    u_his_India_uq_rvalue.where(wind_his_India_uq_mask > 0.0).sel(level=850.0)[::ski, ::ski],
+    v_his_India_uq_rvalue.where(wind_his_India_uq_mask > 0.0).sel(level=850.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[2, 1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[2, 1].format(ltitle="India uq index", rtitle="historical 850hPa")
+# ===================================================
+
+
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l")
+# %%
+uERA5_ver_India_JJA = ca.cal_lat_weighted_mean(uq_dpg_ERA5_JJA.loc[:, 5:25, 50:80]).mean(
+    dim="lon", skipna=True
+)
