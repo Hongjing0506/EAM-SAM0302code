@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-29 23:37:08
 LastEditors: ChenHJ
-LastEditTime: 2022-03-29 23:59:13
+LastEditTime: 2022-03-30 00:26:25
 FilePath: /chenhj/0302code/check_hgt_corr.py
 Aim: 
 Mission: 
@@ -80,7 +80,7 @@ hgtds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 hgthis_ds = xr.DataArray(hgtds_his["zg"])
 hgthis_ds.coords["models"] = modelname_hgt
 # %%
-u_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg"
+u_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua"
 g = os.walk(u_his_path)
 filepath = []
 modelname_u = []
@@ -92,5 +92,47 @@ for path, dir_list, file_name in g:
             modelname_u.append(filename[loc[1] + 1 : loc[2]])
 uds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 uhis_ds = xr.DataArray(uds_his["ua"])
-uhis_ds = ca.detrend_dim(uhis_ds, "time", deg=1, demean=False)
 uhis_ds.coords["models"] = modelname_u
+# %%
+v_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/va"
+g = os.walk(v_his_path)
+filepath = []
+modelname_v = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_v.append(filename[loc[1] + 1 : loc[2]])
+vds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+vhis_ds = xr.DataArray(vds_his["va"])
+vhis_ds.coords["models"] = modelname_v
+# %%
+sp_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ps"
+g = os.walk(sp_his_path)
+filepath = []
+modelname_sp = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_sp.append(filename[loc[1] + 1 : loc[2]])
+spds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+sphis_ds = xr.DataArray(spds_his["ps"])
+sphis_ds.coords["models"] = modelname_sp
+# %%
+q_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus"
+g = os.walk(q_his_path)
+filepath = []
+modelname_q = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_q.append(filename[loc[1] + 1 : loc[2]])
+qds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+qhis_ds = xr.DataArray(qds_his["hus"])
+qhis_ds.coords["models"] = modelname_q
+# %%
