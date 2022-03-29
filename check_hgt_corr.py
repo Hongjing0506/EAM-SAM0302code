@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-29 23:37:08
 LastEditors: ChenHJ
-LastEditTime: 2022-03-30 00:30:08
+LastEditTime: 2022-03-30 00:31:12
 FilePath: /chenhj/0302code/check_hgt_corr.py
 Aim: 
 Mission: 
@@ -203,4 +203,29 @@ fqhis = xr.open_dataset(
 qhis = fqhis["hus"]
 qhis.coords["plev"] = qhis.coords["plev"] / 100.0
 qhis = qhis.rename({"plev": "level"})
+# %%
+hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
+uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
+vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
+qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True).loc[:, 100.0:, :, :]
+spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
+
+hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
+uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
+vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
+qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
+spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
+# %%
+hgthis_ver_JJA = ca.p_time(hgthis, 6, 8, True).loc[:, :100, :, :]
+
+uhis_ver_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :100, :, :]
+vhis_ver_JJA = ca.p_time(vhis, 6, 8, True).loc[:, :100, :, :]
+qhis_ver_JJA = ca.p_time(qhis, 6, 8, True).loc[:, :100, :, :]
+sphis_JJA = ca.p_time(sphis, 6, 8, True)
+
+hgthis_ver_JJA = ca.detrend_dim(hgthis_ver_JJA, "time", deg=1, demean=False)
+uhis_ver_JJA = ca.detrend_dim(uhis_ver_JJA, "time", deg=1, demean=False)
+vhis_ver_JJA = ca.detrend_dim(vhis_ver_JJA, "time", deg=1, demean=False)
+qhis_ver_JJA = ca.detrend_dim(qhis_ver_JJA, "time", deg=1, demean=False)
+sphis_JJA = ca.detrend_dim(sphis_JJA, "time", deg=1, demean=False)
 # %%
