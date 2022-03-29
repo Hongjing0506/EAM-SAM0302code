@@ -3431,3 +3431,60 @@ axs[2, 1].format(ltitle="NEWI index", rtitle="historical 850hPa")
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
+(
+    hgt_ERA5_India_uq_slope,
+    hgt_ERA5_India_uq_intercept,
+    hgt_ERA5_India_uq_rvalue,
+    hgt_ERA5_India_uq_pvalue,
+    hgt_ERA5_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, hgtERA5_ver_JJA)
+(
+    u_ERA5_India_uq_slope,
+    u_ERA5_India_uq_intercept,
+    u_ERA5_India_uq_rvalue,
+    u_ERA5_India_uq_pvalue,
+    u_ERA5_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, uERA5_ver_JJA)
+(
+    v_ERA5_India_uq_slope,
+    v_ERA5_India_uq_intercept,
+    v_ERA5_India_uq_rvalue,
+    v_ERA5_India_uq_pvalue,
+    v_ERA5_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, vERA5_ver_JJA)
+
+(
+    hgt_his_India_uq_slope,
+    hgt_his_India_uq_intercept,
+    hgt_his_India_uq_rvalue,
+    hgt_his_India_uq_pvalue,
+    hgt_his_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_his_India_JJA, hgthis_ver_JJA)
+(
+    u_his_India_uq_slope,
+    u_his_India_uq_intercept,
+    u_his_India_uq_rvalue,
+    u_his_India_uq_pvalue,
+    u_his_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_his_India_JJA, uhis_ver_JJA)
+(
+    v_his_India_uq_slope,
+    v_his_India_uq_intercept,
+    v_his_India_uq_rvalue,
+    v_his_India_uq_pvalue,
+    v_his_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_his_India_JJA, vhis_ver_JJA)
+# %%
+wind_ERA5_India_uq_mask = ca.wind_check(
+    xr.where(u_ERA5_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_ERA5_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_ERA5_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_ERA5_India_uq_pvalue <= 0.05, 1.0, 0.0),
+)
+wind_his_India_uq_mask = ca.wind_check(
+    xr.where(u_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+)
+# %%
