@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-29 23:37:08
 LastEditors: ChenHJ
-LastEditTime: 2022-03-30 00:26:25
+LastEditTime: 2022-03-30 00:28:47
 FilePath: /chenhj/0302code/check_hgt_corr.py
 Aim: 
 Mission: 
@@ -136,3 +136,11 @@ qds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 qhis_ds = xr.DataArray(qds_his["hus"])
 qhis_ds.coords["models"] = modelname_q
 # %%
+hgthis_ds.coords["plev"] = hgthis_ds["plev"] / 100.0
+hgthis_ds = hgthis_ds.rename({"plev": "level"})
+uhis_ds.coords["plev"] = uhis_ds["plev"] / 100.0
+uhis_ds = uhis_ds.rename({"plev": "level"})
+vhis_ds.coords["plev"] = vhis_ds["plev"] / 100.0
+vhis_ds = vhis_ds.rename({"plev": "level"})
+qhis_ds.coords["plev"] = qhis_ds["plev"] / 100.0
+qhis_ds = qhis_ds.rename({"plev": "level"})
