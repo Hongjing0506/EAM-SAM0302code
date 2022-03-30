@@ -275,6 +275,12 @@ vhis_ds_ver_JJA = vhis_ds_ver_JJA_copy
 qhis_ds_ver_JJA = qhis_ds_ver_JJA_copy
 sphis_ds_JJA = sphis_ds_JJA_copy
 
+hgthis_ds_ver_JJA.coords["models"] = models
+uhis_ds_ver_JJA.coords["models"] = models
+vhis_ds_ver_JJA.coords["models"] = models
+qhis_ds_ver_JJA.coords["models"] = models
+sphis_ds_JJA.coords["models"] = models
+
 # %%
 #   calculate the whole levels water vapor flux
 ptop = 100 * 100
