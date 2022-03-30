@@ -256,24 +256,25 @@ sphis_ds_JJA = ca.detrend_dim(sphis_ds_JJA, "time", deg=1, demean=False)
 # %%
 #   reorder the shape
 # print(hgthis_ds_ver_JJA)
-hgthis_ds_ver_JJA_copy = hgthis_ds_ver_JJA
-uhis_ds_ver_JJA_copy = uhis_ds_ver_JJA
-vhis_ds_ver_JJA_copy = vhis_ds_ver_JJA
-qhis_ds_ver_JJA_copy = qhis_ds_ver_JJA
-sphis_ds_JJA_copy = sphis_ds_JJA
+hgthis_ds_ver_JJA_copy = hgthis_ds_ver_JJA.copy()
+uhis_ds_ver_JJA_copy = uhis_ds_ver_JJA.copy()
+vhis_ds_ver_JJA_copy = vhis_ds_ver_JJA.copy()
+qhis_ds_ver_JJA_copy = qhis_ds_ver_JJA.copy()
+sphis_ds_JJA_copy = sphis_ds_JJA.copy()
 models = hgthis_ds_ver_JJA.coords["models"]
 
+print(models)
 for i, mod in enumerate(models):
-    hgthis_ds_ver_JJA_copy[i, :, :, :, :] = hgthis_ds_ver_JJA.sel(models=mod)
-    uhis_ds_ver_JJA_copy[i, :, :, :, :] = uhis_ds_ver_JJA.sel(models=mod)
-    vhis_ds_ver_JJA_copy[i, :, :, :, :] = vhis_ds_ver_JJA.sel(models=mod)
-    qhis_ds_ver_JJA_copy[i, :, :, :, :] = qhis_ds_ver_JJA.sel(models=mod)
-    sphis_ds_JJA_copy[i, :, :, :] = sphis_ds_JJA.sel(models=mod)
-hgthis_ds_ver_JJA = hgthis_ds_ver_JJA_copy
-uhis_ds_ver_JJA = uhis_ds_ver_JJA_copy
-vhis_ds_ver_JJA = vhis_ds_ver_JJA_copy
-qhis_ds_ver_JJA = qhis_ds_ver_JJA_copy
-sphis_ds_JJA = sphis_ds_JJA_copy
+    hgthis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(hgthis_ds_ver_JJA.sel(models=mod))
+    uhis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(uhis_ds_ver_JJA.sel(models=mod))
+    vhis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(vhis_ds_ver_JJA.sel(models=mod))
+    qhis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(qhis_ds_ver_JJA.sel(models=mod))
+    sphis_ds_JJA_copy[i, :, :, :] = np.array(sphis_ds_JJA.sel(models=mod))
+hgthis_ds_ver_JJA = hgthis_ds_ver_JJA_copy.copy()
+uhis_ds_ver_JJA = uhis_ds_ver_JJA_copy.copy()
+vhis_ds_ver_JJA = vhis_ds_ver_JJA_copy.copy()
+qhis_ds_ver_JJA = qhis_ds_ver_JJA_copy.copy()
+sphis_ds_JJA = sphis_ds_JJA_copy.copy()
 
 hgthis_ds_ver_JJA.coords["models"] = models
 uhis_ds_ver_JJA.coords["models"] = models
@@ -335,7 +336,7 @@ his_dsdp = xr.apply_ufunc(
 his_dsdp = his_dsdp.transpose("models", "time", "level", "lat", "lon")
 his_dsdpg = his_dsdp / g
 his_dsdpg.attrs["units"] = "kg/m2"
-uqhis_ds_ver_JJA = uhis_ds_ver_JJA * qhis_ds_ver_JJA.data * 1000.0
+uqhis_ds_ver_JJA = uhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
 # vqhis_ds_ver_JJA = vhis_ds_ver_JJA * qhis_ds_ver_JJA.data * 1000.0
 uqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 # # vqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
@@ -413,7 +414,7 @@ uq_dpg_his_ds_India_JJA = ca.detrend_dim(
     hgt_his_ds_India_uq_pvalue,
     hgt_his_ds_India_uq_hypothesis,
 ) = ca.dim_linregress(
-    uq_dpg_his_ds_India_JJA.sel(models=mod), hgthis_ds_ver_JJA_copy.sel(level=200.0)
+    uq_dpg_his_ds_India_JJA, hgthis_ds_ver_JJA.sel(level=200.0)
 )
 (
     u_his_ds_India_uq_slope,
@@ -422,7 +423,7 @@ uq_dpg_his_ds_India_JJA = ca.detrend_dim(
     u_his_ds_India_uq_pvalue,
     u_his_ds_India_uq_hypothesis,
 ) = ca.dim_linregress(
-    uq_dpg_his_ds_India_JJA.sel(models=mod), uhis_ds_ver_JJA_copy.sel(level=200.0)
+    uq_dpg_his_ds_India_JJA, uhis_ds_ver_JJA.sel(level=200.0)
 )
 (
     v_his_ds_India_uq_slope,
@@ -431,7 +432,7 @@ uq_dpg_his_ds_India_JJA = ca.detrend_dim(
     v_his_ds_India_uq_pvalue,
     v_his_ds_India_uq_hypothesis,
 ) = ca.dim_linregress(
-    uq_dpg_his_ds_India_JJA.sel(models=mod), vhis_ds_ver_JJA_copy.sel(level=200.0)
+    uq_dpg_his_ds_India_JJA, vhis_ds_ver_JJA.sel(level=200.0)
 )
 
 # %%
@@ -490,20 +491,20 @@ for ax in axs:
     patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
-    hgt_ERA5_India_uq_rvalue.where(hgt_ERA5_India_uq_pvalue <= 0.05),
+    hgt_ERA5_India_uq_rvalue,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": 0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
 )
-# sepl.plt_sig(
-#     hgt_ERA5_India_uq_pvalue,
-#     axs[0],
-#     n,
-#     np.where(hgt_ERA5_India_uq_pvalue[::n, ::n] <= 0.05),
-#     "denim",
-#     3.0,
-# )
+sepl.plt_sig(
+    hgt_ERA5_India_uq_pvalue,
+    axs[0],
+    n,
+    np.where(hgt_ERA5_India_uq_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
 
 axs[0].quiver(
     u_ERA5_India_uq_rvalue[::ski, ::ski],
@@ -545,20 +546,20 @@ qk = axs[0].quiverkey(
 axs[0].format(ltitle="India uq index", rtitle="ERA5 200hPa")
 # ===================================================
 con = axs[1].contourf(
-    hgt_his_India_uq_rvalue.where(hgt_his_India_uq_pvalue <= 0.05),
+    hgt_his_India_uq_rvalue,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": 0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
 )
-# sepl.plt_sig(
-#     hgt_his_India_uq_pvalue,
-#     axs[1],
-#     n,
-#     np.where(hgt_his_India_uq_pvalue[::n, ::n] <= 0.05),
-#     "denim",
-#     3.0,
-# )
+sepl.plt_sig(
+    hgt_his_India_uq_pvalue,
+    axs[1],
+    n,
+    np.where(hgt_his_India_uq_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
 
 axs[1].quiver(
     u_his_India_uq_rvalue[::ski, ::ski],
@@ -601,22 +602,20 @@ axs[1].format(ltitle="India uq index", rtitle="ens 200hPa")
 # ===================================================
 for i, mod in enumerate(models):
     con = axs[i + 2].contourf(
-        hgt_his_ds_India_uq_rvalue.sel(models=mod).where(
-            hgt_his_ds_India_uq_pvalue.sel(models=mod) <= 0.05
-        ),
+        hgt_his_ds_India_uq_rvalue.sel(models=mod),
         cmap="ColdHot",
         cmap_kw={"left": 0.06, "right": 0.94, "cut": 0.1},
         levels=np.arange(-1.0, 1.1, 0.1),
         zorder=0.8,
     )
-    # sepl.plt_sig(
-    #     hgt_his_ds_India_uq_pvalue.sel(models=mod),
-    #     axs[i + 2],
-    #     n,
-    #     np.where(hgt_his_ds_India_uq_pvalue.sel(models=mod)[::n, ::n] <= 0.05),
-    #     "denim",
-    #     3.0,
-    # )
+    sepl.plt_sig(
+        hgt_his_ds_India_uq_pvalue.sel(models=mod),
+        axs[i + 2],
+        n,
+        np.where(hgt_his_ds_India_uq_pvalue.sel(models=mod)[::n, ::n] <= 0.05),
+        "denim",
+        3.0,
+    )
 
     axs[i + 2].quiver(
         u_his_ds_India_uq_rvalue.sel(models=mod)[::ski, ::ski],
@@ -667,5 +666,15 @@ fig.format(abc="(a)", abcloc="l")
 # %%
 print(his_dsdpg)
 # print(qhis_ds_ver_JJA)
+
+# %%
+print(uhis_ds_ver_JJA_copy.coords["models"],vhis_ds_ver_JJA_copy.coords["models"],qhis_ds_ver_JJA_copy.coords["models"],hgthis_ds_ver_JJA_copy.coords["models"],sphis_ds_JJA_copy.coords["models"])
+# %%
+# print(uhis_ds_ver_JJA[:,0,0,0,0])
+# print(uhis_ds_ver_JJA_copy.sel(models="EC-Earth3"))
+# print(uhis_ds_ver_JJA.coords["models"])
+print(uhis_ds_ver_JJA[9,0,0,:,:])
+# print(uhis_ds_ver_JJA_copy[0,0,0,:,:])
+
 
 # %%
