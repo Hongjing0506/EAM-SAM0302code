@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-29 23:37:08
 LastEditors: ChenHJ
-LastEditTime: 2022-03-30 00:39:08
+LastEditTime: 2022-03-30 13:30:51
 FilePath: /chenhj/0302code/check_hgt_corr.py
 Aim: 
 Mission: 
@@ -245,7 +245,7 @@ sphis_ds_JJA = ca.detrend_dim(sphis_ds_JJA, "time", deg=1, demean=False)
 #   calculate the whole levels water vapor flux
 ptop = 100 * 100
 g = 9.8
-#   ERA5 data
+#  ERA5 data
 ERA5level = qERA5_ver_JJA.coords["level"] * 100.0
 ERA5level.attrs["units"] = "Pa"
 ERA5dp = geocat.comp.dpres_plevel(ERA5level, spERA5_JJA, ptop)
@@ -274,3 +274,36 @@ uq_dpg_his_JJA = (uqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True)
 uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
 # vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
 # %%
+#   calculate the water vapor flux of multi-models
+his_dslevel = qhis_ds_ver_JJA.coords["level"] * 100.0
+his_dslevel.attrs["units"] = "Pa"
+# his_dsdp = geocat.comp.dpres_plevel(his_dslevel, sphis_ds_JJA, ptop)
+# print(sphis_ds_JJA)
+his_dsdp = xr.apply_ufunc(
+    geocat.comp.dpres_plevel,
+    his_dslevel,
+    sphis_ds_JJA,
+    ptop,
+    input_core_dims=[["level"], [], []],
+    output_core_dims=[["level"]],
+    vectorize=True,
+    dask="parallelized"
+)
+# %%
+# his_dsdpg = his_dsdp / g
+# his_dsdpg.attrs["units"] = "kg/m2"
+# uqhis_ds_ver_JJA = uhis_ds_ver_JJA * qhis_ds_ver_JJA.data * 1000.0
+# # vqhis_ds_ver_JJA = vhis_ds_ver_JJA * qhis_ds_ver_JJA.data * 1000.0
+# uqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+# # vqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+# uq_dpg_his_ds_JJA = (uqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True)
+# # vq_dpg_his_ds_JJA = (vqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True)
+# uq_dpg_his_ds_JJA = ca.detrend_dim(uq_dpg_his_ds_JJA, "time", deg=1, demean=False)
+# # vq_dpg_his_ds_JJA = ca.detrend_dim(vq_dpg_his_ds_JJA, "time", deg=1, demean=False)
+# %%
+uq_dpg_ERA5_India_JJA = ca.cal_lat_weighted_mean(
+    uq_dpg_ERA5_JJA.loc[:, 5:25, 50:80]
+).mean(dim="lon", skipna=True)
+uq_dpg_ERA5_India_JJA = ca.detrend_dim(
+    uq_dpg_ERA5_India_JJA, "time", deg=1, demean=False
+)
