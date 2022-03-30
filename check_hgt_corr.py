@@ -302,17 +302,19 @@ his_dsdp = xr.apply_ufunc(
     dask="parallelized",
 )
 # %%
-print(his_dsdp)
-# his_dsdpg = his_dsdp / g
-# his_dsdpg.attrs["units"] = "kg/m2"
-# uqhis_ds_ver_JJA = uhis_ds_ver_JJA * qhis_ds_ver_JJA.data * 1000.0
-# # vqhis_ds_ver_JJA = vhis_ds_ver_JJA * qhis_ds_ver_JJA.data * 1000.0
-# uqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+# for i in np.arange(0,26):
+#     print(his_dsdp[i, 0, 0, 0, :])
+his_dsdp = his_dsdp.transpose("models", "time", "level", "lat", "lon")
+his_dsdpg = his_dsdp / g
+his_dsdpg.attrs["units"] = "kg/m2"
+uqhis_ds_ver_JJA = uhis_ds_ver_JJA * qhis_ds_ver_JJA.data * 1000.0
+# vqhis_ds_ver_JJA = vhis_ds_ver_JJA * qhis_ds_ver_JJA.data * 1000.0
+uqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 # # vqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-# uq_dpg_his_ds_JJA = (uqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True)
-# # vq_dpg_his_ds_JJA = (vqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True)
-# uq_dpg_his_ds_JJA = ca.detrend_dim(uq_dpg_his_ds_JJA, "time", deg=1, demean=False)
-# # vq_dpg_his_ds_JJA = ca.detrend_dim(vq_dpg_his_ds_JJA, "time", deg=1, demean=False)
+uq_dpg_his_ds_JJA = (uqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True)
+# vq_dpg_his_ds_JJA = (vqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True)
+uq_dpg_his_ds_JJA = ca.detrend_dim(uq_dpg_his_ds_JJA, "time", deg=1, demean=False)
+# vq_dpg_his_ds_JJA = ca.detrend_dim(vq_dpg_his_ds_JJA, "time", deg=1, demean=False)
 # %%
 uq_dpg_ERA5_India_JJA = ca.cal_lat_weighted_mean(
     uq_dpg_ERA5_JJA.loc[:, 5:25, 50:80]
@@ -397,3 +399,21 @@ uq_dpg_his_ds_India_JJA = ca.detrend_dim(uq_dpg_his_ds_India_JJA, "time", deg=1,
 ) = ca.dim_linregress(uq_dpg_his_ds_India_JJA, vhis_ds_ver_JJA.sel(level=200.0))
 
 # %%
+wind_ERA5_India_uq_mask = ca.wind_check(
+    xr.where(u_ERA5_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_ERA5_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_ERA5_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_ERA5_India_uq_pvalue <= 0.05, 1.0, 0.0),
+)
+wind_his_India_uq_mask = ca.wind_check(
+    xr.where(u_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+)
+wind_his_ds_India_uq_mask = ca.wind_check(
+    xr.where(u_his_ds_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_ds_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_his_ds_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_ds_India_uq_pvalue <= 0.05, 1.0, 0.0),
+)
