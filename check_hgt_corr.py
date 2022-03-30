@@ -328,7 +328,7 @@ uq_dpg_his_India_JJA = ca.cal_lat_weighted_mean(
 uq_dpg_his_India_JJA = ca.detrend_dim(uq_dpg_his_India_JJA, "time", deg=1, demean=False)
 
 uq_dpg_his_ds_India_JJA = ca.cal_lat_weighted_mean(
-    uq_dpg_his_ds_JJA.loc[:, 5:25, 50:80]
+    uq_dpg_his_ds_JJA.loc[:, :, 5:25, 50:80]
 ).mean(dim="lon", skipna=True)
 uq_dpg_his_ds_India_JJA = ca.detrend_dim(uq_dpg_his_ds_India_JJA, "time", deg=1, demean=False)
 # %%
@@ -376,27 +376,47 @@ uq_dpg_his_ds_India_JJA = ca.detrend_dim(uq_dpg_his_ds_India_JJA, "time", deg=1,
     v_his_India_uq_hypothesis,
 ) = ca.dim_linregress(uq_dpg_his_India_JJA, vhis_ver_JJA.sel(level=200.0))
 
-(
-    hgt_his_ds_India_uq_slope,
-    hgt_his_ds_India_uq_intercept,
-    hgt_his_ds_India_uq_rvalue,
-    hgt_his_ds_India_uq_pvalue,
-    hgt_his_ds_India_uq_hypothesis,
-) = ca.dim_linregress(uq_dpg_his_ds_India_JJA, hgthis_ds_ver_JJA.sel(level=200.0))
-(
-    u_his_ds_India_uq_slope,
-    u_his_ds_India_uq_intercept,
-    u_his_ds_India_uq_rvalue,
-    u_his_ds_India_uq_pvalue,
-    u_his_ds_India_uq_hypothesis,
-) = ca.dim_linregress(uq_dpg_his_ds_India_JJA, uhis_ds_ver_JJA.sel(level=200.0))
-(
-    v_his_ds_India_uq_slope,
-    v_his_ds_India_uq_intercept,
-    v_his_ds_India_uq_rvalue,
-    v_his_ds_India_uq_pvalue,
-    v_his_ds_India_uq_hypothesis,
-) = ca.dim_linregress(uq_dpg_his_ds_India_JJA, vhis_ds_ver_JJA.sel(level=200.0))
+hgt_his_ds_India_uq_slope = np.zeros((26, 72, 144), dtype=np.float64)
+hgt_his_ds_India_uq_intercept = np.zeros((26, 72, 144), dtype=np.float64)
+hgt_his_ds_India_uq_rvalue = np.zeros((26, 72, 144), dtype=np.float64)
+hgt_his_ds_India_uq_pvalue = np.zeros((26, 72, 144), dtype=np.float64)
+hgt_his_ds_India_uq_hypothesis = np.zeros((26, 72, 144), dtype=np.float64)
+
+u_his_ds_India_uq_slope = np.zeros((26, 72, 144), dtype=np.float64)
+u_his_ds_India_uq_intercept = np.zeros((26, 72, 144), dtype=np.float64)
+u_his_ds_India_uq_rvalue = np.zeros((26, 72, 144), dtype=np.float64)
+u_his_ds_India_uq_pvalue = np.zeros((26, 72, 144), dtype=np.float64)
+u_his_ds_India_uq_hypothesis = np.zeros((26, 72, 144), dtype=np.float64)
+
+v_his_ds_India_uq_slope = np.zeros((26, 72, 144), dtype=np.float64)
+v_his_ds_India_uq_intercept = np.zeros((26, 72, 144), dtype=np.float64)
+v_his_ds_India_uq_rvalue = np.zeros((26, 72, 144), dtype=np.float64)
+v_his_ds_India_uq_pvalue = np.zeros((26, 72, 144), dtype=np.float64)
+v_his_ds_India_uq_hypothesis = np.zeros((26, 72, 144), dtype=np.float64)
+
+
+for i, mod in enumerate(uq_dpg_ERA5_India_JJA.coords["models"]):
+    (
+        hgt_his_ds_India_uq_slope[i,:,:],
+        hgt_his_ds_India_uq_intercept[i,:,:],
+        hgt_his_ds_India_uq_rvalue[i,:,:],
+        hgt_his_ds_India_uq_pvalue[i,:,:],
+        hgt_his_ds_India_uq_hypothesis[i,:,:],
+    ) = ca.dim_linregress(uq_dpg_his_ds_India_JJA.sel(models=mod), hgthis_ds_ver_JJA.sel(models=mod, level=200.0))
+    (
+        u_his_ds_India_uq_slope[i,:,:],
+        u_his_ds_India_uq_intercept[i,:,:],
+        u_his_ds_India_uq_rvalue[i,:,:],
+        u_his_ds_India_uq_pvalue[i,:,:],
+        u_his_ds_India_uq_hypothesis[i,:,:],
+    ) = ca.dim_linregress(uq_dpg_his_ds_India_JJA.sel(models=mod), uhis_ds_ver_JJA.sel(models=mod, level=200.0))
+    (
+        v_his_ds_India_uq_slope[i,:,:],
+        v_his_ds_India_uq_intercept[i,:,:],
+        v_his_ds_India_uq_rvalue[i,:,:],
+        v_his_ds_India_uq_pvalue[i,:,:],
+        v_his_ds_India_uq_hypothesis[i,:,:],
+    ) = ca.dim_linregress(uq_dpg_his_ds_India_JJA.sel(models=mod), vhis_ds_ver_JJA.sel(models=mod, level=200.0))
 
 # %%
 wind_ERA5_India_uq_mask = ca.wind_check(
