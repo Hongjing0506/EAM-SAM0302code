@@ -1,4 +1,4 @@
-'''
+"""
 Author: ChenHJ
 Date: 2022-03-29 23:37:08
 LastEditors: ChenHJ
@@ -6,7 +6,7 @@ LastEditTime: 2022-03-30 13:30:51
 FilePath: /chenhj/0302code/check_hgt_corr.py
 Aim: 
 Mission: 
-'''
+"""
 # %%
 import numpy as np
 import xarray as xr
@@ -65,8 +65,12 @@ def patches(ax, x0, y0, width, height, proj):
         linestyle="--",
     )
     ax.add_patch(rect)
+
+
 # %%
-hgt_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg"
+hgt_his_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg"
+)
 g = os.walk(hgt_his_path)
 filepath = []
 modelname_hgt = []
@@ -80,7 +84,9 @@ hgtds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 hgthis_ds = xr.DataArray(hgtds_his["zg"])
 hgthis_ds.coords["models"] = modelname_hgt
 # %%
-u_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua"
+u_his_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua"
+)
 g = os.walk(u_his_path)
 filepath = []
 modelname_u = []
@@ -94,7 +100,9 @@ uds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 uhis_ds = xr.DataArray(uds_his["ua"])
 uhis_ds.coords["models"] = modelname_u
 # %%
-v_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/va"
+v_his_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/va"
+)
 g = os.walk(v_his_path)
 filepath = []
 modelname_v = []
@@ -108,7 +116,9 @@ vds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 vhis_ds = xr.DataArray(vds_his["va"])
 vhis_ds.coords["models"] = modelname_v
 # %%
-sp_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ps"
+sp_his_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ps"
+)
 g = os.walk(sp_his_path)
 filepath = []
 modelname_sp = []
@@ -122,7 +132,9 @@ spds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 sphis_ds = xr.DataArray(spds_his["ps"])
 sphis_ds.coords["models"] = modelname_sp
 # %%
-q_his_path = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus"
+q_his_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus"
+)
 g = os.walk(q_his_path)
 filepath = []
 modelname_q = []
@@ -287,9 +299,10 @@ his_dsdp = xr.apply_ufunc(
     input_core_dims=[["level"], [], []],
     output_core_dims=[["level"]],
     vectorize=True,
-    dask="parallelized"
+    dask="parallelized",
 )
 # %%
+print(his_dsdp)
 # his_dsdpg = his_dsdp / g
 # his_dsdpg.attrs["units"] = "kg/m2"
 # uqhis_ds_ver_JJA = uhis_ds_ver_JJA * qhis_ds_ver_JJA.data * 1000.0
@@ -307,3 +320,80 @@ uq_dpg_ERA5_India_JJA = ca.cal_lat_weighted_mean(
 uq_dpg_ERA5_India_JJA = ca.detrend_dim(
     uq_dpg_ERA5_India_JJA, "time", deg=1, demean=False
 )
+uq_dpg_his_India_JJA = ca.cal_lat_weighted_mean(
+    uq_dpg_his_JJA.loc[:, 5:25, 50:80]
+).mean(dim="lon", skipna=True)
+uq_dpg_his_India_JJA = ca.detrend_dim(uq_dpg_his_India_JJA, "time", deg=1, demean=False)
+
+uq_dpg_his_ds_India_JJA = ca.cal_lat_weighted_mean(
+    uq_dpg_his_ds_JJA.loc[:, 5:25, 50:80]
+).mean(dim="lon", skipna=True)
+uq_dpg_his_ds_India_JJA = ca.detrend_dim(uq_dpg_his_ds_India_JJA, "time", deg=1, demean=False)
+# %%
+(
+    hgt_ERA5_India_uq_slope,
+    hgt_ERA5_India_uq_intercept,
+    hgt_ERA5_India_uq_rvalue,
+    hgt_ERA5_India_uq_pvalue,
+    hgt_ERA5_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, hgtERA5_ver_JJA.sel(level=200.0))
+(
+    u_ERA5_India_uq_slope,
+    u_ERA5_India_uq_intercept,
+    u_ERA5_India_uq_rvalue,
+    u_ERA5_India_uq_pvalue,
+    u_ERA5_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, uERA5_ver_JJA.sel(level=200.0))
+(
+    v_ERA5_India_uq_slope,
+    v_ERA5_India_uq_intercept,
+    v_ERA5_India_uq_rvalue,
+    v_ERA5_India_uq_pvalue,
+    v_ERA5_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, vERA5_ver_JJA.sel(level=200.0))
+
+(
+    hgt_his_India_uq_slope,
+    hgt_his_India_uq_intercept,
+    hgt_his_India_uq_rvalue,
+    hgt_his_India_uq_pvalue,
+    hgt_his_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_his_India_JJA, hgthis_ver_JJA.sel(level=200.0))
+(
+    u_his_India_uq_slope,
+    u_his_India_uq_intercept,
+    u_his_India_uq_rvalue,
+    u_his_India_uq_pvalue,
+    u_his_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_his_India_JJA, uhis_ver_JJA.sel(level=200.0))
+(
+    v_his_India_uq_slope,
+    v_his_India_uq_intercept,
+    v_his_India_uq_rvalue,
+    v_his_India_uq_pvalue,
+    v_his_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_his_India_JJA, vhis_ver_JJA.sel(level=200.0))
+
+(
+    hgt_his_ds_India_uq_slope,
+    hgt_his_ds_India_uq_intercept,
+    hgt_his_ds_India_uq_rvalue,
+    hgt_his_ds_India_uq_pvalue,
+    hgt_his_ds_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_his_ds_India_JJA, hgthis_ds_ver_JJA.sel(level=200.0))
+(
+    u_his_ds_India_uq_slope,
+    u_his_ds_India_uq_intercept,
+    u_his_ds_India_uq_rvalue,
+    u_his_ds_India_uq_pvalue,
+    u_his_ds_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_his_ds_India_JJA, uhis_ds_ver_JJA.sel(level=200.0))
+(
+    v_his_ds_India_uq_slope,
+    v_his_ds_India_uq_intercept,
+    v_his_ds_India_uq_rvalue,
+    v_his_ds_India_uq_pvalue,
+    v_his_ds_India_uq_hypothesis,
+) = ca.dim_linregress(uq_dpg_his_ds_India_JJA, vhis_ds_ver_JJA.sel(level=200.0))
+
+# %%
