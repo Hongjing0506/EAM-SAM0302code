@@ -246,9 +246,45 @@ ssp585_SAM_index = ca.detrend_dim(ssp585_SAM_index, "time", deg=1, demean=False)
 print(stats.linregress(ssp585_IWF_index, ssp585_SAM_index))
 # %%
 freq = "AS-JUL"
-window = 9
+window = 31
 
 ssp585_IWF_SAM_rolling_9 = ca.rolling_reg_index(
     ssp585_IWF_index, ssp585_SAM_index, ssp585_IWF_index.time, window, freq, True
 )
+# %%
+#   plot the rolling correlation coefficient
+fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=1, nrows=1)
+lw = 0.8
+# cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
+
+
+m1 = axs[0].line(
+    ssp585_IWF_index.time.dt.year, ca.standardize(ssp585_IWF_index), lw=lw, color="black",
+)
+m2 = axs[0].line(
+    ssp585_SAM_index.time.dt.year, ca.standardize(ssp585_SAM_index), lw=lw, color="blue",
+)
+m3 = axs[0].line(
+    ssp585_IWF_index.time.dt.year, np.array(ssp585_IWF_SAM_rolling_9["rvalue"]), lw=lw, color="red",
+    linestyle = "--"
+)
+
+
+axs[0].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(0.2133, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(-0.2133, lw=0.8, color="grey5", linestyle="--")
+axs[0].format(
+    ltitle="window={}".format(window),
+    rtitle="2015-2099",
+    title="IWF & SAM",
+    xrotation=0,
+    ymin=-3.0,
+    ymax=3.0,
+    ylocator=0.5,
+    yminorlocator=0.25,
+)
+axs[0].legend(handles=[m1, m2, m3], loc="ll", labels=["IWF", "SAM", "r"], ncols=1)
+# %%
+print(ca.cal_rlim1(0.95, 85))
 # %%
