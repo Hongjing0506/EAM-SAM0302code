@@ -245,3 +245,10 @@ ssp585_SAM_index = ca.detrend_dim(ssp585_SAM_index, "time", deg=1, demean=False)
 # %%
 print(stats.linregress(ssp585_IWF_index, ssp585_SAM_index))
 # %%
+freq = "AS-JUL"
+window = 9
+
+ssp585_IWF_SAM_rolling_9 = ca.rolling_reg_index(
+    ssp585_IWF_index, ssp585_SAM_index, ssp585_IWF_index.time, window, freq, True
+)
+# %%
