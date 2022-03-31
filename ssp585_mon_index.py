@@ -182,3 +182,53 @@ sphis_JJA = ca.detrend_dim(sphis_JJA, "time", deg=1, demean=False)
 
 preGPCP_JJA = ca.p_time(preGPCP, 6, 8, True)
 preGPCP_JJA = ca.detrend_dim(preGPCP_JJA, "time", deg=1, demean=False)
+# %%
+fhgt585 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/zg/zg_Amon_ensemble_ssp585_gn_201501-209912.nc"
+)
+hgt585 = fhgt585["zg"]
+hgt585.coords["plev"] = hgt585.coords["plev"] / 100.0
+hgt585 = hgt585.rename({"plev": "level"})
+
+fu585 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ua/ua_Amon_ensemble_ssp585_gn_201501-209912.nc"
+)
+u585 = fu585["ua"]
+u585.coords["plev"] = u585.coords["plev"] / 100.0
+u585 = u585.rename({"plev": "level"})
+
+fv585 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/va/va_Amon_ensemble_ssp585_gn_201501-209912.nc"
+)
+v585 = fv585["va"]
+v585.coords["plev"] = v585.coords["plev"] / 100.0
+v585 = v585.rename({"plev": "level"})
+
+fsp585 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ps/ps_Amon_ensemble_ssp585_gn_201501-209912.nc"
+)
+sp585 = fsp585["ps"]
+
+fq585 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/hus/hus_Amon_ensemble_ssp585_gn_201501-209912.nc"
+)
+q585 = fq585["hus"]
+q585.coords["plev"] = q585.coords["plev"] / 100.0
+q585 = q585.rename({"plev": "level"})
+# %%
+hgt585_ver_JJA = ca.p_time(hgt585, 6, 8, True).loc[:, :100, :, :]
+
+u585_ver_JJA = ca.p_time(u585, 6, 8, True).loc[:, :100, :, :]
+v585_ver_JJA = ca.p_time(v585, 6, 8, True).loc[:, :100, :, :]
+q585_ver_JJA = ca.p_time(q585, 6, 8, True).loc[:, :100, :, :]
+pre585_JJA = ca.p_time(pre585, 6, 8, True)
+sp585_JJA = ca.p_time(sp585, 6, 8, True)
+
+hgt585_ver_JJA = ca.detrend_dim(hgt585_ver_JJA, "time", deg=1, demean=False)
+u585_ver_JJA = ca.detrend_dim(u585_ver_JJA, "time", deg=1, demean=False)
+v585_ver_JJA = ca.detrend_dim(v585_ver_JJA, "time", deg=1, demean=False)
+q585_ver_JJA = ca.detrend_dim(q585_ver_JJA, "time", deg=1, demean=False)
+pre585_JJA = ca.detrend_dim(pre585_JJA, "time", deg=1, demean=False)
+sp585_JJA = ca.detrend_dim(sp585_JJA, "time", deg=1, demean=False)
+
+# %%
