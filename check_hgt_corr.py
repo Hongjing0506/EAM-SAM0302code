@@ -1340,3 +1340,8 @@ for i, mod in enumerate(models):
 print(uqlist)
 print(sorted(uqlist, key=lambda x : x["pcc"]))
 # %%
+qlist = []
+for i, mod in enumerate(models):
+    qlist.append({"models": str(np.array(mod)),"pcc": ca.cal_pcc(hgt_ERA5_India_q_rvalue, hgt_his_ds_India_q_rvalue.sel(models=mod))})
+print(qlist)
+print(sorted(qlist, key=lambda x : x["pcc"]))
