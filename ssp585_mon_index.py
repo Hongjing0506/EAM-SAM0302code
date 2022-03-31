@@ -215,6 +215,11 @@ fq585 = xr.open_dataset(
 q585 = fq585["hus"]
 q585.coords["plev"] = q585.coords["plev"] / 100.0
 q585 = q585.rename({"plev": "level"})
+
+fpre585 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/pr/pr_Amon_ensemble_ssp585_gn_201501-209912.nc"
+)
+pre585 = fprehis["pr"]
 # %%
 hgt585_ver_JJA = ca.p_time(hgt585, 6, 8, True).loc[:, :100, :, :]
 
