@@ -260,7 +260,7 @@ ERA5_his_IWF_regress = stats.linregress(ERA5_IWF_index, his_IWF_index)
 # %%
 # print(ERA5_his_IWF_regress)
 print(
-    ERA5_WY_SAM_regress, his_WY_SAM_regress
+    ERA5_IWF_SAM_regress, his_IWF_SAM_regress
 )
 # %%
 #   plot the monsoon index
@@ -3612,7 +3612,7 @@ qk = axs[0, 0].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-axs[0, 0].format(ltitle="India u index", rtitle="ERA5 200hPa")
+axs[0, 0].format(ltitle="India uq index", rtitle="ERA5 200hPa")
 # ===========================================
 
 con = axs[1, 0].contourf(
