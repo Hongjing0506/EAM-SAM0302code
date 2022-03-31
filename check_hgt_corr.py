@@ -183,12 +183,12 @@ fqERA5 = xr.open_dataset(
 )
 qERA5 = fqERA5["q"]
 
-fhgthis = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
-)
-hgthis = fhgthis["zg"]
-hgthis.coords["plev"] = hgthis.coords["plev"] / 100.0
-hgthis = hgthis.rename({"plev": "level"})
+# fhgthis = xr.open_dataset(
+#     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
+# )
+# hgthis = fhgthis["zg"]
+# hgthis.coords["plev"] = hgthis.coords["plev"] / 100.0
+# hgthis = hgthis.rename({"plev": "level"})
 
 fuhis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
@@ -228,14 +228,14 @@ vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
 qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
 spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
 # %%
-hgthis_ver_JJA = ca.p_time(hgthis, 6, 8, True).loc[:, :100, :, :]
+# hgthis_ver_JJA = ca.p_time(hgthis, 6, 8, True).loc[:, :100, :, :]
 
 uhis_ver_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :100, :, :]
 vhis_ver_JJA = ca.p_time(vhis, 6, 8, True).loc[:, :100, :, :]
 qhis_ver_JJA = ca.p_time(qhis, 6, 8, True).loc[:, :100, :, :]
 sphis_JJA = ca.p_time(sphis, 6, 8, True)
 
-hgthis_ver_JJA = ca.detrend_dim(hgthis_ver_JJA, "time", deg=1, demean=False)
+# hgthis_ver_JJA = ca.detrend_dim(hgthis_ver_JJA, "time", deg=1, demean=False)
 uhis_ver_JJA = ca.detrend_dim(uhis_ver_JJA, "time", deg=1, demean=False)
 vhis_ver_JJA = ca.detrend_dim(vhis_ver_JJA, "time", deg=1, demean=False)
 qhis_ver_JJA = ca.detrend_dim(qhis_ver_JJA, "time", deg=1, demean=False)
@@ -281,7 +281,17 @@ uhis_ds_ver_JJA.coords["models"] = models
 vhis_ds_ver_JJA.coords["models"] = models
 qhis_ds_ver_JJA.coords["models"] = models
 sphis_ds_JJA.coords["models"] = models
-
+# %%
+hgthis_ver_JJA = hgthis_ds_ver_JJA.mean(dim="models", skipna=True)
+hgthis_ver_JJA = ca.detrend_dim(hgthis_ver_JJA, "time", deg=1, demean=False)
+uhis_ver_JJA = uhis_ds_ver_JJA.mean(dim="models", skipna=True)
+uhis_ver_JJA = ca.detrend_dim(uhis_ver_JJA, "time", deg=1, demean=False)
+vhis_ver_JJA = vhis_ds_ver_JJA.mean(dim="models", skipna=True)
+vhis_ver_JJA = ca.detrend_dim(vhis_ver_JJA, "time", deg=1, demean=False)
+qhis_ver_JJA = qhis_ds_ver_JJA.mean(dim="models", skipna=True)
+qhis_ver_JJA = ca.detrend_dim(qhis_ver_JJA, "time", deg=1, demean=False)
+sphis_JJA = sphis_ds_JJA.mean(dim="models", skipna=True)
+sphis_JJA = ca.detrend_dim(sphis_JJA, "time", deg=1, demean=False)
 # %%
 #   calculate the whole levels water vapor flux
 ptop = 100 * 100
@@ -677,4 +687,22 @@ print(uhis_ds_ver_JJA[9,0,0,:,:])
 # print(uhis_ds_ver_JJA_copy[0,0,0,:,:])
 
 
+# %%
+u_ERA5_India_JJA = ca.cal_lat_weighted_mean(
+    u_ERA5_JJA.loc[:, 5:25, 50:80]
+).mean(dim="lon", skipna=True)
+u_ERA5_India_JJA = ca.detrend_dim(
+    u_ERA5_India_JJA, "time", deg=1, demean=False
+)
+u_his_India_JJA = ca.cal_lat_weighted_mean(
+    u_his_JJA.loc[:, 5:25, 50:80]
+).mean(dim="lon", skipna=True)
+u_his_India_JJA = ca.detrend_dim(u_his_India_JJA, "time", deg=1, demean=False)
+
+u_his_ds_India_JJA = ca.cal_lat_weighted_mean(
+    u_his_ds_JJA.loc[:, :, 5:25, 50:80]
+).mean(dim="lon", skipna=True)
+u_his_ds_India_JJA = ca.detrend_dim(
+    u_his_ds_India_JJA, "time", deg=1, demean=False
+)
 # %%
