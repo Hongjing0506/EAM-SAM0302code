@@ -4554,10 +4554,10 @@ for ax in axs:
     )
     ax.add_patch(rect)
     # region 1
-    x0 = 90
-    y0 = 5
-    width = 50
-    height = 27.5
+    x0 = 70
+    y0 = 10
+    width = 40
+    height = 20
     patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0, 0].contourf(
