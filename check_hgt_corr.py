@@ -1326,3 +1326,17 @@ for i, mod in enumerate(models):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
+#   calculate the pcc
+reload(ca)
+ulist = []
+for i, mod in enumerate(models):
+    ulist.append({"models": str(np.array(mod)),"pcc": ca.cal_pcc(hgt_ERA5_India_u_rvalue, hgt_his_ds_India_u_rvalue.sel(models=mod))})
+print(ulist)
+print(sorted(ulist, key=lambda x : x["pcc"]))
+# %%
+uqlist = []
+for i, mod in enumerate(models):
+    uqlist.append({"models": str(np.array(mod)),"pcc": ca.cal_pcc(hgt_ERA5_India_uq_rvalue, hgt_his_ds_India_uq_rvalue.sel(models=mod))})
+print(uqlist)
+print(sorted(uqlist, key=lambda x : x["pcc"]))
+# %%
