@@ -1863,3 +1863,16 @@ fig.format(abc="(a)", abcloc="l")
 # %%
 print(vERA5_shear_mean)
 # %%
+shearlist = []
+for i, mod in enumerate(models):
+    shearlist.append({"models": str(mod.data),"pcc": ca.cal_pcc(vERA5_shear_mean.loc[-30:55, 30:180], vhis_ds_shear_mean.sel(models=mod).loc[-30:55, 30:180])})
+# print(shearlist)
+print(sorted(shearlist, key=lambda x : x["pcc"]))
+
+# %%
+vorlist = []
+for i, mod in enumerate(models):
+    vorlist.append({"models": str(mod.data),"pcc": ca.cal_pcc(vorERA5_JJA_mean.loc[-30:55, 30:180], vorhis_ds_JJA_mean.sel(models=mod).loc[-30:55, 30:180])})
+# print(vorlist)
+print(sorted(vorlist, key=lambda x : x["pcc"]))
+# %%
