@@ -1668,5 +1668,16 @@ for i, mod in enumerate(models):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
+#   plot the climatology of two indexes
+windhis_ds_JJA = VectorWind(uhis_ds_ver_JJA.sel(level=850.0), vhis_ds_ver_JJA.sel(level=850.0))
+vorhis_ds_JJA = windhis_ds_JJA.vorticity()
+vorhis_ds_JJA = ca.detrend_dim(vorhis_ds_JJA, "time", deg=1, demean=False)
 
+windhis_JJA = VectorWind(uhis_ver_JJA.sel(level=850.0), vhis_ver_JJA.sel(level=850.0))
+vorhis_JJA = windhis_JJA.vorticity()
+vorhis_JJA = ca.detrend_dim(vorhis_JJA, "time", deg=1, demean=False)
+
+windERA5_JJA = VectorWind(uERA5_ver_JJA.sel(level=850.0), vERA5_ver_JJA.sel(level=850.0))
+vorERA5_JJA = windERA5_JJA.vorticity()
+vorERA5_JJA = ca.detrend_dim(vorERA5_JJA, "time", deg=1, demean=False)
 # %%
