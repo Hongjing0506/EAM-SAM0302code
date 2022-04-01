@@ -283,16 +283,16 @@ vhis_ds_ver_JJA.coords["models"] = models
 qhis_ds_ver_JJA.coords["models"] = models
 sphis_ds_JJA.coords["models"] = models
 # %%
-hgthis_ver_JJA = hgthis_ds_ver_JJA.mean(dim="models", skipna=True)
-hgthis_ver_JJA = ca.detrend_dim(hgthis_ver_JJA, "time", deg=1, demean=False)
-uhis_ver_JJA = uhis_ds_ver_JJA.mean(dim="models", skipna=True)
-uhis_ver_JJA = ca.detrend_dim(uhis_ver_JJA, "time", deg=1, demean=False)
-vhis_ver_JJA = vhis_ds_ver_JJA.mean(dim="models", skipna=True)
-vhis_ver_JJA = ca.detrend_dim(vhis_ver_JJA, "time", deg=1, demean=False)
-qhis_ver_JJA = qhis_ds_ver_JJA.mean(dim="models", skipna=True)
-qhis_ver_JJA = ca.detrend_dim(qhis_ver_JJA, "time", deg=1, demean=False)
-sphis_JJA = sphis_ds_JJA.mean(dim="models", skipna=True)
-sphis_JJA = ca.detrend_dim(sphis_JJA, "time", deg=1, demean=False)
+# hgthis_ver_JJA = hgthis_ds_ver_JJA.mean(dim="models", skipna=True)
+# hgthis_ver_JJA = ca.detrend_dim(hgthis_ver_JJA, "time", deg=1, demean=False)
+# uhis_ver_JJA = uhis_ds_ver_JJA.mean(dim="models", skipna=True)
+# uhis_ver_JJA = ca.detrend_dim(uhis_ver_JJA, "time", deg=1, demean=False)
+# vhis_ver_JJA = vhis_ds_ver_JJA.mean(dim="models", skipna=True)
+# vhis_ver_JJA = ca.detrend_dim(vhis_ver_JJA, "time", deg=1, demean=False)
+# qhis_ver_JJA = qhis_ds_ver_JJA.mean(dim="models", skipna=True)
+# qhis_ver_JJA = ca.detrend_dim(qhis_ver_JJA, "time", deg=1, demean=False)
+# sphis_JJA = sphis_ds_JJA.mean(dim="models", skipna=True)
+# sphis_JJA = ca.detrend_dim(sphis_JJA, "time", deg=1, demean=False)
 # %%
 #   calculate the whole levels water vapor flux
 ptop = 100 * 100
@@ -1706,5 +1706,77 @@ windERA5_JJA = VectorWind(uERA5_ver_JJA.sel(level=850.0), vERA5_ver_JJA.sel(leve
 vorERA5_JJA = windERA5_JJA.vorticity()
 vorERA5_JJA = ca.detrend_dim(vorERA5_JJA, "time", deg=1, demean=False)
 # %%
-print(uhis_ds_ver_JJA_filled.count())
+#   calculate the vorticity climatological mean
+vorhis_ds_JJA_mean = vorhis_ds_JJA.mean(dim="time", skipna=True)
+vorhis_JJA_mean = vorhis_JJA.mean(dim="time", skipna=True)
+vorERA5_JJA_mean = vorERA5_JJA.mean(dim="time", skipna=True)
+
+# %%
+print(vorERA5_JJA_mean.max())
+# %%
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig.subplots(ncols=4, nrows=7, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    # region 1
+    x0 = 90
+    y0 = 5.0
+    width = 50
+    height = 27.5
+    patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0].contourf(
+    vorERA5_JJA_mean,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-3e-05, 3.01e-05, 3e-06),
+    zorder=0.8,
+    extend="both"
+)
+axs[0].format(ltitle="vorticity", rtitle="ERA5 850hPa")
+
+# ===================================================
+con = axs[1].contourf(
+    vorhis_JJA_mean,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-3e-05, 3.01e-05, 3e-06),
+    zorder=0.8,
+    extend="both"
+)
+axs[1].format(ltitle="vorticity", rtitle="ens 850hPa")
+
+# ===================================================
+for i, mod in enumerate(models):
+    con = axs[i + 2].contourf(
+        vorhis_ds_JJA_mean.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(-3e-05, 3.01e-05, 3e-06),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[i + 2].format(ltitle="vorticity", rtitle="{} 850hPa".format(str(mod.data)))
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l")
 # %%
