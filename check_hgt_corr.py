@@ -46,6 +46,7 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from scipy.stats import t
 from scipy import signal
+from scipy.interpolate import interp2d
 from eofs.multivariate.standard import MultivariateEof
 from eofs.standard import Eof
 
@@ -1668,8 +1669,32 @@ for i, mod in enumerate(models):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
+#   interpolate the nan in wind fields
+lat = uhis_ds_ver_JJA.coords["lat"]
+lon = uhis_ds_ver_JJA.coords["lon"]
+time = uhis_ds_ver_JJA.coords["time"]
+uhis_ds_ver_JJA_filled = uhis_ds_ver_JJA.sel(level=850.0).copy()
+vhis_ds_ver_JJA_filled = vhis_ds_ver_JJA.sel(level=850.0).copy()
+for i,mod in enumerate(models):
+    for ti in range(len(time)):
+        u_filled_func = interp2d(lon, lat, uhis_ds_ver_JJA.sel(level=850.0)[i,ti,:,:], kind="linear", bounds_error=False)
+        uhis_ds_ver_JJA_filled[i,ti,:,:] = u_filled_func(lon, lat)
+        v_filled_func = interp2d(lon, lat, vhis_ds_ver_JJA.sel(level=850.0)[i,ti,:,:], kind="linear", bounds_error=False)
+        vhis_ds_ver_JJA_filled[i,ti,:,:] = v_filled_func(lon, lat)
+lenmodels = np.arange(len(models))
+uhis_ds_ver_JJA_filled.coords["models"] = lenmodels
+vhis_ds_ver_JJA_filled.coords["models"] = lenmodels
+
+uhis_ds_ver_JJA_filled = uhis_ds_ver_JJA_filled.interpolate_na(dim="models",method="nearest", fill_value="extrapolate")
+vhis_ds_ver_JJA_filled = vhis_ds_ver_JJA_filled.interpolate_na(dim="models",method="nearest", fill_value="extrapolate")
+uhis_ds_ver_JJA_filled.coords["models"] = models
+vhis_ds_ver_JJA_filled.coords["models"] = models
+# print(uhis_ds_ver_JJA_filled)
+
+
+# %%
 #   plot the climatology of two indexes
-windhis_ds_JJA = VectorWind(uhis_ds_ver_JJA.sel(level=850.0), vhis_ds_ver_JJA.sel(level=850.0))
+windhis_ds_JJA = VectorWind(uhis_ds_ver_JJA_filled, vhis_ds_ver_JJA_filled)
 vorhis_ds_JJA = windhis_ds_JJA.vorticity()
 vorhis_ds_JJA = ca.detrend_dim(vorhis_ds_JJA, "time", deg=1, demean=False)
 
@@ -1680,4 +1705,6 @@ vorhis_JJA = ca.detrend_dim(vorhis_JJA, "time", deg=1, demean=False)
 windERA5_JJA = VectorWind(uERA5_ver_JJA.sel(level=850.0), vERA5_ver_JJA.sel(level=850.0))
 vorERA5_JJA = windERA5_JJA.vorticity()
 vorERA5_JJA = ca.detrend_dim(vorERA5_JJA, "time", deg=1, demean=False)
+# %%
+print(uhis_ds_ver_JJA_filled.count())
 # %%
