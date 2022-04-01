@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-02 16:45:05
 LastEditors: ChenHJ
-LastEditTime: 2022-03-18 16:42:17
+LastEditTime: 2022-03-31 21:37:51
 FilePath: /chenhj/0302code/data_predealing.py
 Aim: 
 Mission: 
@@ -161,8 +161,8 @@ def cdo_ensmean(srcPath, dstPath):
     
 variables = ["ua", "va", "hus", "ta", "wap", "ps", "pr", "zg"]
 for var in variables:
-    srcPath = os.path.join("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/ssp585", var)
-    dstPath = os.path.join("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/ssp585", var)
+    srcPath = os.path.join("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585", var)
+    dstPath = os.path.join("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585", var)
     cdo_ensmean(srcPath, dstPath)
 # %%
 modelname = ["ACCESS-CM2", "BCC-CSM2-MR", "CAMS-CSM1-0", "CanESM5", "CESM2", "CESM2-WACCM", "CMCC-ESM2", "CNRM-CM6-1", "CNRM-ESM2-1", "EC-Earth3-Veg", "EC-Earth3", "FGOALS-g3", "GFDL-CM4", "HadGEM3-GC31-LL", "INM-CM4-8", "INM-CM5-0", "IPSL-CM6A-LR", "KACE-1-0-G", "MIROC-ES2L", "MIROC6", "MPI-ESM1-2-HR", "MRI-ESM2-0", "NESM3", "NorESM2-LM", "TaiESM1", "UKESM1-0-LL"]
