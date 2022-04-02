@@ -3918,14 +3918,15 @@ fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
 uERA5_ver_India_JJA = ca.cal_lat_weighted_mean(
-    uERA5_ver_JJA.sel(level=200.0).loc[:, 5:25, 50:80]
+    uERA5_ver_JJA.sel(level=850.0).loc[:, 5:25, 50:80]
 ).mean(dim="lon", skipna=True)
 uERA5_ver_India_JJA = ca.detrend_dim(uERA5_ver_India_JJA, "time", deg=1, demean=False)
 uhis_ver_India_JJA = ca.cal_lat_weighted_mean(
-    uhis_ver_JJA.sel(level=200.0).loc[:, 5:25, 50:80]
+    uhis_ver_JJA.sel(level=850.0).loc[:, 5:25, 50:80]
 ).mean(dim="lon", skipna=True)
 uhis_ver_India_JJA = ca.detrend_dim(uhis_ver_India_JJA, "time", deg=1, demean=False)
 # %%
+#   calculate the hgt\u\v regress onto uIndia
 (
     hgt_ERA5_India_u_slope,
     hgt_ERA5_India_u_intercept,
