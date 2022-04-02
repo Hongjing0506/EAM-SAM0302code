@@ -356,6 +356,7 @@ uq_dpg_his_ds_JJA = (uqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=
 uq_dpg_his_ds_JJA = ca.detrend_dim(uq_dpg_his_ds_JJA, "time", deg=1, demean=False)
 # vq_dpg_his_ds_JJA = ca.detrend_dim(vq_dpg_his_ds_JJA, "time", deg=1, demean=False)
 # %%
+#   calculate uq in India
 uq_dpg_ERA5_India_JJA = ca.cal_lat_weighted_mean(
     uq_dpg_ERA5_JJA.loc[:, 5:25, 50:80]
 ).mean(dim="lon", skipna=True)
@@ -1834,7 +1835,7 @@ con = axs[0].contourf(
     zorder=0.8,
     extend="both"
 )
-axs[0].format(ltitle="vorticity", rtitle="ERA5 850hPa")
+axs[0].format(ltitle="v850-v200", rtitle="ERA5 850hPa")
 
 # ===================================================
 con = axs[1].contourf(
@@ -1845,7 +1846,7 @@ con = axs[1].contourf(
     zorder=0.8,
     extend="both"
 )
-axs[1].format(ltitle="vorticity", rtitle="ens 850hPa")
+axs[1].format(ltitle="v850-v200", rtitle="ens 850hPa")
 
 # ===================================================
 for i, mod in enumerate(models):
@@ -1857,7 +1858,7 @@ for i, mod in enumerate(models):
         zorder=0.8,
         extend="both"
     )
-    axs[i + 2].format(ltitle="vorticity", rtitle="{} 850hPa".format(str(mod.data)))
+    axs[i + 2].format(ltitle="v850-v200", rtitle="{} 850hPa".format(str(mod.data)))
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
@@ -1876,3 +1877,77 @@ for i, mod in enumerate(models):
 # print(vorlist)
 print(sorted(vorlist, key=lambda x : x["pcc"]))
 # %%
+#   calculate the 850hPa hgt/u/v regress onto u_India
+(
+    hgt_ERA5_India_u_slope,
+    hgt_ERA5_India_u_intercept,
+    hgt_ERA5_India_u_rvalue,
+    hgt_ERA5_India_u_pvalue,
+    hgt_ERA5_India_u_hypothesis,
+) = ca.dim_linregress(u_ERA5_India_JJA, hgtERA5_ver_JJA.sel(level=850.0))
+(
+    u_ERA5_India_u_slope,
+    u_ERA5_India_u_intercept,
+    u_ERA5_India_u_rvalue,
+    u_ERA5_India_u_pvalue,
+    u_ERA5_India_u_hypothesis,
+) = ca.dim_linregress(u_ERA5_India_JJA, uERA5_ver_JJA.sel(level=850.0))
+(
+    v_ERA5_India_u_slope,
+    v_ERA5_India_u_intercept,
+    v_ERA5_India_u_rvalue,
+    v_ERA5_India_u_pvalue,
+    v_ERA5_India_u_hypothesis,
+) = ca.dim_linregress(u_ERA5_India_JJA, vERA5_ver_JJA.sel(level=850.0))
+
+(
+    hgt_his_India_u_slope,
+    hgt_his_India_u_intercept,
+    hgt_his_India_u_rvalue,
+    hgt_his_India_u_pvalue,
+    hgt_his_India_u_hypothesis,
+) = ca.dim_linregress(u_his_India_JJA, hgthis_ver_JJA.sel(level=850.0))
+(
+    u_his_India_u_slope,
+    u_his_India_u_intercept,
+    u_his_India_u_rvalue,
+    u_his_India_u_pvalue,
+    u_his_India_u_hypothesis,
+) = ca.dim_linregress(u_his_India_JJA, uhis_ver_JJA.sel(level=850.0))
+(
+    v_his_India_u_slope,
+    v_his_India_u_intercept,
+    v_his_India_u_rvalue,
+    v_his_India_u_pvalue,
+    v_his_India_u_hypothesis,
+) = ca.dim_linregress(u_his_India_JJA, vhis_ver_JJA.sel(level=850.0))
+
+(
+    hgt_his_ds_India_u_slope,
+    hgt_his_ds_India_u_intercept,
+    hgt_his_ds_India_u_rvalue,
+    hgt_his_ds_India_u_pvalue,
+    hgt_his_ds_India_u_hypothesis,
+) = ca.dim_linregress(
+    u_his_ds_India_JJA, hgthis_ds_ver_JJA.sel(level=850.0)
+)
+(
+    u_his_ds_India_u_slope,
+    u_his_ds_India_u_intercept,
+    u_his_ds_India_u_rvalue,
+    u_his_ds_India_u_pvalue,
+    u_his_ds_India_u_hypothesis,
+) = ca.dim_linregress(
+    u_his_ds_India_JJA, uhis_ds_ver_JJA.sel(level=850.0)
+)
+(
+    v_his_ds_India_u_slope,
+    v_his_ds_India_u_intercept,
+    v_his_ds_India_u_rvalue,
+    v_his_ds_India_u_pvalue,
+    v_his_ds_India_u_hypothesis,
+) = ca.dim_linregress(
+    u_his_ds_India_JJA, vhis_ds_ver_JJA.sel(level=850.0)
+)
+# %%
+#   plot the 850hPa hgt/u/v/ regress onto u_India
