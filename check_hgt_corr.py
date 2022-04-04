@@ -355,28 +355,27 @@ uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
 vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
 # %%
 #   calculate the water vapor flux of multi-models
-his_dslevel = qhis_ds_ver_JJA.coords["level"] * 100.0
-his_dslevel.attrs["units"] = "Pa"
-# his_dsdp = geocat.comp.dpres_plevel(his_dslevel, sphis_ds_JJA, ptop)
-# print(sphis_ds_JJA)
-his_dsdp = xr.apply_ufunc(
-    geocat.comp.dpres_plevel,
-    his_dslevel,
-    sphis_ds_JJA,
-    ptop,
-    input_core_dims=[["level"], [], []],
-    output_core_dims=[["level"]],
-    vectorize=True,
-    dask="parallelized",
-)
+# his_dslevel = qhis_ds_ver_JJA.coords["level"] * 100.0
+# his_dslevel.attrs["units"] = "Pa"
+# # his_dsdp = geocat.comp.dpres_plevel(his_dslevel, sphis_ds_JJA, ptop)
+# # print(sphis_ds_JJA)
+# his_dsdp = xr.apply_ufunc(
+#     geocat.comp.dpres_plevel,
+#     his_dslevel,
+#     sphis_ds_JJA,
+#     ptop,
+#     input_core_dims=[["level"], [], []],
+#     output_core_dims=[["level"]],
+#     vectorize=True,
+#     dask="parallelized",
+# )
 # %%
 # for i in np.arange(0,26):
 #     print(his_dsdp[i, 0, 0, 0, :])
 # his_dsdp = his_dsdp.transpose("models", "time", "level", "lat", "lon")
 # his_dsdpg = his_dsdp / g
 # his_dsdpg.attrs["units"] = "kg/m2"
-fhis_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/his_dsdpg.nc")
-his_dsdpg = fhis_dsdpg["his_dsdpg"]
+his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/his_dsdpg.nc")
 uqhis_ds_ver_JJA = uhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
 vqhis_ds_ver_JJA = vhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
 uqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
@@ -408,6 +407,7 @@ uq_dpg_his_ds_India_JJA = ca.detrend_dim(
     uq_dpg_his_ds_India_JJA, "time", deg=1, demean=False
 )
 #   calculate vq in NCR
+
 
 # %%
 (
@@ -2521,6 +2521,14 @@ fig.format(abc="(a)", abcloc="l")
 # %%
 #   calculate the India uq regression
 
+
 # %%
 #   calculate the uq/vq/pre climatology
-#   read the precipitation data
+uq_dpg_ERA5_JJA_cli = uq_dpg_ERA5_JJA.mean(dim="time", skipna=True)
+vq_dpg_ERA5_JJA_cli = vq_dpg_ERA5_JJA.mean(dim="time", skipna=True)
+uq_dpg_his_JJA_cli = uq_dpg_his_JJA.mean(dim="time", skipna=True)
+vq_dpg_his_JJA_cli = vq_dpg_his_JJA.mean(dim="time", skipna=True)
+uq_dpg_his_ds_JJA_cli = uq_dpg_his_ds_JJA.mean(dim="time", skipna=True)
+vq_dpg_his_ds_JJA_cli = vq_dpg_his_ds_JJA.mean(dim="time", skipna=True)
+
+# %%
