@@ -19,15 +19,15 @@ import sys
 sys.path.append("/home/ys17-23/chenhj/self_def/")
 import plot as sepl
 import cal as ca
-import pandas as pd
 from importlib import reload
+reload(sepl)
 
+import pandas as pd
 import metpy.calc as mpcalc
 import metpy.constants as constants
 import geocat.comp
 from windspharm.xarray import VectorWind
 
-reload(sepl)
 
 # sd.path.append("/home/ys17-23/chenhj/1201code/self_def.py")
 
@@ -2254,6 +2254,25 @@ fig.format(abc="(a)", abcloc="l")
 ) = ca.dim_linregress(
     u_his_ds_India_JJA, vhis_ds_ver_JJA.sel(level=500.0)
 )
+wind_ERA5_India_u_mask = ca.wind_check(
+    xr.where(u_ERA5_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_ERA5_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_ERA5_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_ERA5_India_u_pvalue <= 0.05, 1.0, 0.0),
+)
+wind_his_India_u_mask = ca.wind_check(
+    xr.where(u_his_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_his_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_India_u_pvalue <= 0.05, 1.0, 0.0),
+)
+wind_his_ds_India_u_mask = ca.wind_check(
+    xr.where(u_his_ds_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_ds_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_his_ds_India_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_ds_India_u_pvalue <= 0.05, 1.0, 0.0),
+)
+
 # %%
 #   plot the 850hPa hgt/u/v/ regress onto u_India
 pplt.rc.grid = False
