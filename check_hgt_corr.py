@@ -160,7 +160,7 @@ preCRU = fpreCRU["pre"]
 fprehis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
 )
-prehis = fprehis["pr"]
+prehis = fprehis["pr"]*3600*24
 
 pr_his_path = (
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr"
@@ -175,7 +175,7 @@ for path, dir_list, file_name in g:
             loc = ca.retrieve_allstrindex(filename, "_")
             modelname_pr.append(filename[loc[1] + 1 : loc[2]])
 preds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-prehis_ds = xr.DataArray(preds_his["pr"])
+prehis_ds = xr.DataArray(preds_his["pr"])*3600*24
 prehis_ds.coords["models"] = modelname_pr
 # %%
 hgthis_ds.coords["plev"] = hgthis_ds["plev"] / 100.0
@@ -251,7 +251,7 @@ uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
 qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True).loc[:, 100.0:, :, :]
 spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
-preCRU_JJA = ca.p_time(preCRU, 6, 8, True)
+preCRU_JJA = ca.p_time(preCRU, 6, 8, True)/30.67
 
 hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
 uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
@@ -2530,5 +2530,12 @@ uq_dpg_his_JJA_cli = uq_dpg_his_JJA.mean(dim="time", skipna=True)
 vq_dpg_his_JJA_cli = vq_dpg_his_JJA.mean(dim="time", skipna=True)
 uq_dpg_his_ds_JJA_cli = uq_dpg_his_ds_JJA.mean(dim="time", skipna=True)
 vq_dpg_his_ds_JJA_cli = vq_dpg_his_ds_JJA.mean(dim="time", skipna=True)
+
+preCRU_JJA_cli = preCRU_JJA.mean(dim="time", skipna=True)
+prehis_JJA_cli = prehis_JJA.mean(dim="time", skipna=True)
+prehis_ds_JJA_cli = prehis_ds_JJA.mean(dim="time", skipna=True)
+
+# %%
+#   plot the climatology of uq/vq/pre
 
 # %%
