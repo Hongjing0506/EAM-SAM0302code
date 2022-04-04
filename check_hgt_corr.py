@@ -156,6 +156,10 @@ fpreCRU = xr.open_dataset(
 )
 preCRU = fpreCRU["pre"]
 
+fpreGPCP = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/GPCP_r144x72_197901-201412.nc"
+)
+preGPCP = fpreGPCP["precip"]
 
 fprehis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
@@ -252,6 +256,7 @@ vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
 qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True).loc[:, 100.0:, :, :]
 spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
 preCRU_JJA = ca.p_time(preCRU, 6, 8, True)/30.67
+preGPCP_JJA = ca.p_time(preGPCP, 6, 8, True)
 
 hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
 uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
@@ -259,6 +264,7 @@ vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
 qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
 spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
 preCRU_JJA = ca.detrend_dim(preCRU_JJA, "time", deg=1, demean=False)
+preGPCP_JJA = ca.detrend_dim(preGPCP_JJA, "time", deg=1, demean=False)
 # %%
 hgthis_ver_JJA = ca.p_time(hgthis, 6, 8, True).loc[:, :100, :, :]
 
@@ -335,10 +341,12 @@ uqERA5_ver_JJA = uERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
 vqERA5_ver_JJA = vERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
 uqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 vqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-uq_dpg_ERA5_JJA = (uqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True)
-vq_dpg_ERA5_JJA = (vqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True)
+uq_dpg_ERA5_JJA = (uqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True) / 1e05
+vq_dpg_ERA5_JJA = (vqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True) / 1e05
 uq_dpg_ERA5_JJA = ca.detrend_dim(uq_dpg_ERA5_JJA, "time", deg=1, demean=False)
 vq_dpg_ERA5_JJA = ca.detrend_dim(vq_dpg_ERA5_JJA, "time", deg=1, demean=False)
+uq_dpg_ERA5_JJA.attrs["units"] = "100kg/(m*s)"
+vq_dpg_ERA5_JJA.attrs["units"] = "100kg/(m*s)"
 
 hislevel = qhis_ver_JJA.coords["level"] * 100.0
 hislevel.attrs["units"] = "Pa"
@@ -349,10 +357,12 @@ uqhis_ver_JJA = uhis_ver_JJA * qhis_ver_JJA.data * 1000.0
 vqhis_ver_JJA = vhis_ver_JJA * qhis_ver_JJA.data * 1000.0
 uqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 vqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-uq_dpg_his_JJA = (uqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True)
-vq_dpg_his_JJA = (vqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True)
+uq_dpg_his_JJA = (uqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True) / 1e05
+vq_dpg_his_JJA = (vqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True) / 1e05
 uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
 vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
+uq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
+vq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
 # %%
 #   calculate the water vapor flux of multi-models
 # his_dslevel = qhis_ds_ver_JJA.coords["level"] * 100.0
@@ -380,10 +390,13 @@ uqhis_ds_ver_JJA = uhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
 vqhis_ds_ver_JJA = vhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
 uqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 vqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-uq_dpg_his_ds_JJA = (uqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True)
-vq_dpg_his_ds_JJA = (vqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True)
+uq_dpg_his_ds_JJA = (uqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True) / 1e05
+vq_dpg_his_ds_JJA = (vqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True) / 1e05
 uq_dpg_his_ds_JJA = ca.detrend_dim(uq_dpg_his_ds_JJA, "time", deg=1, demean=False)
 vq_dpg_his_ds_JJA = ca.detrend_dim(vq_dpg_his_ds_JJA, "time", deg=1, demean=False)
+uq_dpg_his_ds_JJA.attrs["units"] = "100kg/(m*s)"
+vq_dpg_his_ds_JJA.attrs["units"] = "100kg/(m*s)"
+
 # %%
 # his_dsdpg.name = "his_dsdpg"
 # his_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/his_dsdpg.nc")
@@ -2531,11 +2544,170 @@ vq_dpg_his_JJA_cli = vq_dpg_his_JJA.mean(dim="time", skipna=True)
 uq_dpg_his_ds_JJA_cli = uq_dpg_his_ds_JJA.mean(dim="time", skipna=True)
 vq_dpg_his_ds_JJA_cli = vq_dpg_his_ds_JJA.mean(dim="time", skipna=True)
 
-preCRU_JJA_cli = preCRU_JJA.mean(dim="time", skipna=True)
+preGPCP_JJA_cli = preGPCP_JJA.mean(dim="time", skipna=True)
 prehis_JJA_cli = prehis_JJA.mean(dim="time", skipna=True)
 prehis_ds_JJA_cli = prehis_ds_JJA.mean(dim="time", skipna=True)
 
 # %%
-#   plot the climatology of uq/vq/pre
+#   calculate the divergence of uq and vq
+div_uqvq_ERA5_cli = ca.cal_divergence(uq_dpg_ERA5_JJA_cli, vq_dpg_ERA5_JJA_cli)
+div_uqvq_his_cli = ca.cal_divergence(uq_dpg_his_JJA_cli, vq_dpg_his_JJA_cli)
+div_uqvq_his_ds_cli = ca.cal_divergence(uq_dpg_his_ds_JJA_cli, vq_dpg_his_ds_JJA_cli)
 
+# %%
+#   plot the climatology of uq/vq/pre
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig.subplots(ncols=4, nrows=7, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+cmap = pplt.Colormap("Greens", alpha=(0.0, 1.0))
+
+for ax in axs:
+    rect = Rectangle(
+        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
+    )
+    ax.add_patch(rect)
+# ===================================================
+# axs[0].contour(
+#     div_uqvq_ERA5_cli,
+#     color="bright purple",
+#     zorder=0.9,
+#     lw=1.0,
+#     # levels=np.array([-0.15,0]),
+#     vmin=-0.10,
+#     vmax=-0.10,
+#     linestyle="--",
+#     discrete=True,
+    
+# )
+con = axs[0].contourf(
+    preGPCP_JJA_cli,
+    cmap=cmap,
+    cmap_kw={"right": 0.94},
+    levels=np.arange(0, 20, 2),
+    zorder=0.8,
+    extend="both"
+)
+
+m = axs[0].quiver(
+    uq_dpg_ERA5_JJA_cli[::ski, ::ski],
+    vq_dpg_ERA5_JJA_cli[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.8,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=5,
+    label="5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+
+axs[0].format(ltitle="100kg/(m*s)", rtitle="ERA5 & GPCP")
+
+# # ===================================================
+con = axs[1].contourf(
+    prehis_JJA_cli,
+    cmap=cmap,
+    cmap_kw={"right": 0.94},
+    levels=np.arange(0, 20, 2),
+    zorder=0.8,
+    extend="both"
+)
+
+m = axs[1].quiver(
+    uq_dpg_his_JJA_cli[::ski, ::ski],
+    vq_dpg_his_JJA_cli[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.8,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=5,
+    label="5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+
+axs[1].format(ltitle="100kg/(m*s)", rtitle="ens")
+
+# # ===================================================
+for i, mod in enumerate(models):
+    con = axs[i + 2].contourf(
+        prehis_ds_JJA_cli.sel(models=mod),
+        cmap=cmap,
+        cmap_kw={"right": 0.94},
+        levels=np.arange(0, 20, 2),
+        zorder=0.8,
+        extend="both"
+    )
+    m = axs[i + 2].quiver(
+        uq_dpg_his_ds_JJA_cli.sel(models=mod)[::ski, ::ski],
+        vq_dpg_his_ds_JJA_cli.sel(models=mod)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.8,
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[i + 2].quiverkey(
+        m,
+        X=1 - w / 2,
+        Y=0.7 * h,
+        U=5,
+        label="5",
+        labelpos="S",
+        labelsep=0.05,
+        fontproperties={"size": 5},
+        zorder=3.1,
+    )
+    axs[i + 2].format(ltitle="100kg/(m*s)", rtitle="{}".format(str(mod.data)))
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="precip & Uq climatology")
+# %%
+print(prehis_ds_JJA_cli)
 # %%
