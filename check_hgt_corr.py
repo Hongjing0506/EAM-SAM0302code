@@ -251,12 +251,14 @@ uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
 qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True).loc[:, 100.0:, :, :]
 spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
+preCRU_JJA = ca.p_time(preCRU, 6, 8, True)
 
 hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
 uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
 vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
 qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
 spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
+preCRU_JJA = ca.detrend_dim(preCRU_JJA, "time", deg=1, demean=False)
 # %%
 hgthis_ver_JJA = ca.p_time(hgthis, 6, 8, True).loc[:, :100, :, :]
 
@@ -264,12 +266,14 @@ uhis_ver_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :100, :, :]
 vhis_ver_JJA = ca.p_time(vhis, 6, 8, True).loc[:, :100, :, :]
 qhis_ver_JJA = ca.p_time(qhis, 6, 8, True).loc[:, :100, :, :]
 sphis_JJA = ca.p_time(sphis, 6, 8, True)
+prehis_JJA = ca.p_time(prehis, 6, 8, True)
 
 hgthis_ver_JJA = ca.detrend_dim(hgthis_ver_JJA, "time", deg=1, demean=False)
 uhis_ver_JJA = ca.detrend_dim(uhis_ver_JJA, "time", deg=1, demean=False)
 vhis_ver_JJA = ca.detrend_dim(vhis_ver_JJA, "time", deg=1, demean=False)
 qhis_ver_JJA = ca.detrend_dim(qhis_ver_JJA, "time", deg=1, demean=False)
 sphis_JJA = ca.detrend_dim(sphis_JJA, "time", deg=1, demean=False)
+prehis_JJA = ca.detrend_dim(prehis_JJA, "time", deg=1, demean=False)
 # %%
 hgthis_ds_ver_JJA = ca.p_time(hgthis_ds, 6, 8, True).loc[:, :, :100, :, :]
 
@@ -277,12 +281,14 @@ uhis_ds_ver_JJA = ca.p_time(uhis_ds, 6, 8, True).loc[:, :, :100, :, :]
 vhis_ds_ver_JJA = ca.p_time(vhis_ds, 6, 8, True).loc[:, :, :100, :, :]
 qhis_ds_ver_JJA = ca.p_time(qhis_ds, 6, 8, True).loc[:, :, :100, :, :]
 sphis_ds_JJA = ca.p_time(sphis_ds, 6, 8, True)
+prehis_ds_JJA = ca.p_time(prehis_ds, 6, 8, True)
 
 hgthis_ds_ver_JJA = ca.detrend_dim(hgthis_ds_ver_JJA, "time", deg=1, demean=False)
 uhis_ds_ver_JJA = ca.detrend_dim(uhis_ds_ver_JJA, "time", deg=1, demean=False)
 vhis_ds_ver_JJA = ca.detrend_dim(vhis_ds_ver_JJA, "time", deg=1, demean=False)
 qhis_ds_ver_JJA = ca.detrend_dim(qhis_ds_ver_JJA, "time", deg=1, demean=False)
 sphis_ds_JJA = ca.detrend_dim(sphis_ds_JJA, "time", deg=1, demean=False)
+prehis_ds_JJA = ca.detrend_dim(prehis_ds_JJA, "time", deg=1, demean=False)
 # %%
 #   reorder the shape
 # print(hgthis_ds_ver_JJA)
@@ -291,6 +297,7 @@ uhis_ds_ver_JJA_copy = uhis_ds_ver_JJA.copy()
 vhis_ds_ver_JJA_copy = vhis_ds_ver_JJA.copy()
 qhis_ds_ver_JJA_copy = qhis_ds_ver_JJA.copy()
 sphis_ds_JJA_copy = sphis_ds_JJA.copy()
+prehis_ds_JJA_copy = prehis_ds_JJA.copy()
 models = hgthis_ds_ver_JJA.coords["models"]
 
 print(models)
@@ -300,28 +307,20 @@ for i, mod in enumerate(models):
     vhis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(vhis_ds_ver_JJA.sel(models=mod))
     qhis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(qhis_ds_ver_JJA.sel(models=mod))
     sphis_ds_JJA_copy[i, :, :, :] = np.array(sphis_ds_JJA.sel(models=mod))
+    prehis_ds_JJA_copy[i, :, :, :] = np.array(prehis_ds_JJA.sel(models=mod))
 hgthis_ds_ver_JJA = hgthis_ds_ver_JJA_copy.copy()
 uhis_ds_ver_JJA = uhis_ds_ver_JJA_copy.copy()
 vhis_ds_ver_JJA = vhis_ds_ver_JJA_copy.copy()
 qhis_ds_ver_JJA = qhis_ds_ver_JJA_copy.copy()
 sphis_ds_JJA = sphis_ds_JJA_copy.copy()
+prehis_ds_JJA = prehis_ds_JJA_copy.copy()
 
 hgthis_ds_ver_JJA.coords["models"] = models
 uhis_ds_ver_JJA.coords["models"] = models
 vhis_ds_ver_JJA.coords["models"] = models
 qhis_ds_ver_JJA.coords["models"] = models
 sphis_ds_JJA.coords["models"] = models
-# %%
-# hgthis_ver_JJA = hgthis_ds_ver_JJA.mean(dim="models", skipna=True)
-# hgthis_ver_JJA = ca.detrend_dim(hgthis_ver_JJA, "time", deg=1, demean=False)
-# uhis_ver_JJA = uhis_ds_ver_JJA.mean(dim="models", skipna=True)
-# uhis_ver_JJA = ca.detrend_dim(uhis_ver_JJA, "time", deg=1, demean=False)
-# vhis_ver_JJA = vhis_ds_ver_JJA.mean(dim="models", skipna=True)
-# vhis_ver_JJA = ca.detrend_dim(vhis_ver_JJA, "time", deg=1, demean=False)
-# qhis_ver_JJA = qhis_ds_ver_JJA.mean(dim="models", skipna=True)
-# qhis_ver_JJA = ca.detrend_dim(qhis_ver_JJA, "time", deg=1, demean=False)
-# sphis_JJA = sphis_ds_JJA.mean(dim="models", skipna=True)
-# sphis_JJA = ca.detrend_dim(sphis_JJA, "time", deg=1, demean=False)
+prehis_ds_JJA.coords["models"] = models
 # %%
 #   calculate the whole levels water vapor flux
 ptop = 100 * 100
@@ -370,6 +369,8 @@ his_dsdp = xr.apply_ufunc(
     vectorize=True,
     dask="parallelized",
 )
+# %%
+
 # %%
 # for i in np.arange(0,26):
 #     print(his_dsdp[i, 0, 0, 0, :])
