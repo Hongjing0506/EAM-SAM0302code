@@ -148,6 +148,35 @@ for path, dir_list, file_name in g:
 qds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 qhis_ds = xr.DataArray(qds_his["hus"])
 qhis_ds.coords["models"] = modelname_q
+
+# %%
+#   read the precipitation data
+fpreCRU = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/cru_ts4.01_r144x72_195001-201412.nc"
+)
+preCRU = fpreCRU["pre"]
+
+
+fprehis = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
+)
+prehis = fprehis["pr"]
+
+pr_his_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr"
+)
+g = os.walk(pr_his_path)
+filepath = []
+modelname_pr = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_pr.append(filename[loc[1] + 1 : loc[2]])
+preds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+prehis_ds = xr.DataArray(preds_his["pr"])
+prehis_ds.coords["models"] = modelname_pr
 # %%
 hgthis_ds.coords["plev"] = hgthis_ds["plev"] / 100.0
 hgthis_ds = hgthis_ds.rename({"plev": "level"})
@@ -304,13 +333,13 @@ ERA5dp = geocat.comp.dpres_plevel(ERA5level, spERA5_JJA, ptop)
 ERA5dpg = ERA5dp / g
 ERA5dpg.attrs["units"] = "kg/m2"
 uqERA5_ver_JJA = uERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
-# vqERA5_ver_JJA = vERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
+vqERA5_ver_JJA = vERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
 uqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-# vqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 uq_dpg_ERA5_JJA = (uqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True)
-# vq_dpg_ERA5_JJA = (vqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True)
+vq_dpg_ERA5_JJA = (vqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True)
 uq_dpg_ERA5_JJA = ca.detrend_dim(uq_dpg_ERA5_JJA, "time", deg=1, demean=False)
-# vq_dpg_ERA5_JJA = ca.detrend_dim(vq_dpg_ERA5_JJA, "time", deg=1, demean=False)
+vq_dpg_ERA5_JJA = ca.detrend_dim(vq_dpg_ERA5_JJA, "time", deg=1, demean=False)
 
 hislevel = qhis_ver_JJA.coords["level"] * 100.0
 hislevel.attrs["units"] = "Pa"
@@ -318,13 +347,13 @@ hisdp = geocat.comp.dpres_plevel(hislevel, sphis_JJA, ptop)
 hisdpg = hisdp / g
 hisdpg.attrs["units"] = "kg/m2"
 uqhis_ver_JJA = uhis_ver_JJA * qhis_ver_JJA.data * 1000.0
-# vqhis_ver_JJA = vhis_ver_JJA * qhis_ver_JJA.data * 1000.0
+vqhis_ver_JJA = vhis_ver_JJA * qhis_ver_JJA.data * 1000.0
 uqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-# vqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 uq_dpg_his_JJA = (uqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True)
-# vq_dpg_his_JJA = (vqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True)
+vq_dpg_his_JJA = (vqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True)
 uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
-# vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
+vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
 # %%
 #   calculate the water vapor flux of multi-models
 his_dslevel = qhis_ds_ver_JJA.coords["level"] * 100.0
@@ -348,13 +377,13 @@ his_dsdp = his_dsdp.transpose("models", "time", "level", "lat", "lon")
 his_dsdpg = his_dsdp / g
 his_dsdpg.attrs["units"] = "kg/m2"
 uqhis_ds_ver_JJA = uhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
-# vqhis_ds_ver_JJA = vhis_ds_ver_JJA * qhis_ds_ver_JJA.data * 1000.0
+vqhis_ds_ver_JJA = vhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
 uqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-# # vqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 uq_dpg_his_ds_JJA = (uqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True)
-# vq_dpg_his_ds_JJA = (vqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True)
+vq_dpg_his_ds_JJA = (vqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True)
 uq_dpg_his_ds_JJA = ca.detrend_dim(uq_dpg_his_ds_JJA, "time", deg=1, demean=False)
-# vq_dpg_his_ds_JJA = ca.detrend_dim(vq_dpg_his_ds_JJA, "time", deg=1, demean=False)
+vq_dpg_his_ds_JJA = ca.detrend_dim(vq_dpg_his_ds_JJA, "time", deg=1, demean=False)
 # %%
 #   calculate uq in India
 uq_dpg_ERA5_India_JJA = ca.cal_lat_weighted_mean(
@@ -374,6 +403,8 @@ uq_dpg_his_ds_India_JJA = ca.cal_lat_weighted_mean(
 uq_dpg_his_ds_India_JJA = ca.detrend_dim(
     uq_dpg_his_ds_India_JJA, "time", deg=1, demean=False
 )
+#   calculate vq in NCR
+
 # %%
 (
     hgt_ERA5_India_uq_slope,
@@ -2484,3 +2515,8 @@ for i, mod in enumerate(models):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
+#   calculate the India uq regression
+
+# %%
+#   calculate the uq/vq/pre climatology
+#   read the precipitation data
