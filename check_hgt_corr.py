@@ -3007,3 +3007,41 @@ for i, mod in enumerate(models):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
+# %%
+#   calculate uq in NCR
+vq_dpg_ERA5_NCR_JJA = ca.cal_lat_weighted_mean(
+    vq_dpg_ERA5_JJA.loc[:, 30.0:37.5, 112.5:120.0]
+).mean(dim="lon", skipna=True)
+vq_dpg_ERA5_NCR_JJA = ca.detrend_dim(
+    vq_dpg_ERA5_NCR_JJA, "time", deg=1, demean=False
+)
+vq_dpg_his_NCR_JJA = ca.cal_lat_weighted_mean(
+    vq_dpg_his_JJA.loc[:, 30.0:37.5, 112.5:120.0]
+).mean(dim="lon", skipna=True)
+vq_dpg_his_NCR_JJA = ca.detrend_dim(vq_dpg_his_NCR_JJA, "time", deg=1, demean=False)
+
+vq_dpg_his_ds_NCR_JJA = ca.cal_lat_weighted_mean(
+    vq_dpg_his_ds_JJA.loc[:, :, 30.0:37.5, 112.5:120.0]
+).mean(dim="lon", skipna=True)
+vq_dpg_his_ds_NCR_JJA = ca.detrend_dim(
+    vq_dpg_his_ds_NCR_JJA, "time", deg=1, demean=False
+)
+
+v_ERA5_NCR_JJA = ca.cal_lat_weighted_mean(
+    vERA5_ver_JJA.sel(level=850.0).loc[:, 30.0:37.5, 112.5:120.0]
+).mean(dim="lon", skipna=True)
+v_ERA5_NCR_JJA = ca.detrend_dim(
+    v_ERA5_NCR_JJA, "time", deg=1, demean=False
+)
+v_his_NCR_JJA = ca.cal_lat_weighted_mean(
+    vhis_ver_JJA.sel(level=850.0).loc[:, 30.0:37.5, 112.5:120.0]
+).mean(dim="lon", skipna=True)
+v_his_NCR_JJA = ca.detrend_dim(v_his_NCR_JJA, "time", deg=1, demean=False)
+
+v_his_ds_NCR_JJA = ca.cal_lat_weighted_mean(
+    vhis_ds_ver_JJA.sel(level=850.0).loc[:, :, 30.0:37.5, 112.5:120.0]
+).mean(dim="lon", skipna=True)
+v_his_ds_NCR_JJA = ca.detrend_dim(
+    v_his_ds_NCR_JJA, "time", deg=1, demean=False
+)
+# %%
