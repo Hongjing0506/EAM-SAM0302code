@@ -3646,3 +3646,115 @@ for i, mod in enumerate(models):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
+#   calculate model ranking for both India and NCR
+
+levels = [850.0, 500.0, 200.0]
+pcc_models = np.zeros(26)
+for lev in levels:
+    (
+        hgt_ERA5_India_uq_slope,
+        hgt_ERA5_India_uq_intercept,
+        hgt_ERA5_India_uq_rvalue,
+        hgt_ERA5_India_uq_pvalue,
+        hgt_ERA5_India_uq_hypothesis,
+    ) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, hgtERA5_ver_JJA.sel(level=lev))
+    (
+        u_ERA5_India_uq_slope,
+        u_ERA5_India_uq_intercept,
+        u_ERA5_India_uq_rvalue,
+        u_ERA5_India_uq_pvalue,
+        u_ERA5_India_uq_hypothesis,
+    ) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, uERA5_ver_JJA.sel(level=lev))
+    (
+        v_ERA5_India_uq_slope,
+        v_ERA5_India_uq_intercept,
+        v_ERA5_India_uq_rvalue,
+        v_ERA5_India_uq_pvalue,
+        v_ERA5_India_uq_hypothesis,
+    ) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, vERA5_ver_JJA.sel(level=lev))
+
+    (
+        hgt_his_ds_India_uq_slope,
+        hgt_his_ds_India_uq_intercept,
+        hgt_his_ds_India_uq_rvalue,
+        hgt_his_ds_India_uq_pvalue,
+        hgt_his_ds_India_uq_hypothesis,
+    ) = ca.dim_linregress(
+        uq_dpg_his_ds_India_JJA, hgthis_ds_ver_JJA.sel(level=lev)
+    )
+    (
+        u_his_ds_India_uq_slope,
+        u_his_ds_India_uq_intercept,
+        u_his_ds_India_uq_rvalue,
+        u_his_ds_India_uq_pvalue,
+        u_his_ds_India_uq_hypothesis,
+    ) = ca.dim_linregress(
+        uq_dpg_his_ds_India_JJA, uhis_ds_ver_JJA.sel(level=lev)
+    )
+    (
+        v_his_ds_India_uq_slope,
+        v_his_ds_India_uq_intercept,
+        v_his_ds_India_uq_rvalue,
+        v_his_ds_India_uq_pvalue,
+        v_his_ds_India_uq_hypothesis,
+    ) = ca.dim_linregress(
+        uq_dpg_his_ds_India_JJA, vhis_ds_ver_JJA.sel(level=lev)
+    )
+    (
+        hgt_ERA5_NCR_vq_slope,
+        hgt_ERA5_NCR_vq_intercept,
+        hgt_ERA5_NCR_vq_rvalue,
+        hgt_ERA5_NCR_vq_pvalue,
+        hgt_ERA5_NCR_vq_hypothesis,
+    ) = ca.dim_linregress(vq_dpg_ERA5_NCR_JJA, hgtERA5_ver_JJA.sel(level=lev))
+    (
+        u_ERA5_NCR_vq_slope,
+        u_ERA5_NCR_vq_intercept,
+        u_ERA5_NCR_vq_rvalue,
+        u_ERA5_NCR_vq_pvalue,
+        u_ERA5_NCR_vq_hypothesis,
+    ) = ca.dim_linregress(vq_dpg_ERA5_NCR_JJA, uERA5_ver_JJA.sel(level=lev))
+    (
+        v_ERA5_NCR_vq_slope,
+        v_ERA5_NCR_vq_intercept,
+        v_ERA5_NCR_vq_rvalue,
+        v_ERA5_NCR_vq_pvalue,
+        v_ERA5_NCR_vq_hypothesis,
+    ) = ca.dim_linregress(vq_dpg_ERA5_NCR_JJA, vERA5_ver_JJA.sel(level=lev))
+
+    (
+        hgt_his_ds_NCR_vq_slope,
+        hgt_his_ds_NCR_vq_intercept,
+        hgt_his_ds_NCR_vq_rvalue,
+        hgt_his_ds_NCR_vq_pvalue,
+        hgt_his_ds_NCR_vq_hypothesis,
+    ) = ca.dim_linregress(
+        vq_dpg_his_ds_NCR_JJA, hgthis_ds_ver_JJA.sel(level=lev)
+    )
+    (
+        u_his_ds_NCR_vq_slope,
+        u_his_ds_NCR_vq_intercept,
+        u_his_ds_NCR_vq_rvalue,
+        u_his_ds_NCR_vq_pvalue,
+        u_his_ds_NCR_vq_hypothesis,
+    ) = ca.dim_linregress(
+        vq_dpg_his_ds_NCR_JJA, uhis_ds_ver_JJA.sel(level=lev)
+    )
+    (
+        v_his_ds_NCR_vq_slope,
+        v_his_ds_NCR_vq_intercept,
+        v_his_ds_NCR_vq_rvalue,
+        v_his_ds_NCR_vq_pvalue,
+        v_his_ds_NCR_vq_hypothesis,
+    ) = ca.dim_linregress(
+        vq_dpg_his_ds_NCR_JJA, vhis_ds_ver_JJA.sel(level=lev)
+    )
+    for i, mod in enumerate(models):
+        pcc_models[i] += ca.cal_pcc(hgt_ERA5_India_uq_rvalue.loc[-30:55, 30:180], hgt_his_ds_India_uq_rvalue.sel(models=mod).loc[-30:55, 30:180])
+        pcc_models[i] += ca.cal_pcc(u_ERA5_India_uq_rvalue.loc[-30:55, 30:180], u_his_ds_India_uq_rvalue.sel(models=mod).loc[-30:55, 30:180])
+        pcc_models[i] += ca.cal_pcc(v_ERA5_India_uq_rvalue.loc[-30:55, 30:180], v_his_ds_India_uq_rvalue.sel(models=mod).loc[-30:55, 30:180])
+        pcc_models[i] += ca.cal_pcc(hgt_ERA5_NCR_vq_rvalue.loc[-30:55, 30:180], hgt_his_ds_NCR_vq_rvalue.sel(models=mod).loc[-30:55, 30:180])
+        pcc_models[i] += ca.cal_pcc(u_ERA5_NCR_vq_rvalue.loc[-30:55, 30:180], u_his_ds_NCR_vq_rvalue.sel(models=mod).loc[-30:55, 30:180])
+        pcc_models[i] += ca.cal_pcc(v_ERA5_NCR_vq_rvalue.loc[-30:55, 30:180], v_his_ds_NCR_vq_rvalue.sel(models=mod).loc[-30:55, 30:180])
+print(pcc_models)
+# %%
