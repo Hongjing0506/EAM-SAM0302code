@@ -3045,3 +3045,95 @@ v_his_ds_NCR_JJA = ca.detrend_dim(
     v_his_ds_NCR_JJA, "time", deg=1, demean=False
 )
 # %%
+#   calculate the regression of vq and v
+(
+    hgt_ERA5_NCR_uq_slope,
+    hgt_ERA5_NCR_uq_intercept,
+    hgt_ERA5_NCR_uq_rvalue,
+    hgt_ERA5_NCR_uq_pvalue,
+    hgt_ERA5_NCR_uq_hypothesis,
+) = ca.dim_linregress(vq_dpg_ERA5_NCR_JJA, hgtERA5_ver_JJA.sel(level=850.0))
+(
+    u_ERA5_NCR_uq_slope,
+    u_ERA5_NCR_uq_intercept,
+    u_ERA5_NCR_uq_rvalue,
+    u_ERA5_NCR_uq_pvalue,
+    u_ERA5_NCR_uq_hypothesis,
+) = ca.dim_linregress(vq_dpg_ERA5_NCR_JJA, uERA5_ver_JJA.sel(level=850.0))
+(
+    v_ERA5_NCR_uq_slope,
+    v_ERA5_NCR_uq_intercept,
+    v_ERA5_NCR_uq_rvalue,
+    v_ERA5_NCR_uq_pvalue,
+    v_ERA5_NCR_uq_hypothesis,
+) = ca.dim_linregress(vq_dpg_ERA5_NCR_JJA, vERA5_ver_JJA.sel(level=850.0))
+
+(
+    hgt_his_NCR_uq_slope,
+    hgt_his_NCR_uq_intercept,
+    hgt_his_NCR_uq_rvalue,
+    hgt_his_NCR_uq_pvalue,
+    hgt_his_NCR_uq_hypothesis,
+) = ca.dim_linregress(vq_dpg_his_NCR_JJA, hgthis_ver_JJA.sel(level=850.0))
+(
+    u_his_NCR_uq_slope,
+    u_his_NCR_uq_intercept,
+    u_his_NCR_uq_rvalue,
+    u_his_NCR_uq_pvalue,
+    u_his_NCR_uq_hypothesis,
+) = ca.dim_linregress(vq_dpg_his_NCR_JJA, uhis_ver_JJA.sel(level=850.0))
+(
+    v_his_NCR_uq_slope,
+    v_his_NCR_uq_intercept,
+    v_his_NCR_uq_rvalue,
+    v_his_NCR_uq_pvalue,
+    v_his_NCR_uq_hypothesis,
+) = ca.dim_linregress(vq_dpg_his_NCR_JJA, vhis_ver_JJA.sel(level=850.0))
+
+(
+    hgt_his_ds_NCR_uq_slope,
+    hgt_his_ds_NCR_uq_intercept,
+    hgt_his_ds_NCR_uq_rvalue,
+    hgt_his_ds_NCR_uq_pvalue,
+    hgt_his_ds_NCR_uq_hypothesis,
+) = ca.dim_linregress(
+    vq_dpg_his_ds_NCR_JJA, hgthis_ds_ver_JJA.sel(level=850.0)
+)
+(
+    u_his_ds_NCR_uq_slope,
+    u_his_ds_NCR_uq_intercept,
+    u_his_ds_NCR_uq_rvalue,
+    u_his_ds_NCR_uq_pvalue,
+    u_his_ds_NCR_uq_hypothesis,
+) = ca.dim_linregress(
+    vq_dpg_his_ds_NCR_JJA, uhis_ds_ver_JJA.sel(level=850.0)
+)
+(
+    v_his_ds_NCR_uq_slope,
+    v_his_ds_NCR_uq_intercept,
+    v_his_ds_NCR_uq_rvalue,
+    v_his_ds_NCR_uq_pvalue,
+    v_his_ds_NCR_uq_hypothesis,
+) = ca.dim_linregress(
+    vq_dpg_his_ds_NCR_JJA, vhis_ds_ver_JJA.sel(level=850.0)
+)
+wind_ERA5_NCR_uq_mask = ca.wind_check(
+    xr.where(u_ERA5_NCR_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_ERA5_NCR_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_ERA5_NCR_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_ERA5_NCR_uq_pvalue <= 0.05, 1.0, 0.0),
+)
+wind_his_NCR_uq_mask = ca.wind_check(
+    xr.where(u_his_NCR_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_NCR_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_his_NCR_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_NCR_uq_pvalue <= 0.05, 1.0, 0.0),
+)
+wind_his_ds_NCR_uq_mask = ca.wind_check(
+    xr.where(u_his_ds_NCR_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_ds_NCR_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(u_his_ds_NCR_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(v_his_ds_NCR_uq_pvalue <= 0.05, 1.0, 0.0),
+)
+# %%
+#   plot the regression on NCR vq
