@@ -3758,3 +3758,8 @@ for lev in levels:
         pcc_models[i] += ca.cal_pcc(v_ERA5_NCR_vq_rvalue.loc[-30:55, 30:180], v_his_ds_NCR_vq_rvalue.sel(models=mod).loc[-30:55, 30:180])
 print(pcc_models)
 # %%
+pcc_list = []
+for i,mod in enumerate(models):
+    pcc_list.append({"models": str(mod.data), "pcc": pcc_models[i]})
+print(sorted(pcc_list, key=lambda x : x["pcc"]))
+# %%
