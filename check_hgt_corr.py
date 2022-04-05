@@ -2712,21 +2712,21 @@ fig.format(abc="(a)", abcloc="l", suptitle="precip & Uq climatology")
     hgt_ERA5_India_uq_rvalue,
     hgt_ERA5_India_uq_pvalue,
     hgt_ERA5_India_uq_hypothesis,
-) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, hgtERA5_ver_JJA.sel(level=850.0))
+) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, hgtERA5_ver_JJA.sel(level=200.0))
 (
     u_ERA5_India_uq_slope,
     u_ERA5_India_uq_intercept,
     u_ERA5_India_uq_rvalue,
     u_ERA5_India_uq_pvalue,
     u_ERA5_India_uq_hypothesis,
-) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, uERA5_ver_JJA.sel(level=850.0))
+) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, uERA5_ver_JJA.sel(level=200.0))
 (
     v_ERA5_India_uq_slope,
     v_ERA5_India_uq_intercept,
     v_ERA5_India_uq_rvalue,
     v_ERA5_India_uq_pvalue,
     v_ERA5_India_uq_hypothesis,
-) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, vERA5_ver_JJA.sel(level=850.0))
+) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, vERA5_ver_JJA.sel(level=200.0))
 
 (
     hgt_his_India_uq_slope,
@@ -2734,21 +2734,21 @@ fig.format(abc="(a)", abcloc="l", suptitle="precip & Uq climatology")
     hgt_his_India_uq_rvalue,
     hgt_his_India_uq_pvalue,
     hgt_his_India_uq_hypothesis,
-) = ca.dim_linregress(uq_dpg_his_India_JJA, hgthis_ver_JJA.sel(level=850.0))
+) = ca.dim_linregress(uq_dpg_his_India_JJA, hgthis_ver_JJA.sel(level=200.0))
 (
     u_his_India_uq_slope,
     u_his_India_uq_intercept,
     u_his_India_uq_rvalue,
     u_his_India_uq_pvalue,
     u_his_India_uq_hypothesis,
-) = ca.dim_linregress(uq_dpg_his_India_JJA, uhis_ver_JJA.sel(level=850.0))
+) = ca.dim_linregress(uq_dpg_his_India_JJA, uhis_ver_JJA.sel(level=200.0))
 (
     v_his_India_uq_slope,
     v_his_India_uq_intercept,
     v_his_India_uq_rvalue,
     v_his_India_uq_pvalue,
     v_his_India_uq_hypothesis,
-) = ca.dim_linregress(uq_dpg_his_India_JJA, vhis_ver_JJA.sel(level=850.0))
+) = ca.dim_linregress(uq_dpg_his_India_JJA, vhis_ver_JJA.sel(level=200.0))
 
 (
     hgt_his_ds_India_uq_slope,
@@ -2757,7 +2757,7 @@ fig.format(abc="(a)", abcloc="l", suptitle="precip & Uq climatology")
     hgt_his_ds_India_uq_pvalue,
     hgt_his_ds_India_uq_hypothesis,
 ) = ca.dim_linregress(
-    uq_dpg_his_ds_India_JJA, hgthis_ds_ver_JJA.sel(level=850.0)
+    uq_dpg_his_ds_India_JJA, hgthis_ds_ver_JJA.sel(level=200.0)
 )
 (
     u_his_ds_India_uq_slope,
@@ -2766,7 +2766,7 @@ fig.format(abc="(a)", abcloc="l", suptitle="precip & Uq climatology")
     u_his_ds_India_uq_pvalue,
     u_his_ds_India_uq_hypothesis,
 ) = ca.dim_linregress(
-    uq_dpg_his_ds_India_JJA, uhis_ds_ver_JJA.sel(level=850.0)
+    uq_dpg_his_ds_India_JJA, uhis_ds_ver_JJA.sel(level=200.0)
 )
 (
     v_his_ds_India_uq_slope,
@@ -2775,9 +2775,8 @@ fig.format(abc="(a)", abcloc="l", suptitle="precip & Uq climatology")
     v_his_ds_India_uq_pvalue,
     v_his_ds_India_uq_hypothesis,
 ) = ca.dim_linregress(
-    uq_dpg_his_ds_India_JJA, vhis_ds_ver_JJA.sel(level=850.0)
+    uq_dpg_his_ds_India_JJA, vhis_ds_ver_JJA.sel(level=200.0)
 )
-# %%
 wind_ERA5_India_uq_mask = ca.wind_check(
     xr.where(u_ERA5_India_uq_pvalue <= 0.05, 1.0, 0.0),
     xr.where(v_ERA5_India_uq_pvalue <= 0.05, 1.0, 0.0),
@@ -2886,7 +2885,7 @@ qk = axs[0].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-axs[0].format(ltitle="India uq index", rtitle="ERA5 850hPa")
+axs[0].format(ltitle="India uq index", rtitle="ERA5 200hPa")
 # ===================================================
 con = axs[1].contourf(
     hgt_his_India_uq_rvalue,
@@ -2941,7 +2940,7 @@ qk = axs[1].quiverkey(
     fontproperties={"size": 5},
     zorder=3.1,
 )
-axs[1].format(ltitle="India uq index", rtitle="ens 850hPa")
+axs[1].format(ltitle="India uq index", rtitle="ens 200hPa")
 # ===================================================
 for i, mod in enumerate(models):
     con = axs[i + 2].contourf(
@@ -3002,7 +3001,7 @@ for i, mod in enumerate(models):
         zorder=3.1,
     )
     axs[i + 2].format(
-        ltitle="India uq index", rtitle="{} 850hPa".format(np.array(models[i]))
+        ltitle="India uq index", rtitle="{} 200hPa".format(np.array(models[i]))
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
@@ -3045,7 +3044,7 @@ v_his_ds_NCR_JJA = ca.detrend_dim(
     v_his_ds_NCR_JJA, "time", deg=1, demean=False
 )
 # %%
-#   calculate the regression of vq and v
+#   calculate the regression of vq
 (
     hgt_ERA5_NCR_vq_slope,
     hgt_ERA5_NCR_vq_intercept,
@@ -3346,3 +3345,4 @@ for i, mod in enumerate(models):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
+#   calculate the regression of v
