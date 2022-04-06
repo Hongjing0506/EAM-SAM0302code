@@ -369,14 +369,14 @@ uq_dpg_his_India_JJA = ca.detrend_dim(uq_dpg_his_India_JJA, "time", deg=1, demea
 uq_dpg_ssp585_India_JJA = ca.cal_lat_weighted_mean(
     uq_dpg_ssp585_JJA.loc[:, 5:25, 50:80]
 ).mean(dim="lon", skipna=True)
-uq_dpg_ssp585_India_JJA = ca.detrend_dim(uq_dpg_ssp585_India_JJA, "time", deg=1, demean=False)
+uq_dpg_ssp585_India_JJA = ca.detrend_dim(
+    uq_dpg_ssp585_India_JJA, "time", deg=1, demean=False
+)
 
 vq_dpg_ERA5_NCR_JJA = ca.cal_lat_weighted_mean(
     vq_dpg_ERA5_JJA.loc[:, 25.0:37.5, 110.0:125.0]
 ).mean(dim="lon", skipna=True)
-vq_dpg_ERA5_NCR_JJA = ca.detrend_dim(
-    vq_dpg_ERA5_NCR_JJA, "time", deg=1, demean=False
-)
+vq_dpg_ERA5_NCR_JJA = ca.detrend_dim(vq_dpg_ERA5_NCR_JJA, "time", deg=1, demean=False)
 vq_dpg_his_NCR_JJA = ca.cal_lat_weighted_mean(
     vq_dpg_his_JJA.loc[:, 25.0:37.5, 110.0:125.0]
 ).mean(dim="lon", skipna=True)
@@ -385,5 +385,43 @@ vq_dpg_his_NCR_JJA = ca.detrend_dim(vq_dpg_his_NCR_JJA, "time", deg=1, demean=Fa
 vq_dpg_ssp585_NCR_JJA = ca.cal_lat_weighted_mean(
     vq_dpg_ssp585_JJA.loc[:, 25.0:37.5, 110.0:125.0]
 ).mean(dim="lon", skipna=True)
-vq_dpg_ssp585_NCR_JJA = ca.detrend_dim(vq_dpg_ssp585_NCR_JJA, "time", deg=1, demean=False)
+vq_dpg_ssp585_NCR_JJA = ca.detrend_dim(
+    vq_dpg_ssp585_NCR_JJA, "time", deg=1, demean=False
+)
 # %%
+#   calculate the uq/vq correlation coefficients and rolling correlation coefficients
+ERA5_uqIND_vqNCR_regress = stats.linregress(uq_dpg_ERA5_India_JJA, vq_dpg_ERA5_NCR_JJA)
+his_uqIND_vqNCR_regress = stats.linregress(uq_dpg_his_India_JJA, vq_dpg_his_NCR_JJA)
+ssp585_uqIND_vqNCR_regress = stats.linregress(
+    uq_dpg_ssp585_India_JJA, vq_dpg_ssp585_NCR_JJA
+)
+
+freq = "AS-JUL"
+window = 31
+ERA5_uqIND_vqNCR_rolling_regress = ca.rolling_reg_index(
+    uq_dpg_ERA5_India_JJA,
+    vq_dpg_ERA5_NCR_JJA,
+    uq_dpg_ERA5_India_JJA.time,
+    window,
+    freq,
+    True,
+)
+his_uqIND_vqNCR_rolling_regress = ca.rolling_reg_index(
+    uq_dpg_his_India_JJA,
+    vq_dpg_his_NCR_JJA,
+    uq_dpg_his_India_JJA.time,
+    window,
+    freq,
+    True,
+)
+ssp585_uqIND_vqNCR_rolling_regress = ca.rolling_reg_index(
+    uq_dpg_ssp585_India_JJA,
+    vq_dpg_ssp585_NCR_JJA,
+    uq_dpg_ssp585_India_JJA.time,
+    window,
+    freq,
+    True,
+)
+
+# %%
+
