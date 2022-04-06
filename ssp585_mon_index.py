@@ -263,14 +263,23 @@ lw = 0.8
 
 
 m1 = axs[0].line(
-    ssp585_IWF_index.time.dt.year, ca.standardize(ssp585_IWF_index), lw=lw, color="black",
+    ssp585_IWF_index.time.dt.year,
+    ca.standardize(ssp585_IWF_index),
+    lw=lw,
+    color="black",
 )
 m2 = axs[0].line(
-    ssp585_SAM_index.time.dt.year, ca.standardize(ssp585_SAM_index), lw=lw, color="blue",
+    ssp585_SAM_index.time.dt.year,
+    ca.standardize(ssp585_SAM_index),
+    lw=lw,
+    color="blue",
 )
 m3 = axs[0].line(
-    ssp585_IWF_index.time.dt.year, np.array(ssp585_IWF_SAM_rolling_9["rvalue"]), lw=lw, color="red",
-    linestyle = "--"
+    ssp585_IWF_index.time.dt.year,
+    np.array(ssp585_IWF_SAM_rolling_9["rvalue"]),
+    lw=lw,
+    color="red",
+    linestyle="--",
 )
 
 
@@ -334,11 +343,47 @@ uqssp585_ver_JJA = ussp585_ver_JJA * qssp585_ver_JJA.data * 1000.0
 vqssp585_ver_JJA = vssp585_ver_JJA * qssp585_ver_JJA.data * 1000.0
 uqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 vqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-uq_dpg_ssp585_JJA = (uqssp585_ver_JJA * ssp585dpg.data).sum(dim="level", skipna=True) / 1e05
-vq_dpg_ssp585_JJA = (vqssp585_ver_JJA * ssp585dpg.data).sum(dim="level", skipna=True) / 1e05
+uq_dpg_ssp585_JJA = (uqssp585_ver_JJA * ssp585dpg.data).sum(
+    dim="level", skipna=True
+) / 1e05
+vq_dpg_ssp585_JJA = (vqssp585_ver_JJA * ssp585dpg.data).sum(
+    dim="level", skipna=True
+) / 1e05
 uq_dpg_ssp585_JJA = ca.detrend_dim(uq_dpg_ssp585_JJA, "time", deg=1, demean=False)
 vq_dpg_ssp585_JJA = ca.detrend_dim(vq_dpg_ssp585_JJA, "time", deg=1, demean=False)
 uq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
 vq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
 # %%
+#   calculate the India and NCR uq\vq area mean
+uq_dpg_ERA5_India_JJA = ca.cal_lat_weighted_mean(
+    uq_dpg_ERA5_JJA.loc[:, 5:25, 50:80]
+).mean(dim="lon", skipna=True)
+uq_dpg_ERA5_India_JJA = ca.detrend_dim(
+    uq_dpg_ERA5_India_JJA, "time", deg=1, demean=False
+)
+uq_dpg_his_India_JJA = ca.cal_lat_weighted_mean(
+    uq_dpg_his_JJA.loc[:, 5:25, 50:80]
+).mean(dim="lon", skipna=True)
+uq_dpg_his_India_JJA = ca.detrend_dim(uq_dpg_his_India_JJA, "time", deg=1, demean=False)
+
+uq_dpg_ssp585_India_JJA = ca.cal_lat_weighted_mean(
+    uq_dpg_ssp585_JJA.loc[:, 5:25, 50:80]
+).mean(dim="lon", skipna=True)
+uq_dpg_ssp585_India_JJA = ca.detrend_dim(uq_dpg_ssp585_India_JJA, "time", deg=1, demean=False)
+
+vq_dpg_ERA5_NCR_JJA = ca.cal_lat_weighted_mean(
+    vq_dpg_ERA5_JJA.loc[:, 25.0:37.5, 110.0:125.0]
+).mean(dim="lon", skipna=True)
+vq_dpg_ERA5_NCR_JJA = ca.detrend_dim(
+    vq_dpg_ERA5_NCR_JJA, "time", deg=1, demean=False
+)
+vq_dpg_his_NCR_JJA = ca.cal_lat_weighted_mean(
+    vq_dpg_his_JJA.loc[:, 25.0:37.5, 110.0:125.0]
+).mean(dim="lon", skipna=True)
+vq_dpg_his_NCR_JJA = ca.detrend_dim(vq_dpg_his_NCR_JJA, "time", deg=1, demean=False)
+
+vq_dpg_ssp585_NCR_JJA = ca.cal_lat_weighted_mean(
+    vq_dpg_ssp585_JJA.loc[:, 25.0:37.5, 110.0:125.0]
+).mean(dim="lon", skipna=True)
+vq_dpg_ssp585_NCR_JJA = ca.detrend_dim(vq_dpg_ssp585_NCR_JJA, "time", deg=1, demean=False)
 # %%
