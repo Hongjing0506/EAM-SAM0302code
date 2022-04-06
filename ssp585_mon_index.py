@@ -68,7 +68,7 @@ def patches(ax, x0, y0, width, height, proj):
 
 
 # %%
-#   read obs data
+#   read obs and historical data
 fhgtERA5 = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc"
 )
@@ -96,33 +96,33 @@ fqERA5 = xr.open_dataset(
 qERA5 = fqERA5["q"]
 
 fhgthis = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models//historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 hgthis = fhgthis["zg"]
 hgthis.coords["plev"] = hgthis.coords["plev"] / 100.0
 hgthis = hgthis.rename({"plev": "level"})
 
 fuhis = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models//historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 uhis = fuhis["ua"]
 uhis.coords["plev"] = uhis.coords["plev"] / 100.0
 uhis = uhis.rename({"plev": "level"})
 
 fvhis = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models//historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 vhis = fvhis["va"]
 vhis.coords["plev"] = vhis.coords["plev"] / 100.0
 vhis = vhis.rename({"plev": "level"})
 
 fsphis = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models//historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 sphis = fsphis["ps"]
 
 fqhis = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models//historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 qhis = fqhis["hus"]
 qhis.coords["plev"] = qhis.coords["plev"] / 100.0
@@ -137,7 +137,7 @@ preCRU = fpreCRU["pre"]
 
 
 fprehis = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 prehis = fprehis["pr"]
 
@@ -149,7 +149,7 @@ fpreGPCP = xr.open_dataset(
 preGPCP = fpreGPCP["precip"]
 
 # %%
-#   pick up the JJA
+#   pick up the obs and historical JJA
 
 hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
 uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
@@ -183,44 +183,46 @@ sphis_JJA = ca.detrend_dim(sphis_JJA, "time", deg=1, demean=False)
 preGPCP_JJA = ca.p_time(preGPCP, 6, 8, True)
 preGPCP_JJA = ca.detrend_dim(preGPCP_JJA, "time", deg=1, demean=False)
 # %%
+#   read the ssp585 data
 fhgtssp585 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/zg/zg_Amon_ensemble_ssp585_gn_201501-209912.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/ssp585/zg/zg_Amon_ensemble_ssp585_gn_201501-209912.nc"
 )
 hgtssp585 = fhgtssp585["zg"]
 hgtssp585.coords["plev"] = hgtssp585.coords["plev"] / 100.0
 hgtssp585 = hgtssp585.rename({"plev": "level"})
 
 fussp585 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ua/ua_Amon_ensemble_ssp585_gn_201501-209912.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/ssp585/ua/ua_Amon_ensemble_ssp585_gn_201501-209912.nc"
 )
 ussp585 = fussp585["ua"]
 ussp585.coords["plev"] = ussp585.coords["plev"] / 100.0
 ussp585 = ussp585.rename({"plev": "level"})
 
 fvssp585 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/va/va_Amon_ensemble_ssp585_gn_201501-209912.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/ssp585/va/va_Amon_ensemble_ssp585_gn_201501-209912.nc"
 )
 vssp585 = fvssp585["va"]
 vssp585.coords["plev"] = vssp585.coords["plev"] / 100.0
 vssp585 = vssp585.rename({"plev": "level"})
 
 fspssp585 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ps/ps_Amon_ensemble_ssp585_gn_201501-209912.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/ssp585/ps/ps_Amon_ensemble_ssp585_gn_201501-209912.nc"
 )
 spssp585 = fspssp585["ps"]
 
 fqssp585 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/hus/hus_Amon_ensemble_ssp585_gn_201501-209912.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/ssp585/hus/hus_Amon_ensemble_ssp585_gn_201501-209912.nc"
 )
 qssp585 = fqssp585["hus"]
 qssp585.coords["plev"] = qssp585.coords["plev"] / 100.0
 qssp585 = qssp585.rename({"plev": "level"})
 
 fpressp585 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/pr/pr_Amon_ensemble_ssp585_gn_201501-209912.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/ssp585/pr/pr_Amon_ensemble_ssp585_gn_201501-209912.nc"
 )
 pressp585 = fpressp585["pr"]
 # %%
+#   pick up the ssp585 data
 hgtssp585_ver_JJA = ca.p_time(hgtssp585, 6, 8, True).loc[:, :100, :, :]
 
 ussp585_ver_JJA = ca.p_time(ussp585, 6, 8, True).loc[:, :100, :, :]
@@ -245,6 +247,7 @@ ssp585_SAM_index = ca.detrend_dim(ssp585_SAM_index, "time", deg=1, demean=False)
 # %%
 print(stats.linregress(ssp585_IWF_index, ssp585_SAM_index))
 # %%
+#   calculate the rolling correlation of SAM and IWF index in ssp585
 freq = "AS-JUL"
 window = 31
 
@@ -252,7 +255,7 @@ ssp585_IWF_SAM_rolling_9 = ca.rolling_reg_index(
     ssp585_IWF_index, ssp585_SAM_index, ssp585_IWF_index.time, window, freq, True
 )
 # %%
-#   plot the rolling correlation coefficient
+#   plot the rolling correlation coefficients of SAM and IWF index
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
 axs = fig.subplots(ncols=1, nrows=1)
 lw = 0.8
@@ -286,5 +289,56 @@ axs[0].format(
 )
 axs[0].legend(handles=[m1, m2, m3], loc="ll", labels=["IWF", "SAM", "r"], ncols=1)
 # %%
-print(ca.cal_rlim1(0.95, 85))
+#   calculate the whole levels water vapor flux in ERA5 historical and ssp585
+ptop = 100 * 100
+g = 9.8
+#  ERA5 data
+ERA5level = qERA5_ver_JJA.coords["level"] * 100.0
+ERA5level.attrs["units"] = "Pa"
+ERA5dp = geocat.comp.dpres_plevel(ERA5level, spERA5_JJA, ptop)
+ERA5dpg = ERA5dp / g
+ERA5dpg.attrs["units"] = "kg/m2"
+uqERA5_ver_JJA = uERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
+vqERA5_ver_JJA = vERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
+uqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_ERA5_JJA = (uqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True) / 1e05
+vq_dpg_ERA5_JJA = (vqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True) / 1e05
+uq_dpg_ERA5_JJA = ca.detrend_dim(uq_dpg_ERA5_JJA, "time", deg=1, demean=False)
+vq_dpg_ERA5_JJA = ca.detrend_dim(vq_dpg_ERA5_JJA, "time", deg=1, demean=False)
+uq_dpg_ERA5_JJA.attrs["units"] = "100kg/(m*s)"
+vq_dpg_ERA5_JJA.attrs["units"] = "100kg/(m*s)"
+
+hislevel = qhis_ver_JJA.coords["level"] * 100.0
+hislevel.attrs["units"] = "Pa"
+hisdp = geocat.comp.dpres_plevel(hislevel, sphis_JJA, ptop)
+hisdpg = hisdp / g
+hisdpg.attrs["units"] = "kg/m2"
+uqhis_ver_JJA = uhis_ver_JJA * qhis_ver_JJA.data * 1000.0
+vqhis_ver_JJA = vhis_ver_JJA * qhis_ver_JJA.data * 1000.0
+uqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_his_JJA = (uqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True) / 1e05
+vq_dpg_his_JJA = (vqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True) / 1e05
+uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
+vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
+uq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
+vq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
+
+ssp585level = qssp585_ver_JJA.coords["level"] * 100.0
+ssp585level.attrs["units"] = "Pa"
+ssp585dp = geocat.comp.dpres_plevel(ssp585level, spssp585_JJA, ptop)
+ssp585dpg = ssp585dp / g
+ssp585dpg.attrs["units"] = "kg/m2"
+uqssp585_ver_JJA = ussp585_ver_JJA * qssp585_ver_JJA.data * 1000.0
+vqssp585_ver_JJA = vssp585_ver_JJA * qssp585_ver_JJA.data * 1000.0
+uqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_ssp585_JJA = (uqssp585_ver_JJA * ssp585dpg.data).sum(dim="level", skipna=True) / 1e05
+vq_dpg_ssp585_JJA = (vqssp585_ver_JJA * ssp585dpg.data).sum(dim="level", skipna=True) / 1e05
+uq_dpg_ssp585_JJA = ca.detrend_dim(uq_dpg_ssp585_JJA, "time", deg=1, demean=False)
+vq_dpg_ssp585_JJA = ca.detrend_dim(vq_dpg_ssp585_JJA, "time", deg=1, demean=False)
+uq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
+vq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
+# %%
 # %%
