@@ -424,4 +424,128 @@ ssp585_uqIND_vqNCR_rolling_regress = ca.rolling_reg_index(
 )
 
 # %%
+#   plot the Ind uq/NCR vq and their rolling correlation coefficients
+fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=1, nrows=3)
+lw = 0.8
+# cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 
+#=======================================================
+m1 = axs[0].line(
+    uq_dpg_ERA5_India_JJA.time.dt.year,
+    ca.standardize(uq_dpg_ERA5_India_JJA),
+    lw=lw,
+    color="black",
+)
+m2 = axs[0].line(
+    vq_dpg_ERA5_NCR_JJA.time.dt.year,
+    ca.standardize(vq_dpg_ERA5_NCR_JJA),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[0].line(
+    vq_dpg_ERA5_NCR_JJA.time.dt.year,
+    ERA5_uqIND_vqNCR_rolling_regress["rvalue"].data,
+    lw=lw,
+    color="red",
+    linestyle="--",
+)
+
+rlim = ca.cal_rlim1(0.95, len(uq_dpg_ERA5_India_JJA.time.dt.year))
+
+axs[0].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(rlim, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(-rlim, lw=0.8, color="grey5", linestyle="--")
+axs[0].text(1952, 2.5, "r={:.2f}".format(ERA5_uqIND_vqNCR_regress[2]), size=10)
+axs[0].legend(handles=[m1, m2, m3], loc="ll", labels=["uq Ind", "vq NCR", "r"], ncols=1)
+axs[0].format(
+    ltitle="window={}".format(window),
+    rtitle="ERA5",
+    title="uq Ind & vq NCR",
+    xrotation=0,
+    ymin=-3.0,
+    ymax=3.0,
+    ylocator=0.5,
+    yminorlocator=0.25,
+    ylabel=""
+)
+#=======================================================
+m1 = axs[1].line(
+    uq_dpg_his_India_JJA.time.dt.year,
+    ca.standardize(uq_dpg_his_India_JJA),
+    lw=lw,
+    color="black",
+)
+m2 = axs[1].line(
+    vq_dpg_his_NCR_JJA.time.dt.year,
+    ca.standardize(vq_dpg_his_NCR_JJA),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[1].line(
+    vq_dpg_his_NCR_JJA.time.dt.year,
+    his_uqIND_vqNCR_rolling_regress["rvalue"].data,
+    lw=lw,
+    color="red",
+    linestyle="--",
+)
+
+rlim = ca.cal_rlim1(0.95, len(uq_dpg_his_India_JJA.time.dt.year))
+
+axs[1].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[1].axhline(rlim, lw=0.8, color="grey5", linestyle="--")
+axs[1].axhline(-rlim, lw=0.8, color="grey5", linestyle="--")
+axs[1].text(1952, 2.5, "r={:.2f}".format(his_uqIND_vqNCR_regress[2]), size=10)
+axs[1].legend(handles=[m1, m2, m3], loc="ll", labels=["uq Ind", "vq NCR", "r"], ncols=1)
+axs[1].format(
+    ltitle="window={}".format(window),
+    rtitle="historical",
+    title="uq Ind & vq NCR",
+    xrotation=0,
+    ymin=-3.0,
+    ymax=3.0,
+    ylocator=0.5,
+    yminorlocator=0.25,
+    ylabel=""
+)
+#=======================================================
+m1 = axs[2].line(
+    uq_dpg_ssp585_India_JJA.time.dt.year,
+    ca.standardize(uq_dpg_ssp585_India_JJA),
+    lw=lw,
+    color="black",
+)
+m2 = axs[2].line(
+    vq_dpg_ssp585_NCR_JJA.time.dt.year,
+    ca.standardize(vq_dpg_ssp585_NCR_JJA),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[2].line(
+    vq_dpg_ssp585_NCR_JJA.time.dt.year,
+    ssp585_uqIND_vqNCR_rolling_regress["rvalue"].data,
+    lw=lw,
+    color="red",
+    linestyle="--",
+)
+
+rlim = ca.cal_rlim1(0.95, len(uq_dpg_ssp585_India_JJA.time.dt.year))
+
+axs[2].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[2].axhline(rlim, lw=0.8, color="grey5", linestyle="--")
+axs[2].axhline(-rlim, lw=0.8, color="grey5", linestyle="--")
+axs[2].text(2017, 2.5, "r={:.2f}".format(ssp585_uqIND_vqNCR_regress[2]), size=10)
+axs[2].legend(handles=[m1, m2, m3], loc="ll", labels=["uq Ind", "vq NCR", "r"], ncols=1)
+axs[2].format(
+    ltitle="window={}".format(window),
+    rtitle="ssp585",
+    title="uq Ind & vq NCR",
+    xrotation=0,
+    ymin=-3.0,
+    ymax=3.0,
+    ylocator=0.5,
+    yminorlocator=0.25,
+    ylabel=""
+)
+
+# %%
