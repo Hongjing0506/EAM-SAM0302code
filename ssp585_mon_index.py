@@ -239,7 +239,17 @@ pressp585_JJA = ca.detrend_dim(pressp585_JJA, "time", deg=1, demean=False)
 spssp585_JJA = ca.detrend_dim(spssp585_JJA, "time", deg=1, demean=False)
 
 # %%
-#   calculate the SAM and IWF index in ssp585
+#   calculate the SAM and IWF index in ERA5, historical, ssp585
+ERA5_IWF_index = ca.IWF(uERA5_ver_JJA, vERA5_ver_JJA)
+ERA5_IWF_index = ca.detrend_dim(ERA5_IWF_index, "time", deg=1, demean=False)
+ERA5_SAM_index = ca.SAM(vERA5_ver_JJA)
+ERA5_SAM_index = ca.detrend_dim(ERA5_SAM_index, "time", deg=1, demean=False)
+
+his_IWF_index = ca.IWF(uhis_ver_JJA, vhis_ver_JJA)
+his_IWF_index = ca.detrend_dim(his_IWF_index, "time", deg=1, demean=False)
+his_SAM_index = ca.SAM(vhis_ver_JJA)
+his_SAM_index = ca.detrend_dim(his_SAM_index, "time", deg=1, demean=False)
+
 ssp585_IWF_index = ca.IWF(ussp585_ver_JJA, vssp585_ver_JJA)
 ssp585_IWF_index = ca.detrend_dim(ssp585_IWF_index, "time", deg=1, demean=False)
 ssp585_SAM_index = ca.SAM(vssp585_ver_JJA)
@@ -549,3 +559,4 @@ axs[2].format(
 )
 
 # %%
+#   plot the SAM index and IWF index correlation coefficients and rolling correlation coefficients
