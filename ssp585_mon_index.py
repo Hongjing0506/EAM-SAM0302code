@@ -905,7 +905,38 @@ div_uqvq_his = ca.cal_divergence(uq_dpg_his_JJA, vq_dpg_his_JJA)
 div_uqvq_ssp585 = ca.cal_divergence(uq_dpg_ssp585_JJA, vq_dpg_ssp585_JJA)
 
 # %%
+#   calculate the uqvq divergence regress on IndR
+(
+    pre_CRU_India_divuqvq_slope,
+    pre_CRU_India_divuqvq_intercept,
+    pre_CRU_India_divuqvq_rvalue,
+    pre_CRU_India_divuqvq_pvalue,
+    pre_CRU_India_divuqvq_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, div_uqvq_ERA5_JJA)
 
+(
+    pre_GPCP_India_divuqvq_slope,
+    pre_GPCP_India_divuqvq_intercept,
+    pre_GPCP_India_divuqvq_rvalue,
+    pre_GPCP_India_divuqvq_pvalue,
+    pre_GPCP_India_divuqvq_hypothesis,
+) = ca.dim_linregress(preGPCP_India_JJA, div_uqvq_ERA5_JJA.sel(time=div_uqvq_ERA5_JJA.time.dt.year>=1979))
+
+(
+    pre_his_India_divuqvq_slope,
+    pre_his_India_divuqvq_intercept,
+    pre_his_India_divuqvq_rvalue,
+    pre_his_India_divuqvq_pvalue,
+    pre_his_India_divuqvq_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, div_uqvq_his_JJA)
+
+(
+    pre_ssp585_India_divuqvq_slope,
+    pre_ssp585_India_divuqvq_intercept,
+    pre_ssp585_India_divuqvq_rvalue,
+    pre_ssp585_India_divuqvq_pvalue,
+    pre_ssp585_India_divuqvq_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA, div_uqvq_ssp585_JJA)
 # %%
 #   plot the Uq/Vq regress on IndR
 pplt.rc.grid = False
