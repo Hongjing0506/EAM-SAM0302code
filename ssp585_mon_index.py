@@ -576,3 +576,68 @@ prehis_NCR_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 36:42, 108:118]).mea
 pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
 pressp585_NCR_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
 # %%
+#   calculate the precipitation regress onto preInd and preNCR
+(
+    pre_CRU_India_pre_slope,
+    pre_CRU_India_pre_intercept,
+    pre_CRU_India_pre_rvalue,
+    pre_CRU_India_pre_pvalue,
+    pre_CRU_India_pre_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, preCRU_JJA)
+
+(
+    pre_GPCP_India_pre_slope,
+    pre_GPCP_India_pre_intercept,
+    pre_GPCP_India_pre_rvalue,
+    pre_GPCP_India_pre_pvalue,
+    pre_GPCP_India_pre_hypothesis,
+) = ca.dim_linregress(preGPCP_India_JJA, preGPCP_JJA)
+
+(
+    pre_his_India_pre_slope,
+    pre_his_India_pre_intercept,
+    pre_his_India_pre_rvalue,
+    pre_his_India_pre_pvalue,
+    pre_his_India_pre_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, prehis_JJA)
+
+(
+    pre_ssp585_India_pre_slope,
+    pre_ssp585_India_pre_intercept,
+    pre_ssp585_India_pre_rvalue,
+    pre_ssp585_India_pre_pvalue,
+    pre_ssp585_India_pre_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA, pressp585_JJA)
+
+(
+    pre_CRU_NCR_pre_slope,
+    pre_CRU_NCR_pre_intercept,
+    pre_CRU_NCR_pre_rvalue,
+    pre_CRU_NCR_pre_pvalue,
+    pre_CRU_NCR_pre_hypothesis,
+) = ca.dim_linregress(preCRU_NCR_JJA, preCRU_JJA)
+
+(
+    pre_GPCP_NCR_pre_slope,
+    pre_GPCP_NCR_pre_intercept,
+    pre_GPCP_NCR_pre_rvalue,
+    pre_GPCP_NCR_pre_pvalue,
+    pre_GPCP_NCR_pre_hypothesis,
+) = ca.dim_linregress(preGPCP_NCR_JJA, preGPCP_JJA)
+
+(
+    pre_his_NCR_pre_slope,
+    pre_his_NCR_pre_intercept,
+    pre_his_NCR_pre_rvalue,
+    pre_his_NCR_pre_pvalue,
+    pre_his_NCR_pre_hypothesis,
+) = ca.dim_linregress(prehis_NCR_JJA, prehis_JJA)
+
+(
+    pre_ssp585_NCR_pre_slope,
+    pre_ssp585_NCR_pre_intercept,
+    pre_ssp585_NCR_pre_rvalue,
+    pre_ssp585_NCR_pre_pvalue,
+    pre_ssp585_NCR_pre_hypothesis,
+) = ca.dim_linregress(pressp585_NCR_JJA, pressp585_JJA)
+# %%
