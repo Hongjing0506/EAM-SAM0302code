@@ -1266,5 +1266,103 @@ axs[3, 0].format(
 fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig_rvalue.format(abc="(a)", abcloc="l")
 # %%
-#
+#   calculate the uqvq regress onto IWF
+(
+    IWF_ERA5_India_uq_slope,
+    IWF_ERA5_India_uq_intercept,
+    IWF_ERA5_India_uq_rvalue,
+    IWF_ERA5_India_uq_pvalue,
+    IWF_ERA5_India_uq_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index, uq_dpg_ERA5_JJA)
 
+(
+    IWF_ERA5_India_vq_slope,
+    IWF_ERA5_India_vq_intercept,
+    IWF_ERA5_India_vq_rvalue,
+    IWF_ERA5_India_vq_pvalue,
+    IWF_ERA5_India_vq_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index, vq_dpg_ERA5_JJA)
+
+(
+    IWF_his_India_uq_slope,
+    IWF_his_India_uq_intercept,
+    IWF_his_India_uq_rvalue,
+    IWF_his_India_uq_pvalue,
+    IWF_his_India_uq_hypothesis,
+) = ca.dim_linregress(his_IWF_index, uq_dpg_his_JJA)
+
+(
+    IWF_his_India_vq_slope,
+    IWF_his_India_vq_intercept,
+    IWF_his_India_vq_rvalue,
+    IWF_his_India_vq_pvalue,
+    IWF_his_India_vq_hypothesis,
+) = ca.dim_linregress(his_IWF_index, vq_dpg_his_JJA)
+
+(
+    IWF_ssp585_India_uq_slope,
+    IWF_ssp585_India_uq_intercept,
+    IWF_ssp585_India_uq_rvalue,
+    IWF_ssp585_India_uq_pvalue,
+    IWF_ssp585_India_uq_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index, uq_dpg_ssp585_JJA)
+
+(
+    IWF_ssp585_India_vq_slope,
+    IWF_ssp585_India_vq_intercept,
+    IWF_ssp585_India_vq_rvalue,
+    IWF_ssp585_India_vq_pvalue,
+    IWF_ssp585_India_vq_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index, vq_dpg_ssp585_JJA)
+
+
+IWF_ERA5_India_uqvq_mask = ca.wind_check(
+    xr.where(IWF_ERA5_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ERA5_India_vq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ERA5_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ERA5_India_vq_pvalue <= 0.05, 1.0, 0.0),
+)
+
+IWF_his_India_uqvq_mask = ca.wind_check(
+    xr.where(IWF_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_his_India_vq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_his_India_vq_pvalue <= 0.05, 1.0, 0.0),
+)
+
+IWF_ssp585_India_uqvq_mask = ca.wind_check(
+    xr.where(IWF_ssp585_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ssp585_India_vq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ssp585_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ssp585_India_vq_pvalue <= 0.05, 1.0, 0.0),
+)
+
+
+# %%
+#   calculate the uqvq divergence regress on IWF
+(
+    IWF_ERA5_India_divuqvq_slope,
+    IWF_ERA5_India_divuqvq_intercept,
+    IWF_ERA5_India_divuqvq_rvalue,
+    IWF_ERA5_India_divuqvq_pvalue,
+    IWF_ERA5_India_divuqvq_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index, div_uqvq_ERA5_JJA)
+
+(
+    IWF_his_India_divuqvq_slope,
+    IWF_his_India_divuqvq_intercept,
+    IWF_his_India_divuqvq_rvalue,
+    IWF_his_India_divuqvq_pvalue,
+    IWF_his_India_divuqvq_hypothesis,
+) = ca.dim_linregress(his_IWF_index, div_uqvq_his_JJA)
+
+(
+    IWF_ssp585_India_divuqvq_slope,
+    IWF_ssp585_India_divuqvq_intercept,
+    IWF_ssp585_India_divuqvq_rvalue,
+    IWF_ssp585_India_divuqvq_pvalue,
+    IWF_ssp585_India_divuqvq_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index, div_uqvq_ssp585_JJA)
+
+# %%
+#   
