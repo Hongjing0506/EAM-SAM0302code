@@ -899,6 +899,14 @@ preGPCP_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"].sel(time=uq_dp
     pre_ssp585_India_vq_hypothesis,
 ) = ca.dim_linregress(pressp585_India_JJA, vq_dpg_ssp585_JJA)
 # %%
+#   calculate the divergence of uq and vq
+div_uqvq_ERA5 = ca.cal_divergence(uq_dpg_ERA5_JJA, vq_dpg_ERA5_JJA)
+div_uqvq_his = ca.cal_divergence(uq_dpg_his_JJA, vq_dpg_his_JJA)
+div_uqvq_ssp585 = ca.cal_divergence(uq_dpg_ssp585_JJA, vq_dpg_ssp585_JJA)
+
+# %%
+
+# %%
 #   plot the Uq/Vq regress on IndR
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
@@ -908,7 +916,7 @@ proj = pplt.PlateCarree(central_longitude=cl)
 fig_rvalue = pplt.figure(
     span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
 )
-axs = fig_rvalue.subplots(ncols=2, nrows=4, proj=proj)
+axs = fig_rvalue.subplots(ncols=1, nrows=4, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
 xticks = np.arange(50, 151, 10)  # 设置纬度刻度
@@ -1088,3 +1096,4 @@ axs[3, 1].format(
 fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig_rvalue.format(abc="(a)", abcloc="l")
 # %%
+#   
