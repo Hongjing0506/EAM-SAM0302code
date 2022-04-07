@@ -3763,3 +3763,90 @@ for i,mod in enumerate(models):
     pcc_list.append({"models": str(mod.data), "pcc": pcc_models[i]})
 print(sorted(pcc_list, key=lambda x : x["pcc"]))
 # %%
+#   calculate the uq and vq regress onto IndR
+preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
+
+prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
+
+prehis_ds_India_JJA = ca.cal_lat_weighted_mean(prehis_ds_JJA.loc[:, :, 8:28, 70:86]).mean(dim="lon", skipna=True)
+
+preCRU_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"]
+
+(
+    pre_CRU_India_uq_slope,
+    pre_CRU_India_uq_intercept,
+    pre_CRU_India_uq_rvalue,
+    pre_CRU_India_uq_pvalue,
+    pre_CRU_India_uq_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, uq_dpg_ERA5_JJA)
+
+(
+    pre_CRU_India_vq_slope,
+    pre_CRU_India_vq_intercept,
+    pre_CRU_India_vq_rvalue,
+    pre_CRU_India_vq_pvalue,
+    pre_CRU_India_vq_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, vq_dpg_ERA5_JJA)
+
+(
+    pre_his_India_uq_slope,
+    pre_his_India_uq_intercept,
+    pre_his_India_uq_rvalue,
+    pre_his_India_uq_pvalue,
+    pre_his_India_uq_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, uq_dpg_his_JJA)
+
+(
+    pre_his_India_vq_slope,
+    pre_his_India_vq_intercept,
+    pre_his_India_vq_rvalue,
+    pre_his_India_vq_pvalue,
+    pre_his_India_vq_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, vq_dpg_his_JJA)
+
+(
+    pre_his_ds_India_uq_slope,
+    pre_his_ds_India_uq_intercept,
+    pre_his_ds_India_uq_rvalue,
+    pre_his_ds_India_uq_pvalue,
+    pre_his_ds_India_uq_hypothesis,
+) = ca.dim_linregress(prehis_ds_India_JJA, uq_dpg_his_ds_JJA)
+
+(
+    pre_his_ds_India_vq_slope,
+    pre_his_ds_India_vq_intercept,
+    pre_his_ds_India_vq_rvalue,
+    pre_his_ds_India_vq_pvalue,
+    pre_his_ds_India_vq_hypothesis,
+) = ca.dim_linregress(prehis_ds_India_JJA, vq_dpg_his_ds_JJA)
+# %%
+#   calculate the divergence of uq and vq
+div_uqvq_ERA5 = ca.cal_divergence(uq_dpg_ERA5_JJA, vq_dpg_ERA5_JJA)
+div_uqvq_his = ca.cal_divergence(uq_dpg_his_JJA, vq_dpg_his_JJA)
+div_uqvq_his_ds = ca.cal_divergence(uq_dpg_his_ds_JJA, vq_dpg_his_ds_JJA)
+# %%
+#   calculate the divergence of uq and vq regress onto IndR
+(
+    pre_CRU_India_divuqvq_slope,
+    pre_CRU_India_divuqvq_intercept,
+    pre_CRU_India_divuqvq_rvalue,
+    pre_CRU_India_divuqvq_pvalue,
+    pre_CRU_India_divuqvq_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, div_uqvq_ERA5)
+
+(
+    pre_his_India_divuqvq_slope,
+    pre_his_India_divuqvq_intercept,
+    pre_his_India_divuqvq_rvalue,
+    pre_his_India_divuqvq_pvalue,
+    pre_his_India_divuqvq_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, div_uqvq_his)
+
+(
+    pre_his_ds_India_divuqvq_slope,
+    pre_his_ds_India_divuqvq_intercept,
+    pre_his_ds_India_divuqvq_rvalue,
+    pre_his_ds_India_divuqvq_pvalue,
+    pre_his_ds_India_divuqvq_hypothesis,
+) = ca.dim_linregress(prehis_ds_India_JJA, div_uqvq_his_ds)
+# %%
