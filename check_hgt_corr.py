@@ -4089,11 +4089,67 @@ for i, mod in enumerate(models):
 
 pcc_models = np.zeros(26)
 
+levels = [850.0, 500.0, 200.0]
+for lev in levels:
+    (
+        hgt_ERA5_India_uq_slope,
+        hgt_ERA5_India_uq_intercept,
+        hgt_ERA5_India_uq_rvalue,
+        hgt_ERA5_India_uq_pvalue,
+        hgt_ERA5_India_uq_hypothesis,
+    ) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, hgtERA5_ver_JJA.sel(level=lev))
+    (
+        u_ERA5_India_uq_slope,
+        u_ERA5_India_uq_intercept,
+        u_ERA5_India_uq_rvalue,
+        u_ERA5_India_uq_pvalue,
+        u_ERA5_India_uq_hypothesis,
+    ) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, uERA5_ver_JJA.sel(level=lev))
+    (
+        v_ERA5_India_uq_slope,
+        v_ERA5_India_uq_intercept,
+        v_ERA5_India_uq_rvalue,
+        v_ERA5_India_uq_pvalue,
+        v_ERA5_India_uq_hypothesis,
+    ) = ca.dim_linregress(uq_dpg_ERA5_India_JJA, vERA5_ver_JJA.sel(level=lev))
+
+    (
+        hgt_his_ds_India_uq_slope,
+        hgt_his_ds_India_uq_intercept,
+        hgt_his_ds_India_uq_rvalue,
+        hgt_his_ds_India_uq_pvalue,
+        hgt_his_ds_India_uq_hypothesis,
+    ) = ca.dim_linregress(
+        uq_dpg_his_ds_India_JJA, hgthis_ds_ver_JJA.sel(level=lev)
+    )
+    (
+        u_his_ds_India_uq_slope,
+        u_his_ds_India_uq_intercept,
+        u_his_ds_India_uq_rvalue,
+        u_his_ds_India_uq_pvalue,
+        u_his_ds_India_uq_hypothesis,
+    ) = ca.dim_linregress(
+        uq_dpg_his_ds_India_JJA, uhis_ds_ver_JJA.sel(level=lev)
+    )
+    (
+        v_his_ds_India_uq_slope,
+        v_his_ds_India_uq_intercept,
+        v_his_ds_India_uq_rvalue,
+        v_his_ds_India_uq_pvalue,
+        v_his_ds_India_uq_hypothesis,
+    ) = ca.dim_linregress(
+        uq_dpg_his_ds_India_JJA, vhis_ds_ver_JJA.sel(level=lev)
+    )
+    for i, mod in enumerate(models):
+        pcc_models[i] += ca.cal_pcc(hgt_ERA5_India_uq_rvalue.loc[0:55, 90:150], hgt_his_ds_India_uq_rvalue.sel(models=mod).loc[0:55, 90:150])
+        pcc_models[i] += ca.cal_pcc(u_ERA5_India_uq_rvalue.loc[0:55, 90:150], u_his_ds_India_uq_rvalue.sel(models=mod).loc[0:55, 90:150])
+        pcc_models[i] += ca.cal_pcc(v_ERA5_India_uq_rvalue.loc[0:55, 90:150], v_his_ds_India_uq_rvalue.sel(models=mod).loc[0:55, 90:150])
 for i, mod in enumerate(models):
-    pcc_models[i] += ca.cal_pcc(pre_CRU_India_divuqvq_rvalue.loc[0:55, 60:180], pre_his_ds_India_divuqvq_rvalue.sel(models=mod).loc[0:55, 60:180])
-    pcc_models[i] += ca.cal_pcc(pre_CRU_India_uq_rvalue.loc[0:55, 60:180], pre_his_ds_India_uq_rvalue.sel(models=mod).loc[0:55, 60:180])
-    pcc_models[i] += ca.cal_pcc(pre_CRU_India_vq_rvalue.loc[0:55, 60:180], pre_his_ds_India_vq_rvalue.sel(models=mod).loc[0:55, 60:180])
-pcc_models = pcc_models/3.0
+    pcc_models[i] += ca.cal_pcc(pre_CRU_India_divuqvq_rvalue.loc[0:55, 90:150], pre_his_ds_India_divuqvq_rvalue.sel(models=mod).loc[0:55, 90:150])
+    pcc_models[i] += ca.cal_pcc(pre_CRU_India_uq_rvalue.loc[0:55, 90:150], pre_his_ds_India_uq_rvalue.sel(models=mod).loc[0:55, 90:150])
+    pcc_models[i] += ca.cal_pcc(pre_CRU_India_vq_rvalue.loc[0:55, 90:150], pre_his_ds_India_vq_rvalue.sel(models=mod).loc[0:55, 90:150])
+pcc_models = pcc_models/12.0
+
 print(pcc_models)
 # %%
 pcc_list = []
