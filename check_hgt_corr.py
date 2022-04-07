@@ -3820,6 +3820,26 @@ preCRU_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"]
     pre_his_ds_India_vq_hypothesis,
 ) = ca.dim_linregress(prehis_ds_India_JJA, vq_dpg_his_ds_JJA)
 # %%
+pre_CRU_India_uqvq_mask = ca.wind_check(
+    xr.where(pre_CRU_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_CRU_India_vq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_CRU_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_CRU_India_vq_pvalue <= 0.05, 1.0, 0.0),
+)
+pre_his_India_uqvq_mask = ca.wind_check(
+    xr.where(pre_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_his_India_vq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_his_India_vq_pvalue <= 0.05, 1.0, 0.0),
+)
+pre_his_ds_India_uqvq_mask = ca.wind_check(
+    xr.where(pre_his_ds_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_his_ds_India_vq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_his_ds_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_his_ds_India_vq_pvalue <= 0.05, 1.0, 0.0),
+)
+
+# %%
 #   calculate the divergence of uq and vq
 div_uqvq_ERA5 = ca.cal_divergence(uq_dpg_ERA5_JJA, vq_dpg_ERA5_JJA)
 div_uqvq_his = ca.cal_divergence(uq_dpg_his_JJA, vq_dpg_his_JJA)
@@ -3849,4 +3869,219 @@ div_uqvq_his_ds = ca.cal_divergence(uq_dpg_his_ds_JJA, vq_dpg_his_ds_JJA)
     pre_his_ds_India_divuqvq_pvalue,
     pre_his_ds_India_divuqvq_hypothesis,
 ) = ca.dim_linregress(prehis_ds_India_JJA, div_uqvq_his_ds)
+# %%
+#   plot the div uq and vq regress onto IndR
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig.subplots(ncols=4, nrows=7, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    rect = Rectangle(
+        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
+    )
+    ax.add_patch(rect)
+    #   Indian area
+    x0 = 70
+    y0 = 8.0
+    width = 16
+    height = 20.0
+    patches(ax, x0 - cl, y0, width, height, proj)
+    #   NCR area
+    x0 = 108
+    y0 = 36.0
+    width = 10.0
+    height = 6.0
+    patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0].contourf(
+    pre_CRU_India_divuqvq_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    pre_CRU_India_divuqvq_pvalue,
+    axs[0],
+    n,
+    np.where(pre_CRU_India_divuqvq_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[0].quiver(
+    pre_CRU_India_uq_rvalue[::ski, ::ski],
+    pre_CRU_India_vq_rvalue[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[0].quiver(
+    pre_CRU_India_uq_rvalue.where(pre_CRU_India_uqvq_mask > 0.0)[::ski, ::ski],
+    pre_CRU_India_vq_rvalue.where(pre_CRU_India_uqvq_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[0].format(ltitle="div&uq/vq reg IndR", rtitle="CRU TS4.01")
+
+# ===================================================
+con = axs[1].contourf(
+    pre_his_India_divuqvq_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    pre_his_India_divuqvq_pvalue,
+    axs[1],
+    n,
+    np.where(pre_his_India_divuqvq_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+
+axs[1].quiver(
+    pre_his_India_uq_rvalue[::ski, ::ski],
+    pre_his_India_vq_rvalue[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[1].quiver(
+    pre_his_India_uq_rvalue.where(pre_his_India_uqvq_mask > 0.0)[::ski, ::ski],
+    pre_his_India_vq_rvalue.where(pre_his_India_uqvq_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[1].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+axs[1].format(ltitle="div&uq/vq reg IndR", rtitle="ensmean")
+# ===================================================
+for i, mod in enumerate(models):
+    con = axs[i + 2].contourf(
+        pre_his_ds_India_divuqvq_rvalue.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(-1.0, 1.1, 0.1),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        pre_his_ds_India_divuqvq_pvalue.sel(models=mod),
+        axs[i + 2],
+        n,
+        np.where(pre_his_ds_India_divuqvq_pvalue.sel(models=mod)[::n, ::n] <= 0.05),
+        "denim",
+        3.0,
+    )
+
+    axs[i + 2].quiver(
+        pre_his_ds_India_uq_rvalue.sel(models=mod)[::ski, ::ski],
+        pre_his_ds_India_vq_rvalue.sel(models=mod)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.17,
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[i + 2].quiver(
+        pre_his_ds_India_uq_rvalue.where(pre_his_ds_India_uqvq_mask > 0.0).sel(models=mod)[
+            ::ski, ::ski
+        ],
+        pre_his_ds_India_vq_rvalue.where(pre_his_ds_India_uqvq_mask > 0.0).sel(models=mod)[
+            ::ski, ::ski
+        ],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.17,
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[i + 2].quiverkey(
+        m,
+        X=1 - w / 2,
+        Y=0.7 * h,
+        U=0.5,
+        label="0.5",
+        labelpos="S",
+        labelsep=0.05,
+        fontproperties={"size": 5},
+        zorder=3.1,
+    )
+    axs[i + 2].format(
+        ltitle="div&uq/vq reg IndR", rtitle="{}".format(np.array(models[i]))
+    )
 # %%
