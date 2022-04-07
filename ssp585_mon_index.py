@@ -900,9 +900,9 @@ preGPCP_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"].sel(time=uq_dp
 ) = ca.dim_linregress(pressp585_India_JJA, vq_dpg_ssp585_JJA)
 # %%
 #   calculate the divergence of uq and vq
-div_uqvq_ERA5 = ca.cal_divergence(uq_dpg_ERA5_JJA, vq_dpg_ERA5_JJA)
-div_uqvq_his = ca.cal_divergence(uq_dpg_his_JJA, vq_dpg_his_JJA)
-div_uqvq_ssp585 = ca.cal_divergence(uq_dpg_ssp585_JJA, vq_dpg_ssp585_JJA)
+div_uqvq_ERA5_JJA = ca.cal_divergence(uq_dpg_ERA5_JJA, vq_dpg_ERA5_JJA)
+div_uqvq_his_JJA = ca.cal_divergence(uq_dpg_his_JJA, vq_dpg_his_JJA)
+div_uqvq_ssp585_JJA = ca.cal_divergence(uq_dpg_ssp585_JJA, vq_dpg_ssp585_JJA)
 
 # %%
 #   calculate the uqvq divergence regress on IndR
