@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-06 10:49:49
 LastEditors: ChenHJ
-LastEditTime: 2022-04-06 11:55:45
+LastEditTime: 2022-04-07 21:36:26
 FilePath: /chenhj/0302code/pick_models.py
 Aim: 
 Mission: 
@@ -96,9 +96,14 @@ def pick_models(srcPath, delmodels):
                 print(file_name)
                 os.remove(os.path.join(path, file_name))
 
-delmodels = ["TaiESM1", "IPSL-CM6A-LR", "CanESM5", "CMCC-ESM2", "CESM2", "FGOALS-g3", "INM-CM4-8", "EC-Earth3-Veg", "INM-CM5-0", "CNRM-CM6-1", "ensemble"]
+delmodels = ["FGOALS-g3", "CMCC-ESM2", "TaiESM1", "CanESM5", "IPSL-CM6A-LR", "INM-CM4-8", "INM-CM5-0", "EC-Earth3-Veg", "UKESM1-0-LL", "KACE-1-0-G", "GFDL-CM4", "MRI-ESM2-0", "MPI-ESM1-2-HR", "EC-Earth3", "MIROC6", "BCC-CSM2-MR", "ensemble"]
 srcPath = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models"
 for delm in delmodels:
     pick_models(srcPath, delm)
 
+# %%
+delmodels = ["FGOALS-g3", "IPSL-CM6A-LR", "CanESM5", "KACE-1-0-G", "CMCC-ESM2", "TaiESM1", "UKESM1-0-LL", "INM-CM4-8", "MPI-ESM1-2-HR", "EC-Earth3-Veg", "GFDL-CM4", "INM-CM5-0", "CNRM-ESM2-1", "CESM2", "BCC-CSM2-MR", "NESM3", "ensemble"]
+srcPath = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models"
+for delm in delmodels:
+    pick_models(srcPath, delm)
 # %%
