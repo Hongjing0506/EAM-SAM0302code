@@ -139,7 +139,7 @@ preCRU = fpreCRU["pre"]
 fprehis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
 )
-prehis = fprehis["pr"]
+prehis = fprehis["pr"]*3600*24
 
 
 # GPCP data just have 1979-2014 year
@@ -155,7 +155,7 @@ hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
 uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
 qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True).loc[:, 100.0:, :, :]
-preCRU_JJA = ca.p_time(preCRU, 6, 8, True)
+preCRU_JJA = ca.p_time(preCRU, 6, 8, True)/30.67
 spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
 
 hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
@@ -220,7 +220,7 @@ qssp585 = qssp585.rename({"plev": "level"})
 fpressp585 = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/ssp585/pr/pr_Amon_ensemble_ssp585_gn_201501-209912.nc"
 )
-pressp585 = fpressp585["pr"]
+pressp585 = fpressp585["pr"]*3600*24
 # %%
 #   pick up the ssp585 data
 hgtssp585_ver_JJA = ca.p_time(hgtssp585, 6, 8, True).loc[:, :100, :, :]
@@ -560,3 +560,19 @@ axs[2].format(
 
 # %%
 #   plot the SAM index and IWF index correlation coefficients and rolling correlation coefficients
+
+
+# %%
+#   calculate the precipitation area mean of India and NCR
+preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
+preCRU_NCR_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
+
+preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
+preGPCP_NCR_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
+
+prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
+prehis_NCR_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
+
+pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
+pressp585_NCR_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
+# %%
