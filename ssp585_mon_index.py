@@ -830,3 +830,72 @@ axs[3, 1].format(
 fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig_rvalue.format(abc="(a)", abcloc="l")
 # %%
+#   calculate the Uq/Vq regress on IndR
+preCRU_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"]
+preGPCP_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"].sel(time=uq_dpg_ERA5_JJA.time.dt.year>=1979)
+
+
+(
+    pre_CRU_India_uq_slope,
+    pre_CRU_India_uq_intercept,
+    pre_CRU_India_uq_rvalue,
+    pre_CRU_India_uq_pvalue,
+    pre_CRU_India_uq_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, uq_dpg_ERA5_JJA)
+
+(
+    pre_CRU_India_vq_slope,
+    pre_CRU_India_vq_intercept,
+    pre_CRU_India_vq_rvalue,
+    pre_CRU_India_vq_pvalue,
+    pre_CRU_India_vq_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, vq_dpg_ERA5_JJA)
+
+(
+    pre_GPCP_India_uq_slope,
+    pre_GPCP_India_uq_intercept,
+    pre_GPCP_India_uq_rvalue,
+    pre_GPCP_India_uq_pvalue,
+    pre_GPCP_India_uq_hypothesis,
+) = ca.dim_linregress(preGPCP_India_JJA, uq_dpg_ERA5_JJA.sel(time=uq_dpg_ERA5_JJA.time.dt.year>=1979))
+
+(
+    pre_GPCP_India_vq_slope,
+    pre_GPCP_India_vq_intercept,
+    pre_GPCP_India_vq_rvalue,
+    pre_GPCP_India_vq_pvalue,
+    pre_GPCP_India_vq_hypothesis,
+) = ca.dim_linregress(preGPCP_India_JJA, vq_dpg_ERA5_JJA.sel(time=uq_dpg_ERA5_JJA.time.dt.year>=1979))
+
+(
+    pre_his_India_uq_slope,
+    pre_his_India_uq_intercept,
+    pre_his_India_uq_rvalue,
+    pre_his_India_uq_pvalue,
+    pre_his_India_uq_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, uq_dpg_his_JJA)
+
+(
+    pre_his_India_vq_slope,
+    pre_his_India_vq_intercept,
+    pre_his_India_vq_rvalue,
+    pre_his_India_vq_pvalue,
+    pre_his_India_vq_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, vq_dpg_his_JJA)
+
+(
+    pre_ssp585_India_uq_slope,
+    pre_ssp585_India_uq_intercept,
+    pre_ssp585_India_uq_rvalue,
+    pre_ssp585_India_uq_pvalue,
+    pre_ssp585_India_uq_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA, uq_dpg_ssp585_JJA)
+
+(
+    pre_ssp585_India_vq_slope,
+    pre_ssp585_India_vq_intercept,
+    pre_ssp585_India_vq_rvalue,
+    pre_ssp585_India_vq_pvalue,
+    pre_ssp585_India_vq_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA, vq_dpg_ssp585_JJA)
+# %%
