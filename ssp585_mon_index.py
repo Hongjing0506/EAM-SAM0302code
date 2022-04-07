@@ -1898,3 +1898,106 @@ axs[2, 0].format(
 fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig_rvalue.format(abc="(a)", abcloc="l")
 # %%
+#   calculate the rolling correlation coefficients of IndR and IWF index
+freq = "AS-JUL"
+window = 31
+
+ssp585_IWF_IndR_rolling_9 = ca.rolling_reg_index(
+    ssp585_IWF_index, pressp585_India_JJA, ssp585_IWF_index.time, window, freq, True
+)
+# %%
+#   plot the rolling correlation coefficients of IndR and IWF index
+fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=1, nrows=1)
+lw = 0.8
+# cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
+
+
+m1 = axs[0].line(
+    ssp585_IWF_index.time.dt.year,
+    ca.standardize(ssp585_IWF_index),
+    lw=lw,
+    color="black",
+)
+m2 = axs[0].line(
+    pressp585_India_JJA.time.dt.year,
+    ca.standardize(pressp585_India_JJA),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[0].line(
+    ssp585_IWF_index.time.dt.year,
+    np.array(ssp585_IWF_IndR_rolling_9["rvalue"]),
+    lw=lw,
+    color="red",
+    linestyle="--",
+)
+
+
+axs[0].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(0.2133, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(-0.2133, lw=0.8, color="grey5", linestyle="--")
+axs[0].format(
+    ltitle="window={}".format(window),
+    rtitle="2015-2099",
+    title="IWF & IndR",
+    xrotation=0,
+    ymin=-3.0,
+    ymax=3.0,
+    ylocator=0.5,
+    yminorlocator=0.25,
+)
+axs[0].legend(handles=[m1, m2, m3], loc="ll", labels=["IWF", "IndR", "r"], ncols=1)
+# %%
+#   calculate the rolling correlation coefficients of uq India and IWF index
+freq = "AS-JUL"
+window = 31
+
+ssp585_IWF_uqInd_rolling_9 = ca.rolling_reg_index(
+    ssp585_IWF_index, uq_dpg_ssp585_India_JJA, ssp585_IWF_index.time, window, freq, True
+)
+# %%
+#   plot the rolling correlation coefficients of uq India and IWF index
+fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=1, nrows=1)
+lw = 0.8
+# cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
+
+
+m1 = axs[0].line(
+    ssp585_IWF_index.time.dt.year,
+    ca.standardize(ssp585_IWF_index),
+    lw=lw,
+    color="black",
+)
+m2 = axs[0].line(
+    uq_dpg_ssp585_India_JJA.time.dt.year,
+    ca.standardize(uq_dpg_ssp585_India_JJA),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[0].line(
+    ssp585_IWF_index.time.dt.year,
+    np.array(ssp585_IWF_uqInd_rolling_9["rvalue"]),
+    lw=lw,
+    color="red",
+    linestyle="--",
+)
+
+
+axs[0].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(0.2133, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(-0.2133, lw=0.8, color="grey5", linestyle="--")
+axs[0].format(
+    ltitle="window={}".format(window),
+    rtitle="2015-2099",
+    title="IWF & uq Ind",
+    xrotation=0,
+    ymin=-3.0,
+    ymax=3.0,
+    ylocator=0.5,
+    yminorlocator=0.25,
+)
+axs[0].legend(handles=[m1, m2, m3], loc="ll", labels=["IWF", "uq Ind", "r"], ncols=1)
+# %%
+#   calculate the hgt, u, v regress onto SAM
