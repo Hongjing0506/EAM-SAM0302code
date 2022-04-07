@@ -4085,3 +4085,19 @@ for i, mod in enumerate(models):
         ltitle="div&uq/vq reg IndR", rtitle="{}".format(np.array(models[i]))
     )
 # %%
+#   calculate model ranking by calculate the performance of models in modeling the divergence/uq/vq reg IndR
+
+pcc_models = np.zeros(26)
+
+for i, mod in enumerate(models):
+    pcc_models[i] += ca.cal_pcc(pre_CRU_India_divuqvq_rvalue.loc[0:55, 60:180], pre_his_ds_India_divuqvq_rvalue.sel(models=mod).loc[0:55, 60:180])
+    pcc_models[i] += ca.cal_pcc(pre_CRU_India_uq_rvalue.loc[0:55, 60:180], pre_his_ds_India_uq_rvalue.sel(models=mod).loc[0:55, 60:180])
+    pcc_models[i] += ca.cal_pcc(pre_CRU_India_vq_rvalue.loc[0:55, 60:180], pre_his_ds_India_vq_rvalue.sel(models=mod).loc[0:55, 60:180])
+pcc_models = pcc_models/3.0
+print(pcc_models)
+# %%
+pcc_list = []
+for i,mod in enumerate(models):
+    pcc_list.append({"models": str(mod.data), "pcc": pcc_models[i]})
+print(sorted(pcc_list, key=lambda x : x["pcc"]))
+# %%
