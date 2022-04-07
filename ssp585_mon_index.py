@@ -139,7 +139,7 @@ preCRU = fpreCRU["pre"]
 fprehis = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/historical/pr/pr_Amon_ensemble_historical_gn_195001-201412.nc"
 )
-prehis = fprehis["pr"]*3600*24
+prehis = fprehis["pr"] * 3600 * 24
 
 
 # GPCP data just have 1979-2014 year
@@ -155,7 +155,7 @@ hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
 uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
 qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True).loc[:, 100.0:, :, :]
-preCRU_JJA = ca.p_time(preCRU, 6, 8, True)/30.67
+preCRU_JJA = ca.p_time(preCRU, 6, 8, True) / 30.67
 spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
 
 hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
@@ -220,7 +220,7 @@ qssp585 = qssp585.rename({"plev": "level"})
 fpressp585 = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/ssp585/pr/pr_Amon_ensemble_ssp585_gn_201501-209912.nc"
 )
-pressp585 = fpressp585["pr"]*3600*24
+pressp585 = fpressp585["pr"] * 3600 * 24
 # %%
 #   pick up the ssp585 data
 hgtssp585_ver_JJA = ca.p_time(hgtssp585, 6, 8, True).loc[:, :100, :, :]
@@ -440,7 +440,7 @@ axs = fig.subplots(ncols=1, nrows=3)
 lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 
-#=======================================================
+# =======================================================
 m1 = axs[0].line(
     uq_dpg_ERA5_India_JJA.time.dt.year,
     ca.standardize(uq_dpg_ERA5_India_JJA),
@@ -477,9 +477,9 @@ axs[0].format(
     ymax=3.0,
     ylocator=0.5,
     yminorlocator=0.25,
-    ylabel=""
+    ylabel="",
 )
-#=======================================================
+# =======================================================
 m1 = axs[1].line(
     uq_dpg_his_India_JJA.time.dt.year,
     ca.standardize(uq_dpg_his_India_JJA),
@@ -516,9 +516,9 @@ axs[1].format(
     ymax=3.0,
     ylocator=0.5,
     yminorlocator=0.25,
-    ylabel=""
+    ylabel="",
 )
-#=======================================================
+# =======================================================
 m1 = axs[2].line(
     uq_dpg_ssp585_India_JJA.time.dt.year,
     ca.standardize(uq_dpg_ssp585_India_JJA),
@@ -555,7 +555,7 @@ axs[2].format(
     ymax=3.0,
     ylocator=0.5,
     yminorlocator=0.25,
-    ylabel=""
+    ylabel="",
 )
 
 # %%
@@ -564,17 +564,33 @@ axs[2].format(
 
 # %%
 #   calculate the precipitation area mean of India and NCR
-preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
-preCRU_NCR_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
+preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 8:28, 70:86]).mean(
+    dim="lon", skipna=True
+)
+preCRU_NCR_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 36:42, 108:118]).mean(
+    dim="lon", skipna=True
+)
 
-preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
-preGPCP_NCR_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
+preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 8:28, 70:86]).mean(
+    dim="lon", skipna=True
+)
+preGPCP_NCR_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 36:42, 108:118]).mean(
+    dim="lon", skipna=True
+)
 
-prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
-prehis_NCR_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
+prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 8:28, 70:86]).mean(
+    dim="lon", skipna=True
+)
+prehis_NCR_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 36:42, 108:118]).mean(
+    dim="lon", skipna=True
+)
 
-pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
-pressp585_NCR_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
+pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 8:28, 70:86]).mean(
+    dim="lon", skipna=True
+)
+pressp585_NCR_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 36:42, 108:118]).mean(
+    dim="lon", skipna=True
+)
 # %%
 #   calculate the precipitation regress onto preInd and preNCR
 (
@@ -676,11 +692,11 @@ for ax in axs:
     patches(ax, x0 - cl, y0, width, height, proj)
 # ======================================
 con = axs[0, 0].contourf(
-    pre_CRU_India_pre_rvalue, 
-    cmap="ColdHot", 
+    pre_CRU_India_pre_rvalue,
+    cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
+    zorder=0.8,
 )
 sepl.plt_sig(
     pre_CRU_India_pre_rvalue,
@@ -695,11 +711,11 @@ axs[0, 0].format(
 )
 # ======================================
 con = axs[0, 1].contourf(
-    pre_CRU_NCR_pre_rvalue, 
-    cmap="ColdHot", 
+    pre_CRU_NCR_pre_rvalue,
+    cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
+    zorder=0.8,
 )
 sepl.plt_sig(
     pre_CRU_NCR_pre_rvalue,
@@ -714,11 +730,11 @@ axs[0, 1].format(
 )
 # ======================================
 con = axs[1, 0].contourf(
-    pre_GPCP_India_pre_rvalue, 
-    cmap="ColdHot", 
+    pre_GPCP_India_pre_rvalue,
+    cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
+    zorder=0.8,
 )
 sepl.plt_sig(
     pre_GPCP_India_pre_rvalue,
@@ -733,11 +749,11 @@ axs[1, 0].format(
 )
 # ======================================
 con = axs[1, 1].contourf(
-    pre_GPCP_NCR_pre_rvalue, 
-    cmap="ColdHot", 
+    pre_GPCP_NCR_pre_rvalue,
+    cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
+    zorder=0.8,
 )
 sepl.plt_sig(
     pre_GPCP_NCR_pre_rvalue,
@@ -752,11 +768,11 @@ axs[1, 1].format(
 )
 # ======================================
 con = axs[2, 0].contourf(
-    pre_his_India_pre_rvalue, 
-    cmap="ColdHot", 
+    pre_his_India_pre_rvalue,
+    cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
+    zorder=0.8,
 )
 sepl.plt_sig(
     pre_his_India_pre_rvalue,
@@ -771,11 +787,11 @@ axs[2, 0].format(
 )
 # ======================================
 con = axs[2, 1].contourf(
-    pre_his_NCR_pre_rvalue, 
-    cmap="ColdHot", 
+    pre_his_NCR_pre_rvalue,
+    cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
+    zorder=0.8,
 )
 sepl.plt_sig(
     pre_his_NCR_pre_rvalue,
@@ -790,11 +806,11 @@ axs[2, 1].format(
 )
 # ======================================
 con = axs[3, 0].contourf(
-    pre_ssp585_India_pre_rvalue, 
-    cmap="ColdHot", 
+    pre_ssp585_India_pre_rvalue,
+    cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
+    zorder=0.8,
 )
 sepl.plt_sig(
     pre_ssp585_India_pre_rvalue,
@@ -809,11 +825,11 @@ axs[3, 0].format(
 )
 # ======================================
 con = axs[3, 1].contourf(
-    pre_ssp585_NCR_pre_rvalue, 
-    cmap="ColdHot", 
+    pre_ssp585_NCR_pre_rvalue,
+    cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
+    zorder=0.8,
 )
 sepl.plt_sig(
     pre_ssp585_NCR_pre_rvalue,
@@ -832,7 +848,9 @@ fig_rvalue.format(abc="(a)", abcloc="l")
 # %%
 #   calculate the Uq/Vq regress on IndR
 preCRU_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"]
-preGPCP_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"].sel(time=uq_dpg_ERA5_JJA.time.dt.year>=1979)
+preGPCP_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"].sel(
+    time=uq_dpg_ERA5_JJA.time.dt.year >= 1979
+)
 
 
 (
@@ -857,7 +875,9 @@ preGPCP_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"].sel(time=uq_dp
     pre_GPCP_India_uq_rvalue,
     pre_GPCP_India_uq_pvalue,
     pre_GPCP_India_uq_hypothesis,
-) = ca.dim_linregress(preGPCP_India_JJA, uq_dpg_ERA5_JJA.sel(time=uq_dpg_ERA5_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(
+    preGPCP_India_JJA, uq_dpg_ERA5_JJA.sel(time=uq_dpg_ERA5_JJA.time.dt.year >= 1979)
+)
 
 (
     pre_GPCP_India_vq_slope,
@@ -865,7 +885,9 @@ preGPCP_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"].sel(time=uq_dp
     pre_GPCP_India_vq_rvalue,
     pre_GPCP_India_vq_pvalue,
     pre_GPCP_India_vq_hypothesis,
-) = ca.dim_linregress(preGPCP_India_JJA, vq_dpg_ERA5_JJA.sel(time=uq_dpg_ERA5_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(
+    preGPCP_India_JJA, vq_dpg_ERA5_JJA.sel(time=uq_dpg_ERA5_JJA.time.dt.year >= 1979)
+)
 
 (
     pre_his_India_uq_slope,
@@ -898,6 +920,35 @@ preGPCP_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"].sel(time=uq_dp
     pre_ssp585_India_vq_pvalue,
     pre_ssp585_India_vq_hypothesis,
 ) = ca.dim_linregress(pressp585_India_JJA, vq_dpg_ssp585_JJA)
+
+pre_CRU_India_uqvq_mask = ca.wind_check(
+    xr.where(pre_CRU_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_CRU_India_vq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_CRU_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_CRU_India_vq_pvalue <= 0.05, 1.0, 0.0),
+)
+
+pre_GPCP_India_uqvq_mask = ca.wind_check(
+    xr.where(pre_GPCP_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_GPCP_India_vq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_GPCP_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_GPCP_India_vq_pvalue <= 0.05, 1.0, 0.0),
+)
+
+pre_his_India_uqvq_mask = ca.wind_check(
+    xr.where(pre_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_his_India_vq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_his_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_his_India_vq_pvalue <= 0.05, 1.0, 0.0),
+)
+
+pre_ssp585_India_uqvq_mask = ca.wind_check(
+    xr.where(pre_ssp585_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_ssp585_India_vq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_ssp585_India_uq_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(pre_ssp585_India_vq_pvalue <= 0.05, 1.0, 0.0),
+)
+
 # %%
 #   calculate the divergence of uq and vq
 div_uqvq_ERA5_JJA = ca.cal_divergence(uq_dpg_ERA5_JJA, vq_dpg_ERA5_JJA)
@@ -920,7 +971,10 @@ div_uqvq_ssp585_JJA = ca.cal_divergence(uq_dpg_ssp585_JJA, vq_dpg_ssp585_JJA)
     pre_GPCP_India_divuqvq_rvalue,
     pre_GPCP_India_divuqvq_pvalue,
     pre_GPCP_India_divuqvq_hypothesis,
-) = ca.dim_linregress(preGPCP_India_JJA, div_uqvq_ERA5_JJA.sel(time=div_uqvq_ERA5_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(
+    preGPCP_India_JJA,
+    div_uqvq_ERA5_JJA.sel(time=div_uqvq_ERA5_JJA.time.dt.year >= 1979),
+)
 
 (
     pre_his_India_divuqvq_slope,
@@ -956,9 +1010,16 @@ yticks = np.arange(10, 51, 10)  # 设置经度刻度
 # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
 extents = [xticks[0], xticks[-1], 5, 55]
 sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+# ===================================================
+ski = 2
 n = 1
+w, h = 0.12, 0.14
 # ======================================
 for ax in axs:
+    rect = Rectangle(
+        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
+    )
+    ax.add_patch(rect)
     #   Indian area
     x0 = 70
     y0 = 8.0
@@ -973,158 +1034,237 @@ for ax in axs:
     patches(ax, x0 - cl, y0, width, height, proj)
 # ======================================
 con = axs[0, 0].contourf(
-    pre_CRU_India_uq_rvalue, 
-    cmap="ColdHot", 
+    pre_CRU_India_divuqvq_rvalue,
+    cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
+    zorder=0.8,
 )
 sepl.plt_sig(
-    pre_CRU_India_uq_rvalue,
+    pre_CRU_India_divuqvq_rvalue,
     axs[0, 0],
     n,
-    np.where(pre_CRU_India_uq_pvalue[::n, ::n] <= 0.05),
+    np.where(pre_CRU_India_divuqvq_pvalue[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
+axs[0, 0].quiver(
+    pre_CRU_India_uq_rvalue[::ski, ::ski],
+    pre_CRU_India_vq_rvalue[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[0, 0].quiver(
+    pre_CRU_India_uq_rvalue.where(pre_CRU_India_uqvq_mask > 0.0)[::ski, ::ski],
+    pre_CRU_India_vq_rvalue.where(pre_CRU_India_uqvq_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0, 0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+
 axs[0, 0].format(
     title="Uq reg IndR", rtitle="1950-2014", ltitle="CRU TS4.01",
 )
 # ======================================
-con = axs[0, 1].contourf(
-    pre_CRU_India_vq_rvalue, 
-    cmap="ColdHot", 
-    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
-)
-sepl.plt_sig(
-    pre_CRU_India_vq_rvalue,
-    axs[0, 1],
-    n,
-    np.where(pre_CRU_India_vq_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
-)
-axs[0, 1].format(
-    title="Vq reg IndR", rtitle="1950-2014", ltitle="CRU TS4.01",
-)
-# ======================================
 con = axs[1, 0].contourf(
-    pre_GPCP_India_uq_rvalue, 
-    cmap="ColdHot", 
+    pre_GPCP_India_divuqvq_rvalue,
+    cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
+    zorder=0.8,
 )
 sepl.plt_sig(
-    pre_GPCP_India_uq_rvalue,
+    pre_GPCP_India_divuqvq_rvalue,
     axs[1, 0],
     n,
-    np.where(pre_GPCP_India_uq_pvalue[::n, ::n] <= 0.05),
+    np.where(pre_GPCP_India_divuqvq_pvalue[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
+axs[1, 0].quiver(
+    pre_GPCP_India_uq_rvalue[::ski, ::ski],
+    pre_GPCP_India_vq_rvalue[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[1, 0].quiver(
+    pre_GPCP_India_uq_rvalue.where(pre_GPCP_India_uqvq_mask > 0.0)[::ski, ::ski],
+    pre_GPCP_India_vq_rvalue.where(pre_GPCP_India_uqvq_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[1, 0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+
 axs[1, 0].format(
     title="Uq reg IndR", rtitle="1979-2014", ltitle="GPCP",
 )
-# ======================================
-con = axs[1, 1].contourf(
-    pre_GPCP_India_vq_rvalue, 
-    cmap="ColdHot", 
-    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
-)
-sepl.plt_sig(
-    pre_GPCP_India_vq_rvalue,
-    axs[1, 1],
-    n,
-    np.where(pre_GPCP_India_vq_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
-)
-axs[1, 1].format(
-    title="Vq reg IndR", rtitle="1979-2014", ltitle="GPCP",
-)
+
 # ======================================
 con = axs[2, 0].contourf(
-    pre_his_India_uq_rvalue, 
-    cmap="ColdHot", 
+    pre_his_India_divuqvq_rvalue,
+    cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
+    zorder=0.8,
 )
 sepl.plt_sig(
-    pre_his_India_uq_rvalue,
+    pre_his_India_divuqvq_rvalue,
     axs[2, 0],
     n,
-    np.where(pre_his_India_uq_pvalue[::n, ::n] <= 0.05),
+    np.where(pre_his_India_divuqvq_pvalue[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
+axs[2, 0].quiver(
+    pre_his_India_uq_rvalue[::ski, ::ski],
+    pre_his_India_vq_rvalue[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[2, 0].quiver(
+    pre_his_India_uq_rvalue.where(pre_his_India_uqvq_mask > 0.0)[::ski, ::ski],
+    pre_his_India_vq_rvalue.where(pre_his_India_uqvq_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[2, 0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+
 axs[2, 0].format(
     title="Uq reg IndR", rtitle="1950-2014", ltitle="historical",
 )
-# ======================================
-con = axs[2, 1].contourf(
-    pre_his_India_vq_rvalue, 
-    cmap="ColdHot", 
-    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
-)
-sepl.plt_sig(
-    pre_his_India_vq_rvalue,
-    axs[2, 1],
-    n,
-    np.where(pre_his_India_vq_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
-)
-axs[2, 1].format(
-    title="Vq reg IndR", rtitle="1950-2014", ltitle="historical",
-)
+
 # ======================================
 con = axs[3, 0].contourf(
-    pre_ssp585_India_uq_rvalue, 
-    cmap="ColdHot", 
+    pre_ssp585_India_divuqvq_rvalue,
+    cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
+    zorder=0.8,
 )
 sepl.plt_sig(
-    pre_ssp585_India_uq_rvalue,
+    pre_ssp585_India_divuqvq_rvalue,
     axs[3, 0],
     n,
-    np.where(pre_ssp585_India_uq_pvalue[::n, ::n] <= 0.05),
+    np.where(pre_ssp585_India_divuqvq_pvalue[::n, ::n] <= 0.05),
     "denim",
     3.0,
 )
+axs[3, 0].quiver(
+    pre_ssp585_India_uq_rvalue[::ski, ::ski],
+    pre_ssp585_India_vq_rvalue[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[3, 0].quiver(
+    pre_ssp585_India_uq_rvalue.where(pre_ssp585_India_uqvq_mask > 0.0)[::ski, ::ski],
+    pre_ssp585_India_vq_rvalue.where(pre_ssp585_India_uqvq_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[3, 0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.5,
+    label="0.5",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+
 axs[3, 0].format(
     title="Uq reg IndR", rtitle="2015-2099", ltitle="ssp585",
-)
-# ======================================
-con = axs[3, 1].contourf(
-    pre_ssp585_India_vq_rvalue, 
-    cmap="ColdHot", 
-    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8
-)
-sepl.plt_sig(
-    pre_ssp585_India_vq_rvalue,
-    axs[3, 1],
-    n,
-    np.where(pre_ssp585_India_vq_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
-)
-axs[3, 1].format(
-    title="Vq reg IndR", rtitle="2015-2099", ltitle="ssp585",
 )
 # ======================================
 fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig_rvalue.format(abc="(a)", abcloc="l")
 # %%
-#   
+#
+
