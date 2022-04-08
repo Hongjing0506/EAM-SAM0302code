@@ -96,33 +96,33 @@ fqERA5 = xr.open_dataset(
 qERA5 = fqERA5["q"]
 
 fhgthis = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models//historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/historical/zg/zg_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 hgthis = fhgthis["zg"]
 hgthis.coords["plev"] = hgthis.coords["plev"] / 100.0
 hgthis = hgthis.rename({"plev": "level"})
 
 fuhis = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models//historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/historical/ua/ua_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 uhis = fuhis["ua"]
 uhis.coords["plev"] = uhis.coords["plev"] / 100.0
 uhis = uhis.rename({"plev": "level"})
 
 fvhis = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models//historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/historical/va/va_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 vhis = fvhis["va"]
 vhis.coords["plev"] = vhis.coords["plev"] / 100.0
 vhis = vhis.rename({"plev": "level"})
 
 fsphis = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models//historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/historical/ps/ps_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 sphis = fsphis["ps"]
 
 fqhis = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models//historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/pick_models/historical/hus/hus_Amon_ensemble_historical_gn_195001-201412.nc"
 )
 qhis = fqhis["hus"]
 qhis.coords["plev"] = qhis.coords["plev"] / 100.0
@@ -239,6 +239,7 @@ spssp585_JJA = ca.detrend_dim(spssp585_JJA, "time", deg=1, demean=False)
 
 # %%
 #   calculate the SAM and IWF index in ERA5, historical, ssp585
+reload(ca)
 ERA5_IWF_index = ca.IWF(uERA5_ver_JJA, vERA5_ver_JJA)
 ERA5_IWF_index = ca.detrend_dim(ERA5_IWF_index, "time", deg=1, demean=False)
 ERA5_SAM_index = ca.SAM(vERA5_ver_JJA)
@@ -586,6 +587,12 @@ preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 8:28, 70:86]).mean
 preCRU_NCR_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 36:42, 108:118]).mean(
     dim="lon", skipna=True
 )
+preCRU_YZRR_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 27:30, 110:120]).mean(
+    dim="lon", skipna=True
+)
+preCRU_India_JJA = ca.detrend_dim(preCRU_India_JJA, "time", deg=1, demean=False)
+preCRU_NCR_JJA = ca.detrend_dim(preCRU_NCR_JJA, "time", deg=1, demean=False)
+preCRU_YZRR_JJA = ca.detrend_dim(preCRU_YZRR_JJA, "time", deg=1, demean=False)
 
 preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 8:28, 70:86]).mean(
     dim="lon", skipna=True
@@ -593,6 +600,12 @@ preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 8:28, 70:86]).me
 preGPCP_NCR_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 36:42, 108:118]).mean(
     dim="lon", skipna=True
 )
+preGPCP_YZRR_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 27:30, 110:120]).mean(
+    dim="lon", skipna=True
+)
+preGPCP_India_JJA = ca.detrend_dim(preGPCP_India_JJA, "time", deg=1, demean=False)
+preGPCP_NCR_JJA = ca.detrend_dim(preGPCP_NCR_JJA, "time", deg=1, demean=False)
+preGPCP_YZRR_JJA = ca.detrend_dim(preGPCP_YZRR_JJA, "time", deg=1, demean=False)
 
 prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 8:28, 70:86]).mean(
     dim="lon", skipna=True
@@ -600,6 +613,12 @@ prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 8:28, 70:86]).mean
 prehis_NCR_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 36:42, 108:118]).mean(
     dim="lon", skipna=True
 )
+prehis_YZRR_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 27:30, 110:120]).mean(
+    dim="lon", skipna=True
+)
+prehis_India_JJA = ca.detrend_dim(prehis_India_JJA, "time", deg=1, demean=False)
+prehis_NCR_JJA = ca.detrend_dim(prehis_NCR_JJA, "time", deg=1, demean=False)
+prehis_YZRR_JJA = ca.detrend_dim(prehis_YZRR_JJA, "time", deg=1, demean=False)
 
 pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 8:28, 70:86]).mean(
     dim="lon", skipna=True
@@ -607,6 +626,12 @@ pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 8:28, 70:86]
 pressp585_NCR_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 36:42, 108:118]).mean(
     dim="lon", skipna=True
 )
+pressp585_YZRR_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 27:30, 110:120]).mean(
+    dim="lon", skipna=True
+)
+pressp585_India_JJA = ca.detrend_dim(pressp585_India_JJA, "time", deg=1, demean=False)
+pressp585_NCR_JJA = ca.detrend_dim(pressp585_NCR_JJA, "time", deg=1, demean=False)
+pressp585_YZRR_JJA = ca.detrend_dim(pressp585_YZRR_JJA, "time", deg=1, demean=False)
 # %%
 #   calculate the precipitation regress onto preInd and preNCR
 (
@@ -2053,6 +2078,11 @@ for ax in axs:
     width = 40
     height = 20.0
     patches(ax, x0 - cl, y0, width, height, proj)
+    x0 = 90
+    y0 = 5.0
+    width = 50
+    height = 27.5
+    patches(ax, x0 - cl, y0, width, height, proj)
 
 
 for p, lev in enumerate(levels):
@@ -2458,6 +2488,159 @@ axs[2].format(
     ltitle="window={}".format(window),
     rtitle="ssp585",
     title="uq BOB & IWF",
+    xrotation=0,
+    ymin=-3.0,
+    ymax=3.0,
+    ylocator=0.5,
+    yminorlocator=0.25,
+    ylabel="",
+)
+# %%
+
+
+
+
+
+
+# %%
+#   calculate the BOB uq/IWF correlation coefficients and rolling correlation coefficients
+ERA5_uqBOB_preYZRR_regress = stats.linregress(uq_dpg_ERA5_BOB_JJA, preCRU_YZRR_JJA)
+his_uqBOB_preYZRR_regress = stats.linregress(uq_dpg_his_BOB_JJA, prehis_YZRR_JJA)
+ssp585_uqBOB_preYZRR_regress = stats.linregress(uq_dpg_ssp585_BOB_JJA, pressp585_YZRR_JJA)
+
+freq = "AS-JUL"
+window = 31
+ERA5_uqBOB_preYZRR_rolling_regress = ca.rolling_reg_index(
+    uq_dpg_ERA5_BOB_JJA, preCRU_YZRR_JJA, uq_dpg_ERA5_BOB_JJA.time, window, freq, True,
+)
+his_uqBOB_preYZRR_rolling_regress = ca.rolling_reg_index(
+    uq_dpg_his_BOB_JJA, prehis_YZRR_JJA, uq_dpg_his_BOB_JJA.time, window, freq, True,
+)
+ssp585_uqBOB_preYZRR_rolling_regress = ca.rolling_reg_index(
+    uq_dpg_ssp585_BOB_JJA,
+    pressp585_YZRR_JJA,
+    uq_dpg_ssp585_BOB_JJA.time,
+    window,
+    freq,
+    True,
+)
+# %%
+#   plot the BOB uq/IWF and their rolling correlation coefficients
+fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=1, nrows=3)
+lw = 0.8
+# cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
+
+# =======================================================
+m1 = axs[0].line(
+    uq_dpg_ERA5_BOB_JJA.time.dt.year,
+    ca.standardize(uq_dpg_ERA5_BOB_JJA),
+    lw=lw,
+    color="black",
+)
+m2 = axs[0].line(
+    preCRU_YZRR_JJA.time.dt.year,
+    ca.standardize(preCRU_YZRR_JJA),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[0].line(
+    preCRU_YZRR_JJA.time.dt.year,
+    ERA5_uqBOB_preYZRR_rolling_regress["rvalue"].data,
+    lw=lw,
+    color="red",
+    linestyle="--",
+)
+
+rlim = ca.cal_rlim1(0.95, len(uq_dpg_ERA5_BOB_JJA.time.dt.year))
+
+axs[0].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(rlim, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(-rlim, lw=0.8, color="grey5", linestyle="--")
+axs[0].text(1952, 2.5, "r={:.2f}".format(ERA5_uqBOB_preYZRR_regress[2]), size=10)
+axs[0].legend(handles=[m1, m2, m3], loc="ll", labels=["uq BOB", "YZRR", "r"], ncols=1)
+axs[0].format(
+    ltitle="window={}".format(window),
+    rtitle="ERA5",
+    title="uq BOB & YZRR",
+    xrotation=0,
+    ymin=-3.0,
+    ymax=3.0,
+    ylocator=0.5,
+    yminorlocator=0.25,
+    ylabel="",
+)
+# =======================================================
+m1 = axs[1].line(
+    uq_dpg_his_BOB_JJA.time.dt.year,
+    ca.standardize(uq_dpg_his_BOB_JJA),
+    lw=lw,
+    color="black",
+)
+m2 = axs[1].line(
+    prehis_YZRR_JJA.time.dt.year,
+    ca.standardize(prehis_YZRR_JJA),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[1].line(
+    prehis_YZRR_JJA.time.dt.year,
+    his_uqBOB_preYZRR_rolling_regress["rvalue"].data,
+    lw=lw,
+    color="red",
+    linestyle="--",
+)
+
+rlim = ca.cal_rlim1(0.95, len(uq_dpg_his_BOB_JJA.time.dt.year))
+
+axs[1].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[1].axhline(rlim, lw=0.8, color="grey5", linestyle="--")
+axs[1].axhline(-rlim, lw=0.8, color="grey5", linestyle="--")
+axs[1].text(1952, 2.5, "r={:.2f}".format(his_uqBOB_preYZRR_regress[2]), size=10)
+axs[1].legend(handles=[m1, m2, m3], loc="ll", labels=["uq BOB", "YZRR", "r"], ncols=1)
+axs[1].format(
+    ltitle="window={}".format(window),
+    rtitle="historical",
+    title="uq BOB & YZRR",
+    xrotation=0,
+    ymin=-3.0,
+    ymax=3.0,
+    ylocator=0.5,
+    yminorlocator=0.25,
+    ylabel="",
+)
+# =======================================================
+m1 = axs[2].line(
+    uq_dpg_ssp585_BOB_JJA.time.dt.year,
+    ca.standardize(uq_dpg_ssp585_BOB_JJA),
+    lw=lw,
+    color="black",
+)
+m2 = axs[2].line(
+    pressp585_YZRR_JJA.time.dt.year,
+    ca.standardize(pressp585_YZRR_JJA),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[2].line(
+    pressp585_YZRR_JJA.time.dt.year,
+    ssp585_uqBOB_preYZRR_rolling_regress["rvalue"].data,
+    lw=lw,
+    color="red",
+    linestyle="--",
+)
+
+rlim = ca.cal_rlim1(0.95, len(uq_dpg_ssp585_BOB_JJA.time.dt.year))
+
+axs[2].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[2].axhline(rlim, lw=0.8, color="grey5", linestyle="--")
+axs[2].axhline(-rlim, lw=0.8, color="grey5", linestyle="--")
+axs[2].text(2017, 2.5, "r={:.2f}".format(ssp585_uqBOB_preYZRR_regress[2]), size=10)
+axs[2].legend(handles=[m1, m2, m3], loc="ll", labels=["uq BOB", "YZRR", "r"], ncols=1)
+axs[2].format(
+    ltitle="window={}".format(window),
+    rtitle="ssp585",
+    title="uq BOB & YZRR",
     xrotation=0,
     ymin=-3.0,
     ymax=3.0,
