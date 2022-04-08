@@ -385,12 +385,10 @@ uq_dpg_ssp585_India_JJA = ca.detrend_dim(
 uq_dpg_ERA5_BOB_JJA = ca.cal_lat_weighted_mean(
     uq_dpg_ERA5_JJA.loc[:, 0:20, 80:110]
 ).mean(dim="lon", skipna=True)
-uq_dpg_ERA5_BOB_JJA = ca.detrend_dim(
-    uq_dpg_ERA5_BOB_JJA, "time", deg=1, demean=False
+uq_dpg_ERA5_BOB_JJA = ca.detrend_dim(uq_dpg_ERA5_BOB_JJA, "time", deg=1, demean=False)
+uq_dpg_his_BOB_JJA = ca.cal_lat_weighted_mean(uq_dpg_his_JJA.loc[:, 0:20, 80:110]).mean(
+    dim="lon", skipna=True
 )
-uq_dpg_his_BOB_JJA = ca.cal_lat_weighted_mean(
-    uq_dpg_his_JJA.loc[:, 0:20, 80:110]
-).mean(dim="lon", skipna=True)
 uq_dpg_his_BOB_JJA = ca.detrend_dim(uq_dpg_his_BOB_JJA, "time", deg=1, demean=False)
 
 uq_dpg_ssp585_BOB_JJA = ca.cal_lat_weighted_mean(
@@ -2057,7 +2055,6 @@ for ax in axs:
     patches(ax, x0 - cl, y0, width, height, proj)
 
 
-
 for p, lev in enumerate(levels):
     (
         SAM_ERA5_hgt_slope,
@@ -2082,7 +2079,7 @@ for p, lev in enumerate(levels):
         SAM_ERA5_v_pvalue,
         SAM_ERA5_v_hypothesis,
     ) = ca.dim_linregress(ERA5_SAM_index, vERA5_ver_JJA.sel(level=lev))
-    
+
     (
         SAM_his_hgt_slope,
         SAM_his_hgt_intercept,
@@ -2106,7 +2103,7 @@ for p, lev in enumerate(levels):
         SAM_his_v_pvalue,
         SAM_his_v_hypothesis,
     ) = ca.dim_linregress(his_SAM_index, vhis_ver_JJA.sel(level=lev))
-    
+
     (
         SAM_ssp585_hgt_slope,
         SAM_ssp585_hgt_intercept,
@@ -2130,21 +2127,21 @@ for p, lev in enumerate(levels):
         SAM_ssp585_v_pvalue,
         SAM_ssp585_v_hypothesis,
     ) = ca.dim_linregress(ssp585_SAM_index, vssp585_ver_JJA.sel(level=lev))
-    
+
     SAM_ERA5_wind_mask = ca.wind_check(
         xr.where(SAM_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
         xr.where(SAM_ERA5_v_pvalue <= 0.05, 1.0, 0.0),
         xr.where(SAM_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
         xr.where(SAM_ERA5_v_pvalue <= 0.05, 1.0, 0.0),
     )
-    
+
     SAM_his_wind_mask = ca.wind_check(
         xr.where(SAM_his_u_pvalue <= 0.05, 1.0, 0.0),
         xr.where(SAM_his_v_pvalue <= 0.05, 1.0, 0.0),
         xr.where(SAM_his_u_pvalue <= 0.05, 1.0, 0.0),
         xr.where(SAM_his_v_pvalue <= 0.05, 1.0, 0.0),
     )
-    
+
     SAM_ssp585_wind_mask = ca.wind_check(
         xr.where(SAM_ssp585_u_pvalue <= 0.05, 1.0, 0.0),
         xr.where(SAM_ssp585_v_pvalue <= 0.05, 1.0, 0.0),
@@ -2207,7 +2204,7 @@ for p, lev in enumerate(levels):
         zorder=3.1,
     )
     axs[p, 0].format(ltitle="SAM", rtitle="ERA5 {:.0f}hPa".format(lev))
-    
+
     # ===================================================
     con = axs[p, 1].contourf(
         SAM_his_hgt_rvalue,
@@ -2263,7 +2260,7 @@ for p, lev in enumerate(levels):
         zorder=3.1,
     )
     axs[p, 1].format(ltitle="SAM", rtitle="historical {:.0f}hPa".format(lev))
-    
+
     # ===================================================
     con = axs[p, 2].contourf(
         SAM_ssp585_hgt_rvalue,
@@ -2319,34 +2316,22 @@ for p, lev in enumerate(levels):
         zorder=3.1,
     )
     axs[p, 2].format(ltitle="SAM", rtitle="ssp585 {:.0f}hPa".format(lev))
-    
+
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
 #   calculate the BOB uq/IWF correlation coefficients and rolling correlation coefficients
 ERA5_uqBOB_IWF_regress = stats.linregress(uq_dpg_ERA5_BOB_JJA, ERA5_IWF_index)
 his_uqBOB_IWF_regress = stats.linregress(uq_dpg_his_BOB_JJA, his_IWF_index)
-ssp585_uqBOB_IWF_regress = stats.linregress(
-    uq_dpg_ssp585_BOB_JJA, ssp585_IWF_index
-)
+ssp585_uqBOB_IWF_regress = stats.linregress(uq_dpg_ssp585_BOB_JJA, ssp585_IWF_index)
 
 freq = "AS-JUL"
 window = 31
 ERA5_uqBOB_IWF_rolling_regress = ca.rolling_reg_index(
-    uq_dpg_ERA5_BOB_JJA,
-    ERA5_IWF_index,
-    uq_dpg_ERA5_BOB_JJA.time,
-    window,
-    freq,
-    True,
+    uq_dpg_ERA5_BOB_JJA, ERA5_IWF_index, uq_dpg_ERA5_BOB_JJA.time, window, freq, True,
 )
 his_uqBOB_IWF_rolling_regress = ca.rolling_reg_index(
-    uq_dpg_his_BOB_JJA,
-    his_IWF_index,
-    uq_dpg_his_BOB_JJA.time,
-    window,
-    freq,
-    True,
+    uq_dpg_his_BOB_JJA, his_IWF_index, uq_dpg_his_BOB_JJA.time, window, freq, True,
 )
 ssp585_uqBOB_IWF_rolling_regress = ca.rolling_reg_index(
     uq_dpg_ssp585_BOB_JJA,
@@ -2355,5 +2340,129 @@ ssp585_uqBOB_IWF_rolling_regress = ca.rolling_reg_index(
     window,
     freq,
     True,
+)
+# %%
+#   plot the BOB uq/IWF and their rolling correlation coefficients
+fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=1, nrows=3)
+lw = 0.8
+# cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
+
+# =======================================================
+m1 = axs[0].line(
+    uq_dpg_ERA5_BOB_JJA.time.dt.year,
+    ca.standardize(uq_dpg_ERA5_BOB_JJA),
+    lw=lw,
+    color="black",
+)
+m2 = axs[0].line(
+    ERA5_IWF_index.time.dt.year,
+    ca.standardize(ERA5_IWF_index),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[0].line(
+    ERA5_IWF_index.time.dt.year,
+    ERA5_uqBOB_IWF_rolling_regress["rvalue"].data,
+    lw=lw,
+    color="red",
+    linestyle="--",
+)
+
+rlim = ca.cal_rlim1(0.95, len(uq_dpg_ERA5_BOB_JJA.time.dt.year))
+
+axs[0].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(rlim, lw=0.8, color="grey5", linestyle="--")
+axs[0].axhline(-rlim, lw=0.8, color="grey5", linestyle="--")
+axs[0].text(1952, 2.5, "r={:.2f}".format(ERA5_uqBOB_IWF_regress[2]), size=10)
+axs[0].legend(handles=[m1, m2, m3], loc="ll", labels=["uq BOB", "IWF", "r"], ncols=1)
+axs[0].format(
+    ltitle="window={}".format(window),
+    rtitle="ERA5",
+    title="uq BOB & IWF",
+    xrotation=0,
+    ymin=-3.0,
+    ymax=3.0,
+    ylocator=0.5,
+    yminorlocator=0.25,
+    ylabel="",
+)
+# =======================================================
+m1 = axs[1].line(
+    uq_dpg_his_BOB_JJA.time.dt.year,
+    ca.standardize(uq_dpg_his_BOB_JJA),
+    lw=lw,
+    color="black",
+)
+m2 = axs[1].line(
+    his_IWF_index.time.dt.year,
+    ca.standardize(his_IWF_index),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[1].line(
+    his_IWF_index.time.dt.year,
+    his_uqBOB_IWF_rolling_regress["rvalue"].data,
+    lw=lw,
+    color="red",
+    linestyle="--",
+)
+
+rlim = ca.cal_rlim1(0.95, len(uq_dpg_his_BOB_JJA.time.dt.year))
+
+axs[1].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[1].axhline(rlim, lw=0.8, color="grey5", linestyle="--")
+axs[1].axhline(-rlim, lw=0.8, color="grey5", linestyle="--")
+axs[1].text(1952, 2.5, "r={:.2f}".format(his_uqBOB_IWF_regress[2]), size=10)
+axs[1].legend(handles=[m1, m2, m3], loc="ll", labels=["uq BOB", "IWF", "r"], ncols=1)
+axs[1].format(
+    ltitle="window={}".format(window),
+    rtitle="historical",
+    title="uq BOB & IWF",
+    xrotation=0,
+    ymin=-3.0,
+    ymax=3.0,
+    ylocator=0.5,
+    yminorlocator=0.25,
+    ylabel="",
+)
+# =======================================================
+m1 = axs[2].line(
+    uq_dpg_ssp585_BOB_JJA.time.dt.year,
+    ca.standardize(uq_dpg_ssp585_BOB_JJA),
+    lw=lw,
+    color="black",
+)
+m2 = axs[2].line(
+    ssp585_IWF_index.time.dt.year,
+    ca.standardize(ssp585_IWF_index),
+    lw=lw,
+    color="blue",
+)
+m3 = axs[2].line(
+    ssp585_IWF_index.time.dt.year,
+    ssp585_uqBOB_IWF_rolling_regress["rvalue"].data,
+    lw=lw,
+    color="red",
+    linestyle="--",
+)
+
+rlim = ca.cal_rlim1(0.95, len(uq_dpg_ssp585_BOB_JJA.time.dt.year))
+
+axs[2].axhline(0, lw=0.8, color="grey5", linestyle="--")
+axs[2].axhline(rlim, lw=0.8, color="grey5", linestyle="--")
+axs[2].axhline(-rlim, lw=0.8, color="grey5", linestyle="--")
+axs[2].text(2017, 2.5, "r={:.2f}".format(ssp585_uqBOB_IWF_regress[2]), size=10)
+axs[2].legend(handles=[m1, m2, m3], loc="ll", labels=["uq BOB", "IWF", "r"], ncols=1)
+axs[2].format(
+    ltitle="window={}".format(window),
+    rtitle="ssp585",
+    title="uq BOB & IWF",
+    xrotation=0,
+    ymin=-3.0,
+    ymax=3.0,
+    ylocator=0.5,
+    yminorlocator=0.25,
+    ylabel="",
 )
 # %%
