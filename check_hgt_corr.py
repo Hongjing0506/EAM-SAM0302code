@@ -4157,3 +4157,14 @@ for i,mod in enumerate(models):
     pcc_list.append({"models": str(mod.data), "pcc": pcc_models[i]})
 print(sorted(pcc_list, key=lambda x : x["pcc"]))
 # %%
+pcc_models = np.zeros(26)
+for i, mod in enumerate(models):
+    pcc_models[i] += ca.cal_pcc(pre_CRU_India_divuqvq_rvalue.loc[0:55, 90:150], pre_his_ds_India_divuqvq_rvalue.sel(models=mod).loc[0:55, 90:150])
+    pcc_models[i] += ca.cal_pcc(pre_CRU_India_uq_rvalue.loc[0:55, 90:150], pre_his_ds_India_uq_rvalue.sel(models=mod).loc[0:55, 90:150])
+    pcc_models[i] += ca.cal_pcc(pre_CRU_India_vq_rvalue.loc[0:55, 90:150], pre_his_ds_India_vq_rvalue.sel(models=mod).loc[0:55, 90:150])
+pcc_models = pcc_models/3.0
+pcc_list = []
+for i,mod in enumerate(models):
+    pcc_list.append({"models": str(mod.data), "pcc": pcc_models[i]})
+print(sorted(pcc_list, key=lambda x : x["pcc"]))
+# %%
