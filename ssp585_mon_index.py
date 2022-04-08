@@ -363,7 +363,7 @@ vq_dpg_ssp585_JJA = ca.detrend_dim(vq_dpg_ssp585_JJA, "time", deg=1, demean=Fals
 uq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
 vq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
 # %%
-#   calculate the India and NCR uq\vq area mean
+#   calculate the India BOB and NCR uq\uq\vq area mean
 uq_dpg_ERA5_India_JJA = ca.cal_lat_weighted_mean(
     uq_dpg_ERA5_JJA.loc[:, 5:25, 50:80]
 ).mean(dim="lon", skipna=True)
@@ -381,6 +381,25 @@ uq_dpg_ssp585_India_JJA = ca.cal_lat_weighted_mean(
 uq_dpg_ssp585_India_JJA = ca.detrend_dim(
     uq_dpg_ssp585_India_JJA, "time", deg=1, demean=False
 )
+
+uq_dpg_ERA5_BOB_JJA = ca.cal_lat_weighted_mean(
+    uq_dpg_ERA5_JJA.loc[:, 0:20, 80:110]
+).mean(dim="lon", skipna=True)
+uq_dpg_ERA5_BOB_JJA = ca.detrend_dim(
+    uq_dpg_ERA5_BOB_JJA, "time", deg=1, demean=False
+)
+uq_dpg_his_BOB_JJA = ca.cal_lat_weighted_mean(
+    uq_dpg_his_JJA.loc[:, 0:20, 80:110]
+).mean(dim="lon", skipna=True)
+uq_dpg_his_BOB_JJA = ca.detrend_dim(uq_dpg_his_BOB_JJA, "time", deg=1, demean=False)
+
+uq_dpg_ssp585_BOB_JJA = ca.cal_lat_weighted_mean(
+    uq_dpg_ssp585_JJA.loc[:, 0:20, 80:110]
+).mean(dim="lon", skipna=True)
+uq_dpg_ssp585_BOB_JJA = ca.detrend_dim(
+    uq_dpg_ssp585_BOB_JJA, "time", deg=1, demean=False
+)
+
 
 vq_dpg_ERA5_NCR_JJA = ca.cal_lat_weighted_mean(
     vq_dpg_ERA5_JJA.loc[:, 25.0:37.5, 110.0:125.0]
@@ -2303,4 +2322,38 @@ for p, lev in enumerate(levels):
     
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
+# %%
+#   calculate the BOB uq/IWF correlation coefficients and rolling correlation coefficients
+ERA5_uqBOB_IWF_regress = stats.linregress(uq_dpg_ERA5_BOB_JJA, ERA5_IWF_index)
+his_uqBOB_IWF_regress = stats.linregress(uq_dpg_his_BOB_JJA, his_IWF_index)
+ssp585_uqBOB_IWF_regress = stats.linregress(
+    uq_dpg_ssp585_BOB_JJA, ssp585_IWF_index
+)
+
+freq = "AS-JUL"
+window = 31
+ERA5_uqBOB_IWF_rolling_regress = ca.rolling_reg_index(
+    uq_dpg_ERA5_BOB_JJA,
+    ERA5_IWF_index,
+    uq_dpg_ERA5_BOB_JJA.time,
+    window,
+    freq,
+    True,
+)
+his_uqBOB_IWF_rolling_regress = ca.rolling_reg_index(
+    uq_dpg_his_BOB_JJA,
+    his_IWF_index,
+    uq_dpg_his_BOB_JJA.time,
+    window,
+    freq,
+    True,
+)
+ssp585_uqBOB_IWF_rolling_regress = ca.rolling_reg_index(
+    uq_dpg_ssp585_BOB_JJA,
+    ssp585_IWF_index,
+    uq_dpg_ssp585_BOB_JJA.time,
+    window,
+    freq,
+    True,
+)
 # %%
