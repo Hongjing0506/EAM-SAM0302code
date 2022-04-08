@@ -150,7 +150,6 @@ preGPCP = fpreGPCP["precip"]
 
 # %%
 #   pick up the obs and historical JJA
-
 hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
 uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
@@ -2000,4 +1999,308 @@ axs[0].format(
 )
 axs[0].legend(handles=[m1, m2, m3], loc="ll", labels=["IWF", "uq Ind", "r"], ncols=1)
 # %%
-#   calculate the hgt, u, v regress onto SAM
+#   calculate and plot the hgt, u, v regress onto SAM
+levels = [200.0, 500.0, 850.0]
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig.subplots(ncols=3, nrows=3, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    rect = Rectangle(
+        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
+    )
+    ax.add_patch(rect)
+    # region 1
+    x0 = 70
+    y0 = 10.0
+    width = 40
+    height = 20.0
+    patches(ax, x0 - cl, y0, width, height, proj)
+
+
+
+for p, lev in enumerate(levels):
+    (
+        SAM_ERA5_hgt_slope,
+        SAM_ERA5_hgt_intercept,
+        SAM_ERA5_hgt_rvalue,
+        SAM_ERA5_hgt_pvalue,
+        SAM_ERA5_hgt_hypothesis,
+    ) = ca.dim_linregress(ERA5_SAM_index, hgtERA5_ver_JJA.sel(level=lev))
+
+    (
+        SAM_ERA5_u_slope,
+        SAM_ERA5_u_intercept,
+        SAM_ERA5_u_rvalue,
+        SAM_ERA5_u_pvalue,
+        SAM_ERA5_u_hypothesis,
+    ) = ca.dim_linregress(ERA5_SAM_index, uERA5_ver_JJA.sel(level=lev))
+
+    (
+        SAM_ERA5_v_slope,
+        SAM_ERA5_v_intercept,
+        SAM_ERA5_v_rvalue,
+        SAM_ERA5_v_pvalue,
+        SAM_ERA5_v_hypothesis,
+    ) = ca.dim_linregress(ERA5_SAM_index, vERA5_ver_JJA.sel(level=lev))
+    
+    (
+        SAM_his_hgt_slope,
+        SAM_his_hgt_intercept,
+        SAM_his_hgt_rvalue,
+        SAM_his_hgt_pvalue,
+        SAM_his_hgt_hypothesis,
+    ) = ca.dim_linregress(his_SAM_index, hgthis_ver_JJA.sel(level=lev))
+
+    (
+        SAM_his_u_slope,
+        SAM_his_u_intercept,
+        SAM_his_u_rvalue,
+        SAM_his_u_pvalue,
+        SAM_his_u_hypothesis,
+    ) = ca.dim_linregress(his_SAM_index, uhis_ver_JJA.sel(level=lev))
+
+    (
+        SAM_his_v_slope,
+        SAM_his_v_intercept,
+        SAM_his_v_rvalue,
+        SAM_his_v_pvalue,
+        SAM_his_v_hypothesis,
+    ) = ca.dim_linregress(his_SAM_index, vhis_ver_JJA.sel(level=lev))
+    
+    (
+        SAM_ssp585_hgt_slope,
+        SAM_ssp585_hgt_intercept,
+        SAM_ssp585_hgt_rvalue,
+        SAM_ssp585_hgt_pvalue,
+        SAM_ssp585_hgt_hypothesis,
+    ) = ca.dim_linregress(ssp585_SAM_index, hgtssp585_ver_JJA.sel(level=lev))
+
+    (
+        SAM_ssp585_u_slope,
+        SAM_ssp585_u_intercept,
+        SAM_ssp585_u_rvalue,
+        SAM_ssp585_u_pvalue,
+        SAM_ssp585_u_hypothesis,
+    ) = ca.dim_linregress(ssp585_SAM_index, ussp585_ver_JJA.sel(level=lev))
+
+    (
+        SAM_ssp585_v_slope,
+        SAM_ssp585_v_intercept,
+        SAM_ssp585_v_rvalue,
+        SAM_ssp585_v_pvalue,
+        SAM_ssp585_v_hypothesis,
+    ) = ca.dim_linregress(ssp585_SAM_index, vssp585_ver_JJA.sel(level=lev))
+    
+    SAM_ERA5_wind_mask = ca.wind_check(
+        xr.where(SAM_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
+        xr.where(SAM_ERA5_v_pvalue <= 0.05, 1.0, 0.0),
+        xr.where(SAM_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
+        xr.where(SAM_ERA5_v_pvalue <= 0.05, 1.0, 0.0),
+    )
+    
+    SAM_his_wind_mask = ca.wind_check(
+        xr.where(SAM_his_u_pvalue <= 0.05, 1.0, 0.0),
+        xr.where(SAM_his_v_pvalue <= 0.05, 1.0, 0.0),
+        xr.where(SAM_his_u_pvalue <= 0.05, 1.0, 0.0),
+        xr.where(SAM_his_v_pvalue <= 0.05, 1.0, 0.0),
+    )
+    
+    SAM_ssp585_wind_mask = ca.wind_check(
+        xr.where(SAM_ssp585_u_pvalue <= 0.05, 1.0, 0.0),
+        xr.where(SAM_ssp585_v_pvalue <= 0.05, 1.0, 0.0),
+        xr.where(SAM_ssp585_u_pvalue <= 0.05, 1.0, 0.0),
+        xr.where(SAM_ssp585_v_pvalue <= 0.05, 1.0, 0.0),
+    )
+
+    # ===================================================
+    con = axs[p, 0].contourf(
+        SAM_ERA5_hgt_rvalue,
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(-1.0, 1.1, 0.1),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        SAM_ERA5_hgt_pvalue,
+        axs[p, 0],
+        n,
+        np.where(SAM_ERA5_hgt_pvalue[::n, ::n] <= 0.05),
+        "denim",
+        3.0,
+    )
+
+    axs[p, 0].quiver(
+        SAM_ERA5_u_rvalue[::ski, ::ski],
+        SAM_ERA5_v_rvalue[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.17,
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[p, 0].quiver(
+        SAM_ERA5_u_rvalue.where(SAM_ERA5_wind_mask > 0.0)[::ski, ::ski],
+        SAM_ERA5_v_rvalue.where(SAM_ERA5_wind_mask > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.17,
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[p, 0].quiverkey(
+        m,
+        X=1 - w / 2,
+        Y=0.7 * h,
+        U=0.5,
+        label="0.5",
+        labelpos="S",
+        labelsep=0.05,
+        fontproperties={"size": 5},
+        zorder=3.1,
+    )
+    axs[p, 0].format(ltitle="SAM", rtitle="ERA5 {:.0f}hPa".format(lev))
+    
+    # ===================================================
+    con = axs[p, 1].contourf(
+        SAM_his_hgt_rvalue,
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(-1.0, 1.1, 0.1),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        SAM_his_hgt_pvalue,
+        axs[p, 1],
+        n,
+        np.where(SAM_his_hgt_pvalue[::n, ::n] <= 0.05),
+        "denim",
+        3.0,
+    )
+
+    axs[p, 1].quiver(
+        SAM_his_u_rvalue[::ski, ::ski],
+        SAM_his_v_rvalue[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.17,
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[p, 1].quiver(
+        SAM_his_u_rvalue.where(SAM_his_wind_mask > 0.0)[::ski, ::ski],
+        SAM_his_v_rvalue.where(SAM_his_wind_mask > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.17,
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[p, 1].quiverkey(
+        m,
+        X=1 - w / 2,
+        Y=0.7 * h,
+        U=0.5,
+        label="0.5",
+        labelpos="S",
+        labelsep=0.05,
+        fontproperties={"size": 5},
+        zorder=3.1,
+    )
+    axs[p, 1].format(ltitle="SAM", rtitle="historical {:.0f}hPa".format(lev))
+    
+    # ===================================================
+    con = axs[p, 2].contourf(
+        SAM_ssp585_hgt_rvalue,
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(-1.0, 1.1, 0.1),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        SAM_ssp585_hgt_pvalue,
+        axs[p, 2],
+        n,
+        np.where(SAM_ssp585_hgt_pvalue[::n, ::n] <= 0.05),
+        "denim",
+        3.0,
+    )
+
+    axs[p, 2].quiver(
+        SAM_ssp585_u_rvalue[::ski, ::ski],
+        SAM_ssp585_v_rvalue[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.17,
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[p, 2].quiver(
+        SAM_ssp585_u_rvalue.where(SAM_ssp585_wind_mask > 0.0)[::ski, ::ski],
+        SAM_ssp585_v_rvalue.where(SAM_ssp585_wind_mask > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.17,
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[p, 2].quiverkey(
+        m,
+        X=1 - w / 2,
+        Y=0.7 * h,
+        U=0.5,
+        label="0.5",
+        labelpos="S",
+        labelsep=0.05,
+        fontproperties={"size": 5},
+        zorder=3.1,
+    )
+    axs[p, 2].format(ltitle="SAM", rtitle="ssp585 {:.0f}hPa".format(lev))
+    
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l")
+# %%
