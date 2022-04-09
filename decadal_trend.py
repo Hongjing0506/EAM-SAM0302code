@@ -1,12 +1,12 @@
-'''
+"""
 Author: ChenHJ
 Date: 2022-04-09 19:19:37
 LastEditors: ChenHJ
-LastEditTime: 2022-04-09 19:22:40
+LastEditTime: 2022-04-09 19:39:41
 FilePath: /chenhj/0302code/decadal_trend.py
 Aim: 
 Mission: 
-'''
+"""
 # %%
 import numpy as np
 import xarray as xr
@@ -65,6 +65,8 @@ def patches(ax, x0, y0, width, height, proj):
         linestyle="--",
     )
     ax.add_patch(rect)
+
+
 # %%
 #   read obs and historical data
 fhgtERA5 = xr.open_dataset(
@@ -155,30 +157,15 @@ qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True).loc[:, 100.0:, :, :]
 preCRU_JJA = ca.p_time(preCRU, 6, 8, True) / 30.67
 spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
 
-hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
-uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
-vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
-qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
-preCRU_JJA = ca.detrend_dim(preCRU_JJA, "time", deg=1, demean=False)
-spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
-
 hgthis_ver_JJA = ca.p_time(hgthis, 6, 8, True).loc[:, :100, :, :]
-
 uhis_ver_JJA = ca.p_time(uhis, 6, 8, True).loc[:, :100, :, :]
 vhis_ver_JJA = ca.p_time(vhis, 6, 8, True).loc[:, :100, :, :]
 qhis_ver_JJA = ca.p_time(qhis, 6, 8, True).loc[:, :100, :, :]
 prehis_JJA = ca.p_time(prehis, 6, 8, True)
 sphis_JJA = ca.p_time(sphis, 6, 8, True)
 
-hgthis_ver_JJA = ca.detrend_dim(hgthis_ver_JJA, "time", deg=1, demean=False)
-uhis_ver_JJA = ca.detrend_dim(uhis_ver_JJA, "time", deg=1, demean=False)
-vhis_ver_JJA = ca.detrend_dim(vhis_ver_JJA, "time", deg=1, demean=False)
-qhis_ver_JJA = ca.detrend_dim(qhis_ver_JJA, "time", deg=1, demean=False)
-prehis_JJA = ca.detrend_dim(prehis_JJA, "time", deg=1, demean=False)
-sphis_JJA = ca.detrend_dim(sphis_JJA, "time", deg=1, demean=False)
-
 preGPCP_JJA = ca.p_time(preGPCP, 6, 8, True)
-preGPCP_JJA = ca.detrend_dim(preGPCP_JJA, "time", deg=1, demean=False)
+
 # %%
 #   read the ssp585 data
 fhgtssp585 = xr.open_dataset(
@@ -228,9 +215,315 @@ qssp585_ver_JJA = ca.p_time(qssp585, 6, 8, True).loc[:, :100, :, :]
 pressp585_JJA = ca.p_time(pressp585, 6, 8, True)
 spssp585_JJA = ca.p_time(spssp585, 6, 8, True)
 
-hgtssp585_ver_JJA = ca.detrend_dim(hgtssp585_ver_JJA, "time", deg=1, demean=False)
-ussp585_ver_JJA = ca.detrend_dim(ussp585_ver_JJA, "time", deg=1, demean=False)
-vssp585_ver_JJA = ca.detrend_dim(vssp585_ver_JJA, "time", deg=1, demean=False)
-qssp585_ver_JJA = ca.detrend_dim(qssp585_ver_JJA, "time", deg=1, demean=False)
-pressp585_JJA = ca.detrend_dim(pressp585_JJA, "time", deg=1, demean=False)
-spssp585_JJA = ca.detrend_dim(spssp585_JJA, "time", deg=1, demean=False)
+# %%
+#   calculate the decadal linear trend of circulations
+#   first remove the zonal mean of hgt
+hgtERA5_ver_JJA = ca.dezonal_mean(hgtERA5_ver_JJA)
+hgthis_ver_JJA = ca.dezonal_mean(hgthis_ver_JJA)
+hgtssp585_ver_JJA = ca.dezonal_mean(hgtssp585_ver_JJA)
+
+uERA5_ver_JJA = ca.dezonal_mean(uERA5_ver_JJA)
+uhis_ver_JJA = ca.dezonal_mean(uhis_ver_JJA)
+ussp585_ver_JJA = ca.dezonal_mean(ussp585_ver_JJA)
+
+vERA5_ver_JJA = ca.dezonal_mean(vERA5_ver_JJA)
+vhis_ver_JJA = ca.dezonal_mean(vhis_ver_JJA)
+vssp585_ver_JJA = ca.dezonal_mean(vssp585_ver_JJA)
+
+#   calculate the linear trend of circulation
+hgtERA5_ver_JJA_trend = ca.dim_linregress(
+    np.arange(len(hgtERA5_ver_JJA.coords["time"])), hgtERA5_ver_JJA
+)
+hgthis_ver_JJA_trend = ca.dim_linregress(
+    np.arange(len(hgthis_ver_JJA.coords["time"])), hgthis_ver_JJA
+)
+hgtssp585_ver_JJA_trend = ca.dim_linregress(
+    np.arange(len(hgtssp585_ver_JJA.coords["time"])), hgtssp585_ver_JJA
+)
+
+uERA5_ver_JJA_trend = ca.dim_linregress(
+    np.arange(len(uERA5_ver_JJA.coords["time"])), uERA5_ver_JJA
+)
+uhis_ver_JJA_trend = ca.dim_linregress(
+    np.arange(len(uhis_ver_JJA.coords["time"])), uhis_ver_JJA
+)
+ussp585_ver_JJA_trend = ca.dim_linregress(
+    np.arange(len(ussp585_ver_JJA.coords["time"])), ussp585_ver_JJA
+)
+
+vERA5_ver_JJA_trend = ca.dim_linregress(
+    np.arange(len(vERA5_ver_JJA.coords["time"])), vERA5_ver_JJA
+)
+vhis_ver_JJA_trend = ca.dim_linregress(
+    np.arange(len(vhis_ver_JJA.coords["time"])), vhis_ver_JJA
+)
+vssp585_ver_JJA_trend = ca.dim_linregress(
+    np.arange(len(vssp585_ver_JJA.coords["time"])), vssp585_ver_JJA
+)
+# %%
+#   wind check
+uv_ERA5_JJA_mask = ca.wind_check(
+    xr.where(uERA5_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+    xr.where(vERA5_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+    xr.where(uERA5_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+    xr.where(vERA5_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+)
+
+uv_his_JJA_mask = ca.wind_check(
+    xr.where(uhis_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+    xr.where(vhis_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+    xr.where(uhis_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+    xr.where(vhis_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+)
+
+uv_ssp585_JJA_mask = ca.wind_check(
+    xr.where(ussp585_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+    xr.where(vssp585_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+    xr.where(ussp585_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+    xr.where(vssp585_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+)
+
+# %%
+#   plot the linear trend of circulation
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig_rvalue = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig_rvalue.subplots(ncols=1, nrows=3, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+startlevel = [-0.70, -0.40, -0.30]
+endlevel = [0.70, 0.40, 0.30]
+spacinglevel = [0.1, 0.08, 0.05]
+scales = [0.008, 0.004, 0.004]
+# ======================================
+for ax in axs:
+    rect = Rectangle(
+        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
+    )
+    ax.add_patch(rect)
+    # SAM area
+    x0 = 70
+    y0 = 10.0
+    width = 40
+    height = 20.0
+    patches(ax, x0 - cl, y0, width, height, proj)
+    # IWF area
+    x0 = 90
+    y0 = 5.0
+    width = 50
+    height = 27.5
+    patches(ax, x0 - cl, y0, width, height, proj)
+# ======================================
+levels = [200.0, 500.0, 850.0]
+for i, lev in enumerate(levels):
+    # con = axs[i, 0].contourf(
+    #     hgtERA5_ver_JJA_trend[0].sel(level=lev),
+    #     cmap="ColdHot",
+    #     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    #     levels=np.arange(
+    #         startlevel[i], endlevel[i] + spacinglevel[i] / 2, spacinglevel[i]
+    #     ),
+    #     zorder=0.8,
+    #     extend="both",
+    # )
+    # sepl.plt_sig(
+    #     hgtERA5_ver_JJA_trend[0].sel(level=lev),
+    #     axs[i, 0],
+    #     n,
+    #     np.where(hgtERA5_ver_JJA_trend[3].sel(level=lev)[::n, ::n] <= 0.05),
+    #     "denim",
+    #     3.0,
+    # )
+    # axs[i, 0].quiver(
+    #     uERA5_ver_JJA_trend[0].sel(level=lev)[::ski, ::ski],
+    #     vERA5_ver_JJA_trend[0].sel(level=lev)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=0.05,
+    #     pivot="mid",
+    #     color="grey6",
+    # )
+
+    # m = axs[i, 0].quiver(
+    #     uERA5_ver_JJA_trend[0]
+    #     .sel(level=lev)
+    #     .where(uv_ERA5_JJA_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+    #     vERA5_ver_JJA_trend[0]
+    #     .sel(level=lev)
+    #     .where(uv_ERA5_JJA_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=0.05,
+    #     pivot="mid",
+    #     color="black",
+    # )
+
+    # qk = axs[i, 0].quiverkey(
+    #     m,
+    #     X=1 - w / 2,
+    #     Y=0.7 * h,
+    #     U=0.5,
+    #     label="0.5",
+    #     labelpos="S",
+    #     labelsep=0.05,
+    #     fontproperties={"size": 5},
+    #     zorder=3.1,
+    # )
+
+    # axs[i, 0].format(
+    #     rtitle="1950-2014 {:.0f}hPa".format(lev), ltitle="ERA5",
+    # )
+    # # ======================================
+    # con = axs[i, 1].contourf(
+    #     hgthis_ver_JJA_trend[0].sel(level=lev),
+    #     cmap="ColdHot",
+    #     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    #     levels=np.arange(
+    #         startlevel[i], endlevel[i] + spacinglevel[i] / 2, spacinglevel[i]
+    #     ),
+    #     zorder=0.8,
+    #     extend="both",
+    # )
+    # sepl.plt_sig(
+    #     hgthis_ver_JJA_trend[0].sel(level=lev),
+    #     axs[i, 1],
+    #     n,
+    #     np.where(hgthis_ver_JJA_trend[3].sel(level=lev)[::n, ::n] <= 0.05),
+    #     "denim",
+    #     3.0,
+    # )
+    # axs[i, 1].quiver(
+    #     uhis_ver_JJA_trend[0].sel(level=lev)[::ski, ::ski],
+    #     vhis_ver_JJA_trend[0].sel(level=lev)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=0.05,
+    #     pivot="mid",
+    #     color="grey6",
+    # )
+
+    # m = axs[i, 1].quiver(
+    #     uhis_ver_JJA_trend[0]
+    #     .sel(level=lev)
+    #     .where(uv_his_JJA_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+    #     vhis_ver_JJA_trend[0]
+    #     .sel(level=lev)
+    #     .where(uv_his_JJA_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=0.05,
+    #     pivot="mid",
+    #     color="black",
+    # )
+
+    # qk = axs[i, 1].quiverkey(
+    #     m,
+    #     X=1 - w / 2,
+    #     Y=0.7 * h,
+    #     U=0.5,
+    #     label="0.5",
+    #     labelpos="S",
+    #     labelsep=0.05,
+    #     fontproperties={"size": 5},
+    #     zorder=3.1,
+    # )
+
+    # axs[i, 1].format(
+    #     rtitle="1950-2014 {:.0f}hPa".format(lev), ltitle="historical",
+    # )
+    # # ======================================
+    con = axs[i, 0].contourf(
+        hgtssp585_ver_JJA_trend[0].sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(
+            startlevel[i], endlevel[i] + spacinglevel[i] / 2, spacinglevel[i]
+        ),
+        zorder=0.8,
+        extend="both",
+    )
+    sepl.plt_sig(
+        hgtssp585_ver_JJA_trend[0].sel(level=lev),
+        axs[i, 0],
+        n,
+        np.where(hgtssp585_ver_JJA_trend[3].sel(level=lev)[::n, ::n] <= 0.05),
+        "denim",
+        3.0,
+    )
+    # axs[i, 0].quiver(
+    #     ussp585_ver_JJA_trend[0].sel(level=lev)[::ski, ::ski],
+    #     vssp585_ver_JJA_trend[0].sel(level=lev)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=0.05,
+    #     pivot="mid",
+    #     color="grey6",
+    # )
+
+    m = axs[i, 0].quiver(
+        ussp585_ver_JJA_trend[0]
+        .sel(level=lev)
+        .where(uv_ssp585_JJA_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        vssp585_ver_JJA_trend[0]
+        .sel(level=lev)
+        .where(uv_ssp585_JJA_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.004,
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[i, 0].quiverkey(
+        m,
+        X=1 - w / 2,
+        Y=0.7 * h,
+        U=0.01,
+        label="0.01",
+        labelpos="S",
+        labelsep=0.05,
+        fontproperties={"size": 5},
+        zorder=3.1,
+    )
+
+    axs[i, 0].format(
+        rtitle="2015-2099 {:.0f}hPa".format(lev), ltitle="ssp585",
+    )
+    axs[i, 0].colorbar(con, loc="r", width=0.13, length=0.90, label="")
+    # ======================================
+# fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig_rvalue.format(abc="(a)", abcloc="l", suptitle="linear trends")
+# %%
