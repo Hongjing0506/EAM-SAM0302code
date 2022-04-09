@@ -527,3 +527,58 @@ for i, lev in enumerate(levels):
 # fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig_rvalue.format(abc="(a)", abcloc="l", suptitle="linear trends")
 # %%
+#   calculate the whole levels water vapor flux in ERA5 historical and ssp585
+ptop = 100 * 100
+g = 9.8
+# #  ERA5 data
+# ERA5level = qERA5_ver_JJA.coords["level"] * 100.0
+# ERA5level.attrs["units"] = "Pa"
+# ERA5dp = geocat.comp.dpres_plevel(ERA5level, spERA5_JJA, ptop)
+# ERA5dpg = ERA5dp / g
+# ERA5dpg.attrs["units"] = "kg/m2"
+# uqERA5_ver_JJA = uERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
+# vqERA5_ver_JJA = vERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
+# uqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+# vqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+# uq_dpg_ERA5_JJA = (uqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True) / 1e05
+# vq_dpg_ERA5_JJA = (vqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True) / 1e05
+# uq_dpg_ERA5_JJA = ca.detrend_dim(uq_dpg_ERA5_JJA, "time", deg=1, demean=False)
+# vq_dpg_ERA5_JJA = ca.detrend_dim(vq_dpg_ERA5_JJA, "time", deg=1, demean=False)
+# uq_dpg_ERA5_JJA.attrs["units"] = "100kg/(m*s)"
+# vq_dpg_ERA5_JJA.attrs["units"] = "100kg/(m*s)"
+
+# hislevel = qhis_ver_JJA.coords["level"] * 100.0
+# hislevel.attrs["units"] = "Pa"
+# hisdp = geocat.comp.dpres_plevel(hislevel, sphis_JJA, ptop)
+# hisdpg = hisdp / g
+# hisdpg.attrs["units"] = "kg/m2"
+# uqhis_ver_JJA = uhis_ver_JJA * qhis_ver_JJA.data * 1000.0
+# vqhis_ver_JJA = vhis_ver_JJA * qhis_ver_JJA.data * 1000.0
+# uqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+# vqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+# uq_dpg_his_JJA = (uqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True) / 1e05
+# vq_dpg_his_JJA = (vqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True) / 1e05
+# uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
+# vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
+# uq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
+# vq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
+
+ssp585level = qssp585_ver_JJA.coords["level"] * 100.0
+ssp585level.attrs["units"] = "Pa"
+ssp585dp = geocat.comp.dpres_plevel(ssp585level, spssp585_JJA, ptop)
+ssp585dpg = ssp585dp / g
+ssp585dpg.attrs["units"] = "kg/m2"
+uqssp585_ver_JJA = ussp585_ver_JJA * qssp585_ver_JJA.data * 1000.0
+vqssp585_ver_JJA = vssp585_ver_JJA * qssp585_ver_JJA.data * 1000.0
+uqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_ssp585_JJA = (uqssp585_ver_JJA * ssp585dpg.data).sum(
+    dim="level", skipna=True
+) / 1e05
+vq_dpg_ssp585_JJA = (vqssp585_ver_JJA * ssp585dpg.data).sum(
+    dim="level", skipna=True
+) / 1e05
+# uq_dpg_ssp585_JJA = ca.detrend_dim(uq_dpg_ssp585_JJA, "time", deg=1, demean=False)
+# vq_dpg_ssp585_JJA = ca.detrend_dim(vq_dpg_ssp585_JJA, "time", deg=1, demean=False)
+uq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
+vq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
