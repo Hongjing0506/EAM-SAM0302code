@@ -628,9 +628,9 @@ ski = 2
 n = 1
 w, h = 0.12, 0.14
 i = 0
-startlevel = [-0.8e-08]
-endlevel = [0.8e-08]
-spacinglevel = [0.1e-09]
+startlevel = [-8e-09]
+endlevel = [8e-09]
+spacinglevel = [1e-09]
 scales = [0.008]
 # ======================================
 for ax in axs:
@@ -714,7 +714,8 @@ qk = axs[0].quiverkey(
 axs[0].format(
     rtitle="2015-2099", ltitle="Uq ssp585",
 )
-axs[0].colorbar(con, loc="r", width=0.13, length=0.90, label="")
+cb = axs[0].colorbar(con, loc="r", width=0.13, length=0.90, label="")
+# cb.set_ticks(np.arange(startlevel[i], endlevel[i]+spacinglevel[i]/2, 10*spacinglevel[i]))
 # ======================================
 # fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig_rvalue.format(abc="(a)", abcloc="l", suptitle="linear trends")
