@@ -2827,12 +2827,13 @@ for ax in axs:
         (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
     )
     ax.add_patch(rect)
-    # region 1
+    # SAM area
     x0 = 70
     y0 = 10.0
     width = 40
     height = 20.0
     patches(ax, x0 - cl, y0, width, height, proj)
+    # IWF area
     x0 = 90
     y0 = 5.0
     width = 50
@@ -3419,3 +3420,40 @@ axs[2, 0].format(
 fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig_rvalue.format(abc="(a)", abcloc="l")
 # %%
+#   pick up the last 30 yr in ssp585
+hgtssp585_p3_ver_JJA = hgtssp585_ver_JJA.sel(time=hgtssp585_ver_JJA.time.dt.year >= 2070)
+ussp585_p3_ver_JJA = ussp585_ver_JJA.sel(time=ussp585_ver_JJA.time.dt.year >= 2070)
+vssp585_p3_ver_JJA = vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year >= 2070)
+qssp585_p3_ver_JJA = qssp585_ver_JJA.sel(time=qssp585_ver_JJA.time.dt.year >= 2070)
+uq_dpg_ssp585_p3_ver_JJA = uq_dpg_ssp585_JJA.sel(time=uq_dpg_ssp585_JJA.time.dt.year >= 2070)
+vq_dpg_ssp585_p3_ver_JJA = vq_dpg_ssp585_JJA.sel(time=vq_dpg_ssp585_JJA.time.dt.year >= 2070)
+pressp585_p3_JJA = pressp585_JJA.sel(time=pressp585_JJA.time.dt.year >= 2070)
+# %%
+#   calculate the p3 regression onto SAM
+
+ssp585_p3_SAM_index = ca.SAM(vssp585_p3_ver_JJA)
+ssp585_p3_IWF_index = ca.IWF(ussp585_p3_ver_JJA, vssp585_p3_ver_JJA)
+
+(
+    SAM_ssp585_p3_hgt_slope,
+    SAM_ssp585_p3_hgt_intercept,
+    SAM_ssp585_p3_hgt_rvalue,
+    SAM_ssp585_p3_hgt_pvalue,
+    SAM_ssp585_p3_hgt_hypothesis,
+) = ca.dim_linregress(ssp585_p3_SAM_index, hgtssp585_p3_ver_JJA)
+
+(
+    SAM_ssp585_p3_u_slope,
+    SAM_ssp585_p3_u_intercept,
+    SAM_ssp585_p3_u_rvalue,
+    SAM_ssp585_p3_u_pvalue,
+    SAM_ssp585_p3_u_hypothesis,
+) = ca.dim_linregress(ssp585_p3_SAM_index, ussp585_p3_ver_JJA)
+
+(
+    SAM_ssp585_p3_v_slope,
+    SAM_ssp585_p3_v_intercept,
+    SAM_ssp585_p3_v_rvalue,
+    SAM_ssp585_p3_v_pvalue,
+    SAM_ssp585_p3_v_hypothesis,
+) = ca.dim_linregress(ssp585_p3_SAM_index, vssp585_p3_ver_JJA)
