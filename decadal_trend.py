@@ -218,63 +218,63 @@ spssp585_JJA = ca.p_time(spssp585, 6, 8, True)
 # %%
 #   calculate the decadal linear trend of circulations
 #   first remove the zonal mean of hgt
-hgtERA5_ver_JJA = ca.dezonal_mean(hgtERA5_ver_JJA)
-hgthis_ver_JJA = ca.dezonal_mean(hgthis_ver_JJA)
+# hgtERA5_ver_JJA = ca.dezonal_mean(hgtERA5_ver_JJA)
+# hgthis_ver_JJA = ca.dezonal_mean(hgthis_ver_JJA)
 hgtssp585_ver_JJA = ca.dezonal_mean(hgtssp585_ver_JJA)
 
-uERA5_ver_JJA = ca.dezonal_mean(uERA5_ver_JJA)
-uhis_ver_JJA = ca.dezonal_mean(uhis_ver_JJA)
-ussp585_ver_JJA = ca.dezonal_mean(ussp585_ver_JJA)
+# uERA5_ver_JJA = ca.dezonal_mean(uERA5_ver_JJA)
+# uhis_ver_JJA = ca.dezonal_mean(uhis_ver_JJA)
+# ussp585_ver_JJA = ca.dezonal_mean(ussp585_ver_JJA)
 
-vERA5_ver_JJA = ca.dezonal_mean(vERA5_ver_JJA)
-vhis_ver_JJA = ca.dezonal_mean(vhis_ver_JJA)
-vssp585_ver_JJA = ca.dezonal_mean(vssp585_ver_JJA)
+# vERA5_ver_JJA = ca.dezonal_mean(vERA5_ver_JJA)
+# vhis_ver_JJA = ca.dezonal_mean(vhis_ver_JJA)
+# vssp585_ver_JJA = ca.dezonal_mean(vssp585_ver_JJA)
 
 #   calculate the linear trend of circulation
-hgtERA5_ver_JJA_trend = ca.dim_linregress(
-    np.arange(len(hgtERA5_ver_JJA.coords["time"])), hgtERA5_ver_JJA
-)
-hgthis_ver_JJA_trend = ca.dim_linregress(
-    np.arange(len(hgthis_ver_JJA.coords["time"])), hgthis_ver_JJA
-)
+# hgtERA5_ver_JJA_trend = ca.dim_linregress(
+#     np.arange(len(hgtERA5_ver_JJA.coords["time"])), hgtERA5_ver_JJA
+# )
+# hgthis_ver_JJA_trend = ca.dim_linregress(
+#     np.arange(len(hgthis_ver_JJA.coords["time"])), hgthis_ver_JJA
+# )
 hgtssp585_ver_JJA_trend = ca.dim_linregress(
     np.arange(len(hgtssp585_ver_JJA.coords["time"])), hgtssp585_ver_JJA
 )
 
-uERA5_ver_JJA_trend = ca.dim_linregress(
-    np.arange(len(uERA5_ver_JJA.coords["time"])), uERA5_ver_JJA
-)
-uhis_ver_JJA_trend = ca.dim_linregress(
-    np.arange(len(uhis_ver_JJA.coords["time"])), uhis_ver_JJA
-)
+# uERA5_ver_JJA_trend = ca.dim_linregress(
+#     np.arange(len(uERA5_ver_JJA.coords["time"])), uERA5_ver_JJA
+# )
+# uhis_ver_JJA_trend = ca.dim_linregress(
+#     np.arange(len(uhis_ver_JJA.coords["time"])), uhis_ver_JJA
+# )
 ussp585_ver_JJA_trend = ca.dim_linregress(
     np.arange(len(ussp585_ver_JJA.coords["time"])), ussp585_ver_JJA
 )
 
-vERA5_ver_JJA_trend = ca.dim_linregress(
-    np.arange(len(vERA5_ver_JJA.coords["time"])), vERA5_ver_JJA
-)
-vhis_ver_JJA_trend = ca.dim_linregress(
-    np.arange(len(vhis_ver_JJA.coords["time"])), vhis_ver_JJA
-)
+# vERA5_ver_JJA_trend = ca.dim_linregress(
+#     np.arange(len(vERA5_ver_JJA.coords["time"])), vERA5_ver_JJA
+# )
+# vhis_ver_JJA_trend = ca.dim_linregress(
+#     np.arange(len(vhis_ver_JJA.coords["time"])), vhis_ver_JJA
+# )
 vssp585_ver_JJA_trend = ca.dim_linregress(
     np.arange(len(vssp585_ver_JJA.coords["time"])), vssp585_ver_JJA
 )
 # %%
 #   wind check
-uv_ERA5_JJA_mask = ca.wind_check(
-    xr.where(uERA5_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
-    xr.where(vERA5_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
-    xr.where(uERA5_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
-    xr.where(vERA5_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
-)
+# uv_ERA5_JJA_mask = ca.wind_check(
+#     xr.where(uERA5_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+#     xr.where(vERA5_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+#     xr.where(uERA5_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+#     xr.where(vERA5_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+# )
 
-uv_his_JJA_mask = ca.wind_check(
-    xr.where(uhis_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
-    xr.where(vhis_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
-    xr.where(uhis_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
-    xr.where(vhis_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
-)
+# uv_his_JJA_mask = ca.wind_check(
+#     xr.where(uhis_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+#     xr.where(vhis_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+#     xr.where(uhis_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+#     xr.where(vhis_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+# )
 
 uv_ssp585_JJA_mask = ca.wind_check(
     xr.where(ussp585_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
@@ -582,3 +582,140 @@ vq_dpg_ssp585_JJA = (vqssp585_ver_JJA * ssp585dpg.data).sum(
 # vq_dpg_ssp585_JJA = ca.detrend_dim(vq_dpg_ssp585_JJA, "time", deg=1, demean=False)
 uq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
 vq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
+# %%
+div_uqvq_ssp585_JJA = ca.cal_divergence(uq_dpg_ssp585_JJA, vq_dpg_ssp585_JJA)
+
+# %%
+#   calculate the linear trend of water vapor transport uq and vq
+div_uqvq_ssp585_ver_JJA_trend = ca.dim_linregress(
+    np.arange(len(div_uqvq_ssp585_JJA.coords["time"])), div_uqvq_ssp585_JJA
+)
+uq_dpg_ssp585_ver_JJA_trend = ca.dim_linregress(
+    np.arange(len(uq_dpg_ssp585_JJA.coords["time"])), uq_dpg_ssp585_JJA
+)
+vq_dpg_ssp585_ver_JJA_trend = ca.dim_linregress(
+    np.arange(len(vq_dpg_ssp585_JJA.coords["time"])), vq_dpg_ssp585_JJA
+)
+
+uqv_ssp585_JJA_mask = ca.wind_check(
+    xr.where(uq_dpg_ssp585_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+    xr.where(vq_dpg_ssp585_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+    xr.where(uq_dpg_ssp585_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+    xr.where(vq_dpg_ssp585_ver_JJA_trend[3] <= 0.05, 1.0, 0.0),
+)
+
+# %%
+#   plot the linear trend of circulation
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig_rvalue = pplt.figure(
+    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
+)
+axs = fig_rvalue.subplots(ncols=1, nrows=1, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+i = 0
+startlevel = [-0.8e-08]
+endlevel = [0.8e-08]
+spacinglevel = [0.1e-09]
+scales = [0.008]
+# ======================================
+for ax in axs:
+    rect = Rectangle(
+        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
+    )
+    ax.add_patch(rect)
+    # SAM area
+    x0 = 70
+    y0 = 10.0
+    width = 40
+    height = 20.0
+    patches(ax, x0 - cl, y0, width, height, proj)
+    # IWF area
+    x0 = 90
+    y0 = 5.0
+    width = 50
+    height = 27.5
+    patches(ax, x0 - cl, y0, width, height, proj)
+# ======================================
+con = axs[0].contourf(
+    div_uqvq_ssp585_ver_JJA_trend[0].where(div_uqvq_ssp585_ver_JJA_trend[3] <= 0.05),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(
+        startlevel[i], endlevel[i] + spacinglevel[i] / 2, spacinglevel[i]
+    ),
+    zorder=0.8,
+    extend="both",
+)
+# sepl.plt_sig(
+#     div_uqvq_ssp585_ver_JJA_trend[0],
+#     axs[0],
+#     n,
+#     np.where(div_uqvq_ssp585_ver_JJA_trend[3][::n, ::n] <= 0.05),
+#     "denim",
+#     3.0,
+# )
+# axs[0].quiver(
+#     ussp585_ver_JJA_trend[0][::ski, ::ski],
+#     vssp585_ver_JJA_trend[0][::ski, ::ski],
+#     zorder=1.1,
+#     headwidth=2.6,
+#     headlength=2.3,
+#     headaxislength=2.3,
+#     scale_units="xy",
+#     scale=0.05,
+#     pivot="mid",
+#     color="grey6",
+# )
+
+m = axs[0].quiver(
+    uq_dpg_ssp585_ver_JJA_trend[0]
+    
+    .where(uqv_ssp585_JJA_mask > 0.0)[::ski, ::ski],
+    vq_dpg_ssp585_ver_JJA_trend[0]
+    
+    .where(uqv_ssp585_JJA_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.004,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0].quiverkey(
+    m,
+    X=1 - w / 2,
+    Y=0.7 * h,
+    U=0.01,
+    label="0.01",
+    labelpos="S",
+    labelsep=0.05,
+    fontproperties={"size": 5},
+    zorder=3.1,
+)
+
+axs[0].format(
+    rtitle="2015-2099", ltitle="Uq ssp585",
+)
+axs[0].colorbar(con, loc="r", width=0.13, length=0.90, label="")
+# ======================================
+# fig_rvalue.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig_rvalue.format(abc="(a)", abcloc="l", suptitle="linear trends")
+# %%
