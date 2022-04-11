@@ -2963,4 +2963,88 @@ ssp585_p3_IWF_index = ca.IWF(ussp585_p3_ver_JJA, vssp585_p3_ver_JJA)
 ) = ca.dim_linregress(ssp585_p3_IWF_index, vssp585_p3_ver_JJA)
 # %%
 #   plot the new regression and difference of regression in p3 and historical
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
 
+fig_rvalue = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig_rvalue.subplots(ncols=1, nrows=3, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.arange(50, 151, 10)  # 设置纬度刻度
+yticks = np.arange(10, 51, 10)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], 5, 55]
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ======================================
+for ax in axs:
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+    ax.add_patch(rect)
+    #   Indian area
+    x0 = 70
+    y0 = 8.0
+    width = 16
+    height = 20.0
+    patches(ax, x0 - cl, y0, width, height, proj)
+    #   NCR area
+    x0 = 108
+    y0 = 36.0
+    width = 10.0
+    height = 6.0
+    patches(ax, x0 - cl, y0, width, height, proj)
+# ======================================
+con = axs[0, 0].contourf(
+    SAM_ERA5_India_divuqvq_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    SAM_ERA5_India_divuqvq_rvalue,
+    axs[0, 0],
+    n,
+    np.where(SAM_ERA5_India_divuqvq_pvalue[::n, ::n] <= 0.05),
+    "denim",
+    3.0,
+)
+axs[0, 0].quiver(
+    SAM_ERA5_India_uq_rvalue[::ski, ::ski],
+    SAM_ERA5_India_vq_rvalue[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="grey6",
+)
+
+m = axs[0, 0].quiver(
+    SAM_ERA5_India_uq_rvalue.where(SAM_ERA5_India_uqvq_mask > 0.0)[::ski, ::ski],
+    SAM_ERA5_India_vq_rvalue.where(SAM_ERA5_India_uqvq_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.17,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0, 0].quiverkey(
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+)
+
+axs[0, 0].format(
+    title="Uq reg SAM", rtitle="1950-2014", ltitle="ERA5",
+)
+# ======================================
