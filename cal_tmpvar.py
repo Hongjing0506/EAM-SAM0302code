@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-11 23:30:16
+LastEditTime: 2022-04-11 23:38:30
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -165,4 +165,15 @@ for path, dir_list, file_name in g:
 preds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 prehis_ds = xr.DataArray(preds_his["pr"])*3600*24
 prehis_ds.coords["models"] = modelname_pr
+# %%
+#   recalculate the plevel of the different variables in historical run
+hgthis_ds.coords["plev"] = hgthis_ds["plev"] / 100.0
+hgthis_ds = hgthis_ds.rename({"plev": "level"})
+uhis_ds.coords["plev"] = uhis_ds["plev"] / 100.0
+uhis_ds = uhis_ds.rename({"plev": "level"})
+vhis_ds.coords["plev"] = vhis_ds["plev"] / 100.0
+vhis_ds = vhis_ds.rename({"plev": "level"})
+qhis_ds.coords["plev"] = qhis_ds["plev"] / 100.0
+qhis_ds = qhis_ds.rename({"plev": "level"})
+
 # %%
