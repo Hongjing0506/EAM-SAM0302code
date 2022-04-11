@@ -54,15 +54,7 @@ def patches(ax, x0, y0, width, height, proj):
     from matplotlib.patches import Rectangle
 
     rect = Rectangle(
-        (x0, y0),
-        width,
-        height,
-        fc="none",
-        ec="grey7",
-        linewidth=0.8,
-        zorder=1.1,
-        transform=proj,
-        linestyle="--",
+        (x0, y0), width, height, fc="none", ec="grey7", linewidth=0.8, zorder=1.1, transform=proj, linestyle="--",
     )
     ax.add_patch(rect)
 
@@ -90,9 +82,7 @@ fspERA5 = xr.open_dataset(
 )
 spERA5 = fspERA5["sp"]
 
-fqERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc"
-)
+fqERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc")
 qERA5 = fqERA5["q"]
 
 fhgthis = xr.open_dataset(
@@ -272,24 +262,10 @@ lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 
 
-m1 = axs[0].line(
-    ssp585_IWF_index.time.dt.year,
-    ca.standardize(ssp585_IWF_index),
-    lw=lw,
-    color="black",
-)
-m2 = axs[0].line(
-    ssp585_SAM_index.time.dt.year,
-    ca.standardize(ssp585_SAM_index),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[0].line(ssp585_IWF_index.time.dt.year, ca.standardize(ssp585_IWF_index), lw=lw, color="black",)
+m2 = axs[0].line(ssp585_SAM_index.time.dt.year, ca.standardize(ssp585_SAM_index), lw=lw, color="blue",)
 m3 = axs[0].line(
-    ssp585_IWF_index.time.dt.year,
-    np.array(ssp585_IWF_SAM_rolling_9["rvalue"]),
-    lw=lw,
-    color="red",
-    linestyle="--",
+    ssp585_IWF_index.time.dt.year, np.array(ssp585_IWF_SAM_rolling_9["rvalue"]), lw=lw, color="red", linestyle="--",
 )
 
 rlim = ca.cal_rlim1(0.95, len(ssp585_IWF_index.time.dt.year))
@@ -354,101 +330,60 @@ uqssp585_ver_JJA = ussp585_ver_JJA * qssp585_ver_JJA.data * 1000.0
 vqssp585_ver_JJA = vssp585_ver_JJA * qssp585_ver_JJA.data * 1000.0
 uqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 vqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-uq_dpg_ssp585_JJA = (uqssp585_ver_JJA * ssp585dpg.data).sum(
-    dim="level", skipna=True
-) / 1e05
-vq_dpg_ssp585_JJA = (vqssp585_ver_JJA * ssp585dpg.data).sum(
-    dim="level", skipna=True
-) / 1e05
+uq_dpg_ssp585_JJA = (uqssp585_ver_JJA * ssp585dpg.data).sum(dim="level", skipna=True) / 1e05
+vq_dpg_ssp585_JJA = (vqssp585_ver_JJA * ssp585dpg.data).sum(dim="level", skipna=True) / 1e05
 uq_dpg_ssp585_JJA = ca.detrend_dim(uq_dpg_ssp585_JJA, "time", deg=1, demean=False)
 vq_dpg_ssp585_JJA = ca.detrend_dim(vq_dpg_ssp585_JJA, "time", deg=1, demean=False)
 uq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
 vq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
 # %%
 #   calculate the India BOB and NCR uq\uq\vq area mean
-uq_dpg_ERA5_India_JJA = ca.cal_lat_weighted_mean(
-    uq_dpg_ERA5_JJA.loc[:, 5:25, 50:80]
-).mean(dim="lon", skipna=True)
-uq_dpg_ERA5_India_JJA = ca.detrend_dim(
-    uq_dpg_ERA5_India_JJA, "time", deg=1, demean=False
-)
-uq_dpg_his_India_JJA = ca.cal_lat_weighted_mean(
-    uq_dpg_his_JJA.loc[:, 5:25, 50:80]
-).mean(dim="lon", skipna=True)
+uq_dpg_ERA5_India_JJA = ca.cal_lat_weighted_mean(uq_dpg_ERA5_JJA.loc[:, 5:25, 50:80]).mean(dim="lon", skipna=True)
+uq_dpg_ERA5_India_JJA = ca.detrend_dim(uq_dpg_ERA5_India_JJA, "time", deg=1, demean=False)
+uq_dpg_his_India_JJA = ca.cal_lat_weighted_mean(uq_dpg_his_JJA.loc[:, 5:25, 50:80]).mean(dim="lon", skipna=True)
 uq_dpg_his_India_JJA = ca.detrend_dim(uq_dpg_his_India_JJA, "time", deg=1, demean=False)
 
-uq_dpg_ssp585_India_JJA = ca.cal_lat_weighted_mean(
-    uq_dpg_ssp585_JJA.loc[:, 5:25, 50:80]
-).mean(dim="lon", skipna=True)
-uq_dpg_ssp585_India_JJA = ca.detrend_dim(
-    uq_dpg_ssp585_India_JJA, "time", deg=1, demean=False
-)
+uq_dpg_ssp585_India_JJA = ca.cal_lat_weighted_mean(uq_dpg_ssp585_JJA.loc[:, 5:25, 50:80]).mean(dim="lon", skipna=True)
+uq_dpg_ssp585_India_JJA = ca.detrend_dim(uq_dpg_ssp585_India_JJA, "time", deg=1, demean=False)
 
-uq_dpg_ERA5_BOB_JJA = ca.cal_lat_weighted_mean(
-    uq_dpg_ERA5_JJA.loc[:, 0:20, 80:110]
-).mean(dim="lon", skipna=True)
+uq_dpg_ERA5_BOB_JJA = ca.cal_lat_weighted_mean(uq_dpg_ERA5_JJA.loc[:, 0:20, 80:110]).mean(dim="lon", skipna=True)
 uq_dpg_ERA5_BOB_JJA = ca.detrend_dim(uq_dpg_ERA5_BOB_JJA, "time", deg=1, demean=False)
-uq_dpg_his_BOB_JJA = ca.cal_lat_weighted_mean(uq_dpg_his_JJA.loc[:, 0:20, 80:110]).mean(
-    dim="lon", skipna=True
-)
+uq_dpg_his_BOB_JJA = ca.cal_lat_weighted_mean(uq_dpg_his_JJA.loc[:, 0:20, 80:110]).mean(dim="lon", skipna=True)
 uq_dpg_his_BOB_JJA = ca.detrend_dim(uq_dpg_his_BOB_JJA, "time", deg=1, demean=False)
 
-uq_dpg_ssp585_BOB_JJA = ca.cal_lat_weighted_mean(
-    uq_dpg_ssp585_JJA.loc[:, 0:20, 80:110]
-).mean(dim="lon", skipna=True)
-uq_dpg_ssp585_BOB_JJA = ca.detrend_dim(
-    uq_dpg_ssp585_BOB_JJA, "time", deg=1, demean=False
+uq_dpg_ssp585_BOB_JJA = ca.cal_lat_weighted_mean(uq_dpg_ssp585_JJA.loc[:, 0:20, 80:110]).mean(dim="lon", skipna=True)
+uq_dpg_ssp585_BOB_JJA = ca.detrend_dim(uq_dpg_ssp585_BOB_JJA, "time", deg=1, demean=False)
+
+
+vq_dpg_ERA5_NCR_JJA = ca.cal_lat_weighted_mean(vq_dpg_ERA5_JJA.loc[:, 25.0:37.5, 110.0:125.0]).mean(
+    dim="lon", skipna=True
 )
-
-
-vq_dpg_ERA5_NCR_JJA = ca.cal_lat_weighted_mean(
-    vq_dpg_ERA5_JJA.loc[:, 25.0:37.5, 110.0:125.0]
-).mean(dim="lon", skipna=True)
 vq_dpg_ERA5_NCR_JJA = ca.detrend_dim(vq_dpg_ERA5_NCR_JJA, "time", deg=1, demean=False)
-vq_dpg_his_NCR_JJA = ca.cal_lat_weighted_mean(
-    vq_dpg_his_JJA.loc[:, 25.0:37.5, 110.0:125.0]
-).mean(dim="lon", skipna=True)
+vq_dpg_his_NCR_JJA = ca.cal_lat_weighted_mean(vq_dpg_his_JJA.loc[:, 25.0:37.5, 110.0:125.0]).mean(
+    dim="lon", skipna=True
+)
 vq_dpg_his_NCR_JJA = ca.detrend_dim(vq_dpg_his_NCR_JJA, "time", deg=1, demean=False)
 
-vq_dpg_ssp585_NCR_JJA = ca.cal_lat_weighted_mean(
-    vq_dpg_ssp585_JJA.loc[:, 25.0:37.5, 110.0:125.0]
-).mean(dim="lon", skipna=True)
-vq_dpg_ssp585_NCR_JJA = ca.detrend_dim(
-    vq_dpg_ssp585_NCR_JJA, "time", deg=1, demean=False
+vq_dpg_ssp585_NCR_JJA = ca.cal_lat_weighted_mean(vq_dpg_ssp585_JJA.loc[:, 25.0:37.5, 110.0:125.0]).mean(
+    dim="lon", skipna=True
 )
+vq_dpg_ssp585_NCR_JJA = ca.detrend_dim(vq_dpg_ssp585_NCR_JJA, "time", deg=1, demean=False)
 # %%
 #   calculate the uq/vq correlation coefficients and rolling correlation coefficients
 ERA5_uqIND_vqNCR_regress = stats.linregress(uq_dpg_ERA5_India_JJA, vq_dpg_ERA5_NCR_JJA)
 his_uqIND_vqNCR_regress = stats.linregress(uq_dpg_his_India_JJA, vq_dpg_his_NCR_JJA)
-ssp585_uqIND_vqNCR_regress = stats.linregress(
-    uq_dpg_ssp585_India_JJA, vq_dpg_ssp585_NCR_JJA
-)
+ssp585_uqIND_vqNCR_regress = stats.linregress(uq_dpg_ssp585_India_JJA, vq_dpg_ssp585_NCR_JJA)
 
 freq = "AS-JUL"
 window = 31
 ERA5_uqIND_vqNCR_rolling_regress = ca.rolling_reg_index(
-    uq_dpg_ERA5_India_JJA,
-    vq_dpg_ERA5_NCR_JJA,
-    uq_dpg_ERA5_India_JJA.time,
-    window,
-    freq,
-    True,
+    uq_dpg_ERA5_India_JJA, vq_dpg_ERA5_NCR_JJA, uq_dpg_ERA5_India_JJA.time, window, freq, True,
 )
 his_uqIND_vqNCR_rolling_regress = ca.rolling_reg_index(
-    uq_dpg_his_India_JJA,
-    vq_dpg_his_NCR_JJA,
-    uq_dpg_his_India_JJA.time,
-    window,
-    freq,
-    True,
+    uq_dpg_his_India_JJA, vq_dpg_his_NCR_JJA, uq_dpg_his_India_JJA.time, window, freq, True,
 )
 ssp585_uqIND_vqNCR_rolling_regress = ca.rolling_reg_index(
-    uq_dpg_ssp585_India_JJA,
-    vq_dpg_ssp585_NCR_JJA,
-    uq_dpg_ssp585_India_JJA.time,
-    window,
-    freq,
-    True,
+    uq_dpg_ssp585_India_JJA, vq_dpg_ssp585_NCR_JJA, uq_dpg_ssp585_India_JJA.time, window, freq, True,
 )
 
 # %%
@@ -459,18 +394,8 @@ lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 
 # =======================================================
-m1 = axs[0].line(
-    uq_dpg_ERA5_India_JJA.time.dt.year,
-    ca.standardize(uq_dpg_ERA5_India_JJA),
-    lw=lw,
-    color="black",
-)
-m2 = axs[0].line(
-    vq_dpg_ERA5_NCR_JJA.time.dt.year,
-    ca.standardize(vq_dpg_ERA5_NCR_JJA),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[0].line(uq_dpg_ERA5_India_JJA.time.dt.year, ca.standardize(uq_dpg_ERA5_India_JJA), lw=lw, color="black",)
+m2 = axs[0].line(vq_dpg_ERA5_NCR_JJA.time.dt.year, ca.standardize(vq_dpg_ERA5_NCR_JJA), lw=lw, color="blue",)
 m3 = axs[0].line(
     vq_dpg_ERA5_NCR_JJA.time.dt.year,
     ERA5_uqIND_vqNCR_rolling_regress["rvalue"].data,
@@ -498,24 +423,10 @@ axs[0].format(
     ylabel="",
 )
 # =======================================================
-m1 = axs[1].line(
-    uq_dpg_his_India_JJA.time.dt.year,
-    ca.standardize(uq_dpg_his_India_JJA),
-    lw=lw,
-    color="black",
-)
-m2 = axs[1].line(
-    vq_dpg_his_NCR_JJA.time.dt.year,
-    ca.standardize(vq_dpg_his_NCR_JJA),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[1].line(uq_dpg_his_India_JJA.time.dt.year, ca.standardize(uq_dpg_his_India_JJA), lw=lw, color="black",)
+m2 = axs[1].line(vq_dpg_his_NCR_JJA.time.dt.year, ca.standardize(vq_dpg_his_NCR_JJA), lw=lw, color="blue",)
 m3 = axs[1].line(
-    vq_dpg_his_NCR_JJA.time.dt.year,
-    his_uqIND_vqNCR_rolling_regress["rvalue"].data,
-    lw=lw,
-    color="red",
-    linestyle="--",
+    vq_dpg_his_NCR_JJA.time.dt.year, his_uqIND_vqNCR_rolling_regress["rvalue"].data, lw=lw, color="red", linestyle="--",
 )
 
 rlim = ca.cal_rlim1(0.95, len(uq_dpg_his_India_JJA.time.dt.year))
@@ -537,18 +448,8 @@ axs[1].format(
     ylabel="",
 )
 # =======================================================
-m1 = axs[2].line(
-    uq_dpg_ssp585_India_JJA.time.dt.year,
-    ca.standardize(uq_dpg_ssp585_India_JJA),
-    lw=lw,
-    color="black",
-)
-m2 = axs[2].line(
-    vq_dpg_ssp585_NCR_JJA.time.dt.year,
-    ca.standardize(vq_dpg_ssp585_NCR_JJA),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[2].line(uq_dpg_ssp585_India_JJA.time.dt.year, ca.standardize(uq_dpg_ssp585_India_JJA), lw=lw, color="black",)
+m2 = axs[2].line(vq_dpg_ssp585_NCR_JJA.time.dt.year, ca.standardize(vq_dpg_ssp585_NCR_JJA), lw=lw, color="blue",)
 m3 = axs[2].line(
     vq_dpg_ssp585_NCR_JJA.time.dt.year,
     ssp585_uqIND_vqNCR_rolling_regress["rvalue"].data,
@@ -582,54 +483,30 @@ axs[2].format(
 
 # %%
 #   calculate the precipitation area mean of India and NCR
-preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 8:28, 70:86]).mean(
-    dim="lon", skipna=True
-)
-preCRU_NCR_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 36:42, 108:118]).mean(
-    dim="lon", skipna=True
-)
-preCRU_YZRR_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 27:30, 110:120]).mean(
-    dim="lon", skipna=True
-)
+preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
+preCRU_NCR_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
+preCRU_YZRR_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 27:30, 110:120]).mean(dim="lon", skipna=True)
 preCRU_India_JJA = ca.detrend_dim(preCRU_India_JJA, "time", deg=1, demean=False)
 preCRU_NCR_JJA = ca.detrend_dim(preCRU_NCR_JJA, "time", deg=1, demean=False)
 preCRU_YZRR_JJA = ca.detrend_dim(preCRU_YZRR_JJA, "time", deg=1, demean=False)
 
-preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 8:28, 70:86]).mean(
-    dim="lon", skipna=True
-)
-preGPCP_NCR_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 36:42, 108:118]).mean(
-    dim="lon", skipna=True
-)
-preGPCP_YZRR_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 27:30, 110:120]).mean(
-    dim="lon", skipna=True
-)
+preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
+preGPCP_NCR_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
+preGPCP_YZRR_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.loc[:, 27:30, 110:120]).mean(dim="lon", skipna=True)
 preGPCP_India_JJA = ca.detrend_dim(preGPCP_India_JJA, "time", deg=1, demean=False)
 preGPCP_NCR_JJA = ca.detrend_dim(preGPCP_NCR_JJA, "time", deg=1, demean=False)
 preGPCP_YZRR_JJA = ca.detrend_dim(preGPCP_YZRR_JJA, "time", deg=1, demean=False)
 
-prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 8:28, 70:86]).mean(
-    dim="lon", skipna=True
-)
-prehis_NCR_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 36:42, 108:118]).mean(
-    dim="lon", skipna=True
-)
-prehis_YZRR_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 27:30, 110:120]).mean(
-    dim="lon", skipna=True
-)
+prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
+prehis_NCR_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
+prehis_YZRR_JJA = ca.cal_lat_weighted_mean(prehis_JJA.loc[:, 27:30, 110:120]).mean(dim="lon", skipna=True)
 prehis_India_JJA = ca.detrend_dim(prehis_India_JJA, "time", deg=1, demean=False)
 prehis_NCR_JJA = ca.detrend_dim(prehis_NCR_JJA, "time", deg=1, demean=False)
 prehis_YZRR_JJA = ca.detrend_dim(prehis_YZRR_JJA, "time", deg=1, demean=False)
 
-pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 8:28, 70:86]).mean(
-    dim="lon", skipna=True
-)
-pressp585_NCR_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 36:42, 108:118]).mean(
-    dim="lon", skipna=True
-)
-pressp585_YZRR_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 27:30, 110:120]).mean(
-    dim="lon", skipna=True
-)
+pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
+pressp585_NCR_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 36:42, 108:118]).mean(dim="lon", skipna=True)
+pressp585_YZRR_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.loc[:, 27:30, 110:120]).mean(dim="lon", skipna=True)
 pressp585_India_JJA = ca.detrend_dim(pressp585_India_JJA, "time", deg=1, demean=False)
 pressp585_NCR_JJA = ca.detrend_dim(pressp585_NCR_JJA, "time", deg=1, demean=False)
 pressp585_YZRR_JJA = ca.detrend_dim(pressp585_YZRR_JJA, "time", deg=1, demean=False)
@@ -705,9 +582,7 @@ pplt.rc.reso = "lo"
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig_rvalue = pplt.figure(
-    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
-)
+fig_rvalue = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig_rvalue.subplots(ncols=2, nrows=4, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
@@ -741,12 +616,7 @@ con = axs[0, 0].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    pre_CRU_India_pre_rvalue,
-    axs[0, 0],
-    n,
-    np.where(pre_CRU_India_pre_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
+    pre_CRU_India_pre_rvalue, axs[0, 0], n, np.where(pre_CRU_India_pre_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
 )
 axs[0, 0].format(
     title="Pr reg IndR", rtitle="1950-2014", ltitle="CRU TS4.01",
@@ -760,12 +630,7 @@ con = axs[0, 1].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    pre_CRU_NCR_pre_rvalue,
-    axs[0, 1],
-    n,
-    np.where(pre_CRU_NCR_pre_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
+    pre_CRU_NCR_pre_rvalue, axs[0, 1], n, np.where(pre_CRU_NCR_pre_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
 )
 axs[0, 1].format(
     title="Pr reg NCR", rtitle="1950-2014", ltitle="CRU TS4.01",
@@ -779,12 +644,7 @@ con = axs[1, 0].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    pre_GPCP_India_pre_rvalue,
-    axs[1, 0],
-    n,
-    np.where(pre_GPCP_India_pre_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
+    pre_GPCP_India_pre_rvalue, axs[1, 0], n, np.where(pre_GPCP_India_pre_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
 )
 axs[1, 0].format(
     title="Pr reg IndR", rtitle="1979-2014", ltitle="GPCP",
@@ -798,12 +658,7 @@ con = axs[1, 1].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    pre_GPCP_NCR_pre_rvalue,
-    axs[1, 1],
-    n,
-    np.where(pre_GPCP_NCR_pre_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
+    pre_GPCP_NCR_pre_rvalue, axs[1, 1], n, np.where(pre_GPCP_NCR_pre_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
 )
 axs[1, 1].format(
     title="Pr reg NCR", rtitle="1979-2014", ltitle="GPCP",
@@ -817,12 +672,7 @@ con = axs[2, 0].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    pre_his_India_pre_rvalue,
-    axs[2, 0],
-    n,
-    np.where(pre_his_India_pre_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
+    pre_his_India_pre_rvalue, axs[2, 0], n, np.where(pre_his_India_pre_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
 )
 axs[2, 0].format(
     title="Pr reg IndR", rtitle="1950-2014", ltitle="historical",
@@ -836,12 +686,7 @@ con = axs[2, 1].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    pre_his_NCR_pre_rvalue,
-    axs[2, 1],
-    n,
-    np.where(pre_his_NCR_pre_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
+    pre_his_NCR_pre_rvalue, axs[2, 1], n, np.where(pre_his_NCR_pre_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
 )
 axs[2, 1].format(
     title="Pr reg NCR", rtitle="1950-2014", ltitle="historical",
@@ -855,12 +700,7 @@ con = axs[3, 0].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    pre_ssp585_India_pre_rvalue,
-    axs[3, 0],
-    n,
-    np.where(pre_ssp585_India_pre_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
+    pre_ssp585_India_pre_rvalue, axs[3, 0], n, np.where(pre_ssp585_India_pre_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
 )
 axs[3, 0].format(
     title="Pr reg IndR", rtitle="2015-2099", ltitle="ssp585",
@@ -874,12 +714,7 @@ con = axs[3, 1].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    pre_ssp585_NCR_pre_rvalue,
-    axs[3, 1],
-    n,
-    np.where(pre_ssp585_NCR_pre_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
+    pre_ssp585_NCR_pre_rvalue, axs[3, 1], n, np.where(pre_ssp585_NCR_pre_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
 )
 axs[3, 1].format(
     title="Pr reg NCR", rtitle="2015-2099", ltitle="ssp585",
@@ -890,9 +725,7 @@ fig_rvalue.format(abc="(a)", abcloc="l")
 # %%
 #   calculate the Uq/Vq regress on IndR
 preCRU_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"]
-preGPCP_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"].sel(
-    time=uq_dpg_ERA5_JJA.time.dt.year >= 1979
-)
+preGPCP_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"].sel(time=uq_dpg_ERA5_JJA.time.dt.year >= 1979)
 
 
 (
@@ -917,9 +750,7 @@ preGPCP_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"].sel(
     pre_GPCP_India_uq_rvalue,
     pre_GPCP_India_uq_pvalue,
     pre_GPCP_India_uq_hypothesis,
-) = ca.dim_linregress(
-    preGPCP_India_JJA, uq_dpg_ERA5_JJA.sel(time=uq_dpg_ERA5_JJA.time.dt.year >= 1979)
-)
+) = ca.dim_linregress(preGPCP_India_JJA, uq_dpg_ERA5_JJA.sel(time=uq_dpg_ERA5_JJA.time.dt.year >= 1979))
 
 (
     pre_GPCP_India_vq_slope,
@@ -927,9 +758,7 @@ preGPCP_India_JJA.coords["time"] = uq_dpg_ERA5_JJA.coords["time"].sel(
     pre_GPCP_India_vq_rvalue,
     pre_GPCP_India_vq_pvalue,
     pre_GPCP_India_vq_hypothesis,
-) = ca.dim_linregress(
-    preGPCP_India_JJA, vq_dpg_ERA5_JJA.sel(time=uq_dpg_ERA5_JJA.time.dt.year >= 1979)
-)
+) = ca.dim_linregress(preGPCP_India_JJA, vq_dpg_ERA5_JJA.sel(time=uq_dpg_ERA5_JJA.time.dt.year >= 1979))
 
 (
     pre_his_India_uq_slope,
@@ -1013,10 +842,7 @@ div_uqvq_ssp585_JJA = ca.cal_divergence(uq_dpg_ssp585_JJA, vq_dpg_ssp585_JJA)
     pre_GPCP_India_divuqvq_rvalue,
     pre_GPCP_India_divuqvq_pvalue,
     pre_GPCP_India_divuqvq_hypothesis,
-) = ca.dim_linregress(
-    preGPCP_India_JJA,
-    div_uqvq_ERA5_JJA.sel(time=div_uqvq_ERA5_JJA.time.dt.year >= 1979),
-)
+) = ca.dim_linregress(preGPCP_India_JJA, div_uqvq_ERA5_JJA.sel(time=div_uqvq_ERA5_JJA.time.dt.year >= 1979),)
 
 (
     pre_his_India_divuqvq_slope,
@@ -1040,9 +866,7 @@ pplt.rc.reso = "lo"
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig_rvalue = pplt.figure(
-    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
-)
+fig_rvalue = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig_rvalue.subplots(ncols=1, nrows=4, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
@@ -1058,9 +882,7 @@ n = 1
 w, h = 0.12, 0.14
 # ======================================
 for ax in axs:
-    rect = Rectangle(
-        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
-    )
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
     ax.add_patch(rect)
     #   Indian area
     x0 = 70
@@ -1083,12 +905,7 @@ con = axs[0, 0].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    pre_CRU_India_divuqvq_rvalue,
-    axs[0, 0],
-    n,
-    np.where(pre_CRU_India_divuqvq_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
+    pre_CRU_India_divuqvq_rvalue, axs[0, 0], n, np.where(pre_CRU_India_divuqvq_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
 )
 axs[0, 0].quiver(
     pre_CRU_India_uq_rvalue[::ski, ::ski],
@@ -1117,15 +934,7 @@ m = axs[0, 0].quiver(
 )
 
 qk = axs[0, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[0, 0].format(
@@ -1174,15 +983,7 @@ m = axs[1, 0].quiver(
 )
 
 qk = axs[1, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[1, 0].format(
@@ -1198,12 +999,7 @@ con = axs[2, 0].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    pre_his_India_divuqvq_rvalue,
-    axs[2, 0],
-    n,
-    np.where(pre_his_India_divuqvq_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
+    pre_his_India_divuqvq_rvalue, axs[2, 0], n, np.where(pre_his_India_divuqvq_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
 )
 axs[2, 0].quiver(
     pre_his_India_uq_rvalue[::ski, ::ski],
@@ -1232,15 +1028,7 @@ m = axs[2, 0].quiver(
 )
 
 qk = axs[2, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[2, 0].format(
@@ -1290,15 +1078,7 @@ m = axs[3, 0].quiver(
 )
 
 qk = axs[3, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[3, 0].format(
@@ -1413,9 +1193,7 @@ pplt.rc.reso = "lo"
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig_rvalue = pplt.figure(
-    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
-)
+fig_rvalue = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig_rvalue.subplots(ncols=1, nrows=3, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
@@ -1431,9 +1209,7 @@ n = 1
 w, h = 0.12, 0.14
 # ======================================
 for ax in axs:
-    rect = Rectangle(
-        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
-    )
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
     ax.add_patch(rect)
     #   Indian area
     x0 = 70
@@ -1490,15 +1266,7 @@ m = axs[0, 0].quiver(
 )
 
 qk = axs[0, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[0, 0].format(
@@ -1513,12 +1281,7 @@ con = axs[1, 0].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    IWF_his_India_divuqvq_rvalue,
-    axs[1, 0],
-    n,
-    np.where(IWF_his_India_divuqvq_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
+    IWF_his_India_divuqvq_rvalue, axs[1, 0], n, np.where(IWF_his_India_divuqvq_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
 )
 axs[1, 0].quiver(
     IWF_his_India_uq_rvalue[::ski, ::ski],
@@ -1547,15 +1310,7 @@ m = axs[1, 0].quiver(
 )
 
 qk = axs[1, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[1, 0].format(
@@ -1605,15 +1360,7 @@ m = axs[2, 0].quiver(
 )
 
 qk = axs[2, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[2, 0].format(
@@ -1729,9 +1476,7 @@ pplt.rc.reso = "lo"
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig_rvalue = pplt.figure(
-    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
-)
+fig_rvalue = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig_rvalue.subplots(ncols=1, nrows=3, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
@@ -1747,9 +1492,7 @@ n = 1
 w, h = 0.12, 0.14
 # ======================================
 for ax in axs:
-    rect = Rectangle(
-        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
-    )
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
     ax.add_patch(rect)
     #   Indian area
     x0 = 70
@@ -1806,15 +1549,7 @@ m = axs[0, 0].quiver(
 )
 
 qk = axs[0, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[0, 0].format(
@@ -1829,12 +1564,7 @@ con = axs[1, 0].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    SAM_his_India_divuqvq_rvalue,
-    axs[1, 0],
-    n,
-    np.where(SAM_his_India_divuqvq_pvalue[::n, ::n] <= 0.05),
-    "denim",
-    3.0,
+    SAM_his_India_divuqvq_rvalue, axs[1, 0], n, np.where(SAM_his_India_divuqvq_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
 )
 axs[1, 0].quiver(
     SAM_his_India_uq_rvalue[::ski, ::ski],
@@ -1863,15 +1593,7 @@ m = axs[1, 0].quiver(
 )
 
 qk = axs[1, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[1, 0].format(
@@ -1921,15 +1643,7 @@ m = axs[2, 0].quiver(
 )
 
 qk = axs[2, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[2, 0].format(
@@ -1955,24 +1669,10 @@ lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 
 
-m1 = axs[0].line(
-    ssp585_IWF_index.time.dt.year,
-    ca.standardize(ssp585_IWF_index),
-    lw=lw,
-    color="black",
-)
-m2 = axs[0].line(
-    pressp585_India_JJA.time.dt.year,
-    ca.standardize(pressp585_India_JJA),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[0].line(ssp585_IWF_index.time.dt.year, ca.standardize(ssp585_IWF_index), lw=lw, color="black",)
+m2 = axs[0].line(pressp585_India_JJA.time.dt.year, ca.standardize(pressp585_India_JJA), lw=lw, color="blue",)
 m3 = axs[0].line(
-    ssp585_IWF_index.time.dt.year,
-    np.array(ssp585_IWF_IndR_rolling_9["rvalue"]),
-    lw=lw,
-    color="red",
-    linestyle="--",
+    ssp585_IWF_index.time.dt.year, np.array(ssp585_IWF_IndR_rolling_9["rvalue"]), lw=lw, color="red", linestyle="--",
 )
 
 rlim = ca.cal_rlim1(0.95, len(ssp585_IWF_index.time.dt.year))
@@ -2007,24 +1707,10 @@ lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 
 
-m1 = axs[0].line(
-    ssp585_IWF_index.time.dt.year,
-    ca.standardize(ssp585_IWF_index),
-    lw=lw,
-    color="black",
-)
-m2 = axs[0].line(
-    uq_dpg_ssp585_India_JJA.time.dt.year,
-    ca.standardize(uq_dpg_ssp585_India_JJA),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[0].line(ssp585_IWF_index.time.dt.year, ca.standardize(ssp585_IWF_index), lw=lw, color="black",)
+m2 = axs[0].line(uq_dpg_ssp585_India_JJA.time.dt.year, ca.standardize(uq_dpg_ssp585_India_JJA), lw=lw, color="blue",)
 m3 = axs[0].line(
-    ssp585_IWF_index.time.dt.year,
-    np.array(ssp585_IWF_uqInd_rolling_9["rvalue"]),
-    lw=lw,
-    color="red",
-    linestyle="--",
+    ssp585_IWF_index.time.dt.year, np.array(ssp585_IWF_uqInd_rolling_9["rvalue"]), lw=lw, color="red", linestyle="--",
 )
 
 rlim = ca.cal_rlim1(0.95, len(ssp585_IWF_index.time.dt.year))
@@ -2052,9 +1738,7 @@ pplt.rc.reso = "lo"
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(
-    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
-)
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=3, nrows=3, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
@@ -2071,9 +1755,7 @@ n = 1
 w, h = 0.12, 0.14
 # ===================================================
 for ax in axs:
-    rect = Rectangle(
-        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
-    )
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
     ax.add_patch(rect)
     # region 1
     x0 = 70
@@ -2191,12 +1873,7 @@ for p, lev in enumerate(levels):
         zorder=0.8,
     )
     sepl.plt_sig(
-        SAM_ERA5_hgt_pvalue,
-        axs[p, 0],
-        n,
-        np.where(SAM_ERA5_hgt_pvalue[::n, ::n] <= 0.05),
-        "denim",
-        3.0,
+        SAM_ERA5_hgt_pvalue, axs[p, 0], n, np.where(SAM_ERA5_hgt_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
     )
 
     axs[p, 0].quiver(
@@ -2247,12 +1924,7 @@ for p, lev in enumerate(levels):
         zorder=0.8,
     )
     sepl.plt_sig(
-        SAM_his_hgt_pvalue,
-        axs[p, 1],
-        n,
-        np.where(SAM_his_hgt_pvalue[::n, ::n] <= 0.05),
-        "denim",
-        3.0,
+        SAM_his_hgt_pvalue, axs[p, 1], n, np.where(SAM_his_hgt_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
     )
 
     axs[p, 1].quiver(
@@ -2303,12 +1975,7 @@ for p, lev in enumerate(levels):
         zorder=0.8,
     )
     sepl.plt_sig(
-        SAM_ssp585_hgt_pvalue,
-        axs[p, 2],
-        n,
-        np.where(SAM_ssp585_hgt_pvalue[::n, ::n] <= 0.05),
-        "denim",
-        3.0,
+        SAM_ssp585_hgt_pvalue, axs[p, 2], n, np.where(SAM_ssp585_hgt_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
     )
 
     axs[p, 2].quiver(
@@ -2367,12 +2034,7 @@ his_uqBOB_IWF_rolling_regress = ca.rolling_reg_index(
     uq_dpg_his_BOB_JJA, his_IWF_index, uq_dpg_his_BOB_JJA.time, window, freq, True,
 )
 ssp585_uqBOB_IWF_rolling_regress = ca.rolling_reg_index(
-    uq_dpg_ssp585_BOB_JJA,
-    ssp585_IWF_index,
-    uq_dpg_ssp585_BOB_JJA.time,
-    window,
-    freq,
-    True,
+    uq_dpg_ssp585_BOB_JJA, ssp585_IWF_index, uq_dpg_ssp585_BOB_JJA.time, window, freq, True,
 )
 # %%
 #   plot the BOB uq/IWF and their rolling correlation coefficients
@@ -2382,24 +2044,10 @@ lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 
 # =======================================================
-m1 = axs[0].line(
-    uq_dpg_ERA5_BOB_JJA.time.dt.year,
-    ca.standardize(uq_dpg_ERA5_BOB_JJA),
-    lw=lw,
-    color="black",
-)
-m2 = axs[0].line(
-    ERA5_IWF_index.time.dt.year,
-    ca.standardize(ERA5_IWF_index),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[0].line(uq_dpg_ERA5_BOB_JJA.time.dt.year, ca.standardize(uq_dpg_ERA5_BOB_JJA), lw=lw, color="black",)
+m2 = axs[0].line(ERA5_IWF_index.time.dt.year, ca.standardize(ERA5_IWF_index), lw=lw, color="blue",)
 m3 = axs[0].line(
-    ERA5_IWF_index.time.dt.year,
-    ERA5_uqBOB_IWF_rolling_regress["rvalue"].data,
-    lw=lw,
-    color="red",
-    linestyle="--",
+    ERA5_IWF_index.time.dt.year, ERA5_uqBOB_IWF_rolling_regress["rvalue"].data, lw=lw, color="red", linestyle="--",
 )
 
 rlim = ca.cal_rlim1(0.95, len(uq_dpg_ERA5_BOB_JJA.time.dt.year))
@@ -2421,24 +2069,10 @@ axs[0].format(
     ylabel="",
 )
 # =======================================================
-m1 = axs[1].line(
-    uq_dpg_his_BOB_JJA.time.dt.year,
-    ca.standardize(uq_dpg_his_BOB_JJA),
-    lw=lw,
-    color="black",
-)
-m2 = axs[1].line(
-    his_IWF_index.time.dt.year,
-    ca.standardize(his_IWF_index),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[1].line(uq_dpg_his_BOB_JJA.time.dt.year, ca.standardize(uq_dpg_his_BOB_JJA), lw=lw, color="black",)
+m2 = axs[1].line(his_IWF_index.time.dt.year, ca.standardize(his_IWF_index), lw=lw, color="blue",)
 m3 = axs[1].line(
-    his_IWF_index.time.dt.year,
-    his_uqBOB_IWF_rolling_regress["rvalue"].data,
-    lw=lw,
-    color="red",
-    linestyle="--",
+    his_IWF_index.time.dt.year, his_uqBOB_IWF_rolling_regress["rvalue"].data, lw=lw, color="red", linestyle="--",
 )
 
 rlim = ca.cal_rlim1(0.95, len(uq_dpg_his_BOB_JJA.time.dt.year))
@@ -2460,24 +2094,10 @@ axs[1].format(
     ylabel="",
 )
 # =======================================================
-m1 = axs[2].line(
-    uq_dpg_ssp585_BOB_JJA.time.dt.year,
-    ca.standardize(uq_dpg_ssp585_BOB_JJA),
-    lw=lw,
-    color="black",
-)
-m2 = axs[2].line(
-    ssp585_IWF_index.time.dt.year,
-    ca.standardize(ssp585_IWF_index),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[2].line(uq_dpg_ssp585_BOB_JJA.time.dt.year, ca.standardize(uq_dpg_ssp585_BOB_JJA), lw=lw, color="black",)
+m2 = axs[2].line(ssp585_IWF_index.time.dt.year, ca.standardize(ssp585_IWF_index), lw=lw, color="blue",)
 m3 = axs[2].line(
-    ssp585_IWF_index.time.dt.year,
-    ssp585_uqBOB_IWF_rolling_regress["rvalue"].data,
-    lw=lw,
-    color="red",
-    linestyle="--",
+    ssp585_IWF_index.time.dt.year, ssp585_uqBOB_IWF_rolling_regress["rvalue"].data, lw=lw, color="red", linestyle="--",
 )
 
 rlim = ca.cal_rlim1(0.95, len(uq_dpg_ssp585_BOB_JJA.time.dt.year))
@@ -2513,12 +2133,7 @@ his_uqBOB_SAM_rolling_regress = ca.rolling_reg_index(
     uq_dpg_his_BOB_JJA, his_SAM_index, uq_dpg_his_BOB_JJA.time, window, freq, True,
 )
 ssp585_uqBOB_SAM_rolling_regress = ca.rolling_reg_index(
-    uq_dpg_ssp585_BOB_JJA,
-    ssp585_SAM_index,
-    uq_dpg_ssp585_BOB_JJA.time,
-    window,
-    freq,
-    True,
+    uq_dpg_ssp585_BOB_JJA, ssp585_SAM_index, uq_dpg_ssp585_BOB_JJA.time, window, freq, True,
 )
 # %%
 #   plot the BOB uq/SAM and their rolling correlation coefficients
@@ -2528,24 +2143,10 @@ lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 
 # =======================================================
-m1 = axs[0].line(
-    uq_dpg_ERA5_BOB_JJA.time.dt.year,
-    ca.standardize(uq_dpg_ERA5_BOB_JJA),
-    lw=lw,
-    color="black",
-)
-m2 = axs[0].line(
-    ERA5_SAM_index.time.dt.year,
-    ca.standardize(ERA5_SAM_index),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[0].line(uq_dpg_ERA5_BOB_JJA.time.dt.year, ca.standardize(uq_dpg_ERA5_BOB_JJA), lw=lw, color="black",)
+m2 = axs[0].line(ERA5_SAM_index.time.dt.year, ca.standardize(ERA5_SAM_index), lw=lw, color="blue",)
 m3 = axs[0].line(
-    ERA5_SAM_index.time.dt.year,
-    ERA5_uqBOB_SAM_rolling_regress["rvalue"].data,
-    lw=lw,
-    color="red",
-    linestyle="--",
+    ERA5_SAM_index.time.dt.year, ERA5_uqBOB_SAM_rolling_regress["rvalue"].data, lw=lw, color="red", linestyle="--",
 )
 
 rlim = ca.cal_rlim1(0.95, len(uq_dpg_ERA5_BOB_JJA.time.dt.year))
@@ -2567,24 +2168,10 @@ axs[0].format(
     ylabel="",
 )
 # =======================================================
-m1 = axs[1].line(
-    uq_dpg_his_BOB_JJA.time.dt.year,
-    ca.standardize(uq_dpg_his_BOB_JJA),
-    lw=lw,
-    color="black",
-)
-m2 = axs[1].line(
-    his_SAM_index.time.dt.year,
-    ca.standardize(his_SAM_index),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[1].line(uq_dpg_his_BOB_JJA.time.dt.year, ca.standardize(uq_dpg_his_BOB_JJA), lw=lw, color="black",)
+m2 = axs[1].line(his_SAM_index.time.dt.year, ca.standardize(his_SAM_index), lw=lw, color="blue",)
 m3 = axs[1].line(
-    his_SAM_index.time.dt.year,
-    his_uqBOB_SAM_rolling_regress["rvalue"].data,
-    lw=lw,
-    color="red",
-    linestyle="--",
+    his_SAM_index.time.dt.year, his_uqBOB_SAM_rolling_regress["rvalue"].data, lw=lw, color="red", linestyle="--",
 )
 
 rlim = ca.cal_rlim1(0.95, len(uq_dpg_his_BOB_JJA.time.dt.year))
@@ -2606,24 +2193,10 @@ axs[1].format(
     ylabel="",
 )
 # =======================================================
-m1 = axs[2].line(
-    uq_dpg_ssp585_BOB_JJA.time.dt.year,
-    ca.standardize(uq_dpg_ssp585_BOB_JJA),
-    lw=lw,
-    color="black",
-)
-m2 = axs[2].line(
-    ssp585_SAM_index.time.dt.year,
-    ca.standardize(ssp585_SAM_index),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[2].line(uq_dpg_ssp585_BOB_JJA.time.dt.year, ca.standardize(uq_dpg_ssp585_BOB_JJA), lw=lw, color="black",)
+m2 = axs[2].line(ssp585_SAM_index.time.dt.year, ca.standardize(ssp585_SAM_index), lw=lw, color="blue",)
 m3 = axs[2].line(
-    ssp585_SAM_index.time.dt.year,
-    ssp585_uqBOB_SAM_rolling_regress["rvalue"].data,
-    lw=lw,
-    color="red",
-    linestyle="--",
+    ssp585_SAM_index.time.dt.year, ssp585_uqBOB_SAM_rolling_regress["rvalue"].data, lw=lw, color="red", linestyle="--",
 )
 
 rlim = ca.cal_rlim1(0.95, len(uq_dpg_ssp585_BOB_JJA.time.dt.year))
@@ -2646,9 +2219,6 @@ axs[2].format(
 )
 
 
-
-
-
 # %%
 #   calculate the BOB uq/preYZRR correlation coefficients and rolling correlation coefficients
 ERA5_uqBOB_preYZRR_regress = stats.linregress(uq_dpg_ERA5_BOB_JJA, preCRU_YZRR_JJA)
@@ -2664,12 +2234,7 @@ his_uqBOB_preYZRR_rolling_regress = ca.rolling_reg_index(
     uq_dpg_his_BOB_JJA, prehis_YZRR_JJA, uq_dpg_his_BOB_JJA.time, window, freq, True,
 )
 ssp585_uqBOB_preYZRR_rolling_regress = ca.rolling_reg_index(
-    uq_dpg_ssp585_BOB_JJA,
-    pressp585_YZRR_JJA,
-    uq_dpg_ssp585_BOB_JJA.time,
-    window,
-    freq,
-    True,
+    uq_dpg_ssp585_BOB_JJA, pressp585_YZRR_JJA, uq_dpg_ssp585_BOB_JJA.time, window, freq, True,
 )
 # %%
 #   plot the BOB uq/IWF and their rolling correlation coefficients
@@ -2679,24 +2244,10 @@ lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 
 # =======================================================
-m1 = axs[0].line(
-    uq_dpg_ERA5_BOB_JJA.time.dt.year,
-    ca.standardize(uq_dpg_ERA5_BOB_JJA),
-    lw=lw,
-    color="black",
-)
-m2 = axs[0].line(
-    preCRU_YZRR_JJA.time.dt.year,
-    ca.standardize(preCRU_YZRR_JJA),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[0].line(uq_dpg_ERA5_BOB_JJA.time.dt.year, ca.standardize(uq_dpg_ERA5_BOB_JJA), lw=lw, color="black",)
+m2 = axs[0].line(preCRU_YZRR_JJA.time.dt.year, ca.standardize(preCRU_YZRR_JJA), lw=lw, color="blue",)
 m3 = axs[0].line(
-    preCRU_YZRR_JJA.time.dt.year,
-    ERA5_uqBOB_preYZRR_rolling_regress["rvalue"].data,
-    lw=lw,
-    color="red",
-    linestyle="--",
+    preCRU_YZRR_JJA.time.dt.year, ERA5_uqBOB_preYZRR_rolling_regress["rvalue"].data, lw=lw, color="red", linestyle="--",
 )
 
 rlim = ca.cal_rlim1(0.95, len(uq_dpg_ERA5_BOB_JJA.time.dt.year))
@@ -2718,24 +2269,10 @@ axs[0].format(
     ylabel="",
 )
 # =======================================================
-m1 = axs[1].line(
-    uq_dpg_his_BOB_JJA.time.dt.year,
-    ca.standardize(uq_dpg_his_BOB_JJA),
-    lw=lw,
-    color="black",
-)
-m2 = axs[1].line(
-    prehis_YZRR_JJA.time.dt.year,
-    ca.standardize(prehis_YZRR_JJA),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[1].line(uq_dpg_his_BOB_JJA.time.dt.year, ca.standardize(uq_dpg_his_BOB_JJA), lw=lw, color="black",)
+m2 = axs[1].line(prehis_YZRR_JJA.time.dt.year, ca.standardize(prehis_YZRR_JJA), lw=lw, color="blue",)
 m3 = axs[1].line(
-    prehis_YZRR_JJA.time.dt.year,
-    his_uqBOB_preYZRR_rolling_regress["rvalue"].data,
-    lw=lw,
-    color="red",
-    linestyle="--",
+    prehis_YZRR_JJA.time.dt.year, his_uqBOB_preYZRR_rolling_regress["rvalue"].data, lw=lw, color="red", linestyle="--",
 )
 
 rlim = ca.cal_rlim1(0.95, len(uq_dpg_his_BOB_JJA.time.dt.year))
@@ -2757,18 +2294,8 @@ axs[1].format(
     ylabel="",
 )
 # =======================================================
-m1 = axs[2].line(
-    uq_dpg_ssp585_BOB_JJA.time.dt.year,
-    ca.standardize(uq_dpg_ssp585_BOB_JJA),
-    lw=lw,
-    color="black",
-)
-m2 = axs[2].line(
-    pressp585_YZRR_JJA.time.dt.year,
-    ca.standardize(pressp585_YZRR_JJA),
-    lw=lw,
-    color="blue",
-)
+m1 = axs[2].line(uq_dpg_ssp585_BOB_JJA.time.dt.year, ca.standardize(uq_dpg_ssp585_BOB_JJA), lw=lw, color="black",)
+m2 = axs[2].line(pressp585_YZRR_JJA.time.dt.year, ca.standardize(pressp585_YZRR_JJA), lw=lw, color="blue",)
 m3 = axs[2].line(
     pressp585_YZRR_JJA.time.dt.year,
     ssp585_uqBOB_preYZRR_rolling_regress["rvalue"].data,
@@ -2804,9 +2331,7 @@ pplt.rc.reso = "lo"
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(
-    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
-)
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=3, nrows=3, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
@@ -2823,9 +2348,7 @@ n = 1
 w, h = 0.12, 0.14
 # ===================================================
 for ax in axs:
-    rect = Rectangle(
-        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
-    )
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
     ax.add_patch(rect)
     # SAM area
     x0 = 70
@@ -2944,12 +2467,7 @@ for p, lev in enumerate(levels):
         zorder=0.8,
     )
     sepl.plt_sig(
-        IWF_ERA5_hgt_pvalue,
-        axs[p, 0],
-        n,
-        np.where(IWF_ERA5_hgt_pvalue[::n, ::n] <= 0.05),
-        "denim",
-        3.0,
+        IWF_ERA5_hgt_pvalue, axs[p, 0], n, np.where(IWF_ERA5_hgt_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
     )
 
     axs[p, 0].quiver(
@@ -3000,12 +2518,7 @@ for p, lev in enumerate(levels):
         zorder=0.8,
     )
     sepl.plt_sig(
-        IWF_his_hgt_pvalue,
-        axs[p, 1],
-        n,
-        np.where(IWF_his_hgt_pvalue[::n, ::n] <= 0.05),
-        "denim",
-        3.0,
+        IWF_his_hgt_pvalue, axs[p, 1], n, np.where(IWF_his_hgt_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
     )
 
     axs[p, 1].quiver(
@@ -3056,12 +2569,7 @@ for p, lev in enumerate(levels):
         zorder=0.8,
     )
     sepl.plt_sig(
-        IWF_ssp585_hgt_pvalue,
-        axs[p, 2],
-        n,
-        np.where(IWF_ssp585_hgt_pvalue[::n, ::n] <= 0.05),
-        "denim",
-        3.0,
+        IWF_ssp585_hgt_pvalue, axs[p, 2], n, np.where(IWF_ssp585_hgt_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
     )
 
     axs[p, 2].quiver(
@@ -3209,9 +2717,7 @@ pplt.rc.reso = "lo"
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig_rvalue = pplt.figure(
-    span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0
-)
+fig_rvalue = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig_rvalue.subplots(ncols=1, nrows=3, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
@@ -3227,9 +2733,7 @@ n = 1
 w, h = 0.12, 0.14
 # ======================================
 for ax in axs:
-    rect = Rectangle(
-        (1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1
-    )
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
     ax.add_patch(rect)
     #   BOB area
     x0 = 80
@@ -3286,15 +2790,7 @@ m = axs[0, 0].quiver(
 )
 
 qk = axs[0, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[0, 0].format(
@@ -3343,15 +2839,7 @@ m = axs[1, 0].quiver(
 )
 
 qk = axs[1, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[1, 0].format(
@@ -3401,15 +2889,7 @@ m = axs[2, 0].quiver(
 )
 
 qk = axs[2, 0].quiverkey(
-    m,
-    X=1 - w / 2,
-    Y=0.7 * h,
-    U=0.5,
-    label="0.5",
-    labelpos="S",
-    labelsep=0.05,
-    fontproperties={"size": 5},
-    zorder=3.1,
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
 )
 
 axs[2, 0].format(
@@ -3429,7 +2909,7 @@ uq_dpg_ssp585_p3_ver_JJA = uq_dpg_ssp585_JJA.sel(time=uq_dpg_ssp585_JJA.time.dt.
 vq_dpg_ssp585_p3_ver_JJA = vq_dpg_ssp585_JJA.sel(time=vq_dpg_ssp585_JJA.time.dt.year >= 2070)
 pressp585_p3_JJA = pressp585_JJA.sel(time=pressp585_JJA.time.dt.year >= 2070)
 # %%
-#   calculate the p3 regression onto SAM
+#   calculate the p3 regression onto SAM and IWF
 
 ssp585_p3_SAM_index = ca.SAM(vssp585_p3_ver_JJA)
 ssp585_p3_IWF_index = ca.IWF(ussp585_p3_ver_JJA, vssp585_p3_ver_JJA)
@@ -3457,3 +2937,30 @@ ssp585_p3_IWF_index = ca.IWF(ussp585_p3_ver_JJA, vssp585_p3_ver_JJA)
     SAM_ssp585_p3_v_pvalue,
     SAM_ssp585_p3_v_hypothesis,
 ) = ca.dim_linregress(ssp585_p3_SAM_index, vssp585_p3_ver_JJA)
+# ==================================================
+(
+    IWF_ssp585_p3_hgt_slope,
+    IWF_ssp585_p3_hgt_intercept,
+    IWF_ssp585_p3_hgt_rvalue,
+    IWF_ssp585_p3_hgt_pvalue,
+    IWF_ssp585_p3_hgt_hypothesis,
+) = ca.dim_linregress(ssp585_p3_IWF_index, hgtssp585_p3_ver_JJA)
+
+(
+    IWF_ssp585_p3_u_slope,
+    IWF_ssp585_p3_u_intercept,
+    IWF_ssp585_p3_u_rvalue,
+    IWF_ssp585_p3_u_pvalue,
+    IWF_ssp585_p3_u_hypothesis,
+) = ca.dim_linregress(ssp585_p3_IWF_index, ussp585_p3_ver_JJA)
+
+(
+    IWF_ssp585_p3_v_slope,
+    IWF_ssp585_p3_v_intercept,
+    IWF_ssp585_p3_v_rvalue,
+    IWF_ssp585_p3_v_pvalue,
+    IWF_ssp585_p3_v_hypothesis,
+) = ca.dim_linregress(ssp585_p3_IWF_index, vssp585_p3_ver_JJA)
+# %%
+#   plot the new regression and difference of regression in p3 and historical
+
