@@ -177,3 +177,11 @@ qhis_ds.coords["plev"] = qhis_ds["plev"] / 100.0
 qhis_ds = qhis_ds.rename({"plev": "level"})
 
 # %%
+#   calculate the JJA mean in different variables of multi-models
+hgthis_ds_ver_JJA = ca.p_time(hgthis_ds, 6, 8, True).loc[:, :, :, :, :]
+uhis_ds_ver_JJA = ca.p_time(uhis_ds, 6, 8, True).loc[:, :, :, :, :]
+vhis_ds_ver_JJA = ca.p_time(vhis_ds, 6, 8, True).loc[:, :, :, :, :]
+qhis_ds_ver_JJA = ca.p_time(qhis_ds, 6, 8, True).loc[:, :, :, :, :]
+sphis_ds_JJA = ca.p_time(sphis_ds, 6, 8, True)
+prehis_ds_JJA = ca.p_time(prehis_ds, 6, 8, True)
+
