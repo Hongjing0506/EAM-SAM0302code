@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-11 23:38:30
+LastEditTime: 2022-04-11 23:44:54
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -185,3 +185,51 @@ qhis_ds_ver_JJA = ca.p_time(qhis_ds, 6, 8, True).loc[:, :, :, :, :]
 sphis_ds_JJA = ca.p_time(sphis_ds, 6, 8, True)
 prehis_ds_JJA = ca.p_time(prehis_ds, 6, 8, True)
 
+# %%
+#   reorder the multi-models in historical run
+hgthis_ds_ver_JJA_copy = hgthis_ds_ver_JJA.copy()
+uhis_ds_ver_JJA_copy = uhis_ds_ver_JJA.copy()
+vhis_ds_ver_JJA_copy = vhis_ds_ver_JJA.copy()
+qhis_ds_ver_JJA_copy = qhis_ds_ver_JJA.copy()
+sphis_ds_JJA_copy = sphis_ds_JJA.copy()
+prehis_ds_JJA_copy = prehis_ds_JJA.copy()
+models = hgthis_ds_ver_JJA.coords["models"]
+
+print(models)
+for i, mod in enumerate(models):
+    hgthis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(hgthis_ds_ver_JJA.sel(models=mod))
+    uhis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(uhis_ds_ver_JJA.sel(models=mod))
+    vhis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(vhis_ds_ver_JJA.sel(models=mod))
+    qhis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(qhis_ds_ver_JJA.sel(models=mod))
+    sphis_ds_JJA_copy[i, :, :, :] = np.array(sphis_ds_JJA.sel(models=mod))
+    prehis_ds_JJA_copy[i, :, :, :] = np.array(prehis_ds_JJA.sel(models=mod))
+hgthis_ds_ver_JJA = hgthis_ds_ver_JJA_copy.copy()
+uhis_ds_ver_JJA = uhis_ds_ver_JJA_copy.copy()
+vhis_ds_ver_JJA = vhis_ds_ver_JJA_copy.copy()
+qhis_ds_ver_JJA = qhis_ds_ver_JJA_copy.copy()
+sphis_ds_JJA = sphis_ds_JJA_copy.copy()
+prehis_ds_JJA = prehis_ds_JJA_copy.copy()
+
+hgthis_ds_ver_JJA.coords["models"] = models
+uhis_ds_ver_JJA.coords["models"] = models
+vhis_ds_ver_JJA.coords["models"] = models
+qhis_ds_ver_JJA.coords["models"] = models
+sphis_ds_JJA.coords["models"] = models
+prehis_ds_JJA.coords["models"] = models
+
+
+
+
+
+# %%
+#   output the non-detrend variables of multi-models in historical run
+hgthis_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/zg_historical_r144x72_195001-201412.nc")
+
+# %%
+#   calculate the detrend of different variables of multi-models
+hgthis_ds_ver_JJA = ca.detrend_dim(hgthis_ds_ver_JJA, "time", deg=1, demean=False)
+uhis_ds_ver_JJA = ca.detrend_dim(uhis_ds_ver_JJA, "time", deg=1, demean=False)
+vhis_ds_ver_JJA = ca.detrend_dim(vhis_ds_ver_JJA, "time", deg=1, demean=False)
+qhis_ds_ver_JJA = ca.detrend_dim(qhis_ds_ver_JJA, "time", deg=1, demean=False)
+sphis_ds_JJA = ca.detrend_dim(sphis_ds_JJA, "time", deg=1, demean=False)
+prehis_ds_JJA = ca.detrend_dim(prehis_ds_JJA, "time", deg=1, demean=False)
