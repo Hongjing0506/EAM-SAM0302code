@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 11:38:11
+LastEditTime: 2022-04-12 11:52:55
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -345,3 +345,43 @@ his_SAM_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_da
 his_EAM_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_EAM_index_1950-2014.nc")
 his_IWF_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_IWF_index_1950-2014.nc")
 # %%
+#   calculate the uq and vq for non-detrend data in different models
+fqhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/hus_historical_r144x72_195001-201412.nc")
+qhis_ver_JJA = fqhis_ver_JJA["hus"]
+fsphis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/sp_historical_r144x72_195001-201412.nc")
+sphis_JJA = fsphis_JJA["ps"]
+
+
+ptop = 1 * 100
+g = 9.8
+his_dslevel = qhis_ver_JJA.coords["level"] * 100.0
+his_dslevel.attrs["units"] = "Pa"
+# his_dsdp = geocat.comp.dpres_plevel(his_dslevel, sphis_JJA, ptop)
+# print(sphis_ds_JJA)
+his_dsdp = xr.apply_ufunc(
+    geocat.comp.dpres_plevel,
+    his_dslevel,
+    sphis_JJA,
+    ptop,
+    input_core_dims=[["level"], [], []],
+    output_core_dims=[["level"]],
+    vectorize=True,
+    dask="parallelized",
+)
+# for i in np.arange(0,26):
+#     print(his_dsdp[i, 0, 0, 0, :])
+his_dsdp = his_dsdp.transpose("models", "time", "level", "lat", "lon")
+his_dsdpg = his_dsdp / g
+his_dsdpg.attrs["units"] = "kg/m2"
+# %%
+# his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/his_dsdpg.nc")
+uqhis_ds_ver_JJA = uhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
+vqhis_ds_ver_JJA = vhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
+uqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_his_ds_JJA = (uqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True) / 1e05
+vq_dpg_his_ds_JJA = (vqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True) / 1e05
+uq_dpg_his_ds_JJA = ca.detrend_dim(uq_dpg_his_ds_JJA, "time", deg=1, demean=False)
+vq_dpg_his_ds_JJA = ca.detrend_dim(vq_dpg_his_ds_JJA, "time", deg=1, demean=False)
+uq_dpg_his_ds_JJA.attrs["units"] = "100kg/(m*s)"
+vq_dpg_his_ds_JJA.attrs["units"] = "100kg/(m*s)"
