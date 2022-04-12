@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 23:06:54
+LastEditTime: 2022-04-12 23:09:41
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -423,6 +423,12 @@ his_SAM_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SA
 his_EAM_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_EAM_index_1950-2014.nc")
 his_IWF_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_IWF_index_1950-2014.nc")
 
+
+# %%
+#   calculate the detrended his_dsdpg/uq/vq
+his_dsdpg_detrend = ca.detrend_dim(his_dsdpg, "time", deg=1, demean=False)
+his_dsdpg_detrend.name = "dsdpg"
+his_dsdpg_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_dsdpg.nc")
 # %%
 # #   read multi-models data of ssp585
 # hgt_ssp585_path = (
