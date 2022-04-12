@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 19:40:48
+LastEditTime: 2022-04-12 19:43:45
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -757,4 +757,27 @@ ussp585_ver_JJA = fussp585_ver_JJA["ua"]
 fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/va_ssp585_r144x72_195001-201412.nc")
 vssp585_ver_JJA = fvssp585_ver_JJA["va"]
 
+# %%
+#   interpolate the nan in 850hPa wind fields
+from scipy.interpolate import interp2d
+lat = ussp585_ver_JJA.coords["lat"]
+lon = ussp585_ver_JJA.coords["lon"]
+time = ussp585_ver_JJA.coords["time"]
+models = ussp585_ver_JJA.coords["models"]
+ussp585_ver_JJA_filled = ussp585_ver_JJA.sel(level=850.0).copy()
+vssp585_ver_JJA_filled = vssp585_ver_JJA.sel(level=850.0).copy()
+for i,mod in enumerate(models):
+    for ti in range(len(time)):
+        u_filled_func = interp2d(lon, lat, ussp585_ver_JJA.sel(level=850.0)[i,ti,:,:], kind="linear", bounds_error=False)
+        ussp585_ver_JJA_filled[i,ti,:,:] = u_filled_func(lon, lat)
+        v_filled_func = interp2d(lon, lat, vssp585_ver_JJA.sel(level=850.0)[i,ti,:,:], kind="linear", bounds_error=False)
+        vssp585_ver_JJA_filled[i,ti,:,:] = v_filled_func(lon, lat)
+lenmodels = np.arange(len(models))
+ussp585_ver_JJA_filled.coords["models"] = lenmodels
+vssp585_ver_JJA_filled.coords["models"] = lenmodels
+
+ussp585_ver_JJA_filled = ussp585_ver_JJA_filled.interpolate_na(dim="models",method="nearest", fill_value="extrapolate")
+vssp585_ver_JJA_filled = vssp585_ver_JJA_filled.interpolate_na(dim="models",method="nearest", fill_value="extrapolate")
+ussp585_ver_JJA_filled.coords["models"] = models
+vssp585_ver_JJA_filled.coords["models"] = models
 # %%
