@@ -374,6 +374,11 @@ his_dsdp = his_dsdp.transpose("models", "time", "level", "lat", "lon")
 his_dsdpg = his_dsdp / g
 his_dsdpg.attrs["units"] = "kg/m2"
 # %%
+his_dsdpg.name = "dsdpg"
+his_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_dsdpg.nc")
+
+
+# %%
 # his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/his_dsdpg.nc")
 uqhis_ds_ver_JJA = uhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
 vqhis_ds_ver_JJA = vhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
