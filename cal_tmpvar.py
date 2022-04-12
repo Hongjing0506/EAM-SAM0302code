@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 23:17:18
+LastEditTime: 2022-04-12 23:27:48
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -728,7 +728,7 @@ qssp585_ver_JJA = fqssp585_ver_JJA["hus"]
 fspssp585_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ps_ssp585_r144x72_201501-209912.nc")
 spssp585_JJA = fspssp585_JJA["ps"]
 
-
+# %%
 ptop = 1 * 100
 g = 9.8
 ssp585_dslevel = qssp585_ver_JJA.coords["level"] * 100.0
@@ -754,7 +754,7 @@ ssp585_dsdpg.attrs["units"] = "kg/m2"
 ssp585_dsdpg.name = "dsdpg"
 ssp585_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg.nc")
 # %%
-# ssp585_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/ssp585_dsdpg.nc")
+ssp585_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg.nc")
 uqssp585_ver_JJA = ussp585_ver_JJA * qssp585_ver_JJA * 1000.0
 vqssp585_ver_JJA = vssp585_ver_JJA * qssp585_ver_JJA * 1000.0
 uqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
@@ -769,5 +769,5 @@ vq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
 uq_dpg_ssp585_JJA.name = "uq_dpg"
 vq_dpg_ssp585_JJA.name = "vq_dpg"
 
-uq_dpg_ssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585torical/tmp_var/JJA/non_detrend/ssp585_uq_dpg.nc")
-vq_dpg_ssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585torical/tmp_var/JJA/non_detrend/ssp585_vq_dpg.nc")
+uq_dpg_ssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_uq_dpg.nc")
+vq_dpg_ssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_vq_dpg.nc")
