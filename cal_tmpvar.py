@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 18:05:51
+LastEditTime: 2022-04-12 18:09:12
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -718,3 +718,35 @@ wapssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM
 tassp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ta_ssp585_r144x72_195001-201412.nc")
 pressp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/pr_ssp585_r144x72_195001-201412.nc")
 spssp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/sp_ssp585_r144x72_195001-201412.nc")
+# %%
+#   calculate the detrend of different variables of multi-models
+hgtssp585_ds_ver_JJA = ca.detrend_dim(hgtssp585_ds_ver_JJA, "time", deg=1, demean=False)
+ussp585_ds_ver_JJA = ca.detrend_dim(ussp585_ds_ver_JJA, "time", deg=1, demean=False)
+vssp585_ds_ver_JJA = ca.detrend_dim(vssp585_ds_ver_JJA, "time", deg=1, demean=False)
+qssp585_ds_ver_JJA = ca.detrend_dim(qssp585_ds_ver_JJA, "time", deg=1, demean=False)
+wapssp585_ds_ver_JJA = ca.detrend_dim(wapssp585_ds_ver_JJA, "time", deg=1, demean=False)
+tassp585_ds_ver_JJA = ca.detrend_dim(tassp585_ds_ver_JJA, "time", deg=1, demean=False)
+spssp585_ds_JJA = ca.detrend_dim(spssp585_ds_JJA, "time", deg=1, demean=False)
+pressp585_ds_JJA = ca.detrend_dim(pressp585_ds_JJA, "time", deg=1, demean=False)
+# %%
+#   rename the variables of detrend data
+hgtssp585_ds_ver_JJA.name = "zg"
+ussp585_ds_ver_JJA.name = "ua"
+vssp585_ds_ver_JJA.name = "va"
+qssp585_ds_ver_JJA.name = "hus"
+wapssp585_ds_ver_JJA.name = "wap"
+tassp585_ds_ver_JJA.name = "ta"
+spssp585_ds_JJA.name = "ps"
+pressp585_ds_JJA.name = "pr"
+
+# %%
+#   output the detrended variables of multi-models in ssp585 run
+hgthis_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_195001-201412.nc")
+uhis_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_195001-201412.nc")
+vhis_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_195001-201412.nc")
+qhis_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/hus_ssp585_r144x72_195001-201412.nc")
+waphis_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/wap_ssp585_r144x72_195001-201412.nc")
+tahis_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ta_ssp585_r144x72_195001-201412.nc")
+prehis_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pr_ssp585_r144x72_195001-201412.nc")
+sphis_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ps_ssp585_r144x72_195001-201412.nc")
+# %%
