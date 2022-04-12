@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 11:52:55
+LastEditTime: 2022-04-12 14:29:09
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -380,13 +380,20 @@ his_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/C
 
 # %%
 # his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/his_dsdpg.nc")
-uqhis_ds_ver_JJA = uhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
-vqhis_ds_ver_JJA = vhis_ds_ver_JJA * qhis_ds_ver_JJA * 1000.0
-uqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-vqhis_ds_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-uq_dpg_his_ds_JJA = (uqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True) / 1e05
-vq_dpg_his_ds_JJA = (vqhis_ds_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True) / 1e05
-uq_dpg_his_ds_JJA = ca.detrend_dim(uq_dpg_his_ds_JJA, "time", deg=1, demean=False)
-vq_dpg_his_ds_JJA = ca.detrend_dim(vq_dpg_his_ds_JJA, "time", deg=1, demean=False)
-uq_dpg_his_ds_JJA.attrs["units"] = "100kg/(m*s)"
-vq_dpg_his_ds_JJA.attrs["units"] = "100kg/(m*s)"
+uqhis_ver_JJA = uhis_ver_JJA * qhis_ver_JJA * 1000.0
+vqhis_ver_JJA = vhis_ver_JJA * qhis_ver_JJA * 1000.0
+uqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_his_JJA = (uqhis_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True) / 1e05
+vq_dpg_his_JJA = (vqhis_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True) / 1e05
+# uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
+# vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
+uq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
+vq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
+# %%
+uq_dpg_his_JJA.name = "uq_dpg"
+vq_dpg_his_JJA.name = "vq_dpg"
+
+uq_dpg_his_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_uq_dpg.nc")
+vq_dpg_his_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_vq_dpg.nc")
+# %%
