@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 19:57:59
+LastEditTime: 2022-04-12 23:06:54
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -408,111 +408,21 @@ vq_dpg_his_JJA.name = "vq_dpg"
 uq_dpg_his_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_uq_dpg.nc")
 vq_dpg_his_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_vq_dpg.nc")
 # %%
-#   read the detrend data
-fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc")
-uhis_ver_JJA = fuhis_ver_JJA["ua"]
+#   calculate detrended SAM/EAM/IWF
+his_SAM_index_detrend = ca.detrend_dim(his_SAM_index, "time", deg=1, demean=False)
+his_EAM_index_detrend = ca.detrend_dim(his_EAM_index, "time", deg=1, demean=False)
+his_IWF_index_detrend = ca.detrend_dim(his_IWF_index, "time", deg=1, demean=False)
 
-fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc")
-vhis_ver_JJA = fvhis_ver_JJA["va"]
-
-# %%
-#   interpolate the nan in 850hPa wind fields
-from scipy.interpolate import interp2d
-lat = uhis_ver_JJA.coords["lat"]
-lon = uhis_ver_JJA.coords["lon"]
-time = uhis_ver_JJA.coords["time"]
-models = uhis_ver_JJA.coords["models"]
-uhis_ver_JJA_filled = uhis_ver_JJA.sel(level=850.0).copy()
-vhis_ver_JJA_filled = vhis_ver_JJA.sel(level=850.0).copy()
-for i,mod in enumerate(models):
-    for ti in range(len(time)):
-        u_filled_func = interp2d(lon, lat, uhis_ver_JJA.sel(level=850.0)[i,ti,:,:], kind="linear", bounds_error=False)
-        uhis_ver_JJA_filled[i,ti,:,:] = u_filled_func(lon, lat)
-        v_filled_func = interp2d(lon, lat, vhis_ver_JJA.sel(level=850.0)[i,ti,:,:], kind="linear", bounds_error=False)
-        vhis_ver_JJA_filled[i,ti,:,:] = v_filled_func(lon, lat)
-lenmodels = np.arange(len(models))
-uhis_ver_JJA_filled.coords["models"] = lenmodels
-vhis_ver_JJA_filled.coords["models"] = lenmodels
-
-uhis_ver_JJA_filled = uhis_ver_JJA_filled.interpolate_na(dim="models",method="nearest", fill_value="extrapolate")
-vhis_ver_JJA_filled = vhis_ver_JJA_filled.interpolate_na(dim="models",method="nearest", fill_value="extrapolate")
-uhis_ver_JJA_filled.coords["models"] = models
-vhis_ver_JJA_filled.coords["models"] = models
+his_SAM_index_detrend = "SAM"
+his_EAM_index_detrend = "EAM"
+his_IWF_index_detrend = "IWF"
 
 # %%
-uhis_ver_JJA_filled = uhis_ver_JJA_filled.expand_dims("level")
-vhis_ver_JJA_filled = vhis_ver_JJA_filled.expand_dims("level")
-# %%
-#   calculate the detrend SAM/EAM/IWF
-his_SAM_index = ca.SAM(uhis_ver_JJA)
-his_EAM_index = ca.EAM(uhis_ver_JJA)
-his_IWF_index = ca.IWF(uhis_ver_JJA_filled, vhis_ver_JJA_filled)
-his_SAM_index = ca.detrend_dim(his_SAM_index, "time", deg=1, demean=False)
-his_EAM_index = ca.detrend_dim(his_EAM_index, "time", deg=1, demean=False)
-his_IWF_index = ca.detrend_dim(his_IWF_index, "time", deg=1, demean=False)
+#   output the detrended SAM/EAM/IWF
+his_SAM_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_SAM_index_1950-2014.nc")
+his_EAM_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_EAM_index_1950-2014.nc")
+his_IWF_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_IWF_index_1950-2014.nc")
 
-# %%
-#   ouput the detrend SAM/EAM/IWF
-his_SAM_index.name = "SAM"
-his_EAM_index.name = "EAM"
-his_IWF_index.name = "IWF"
-
-his_SAM_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_SAM_index_1950-2014.nc")
-his_EAM_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_EAM_index_1950-2014.nc")
-his_IWF_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_IWF_index_1950-2014.nc")
-# %%
-#   calculate the uq and vq for detrend data in different models
-fqhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/hus_historical_r144x72_195001-201412.nc")
-qhis_ver_JJA = fqhis_ver_JJA["hus"]
-fsphis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ps_historical_r144x72_195001-201412.nc")
-sphis_JJA = fsphis_JJA["ps"]
-
-
-ptop = 1 * 100
-g = 9.8
-his_dslevel = qhis_ver_JJA.coords["level"] * 100.0
-his_dslevel.attrs["units"] = "Pa"
-# his_dsdp = geocat.comp.dpres_plevel(his_dslevel, sphis_JJA, ptop)
-# print(sphis_ds_JJA)
-his_dsdp = xr.apply_ufunc(
-    geocat.comp.dpres_plevel,
-    his_dslevel,
-    sphis_JJA,
-    ptop,
-    input_core_dims=[["level"], [], []],
-    output_core_dims=[["level"]],
-    vectorize=True,
-    dask="parallelized",
-)
-# for i in np.arange(0,26):
-#     print(his_dsdp[i, 0, 0, 0, :])
-his_dsdp = his_dsdp.transpose("models", "time", "level", "lat", "lon")
-his_dsdpg = his_dsdp / g
-his_dsdpg.attrs["units"] = "kg/m2"
-# %%
-his_dsdpg.name = "dsdpg"
-his_dsdpg = ca.detrend_dim(his_dsdpg, "time", deg=1, demean=False)
-his_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_dsdpg.nc")
-
-
-# %%
-# his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/his_dsdpg.nc")
-uqhis_ver_JJA = uhis_ver_JJA * qhis_ver_JJA * 1000.0
-vqhis_ver_JJA = vhis_ver_JJA * qhis_ver_JJA * 1000.0
-uqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-vqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-uq_dpg_his_JJA = (uqhis_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True) / 1e05
-vq_dpg_his_JJA = (vqhis_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True) / 1e05
-uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
-vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
-uq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
-vq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
-# %%
-uq_dpg_his_JJA.name = "uq_dpg"
-vq_dpg_his_JJA.name = "vq_dpg"
-
-uq_dpg_his_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_uq_dpg.nc")
-vq_dpg_his_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_vq_dpg.nc")
 # %%
 # #   read multi-models data of ssp585
 # hgt_ssp585_path = (
@@ -830,3 +740,21 @@ ssp585_dsdpg.attrs["units"] = "kg/m2"
 # %%
 ssp585_dsdpg.name = "dsdpg"
 ssp585_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg.nc")
+# %%
+# ssp585_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/ssp585_dsdpg.nc")
+uqssp585_ver_JJA = ussp585_ver_JJA * qssp585_ver_JJA * 1000.0
+vqssp585_ver_JJA = vssp585_ver_JJA * qssp585_ver_JJA * 1000.0
+uqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_ssp585_JJA = (uqssp585_ver_JJA * ssp585_dsdpg.data).sum(dim="level", skipna=True) / 1e05
+vq_dpg_ssp585_JJA = (vqssp585_ver_JJA * ssp585_dsdpg.data).sum(dim="level", skipna=True) / 1e05
+# uq_dpg_ssp585_JJA = ca.detrend_dim(uq_dpg_ssp585_JJA, "time", deg=1, demean=False)
+# vq_dpg_ssp585_JJA = ca.detrend_dim(vq_dpg_ssp585_JJA, "time", deg=1, demean=False)
+uq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
+vq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
+# %%
+uq_dpg_ssp585_JJA.name = "uq_dpg"
+vq_dpg_ssp585_JJA.name = "vq_dpg"
+
+uq_dpg_ssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585torical/tmp_var/JJA/non_detrend/ssp585_uq_dpg.nc")
+vq_dpg_ssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585torical/tmp_var/JJA/non_detrend/ssp585_vq_dpg.nc")
