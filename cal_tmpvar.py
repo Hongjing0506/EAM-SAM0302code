@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 11:12:41
+LastEditTime: 2022-04-12 11:38:11
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -296,7 +296,7 @@ def patches(ax, x0, y0, width, height, proj):
 # prehis_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pr_historical_r144x72_195001-201412.nc")
 # sphis_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/sp_historical_r144x72_195001-201412.nc")
 # %%
-#   read non-detrend data and calculate the SAM/EAM/IWF
+#   read non-detrend data
 fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/ua_historical_r144x72_195001-201412.nc")
 uhis_ver_JJA = fuhis_ver_JJA["ua"]
 
@@ -327,9 +327,21 @@ uhis_ver_JJA_filled.coords["models"] = models
 vhis_ver_JJA_filled.coords["models"] = models
 
 # %%
-#   calculate and output the non-detrend SAM/EAM/IWF
+uhis_ver_JJA_filled = uhis_ver_JJA_filled.expand_dims("level")
+vhis_ver_JJA_filled = vhis_ver_JJA_filled.expand_dims("level")
+# %%
+#   calculate the non-detrend SAM/EAM/IWF
 his_SAM_index = ca.SAM(uhis_ver_JJA)
 his_EAM_index = ca.EAM(uhis_ver_JJA)
-his_IWF_index = ca.IWF(uhis_ver_JJA, vhis_ver_JJA)
+his_IWF_index = ca.IWF(uhis_ver_JJA_filled, vhis_ver_JJA_filled)
 
+# %%
+#   ouput the non-detrend SAM/EAM/IWF
+his_SAM_index.name = "SAM"
+his_EAM_index.name = "EAM"
+his_IWF_index.name = "IWF"
+
+his_SAM_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_SAM_index_1950-2014.nc")
+his_EAM_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_EAM_index_1950-2014.nc")
+his_IWF_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_IWF_index_1950-2014.nc")
 # %%
