@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 17:37:45
+LastEditTime: 2022-04-12 18:05:51
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -660,7 +660,6 @@ wapssp585_ds = wapssp585_ds.rename({"plev": "level"})
 tassp585_ds.coords["plev"] = tassp585_ds["plev"] / 100.0
 tassp585_ds = tassp585_ds.rename({"plev": "level"})
 # %%
-# # %%
 #   calculate the JJA mean in different variables of multi-models
 hgtssp585_ds_ver_JJA = ca.p_time(hgtssp585_ds, 6, 8, True)
 ussp585_ds_ver_JJA = ca.p_time(ussp585_ds, 6, 8, True)
@@ -682,7 +681,7 @@ tassp585_ds_ver_JJA_copy = tassp585_ds_ver_JJA.copy()
 spssp585_ds_JJA_copy = spssp585_ds_JJA.copy()
 pressp585_ds_JJA_copy = pressp585_ds_JJA.copy()
 
-print(models)
+# print(models)
 for i, mod in enumerate(models):
     hgtssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(hgtssp585_ds_ver_JJA.sel(models=mod))
     ussp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(ussp585_ds_ver_JJA.sel(models=mod))
@@ -709,3 +708,13 @@ wapssp585_ds_ver_JJA.coords["models"] = models
 tassp585_ds_ver_JJA.coords["models"] = models
 spssp585_ds_JJA.coords["models"] = models
 pressp585_ds_JJA.coords["models"] = models
+# %%
+#   output the non-detrend variables of multi-models in ssp585 run
+hgtssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/zg_ssp585_r144x72_195001-201412.nc")
+ussp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ua_ssp585_r144x72_195001-201412.nc")
+vssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/va_ssp585_r144x72_195001-201412.nc")
+qssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/hus_ssp585_r144x72_195001-201412.nc")
+wapssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/wap_ssp585_r144x72_195001-201412.nc")
+tassp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ta_ssp585_r144x72_195001-201412.nc")
+pressp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/pr_ssp585_r144x72_195001-201412.nc")
+spssp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/sp_ssp585_r144x72_195001-201412.nc")
