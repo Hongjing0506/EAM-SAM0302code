@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 17:10:24
+LastEditTime: 2022-04-12 17:37:45
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -660,3 +660,52 @@ wapssp585_ds = wapssp585_ds.rename({"plev": "level"})
 tassp585_ds.coords["plev"] = tassp585_ds["plev"] / 100.0
 tassp585_ds = tassp585_ds.rename({"plev": "level"})
 # %%
+# # %%
+#   calculate the JJA mean in different variables of multi-models
+hgtssp585_ds_ver_JJA = ca.p_time(hgtssp585_ds, 6, 8, True)
+ussp585_ds_ver_JJA = ca.p_time(ussp585_ds, 6, 8, True)
+vssp585_ds_ver_JJA = ca.p_time(vssp585_ds, 6, 8, True)
+qssp585_ds_ver_JJA = ca.p_time(qssp585_ds, 6, 8, True)
+wapssp585_ds_ver_JJA = ca.p_time(wapssp585_ds, 6, 8, True)
+tassp585_ds_ver_JJA = ca.p_time(tassp585_ds, 6, 8, True)
+spssp585_ds_JJA = ca.p_time(spssp585_ds, 6, 8, True)
+pressp585_ds_JJA = ca.p_time(pressp585_ds, 6, 8, True)
+
+# %%
+#   reorder the multi-models in ssp585 run
+hgtssp585_ds_ver_JJA_copy = hgtssp585_ds_ver_JJA.copy()
+ussp585_ds_ver_JJA_copy = ussp585_ds_ver_JJA.copy()
+vssp585_ds_ver_JJA_copy = vssp585_ds_ver_JJA.copy()
+qssp585_ds_ver_JJA_copy = qssp585_ds_ver_JJA.copy()
+wapssp585_ds_ver_JJA_copy = wapssp585_ds_ver_JJA.copy()
+tassp585_ds_ver_JJA_copy = tassp585_ds_ver_JJA.copy()
+spssp585_ds_JJA_copy = spssp585_ds_JJA.copy()
+pressp585_ds_JJA_copy = pressp585_ds_JJA.copy()
+
+print(models)
+for i, mod in enumerate(models):
+    hgtssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(hgtssp585_ds_ver_JJA.sel(models=mod))
+    ussp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(ussp585_ds_ver_JJA.sel(models=mod))
+    vssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(vssp585_ds_ver_JJA.sel(models=mod))
+    qssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(qssp585_ds_ver_JJA.sel(models=mod))
+    wapssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(wapssp585_ds_ver_JJA.sel(models=mod))
+    tassp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(tassp585_ds_ver_JJA.sel(models=mod))
+    spssp585_ds_JJA_copy[i, :, :, :] = np.array(spssp585_ds_JJA.sel(models=mod))
+    pressp585_ds_JJA_copy[i, :, :, :] = np.array(pressp585_ds_JJA.sel(models=mod))
+hgtssp585_ds_ver_JJA = hgtssp585_ds_ver_JJA_copy.copy()
+ussp585_ds_ver_JJA = ussp585_ds_ver_JJA_copy.copy()
+vssp585_ds_ver_JJA = vssp585_ds_ver_JJA_copy.copy()
+qssp585_ds_ver_JJA = qssp585_ds_ver_JJA_copy.copy()
+wapssp585_ds_ver_JJA = wapssp585_ds_ver_JJA_copy.copy()
+tassp585_ds_ver_JJA = tassp585_ds_ver_JJA_copy.copy()
+spssp585_ds_JJA = spssp585_ds_JJA_copy.copy()
+pressp585_ds_JJA = pressp585_ds_JJA_copy.copy()
+
+hgtssp585_ds_ver_JJA.coords["models"] = models
+ussp585_ds_ver_JJA.coords["models"] = models
+vssp585_ds_ver_JJA.coords["models"] = models
+qssp585_ds_ver_JJA.coords["models"] = models
+wapssp585_ds_ver_JJA.coords["models"] = models
+tassp585_ds_ver_JJA.coords["models"] = models
+spssp585_ds_JJA.coords["models"] = models
+pressp585_ds_JJA.coords["models"] = models
