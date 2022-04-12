@@ -756,3 +756,5 @@ ussp585_ver_JJA = fussp585_ver_JJA["ua"]
 
 fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/va_ssp585_r144x72_195001-201412.nc")
 vssp585_ver_JJA = fvssp585_ver_JJA["va"]
+
+# %%
