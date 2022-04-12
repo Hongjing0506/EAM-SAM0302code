@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 23:27:48
+LastEditTime: 2022-04-12 23:51:26
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -771,3 +771,19 @@ vq_dpg_ssp585_JJA.name = "vq_dpg"
 
 uq_dpg_ssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_uq_dpg.nc")
 vq_dpg_ssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_vq_dpg.nc")
+
+# %%
+#   calculate detrended SAM/EAM/IWF
+ssp585_SAM_index_detrend = ca.detrend_dim(ssp585_SAM_index, "time", deg=1, demean=False)
+ssp585_EAM_index_detrend = ca.detrend_dim(ssp585_EAM_index, "time", deg=1, demean=False)
+ssp585_IWF_index_detrend = ca.detrend_dim(ssp585_IWF_index, "time", deg=1, demean=False)
+
+ssp585_SAM_index_detrend.name = "SAM"
+ssp585_EAM_index_detrend.name = "EAM"
+ssp585_IWF_index_detrend.name = "IWF"
+
+#   output the detrended SAM/EAM/IWF
+ssp585_SAM_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_SAM_index_2015-2099.nc")
+ssp585_EAM_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_EAM_index_2015-2099.nc")
+ssp585_IWF_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_IWF_index_2015-2099.nc")
+# %%
