@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 23:09:41
+LastEditTime: 2022-04-12 23:17:18
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -429,6 +429,13 @@ his_IWF_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SA
 his_dsdpg_detrend = ca.detrend_dim(his_dsdpg, "time", deg=1, demean=False)
 his_dsdpg_detrend.name = "dsdpg"
 his_dsdpg_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_dsdpg.nc")
+# %%
+uq_dpg_his_JJA_detrend = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
+vq_dpg_his_JJA_detrend = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
+uq_dpg_his_JJA_detrend.name = "uq_dpg"
+vq_dpg_his_JJA_detrend.name = "vq_dpg"
+uq_dpg_his_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_uq_dpg.nc")
+vq_dpg_his_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_vq_dpg.nc")
 # %%
 # #   read multi-models data of ssp585
 # hgt_ssp585_path = (
