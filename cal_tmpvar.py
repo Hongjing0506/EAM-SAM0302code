@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 19:43:45
+LastEditTime: 2022-04-12 19:52:02
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -780,4 +780,22 @@ ussp585_ver_JJA_filled = ussp585_ver_JJA_filled.interpolate_na(dim="models",meth
 vssp585_ver_JJA_filled = vssp585_ver_JJA_filled.interpolate_na(dim="models",method="nearest", fill_value="extrapolate")
 ussp585_ver_JJA_filled.coords["models"] = models
 vssp585_ver_JJA_filled.coords["models"] = models
+# %%
+ussp585_ver_JJA_filled = ussp585_ver_JJA_filled.expand_dims("level")
+vssp585_ver_JJA_filled = vssp585_ver_JJA_filled.expand_dims("level")
+# %%
+#   calculate the non-detrend SAM/EAM/IWF
+ssp585_SAM_index = ca.SAM(ussp585_ver_JJA)
+ssp585_EAM_index = ca.EAM(ussp585_ver_JJA)
+ssp585_IWF_index = ca.IWF(ussp585_ver_JJA_filled, vssp585_ver_JJA_filled)
+# %%
+#   ouput the non-detrend SAM/EAM/IWF
+ssp585_SAM_index.name = "SAM"
+ssp585_EAM_index.name = "EAM"
+ssp585_IWF_index.name = "IWF"
+
+ssp585_SAM_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_SAM_index_1950-2014.nc")
+ssp585_EAM_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_EAM_index_1950-2014.nc")
+ssp585_IWF_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_IWF_index_1950-2014.nc")
+
 # %%
