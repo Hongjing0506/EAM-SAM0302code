@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 15:12:56
+LastEditTime: 2022-04-12 17:10:24
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -68,21 +68,21 @@ def patches(ax, x0, y0, width, height, proj):
     ax.add_patch(rect)
 # %%
 #   read multi-models data of historical
-# hgt_his_path = (
-#     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg"
-# )
-# g = os.walk(hgt_his_path)
-# filepath = []
-# modelname_hgt = []
-# for path, dir_list, file_name in g:
-#     for filename in file_name:
-#         if re.search("ensemble", filename) == None:
-#             filepath.append(os.path.join(path, filename))
-#             loc = ca.retrieve_allstrindex(filename, "_")
-#             modelname_hgt.append(filename[loc[1] + 1 : loc[2]])
-# hgtds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-# hgthis_ds = xr.DataArray(hgtds_his["zg"])
-# hgthis_ds.coords["models"] = modelname_hgt
+hgt_his_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/zg"
+)
+g = os.walk(hgt_his_path)
+filepath = []
+modelname_hgt = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_hgt.append(filename[loc[1] + 1 : loc[2]])
+hgtds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+hgthis_ds = xr.DataArray(hgtds_his["zg"])
+hgthis_ds.coords["models"] = modelname_hgt
 # # %%
 # u_his_path = (
 #     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua"
@@ -408,15 +408,13 @@ vq_dpg_his_JJA.name = "vq_dpg"
 uq_dpg_his_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_uq_dpg.nc")
 vq_dpg_his_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_vq_dpg.nc")
 # %%
-#   read detrend data
+#   read the detrend data
 fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc")
 uhis_ver_JJA = fuhis_ver_JJA["ua"]
 
 fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc")
 vhis_ver_JJA = fvhis_ver_JJA["va"]
 
-
-# %%
 # %%
 #   interpolate the nan in 850hPa wind fields
 from scipy.interpolate import interp2d
@@ -445,25 +443,28 @@ vhis_ver_JJA_filled.coords["models"] = models
 uhis_ver_JJA_filled = uhis_ver_JJA_filled.expand_dims("level")
 vhis_ver_JJA_filled = vhis_ver_JJA_filled.expand_dims("level")
 # %%
-#   calculate the non-detrend SAM/EAM/IWF
+#   calculate the detrend SAM/EAM/IWF
 his_SAM_index = ca.SAM(uhis_ver_JJA)
 his_EAM_index = ca.EAM(uhis_ver_JJA)
 his_IWF_index = ca.IWF(uhis_ver_JJA_filled, vhis_ver_JJA_filled)
+his_SAM_index = ca.detrend_dim(his_SAM_index, "time", deg=1, demean=False)
+his_EAM_index = ca.detrend_dim(his_EAM_index, "time", deg=1, demean=False)
+his_IWF_index = ca.detrend_dim(his_IWF_index, "time", deg=1, demean=False)
 
 # %%
-#   ouput the non-detrend SAM/EAM/IWF
+#   ouput the detrend SAM/EAM/IWF
 his_SAM_index.name = "SAM"
 his_EAM_index.name = "EAM"
 his_IWF_index.name = "IWF"
 
-his_SAM_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_SAM_index_1950-2014.nc")
-his_EAM_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_EAM_index_1950-2014.nc")
-his_IWF_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_IWF_index_1950-2014.nc")
+his_SAM_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_SAM_index_1950-2014.nc")
+his_EAM_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_EAM_index_1950-2014.nc")
+his_IWF_index.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_IWF_index_1950-2014.nc")
 # %%
-#   calculate the uq and vq for non-detrend data in different models
-fqhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/hus_historical_r144x72_195001-201412.nc")
+#   calculate the uq and vq for detrend data in different models
+fqhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/hus_historical_r144x72_195001-201412.nc")
 qhis_ver_JJA = fqhis_ver_JJA["hus"]
-fsphis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/sp_historical_r144x72_195001-201412.nc")
+fsphis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ps_historical_r144x72_195001-201412.nc")
 sphis_JJA = fsphis_JJA["ps"]
 
 
@@ -490,7 +491,8 @@ his_dsdpg = his_dsdp / g
 his_dsdpg.attrs["units"] = "kg/m2"
 # %%
 his_dsdpg.name = "dsdpg"
-his_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_dsdpg.nc")
+his_dsdpg = ca.detrend_dim(his_dsdpg, "time", deg=1, demean=False)
+his_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_dsdpg.nc")
 
 
 # %%
@@ -501,8 +503,8 @@ uqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 vqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
 uq_dpg_his_JJA = (uqhis_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True) / 1e05
 vq_dpg_his_JJA = (vqhis_ver_JJA * his_dsdpg.data).sum(dim="level", skipna=True) / 1e05
-# uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
-# vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
+uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
+vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
 uq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
 vq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
 # %%
@@ -511,3 +513,150 @@ vq_dpg_his_JJA.name = "vq_dpg"
 
 uq_dpg_his_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_uq_dpg.nc")
 vq_dpg_his_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_vq_dpg.nc")
+# %%
+#   read multi-models data of ssp585
+hgt_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/zg"
+)
+g = os.walk(hgt_ssp585_path)
+filepath = []
+modelname_hgt = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_hgt.append(filename[loc[1] + 1 : loc[2]])
+hgtds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+hgtssp585_ds = xr.DataArray(hgtds_ssp585["zg"])
+hgtssp585_ds.coords["models"] = modelname_hgt
+# %%
+u_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ua"
+)
+g = os.walk(u_ssp585_path)
+filepath = []
+modelname_u = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_u.append(filename[loc[1] + 1 : loc[2]])
+uds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+ussp585_ds = xr.DataArray(uds_ssp585["ua"])
+ussp585_ds.coords["models"] = modelname_u
+# %%
+v_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/va"
+)
+g = os.walk(v_ssp585_path)
+filepath = []
+modelname_v = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_v.append(filename[loc[1] + 1 : loc[2]])
+vds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+vssp585_ds = xr.DataArray(vds_ssp585["va"])
+vssp585_ds.coords["models"] = modelname_v
+# %%
+sp_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ps"
+)
+g = os.walk(sp_ssp585_path)
+filepath = []
+modelname_sp = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_sp.append(filename[loc[1] + 1 : loc[2]])
+spds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+spssp585_ds = xr.DataArray(spds_ssp585["ps"])
+spssp585_ds.coords["models"] = modelname_sp
+# %%
+q_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/hus"
+)
+g = os.walk(q_ssp585_path)
+filepath = []
+modelname_q = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_q.append(filename[loc[1] + 1 : loc[2]])
+qds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+qssp585_ds = xr.DataArray(qds_ssp585["hus"])
+qssp585_ds.coords["models"] = modelname_q
+
+
+# %%
+pr_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/pr"
+)
+g = os.walk(pr_ssp585_path)
+filepath = []
+modelname_pr = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_pr.append(filename[loc[1] + 1 : loc[2]])
+preds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+pressp585_ds = xr.DataArray(preds_ssp585["pr"])*3600*24
+pressp585_ds.coords["models"] = modelname_pr
+
+# %%
+wap_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/wap"
+)
+g = os.walk(wap_ssp585_path)
+filepath = []
+modelname_wap = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_wap.append(filename[loc[1] + 1 : loc[2]])
+wapds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+wapssp585_ds = xr.DataArray(wapds_ssp585["wap"])
+wapssp585_ds.coords["models"] = modelname_wap
+# %%
+ta_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ta"
+)
+g = os.walk(ta_ssp585_path)
+filepath = []
+modelname_ta = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_ta.append(filename[loc[1] + 1 : loc[2]])
+tads_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+tassp585_ds = xr.DataArray(tads_ssp585["ta"])
+tassp585_ds.coords["models"] = modelname_ta
+# %%
+#   recalculate the plevel of the different variables in ssp585 run
+hgtssp585_ds.coords["plev"] = hgtssp585_ds["plev"] / 100.0
+hgtssp585_ds = hgtssp585_ds.rename({"plev": "level"})
+ussp585_ds.coords["plev"] = ussp585_ds["plev"] / 100.0
+ussp585_ds = ussp585_ds.rename({"plev": "level"})
+vssp585_ds.coords["plev"] = vssp585_ds["plev"] / 100.0
+vssp585_ds = vssp585_ds.rename({"plev": "level"})
+qssp585_ds.coords["plev"] = qssp585_ds["plev"] / 100.0
+qssp585_ds = qssp585_ds.rename({"plev": "level"})
+wapssp585_ds.coords["plev"] = wapssp585_ds["plev"] / 100.0
+wapssp585_ds = wapssp585_ds.rename({"plev": "level"})
+tassp585_ds.coords["plev"] = tassp585_ds["plev"] / 100.0
+tassp585_ds = tassp585_ds.rename({"plev": "level"})
+# %%
