@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-13 16:04:45
 LastEditors: ChenHJ
-LastEditTime: 2022-04-13 19:56:50
+LastEditTime: 2022-04-13 20:01:22
 FilePath: /chenhj/0302code/calculate_regress.py
 Aim: 
 Mission: 
@@ -722,3 +722,4 @@ vq_ssp585_IWF_regress = xr.Dataset(
 uq_ssp585_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/uq_ssp585_IWF_regress.nc")
 
 vq_ssp585_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/vq_ssp585_IWF_regress.nc")
+# %%
