@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-13 16:04:45
 LastEditors: ChenHJ
-LastEditTime: 2022-04-13 17:07:18
+LastEditTime: 2022-04-13 17:56:36
 FilePath: /chenhj/0302code/calculate_regress.py
 Aim: 
 Mission: 
@@ -262,4 +262,75 @@ v_his_IWF_regress = xr.Dataset(
 hgt_his_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/hgt_his_IWF_regress.nc")
 u_his_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/u_his_IWF_regress.nc")
 v_his_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/v_his_IWF_regress.nc")
+# %%
+#   calculate the uq and vq of multi-models in historical run regress onto SAM index
+fuq_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_uq_dpg.nc")
+uqhis_JJA = fuq_his["uq_dpg"]
+
+fvq_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_vq_dpg.nc")
+vqhis_JJA = fvq_his["vq_dpg"]
+
+# %%
+(
+    uq_his_SAM_slope,
+    uq_his_SAM_intercept,
+    uq_his_SAM_rvalue,
+    uq_his_SAM_pvalue,
+    uq_his_SAM_hypothesis,
+) = ca.dim_linregress(his_SAM_index_detrend, uqhis_JJA)
+
+(
+    vq_his_SAM_slope,
+    vq_his_SAM_intercept,
+    vq_his_SAM_rvalue,
+    vq_his_SAM_pvalue,
+    vq_his_SAM_hypothesis,
+) = ca.dim_linregress(his_SAM_index_detrend, vqhis_JJA)
+
+
+# %%
+models = uq_his_SAM_rvalue.coords["models"]
+lon = uq_his_SAM_rvalue.coords["lon"]
+lat = uq_his_SAM_rvalue.coords["lat"]
+
+# %%
+#   create the dataset of hgt/u/v regress onto SAM index in historical run
+uq_his_SAM_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], uq_his_SAM_slope.data),
+        intercept=(["models", "level", "lat", "lon"], uq_his_SAM_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], uq_his_SAM_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], uq_his_SAM_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], uq_his_SAM_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="uq fields of multi-models in historical run regress onto his_SAM_index"),
+)
+
+vq_his_SAM_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], vq_his_SAM_slope.data),
+        intercept=(["models", "level", "lat", "lon"], vq_his_SAM_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], vq_his_SAM_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], vq_his_SAM_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], vq_his_SAM_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="vq fields of multi-models in historical run regress onto his_SAM_index"),
+)
+# %%
+#   output the regress result
+uq_his_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/uq_his_SAM_regress.nc")
+
+vq_his_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/vq_his_SAM_regress.nc")
 # %%
