@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-13 16:04:45
 LastEditors: ChenHJ
-LastEditTime: 2022-04-13 16:48:01
+LastEditTime: 2022-04-13 17:07:18
 FilePath: /chenhj/0302code/calculate_regress.py
 Aim: 
 Mission: 
@@ -170,3 +170,96 @@ v_his_SAM_regress = xr.Dataset(
 hgt_his_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/hgt_his_SAM_regress.nc")
 u_his_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/u_his_SAM_regress.nc")
 v_his_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/v_his_SAM_regress.nc")
+# %%
+#   calculate the hgt/u/v of multi-models in historical run regress onto IWF index
+fIWF_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_IWF_index_1950-2014.nc")
+his_IWF_index_detrend = fIWF_his["IWF"]
+
+(
+    hgt_his_IWF_slope,
+    hgt_his_IWF_intercept,
+    hgt_his_IWF_rvalue,
+    hgt_his_IWF_pvalue,
+    hgt_his_IWF_hypothesis,
+) = ca.dim_linregress(his_IWF_index_detrend, hgthis_ver_JJA_3lev)
+
+(
+    u_his_IWF_slope,
+    u_his_IWF_intercept,
+    u_his_IWF_rvalue,
+    u_his_IWF_pvalue,
+    u_his_IWF_hypothesis,
+) = ca.dim_linregress(his_IWF_index_detrend, uhis_ver_JJA_3lev)
+
+(
+    v_his_IWF_slope,
+    v_his_IWF_intercept,
+    v_his_IWF_rvalue,
+    v_his_IWF_pvalue,
+    v_his_IWF_hypothesis,
+) = ca.dim_linregress(his_IWF_index_detrend, vhis_ver_JJA_3lev)
+
+# %%
+models = hgt_his_IWF_rvalue.coords["models"]
+lon = hgt_his_IWF_rvalue.coords["lon"]
+lat = hgt_his_IWF_rvalue.coords["lat"]
+level = hgt_his_IWF_rvalue.coords["level"]
+
+# %%
+#   create the dataset of hgt/u/v regress onto IWF index in historical run
+hgt_his_IWF_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], hgt_his_IWF_slope.data),
+        intercept=(["models", "level", "lat", "lon"], hgt_his_IWF_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], hgt_his_IWF_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], hgt_his_IWF_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], hgt_his_IWF_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of multi-models in historical run regress onto his_IWF_index"),
+)
+
+u_his_IWF_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], u_his_IWF_slope.data),
+        intercept=(["models", "level", "lat", "lon"], u_his_IWF_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], u_his_IWF_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], u_his_IWF_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], u_his_IWF_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of multi-models in historical run regress onto his_IWF_index"),
+)
+
+v_his_IWF_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], v_his_IWF_slope.data),
+        intercept=(["models", "level", "lat", "lon"], v_his_IWF_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], v_his_IWF_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], v_his_IWF_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], v_his_IWF_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of multi-models in historical run regress onto his_IWF_index"),
+)
+# %%
+#   output the regress result
+hgt_his_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/hgt_his_IWF_regress.nc")
+u_his_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/u_his_IWF_regress.nc")
+v_his_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/v_his_IWF_regress.nc")
+# %%
