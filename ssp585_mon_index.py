@@ -143,18 +143,18 @@ fssp585_SAM_index = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenh
 ssp585_SAM_index = fssp585_SAM_index["SAM"]
 # %%
 #   calculate the ensemble mean SAM and IWF for historical run and ssp585 run
-his_IWF_index_ens = ca.standardize(his_IWF_index).mean(dim="models", skipna=True)
-his_SAM_index_ens = ca.standardize(his_SAM_index).mean(dim="models", skipna=True)
+his_IWF_index_ens = ca.standardize(his_IWF_index.mean(dim="models", skipna=True))
+his_SAM_index_ens = ca.standardize(his_SAM_index.mean(dim="models", skipna=True))
 
-ssp585_IWF_index_ens = ca.standardize(ssp585_IWF_index).mean(dim="models", skipna=True)
-ssp585_SAM_index_ens = ca.standardize(ssp585_SAM_index).mean(dim="models", skipna=True)
+ssp585_IWF_index_ens = ca.standardize(ssp585_IWF_index.mean(dim="models", skipna=True))
+ssp585_SAM_index_ens = ca.standardize(ssp585_SAM_index.mean(dim="models", skipna=True))
 # %%
 #   calculate the rolling correlation of SAM and IWF index in ssp585
 freq = "AS-JUL"
 window = 31
 
-ssp585_IWF_SAM_rolling_9 = ca.rolling_reg_index(
-    ssp585_IWF_index, ssp585_SAM_index, ssp585_IWF_index.time, window, freq, True
+ssp585_IWF_SAM_ens_rolling = ca.rolling_reg_index(
+    ssp585_IWF_index_ens, ssp585_SAM_index_ens, ssp585_IWF_index_ens.time, window, freq, True
 )
 # %%
 #   plot the rolling correlation coefficients of SAM and IWF index
@@ -164,13 +164,14 @@ lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
 
 
-m1 = axs[0].line(ssp585_IWF_index.time.dt.year, ca.standardize(ssp585_IWF_index), lw=lw, color="black",)
-m2 = axs[0].line(ssp585_SAM_index.time.dt.year, ca.standardize(ssp585_SAM_index), lw=lw, color="blue",)
+m1 = axs[0].line(
+    ssp585_IWF_index_ens.time.dt.year, ssp585_IWF_index_ens, lw=lw, color="black",)
+m2 = axs[0].line(ssp585_SAM_index_ens.time.dt.year, ssp585_SAM_index_ens, lw=lw, color="blue",)
 m3 = axs[0].line(
-    ssp585_IWF_index.time.dt.year, np.array(ssp585_IWF_SAM_rolling_9["rvalue"]), lw=lw, color="red", linestyle="--",
+    ssp585_IWF_index_ens.time.dt.year, ssp585_IWF_SAM_ens_rolling["rvalue"].data, lw=lw, color="red", linestyle="--",
 )
 
-rlim = ca.cal_rlim1(0.95, len(ssp585_IWF_index.time.dt.year))
+rlim = ca.cal_rlim1(0.95, len(ssp585_IWF_index_ens.time.dt.year))
 
 axs[0].axhline(0, lw=0.8, color="grey5", linestyle="--")
 axs[0].axhline(rlim, lw=0.8, color="grey5", linestyle="--")
