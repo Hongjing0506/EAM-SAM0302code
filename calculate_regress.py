@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-13 16:04:45
 LastEditors: ChenHJ
-LastEditTime: 2022-04-13 21:04:33
+LastEditTime: 2022-04-13 22:38:45
 FilePath: /chenhj/0302code/calculate_regress.py
 Aim: 
 Mission: 
@@ -754,35 +754,224 @@ divuqvqssp585_JJA_detrend.name = "div_uqvq"
 divuqvqssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_div_uqvq.nc")
 
 # %%
-#   calculate the linear trends of different variables in historical run
+#   calculate the linear trends of different variables in ssp585 run
 
-fhgt_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/zg_historical_r144x72_195001-201412.nc")
-hgthis_ver_JJA = fhgt_his["zg"]
-
-fu_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/ua_historical_r144x72_195001-201412.nc")
-uhis_ver_JJA = fu_his["ua"]
-
-fv_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/va_historical_r144x72_195001-201412.nc")
-vhis_ver_JJA = fv_his["va"]
-
-fuq_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_uq_dpg.nc")
-uqhis_ver_JJA = fuq_his["uq_dpg"]
-
-fvq_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_vq_dpg.nc")
-vqhis_ver_JJA = fvq_his["vq_dpg"]
-
-# %%
-hgthis_ver_JJA_3lev = 
-
-
-tmp_time = np.arange(len(hgthis_ver_JJA_3lev.coords["time"]))
-
-# %%
-fhgt_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
+fhgt_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/zg_ssp585_r144x72_201501-209912.nc")
 hgtssp585_ver_JJA = fhgt_ssp585["zg"]
 
-fu_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_201501-209912.nc")
+fu_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ua_ssp585_r144x72_201501-209912.nc")
 ussp585_ver_JJA = fu_ssp585["ua"]
 
-fv_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
+fv_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/va_ssp585_r144x72_201501-209912.nc")
 vssp585_ver_JJA = fv_ssp585["va"]
+
+fuq_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_uq_dpg.nc")
+uqssp585_ver_JJA = fuq_ssp585["uq_dpg"]
+
+fvq_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_vq_dpg.nc")
+vqssp585_ver_JJA = fvq_ssp585["vq_dpg"]
+
+fpr_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/pr_ssp585_r144x72_201501-209912.nc")
+prssp585_ver_JJA = fpr_ssp585["pr"]
+
+fdivuqvq_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_div_uqvq.nc")
+divuqvqssp585_ver_JJA = fdivuqvq_ssp585["div_uqvq"]
+
+# %%
+hgtssp585_ver_JJA_3lev = hgtssp585_ver_JJA.sel(level=[200.0, 500.0, 850.0])
+ussp585_ver_JJA_3lev = ussp585_ver_JJA.sel(level=[200.0, 500.0, 850.0])
+vssp585_ver_JJA_3lev = vssp585_ver_JJA.sel(level=[200.0, 500.0, 850.0])
+
+tmp_time = np.arange(len(hgtssp585_ver_JJA_3lev.coords["time"]))
+hgtssp585_ver_JJA_3lev.coords["time"] = tmp_time
+ussp585_ver_JJA_3lev.coords["time"] = tmp_time
+vssp585_ver_JJA_3lev.coords["time"] = tmp_time
+divuqvqssp585_ver_JJA.coords["time"] = tmp_time
+uqssp585_ver_JJA.coords["time"] = tmp_time
+vqssp585_ver_JJA.coords["time"] = tmp_time
+prssp585_ver_JJA.coords["time"] = tmp_time
+
+(
+    hgt_ssp585_time_slope,
+    hgt_ssp585_time_intercept,
+    hgt_ssp585_time_rvalue,
+    hgt_ssp585_time_pvalue,
+    hgt_ssp585_time_hypothesis,
+) = ca.dim_linregress(hgtssp585_ver_JJA_3lev.coords["time"], hgtssp585_ver_JJA_3lev)
+
+(
+    u_ssp585_time_slope,
+    u_ssp585_time_intercept,
+    u_ssp585_time_rvalue,
+    u_ssp585_time_pvalue,
+    u_ssp585_time_hypothesis,
+) = ca.dim_linregress(ussp585_ver_JJA_3lev.coords["time"], ussp585_ver_JJA_3lev)
+
+(
+    v_ssp585_time_slope,
+    v_ssp585_time_intercept,
+    v_ssp585_time_rvalue,
+    v_ssp585_time_pvalue,
+    v_ssp585_time_hypothesis,
+) = ca.dim_linregress(vssp585_ver_JJA_3lev.coords["time"], vssp585_ver_JJA_3lev)
+
+(
+    divuqvq_ssp585_time_slope,
+    divuqvq_ssp585_time_intercept,
+    divuqvq_ssp585_time_rvalue,
+    divuqvq_ssp585_time_pvalue,
+    divuqvq_ssp585_time_hypothesis,
+) = ca.dim_linregress(divuqvqssp585_ver_JJA.coords["time"], divuqvqssp585_ver_JJA)
+
+(
+    uq_ssp585_time_slope,
+    uq_ssp585_time_intercept,
+    uq_ssp585_time_rvalue,
+    uq_ssp585_time_pvalue,
+    uq_ssp585_time_hypothesis,
+) = ca.dim_linregress(uqssp585_ver_JJA.coords["time"], uqssp585_ver_JJA)
+
+(
+    vq_ssp585_time_slope,
+    vq_ssp585_time_intercept,
+    vq_ssp585_time_rvalue,
+    vq_ssp585_time_pvalue,
+    vq_ssp585_time_hypothesis,
+) = ca.dim_linregress(vqssp585_ver_JJA.coords["time"], vqssp585_ver_JJA)
+
+(
+    pr_ssp585_time_slope,
+    pr_ssp585_time_intercept,
+    pr_ssp585_time_rvalue,
+    pr_ssp585_time_pvalue,
+    pr_ssp585_time_hypothesis,
+) = ca.dim_linregress(prssp585_ver_JJA.coords["time"], prssp585_ver_JJA)
+# %%
+#   generate the dataset and output the linear trend result of ssp585 run
+models = hgt_ssp585_time_rvalue.coords["models"]
+level = hgt_ssp585_time_rvalue.coords["level"]
+lon = hgt_ssp585_time_rvalue.coords["lon"]
+lat = hgt_ssp585_time_rvalue.coords["lat"]
+
+hgt_ssp585_time_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], hgt_ssp585_time_slope.data),
+        intercept=(["models", "level", "lat", "lon"], hgt_ssp585_time_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], hgt_ssp585_time_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], hgt_ssp585_time_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], hgt_ssp585_time_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt linear trends of multi-models in ssp585 run"),
+)
+hgt_ssp585_time_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/hgt_ssp585_time_regress.nc")
+
+u_ssp585_time_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], u_ssp585_time_slope.data),
+        intercept=(["models", "level", "lat", "lon"], u_ssp585_time_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], u_ssp585_time_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], u_ssp585_time_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], u_ssp585_time_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u linear trends of multi-models in ssp585 run"),
+)
+u_ssp585_time_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/u_ssp585_time_regress.nc")
+
+v_ssp585_time_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], v_ssp585_time_slope.data),
+        intercept=(["models", "level", "lat", "lon"], v_ssp585_time_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], v_ssp585_time_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], v_ssp585_time_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], v_ssp585_time_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v linear trends of multi-models in ssp585 run"),
+)
+v_ssp585_time_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/v_ssp585_time_regress.nc")
+
+divuqvq_ssp585_time_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], divuqvq_ssp585_time_slope.data),
+        intercept=(["models", "lat", "lon"], divuqvq_ssp585_time_intercept.data),
+        rvalue=(["models", "lat", "lon"], divuqvq_ssp585_time_rvalue.data),
+        pvalue=(["models", "lat", "lon"], divuqvq_ssp585_time_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], divuqvq_ssp585_time_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="divuqvq linear trends of multi-models in ssp585 run"),
+)
+divuqvq_ssp585_time_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/divuqvq_ssp585_time_regress.nc")
+
+uq_ssp585_time_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], uq_ssp585_time_slope.data),
+        intercept=(["models", "lat", "lon"], uq_ssp585_time_intercept.data),
+        rvalue=(["models", "lat", "lon"], uq_ssp585_time_rvalue.data),
+        pvalue=(["models", "lat", "lon"], uq_ssp585_time_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], uq_ssp585_time_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="uq linear trends of multi-models in ssp585 run"),
+)
+uq_ssp585_time_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/uq_ssp585_time_regress.nc")
+
+vq_ssp585_time_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], vq_ssp585_time_slope.data),
+        intercept=(["models", "lat", "lon"], vq_ssp585_time_intercept.data),
+        rvalue=(["models", "lat", "lon"], vq_ssp585_time_rvalue.data),
+        pvalue=(["models", "lat", "lon"], vq_ssp585_time_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], vq_ssp585_time_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="vq linear trends of multi-models in ssp585 run"),
+)
+vq_ssp585_time_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/vq_ssp585_time_regress.nc")
+
+pr_ssp585_time_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], pr_ssp585_time_slope.data),
+        intercept=(["models", "lat", "lon"], pr_ssp585_time_intercept.data),
+        rvalue=(["models", "lat", "lon"], pr_ssp585_time_rvalue.data),
+        pvalue=(["models", "lat", "lon"], pr_ssp585_time_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], pr_ssp585_time_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="pr linear trends of multi-models in ssp585 run"),
+)
+pr_ssp585_time_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/pr_ssp585_time_regress.nc")
+# %%
