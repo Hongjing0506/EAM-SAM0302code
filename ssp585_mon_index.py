@@ -142,7 +142,12 @@ ssp585_IWF_index = fssp585_IWF_index["IWF"]
 fssp585_SAM_index = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_SAM_index_2015-2099.nc")
 ssp585_SAM_index = fssp585_SAM_index["SAM"]
 # %%
-print(stats.linregress(ssp585_IWF_index, ssp585_SAM_index))
+#   calculate the ensemble mean SAM and IWF for historical run and ssp585 run
+his_IWF_index_ens = ca.standardize(his_IWF_index).mean(dim="models", skipna=True)
+his_SAM_index_ens = ca.standardize(his_SAM_index).mean(dim="models", skipna=True)
+
+ssp585_IWF_index_ens = ca.standardize(ssp585_IWF_index).mean(dim="models", skipna=True)
+ssp585_SAM_index_ens = ca.standardize(ssp585_SAM_index).mean(dim="models", skipna=True)
 # %%
 #   calculate the rolling correlation of SAM and IWF index in ssp585
 freq = "AS-JUL"
