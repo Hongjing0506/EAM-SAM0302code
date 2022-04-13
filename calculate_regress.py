@@ -1,0 +1,172 @@
+'''
+Author: ChenHJ
+Date: 2022-04-13 16:04:45
+LastEditors: ChenHJ
+LastEditTime: 2022-04-13 16:48:01
+FilePath: /chenhj/0302code/calculate_regress.py
+Aim: 
+Mission: 
+'''
+# %%
+import numpy as np
+import xarray as xr
+import os
+import re
+from cdo import Cdo
+import shutil
+import sys
+
+sys.path.append("/home/ys17-23/chenhj/self_def/")
+import plot as sepl
+import cal as ca
+from importlib import reload
+reload(sepl)
+
+import pandas as pd
+import metpy.calc as mpcalc
+import metpy.constants as constants
+import geocat.comp
+from windspharm.xarray import VectorWind
+
+
+# sd.path.append("/home/ys17-23/chenhj/1201code/self_def.py")
+
+cdo = Cdo()
+
+# for plot
+import proplot as pplt
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+from cartopy.mpl.ticker import LongitudeFormatter
+from cartopy.mpl.ticker import LatitudeFormatter
+from cartopy.util import add_cyclic_point
+from matplotlib.ticker import MultipleLocator
+from matplotlib.patches import Rectangle
+import matplotlib.pyplot as plt
+from scipy import stats
+from scipy.stats import t
+from scipy import signal
+from scipy.interpolate import interp2d
+from eofs.multivariate.standard import MultivariateEof
+from eofs.standard import Eof
+
+
+def patches(ax, x0, y0, width, height, proj):
+    from matplotlib.patches import Rectangle
+
+    rect = Rectangle(
+        (x0, y0),
+        width,
+        height,
+        fc="none",
+        ec="grey7",
+        linewidth=0.8,
+        zorder=1.1,
+        transform=proj,
+        linestyle="--",
+    )
+    ax.add_patch(rect)
+# %%
+#   calculate the regression on detrend SAM of different models in historical run
+fSAM_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_SAM_index_1950-2014.nc")
+his_SAM_index_detrend = fSAM_his["SAM"]
+
+fhgt_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc")
+hgthis_ver_JJA = fhgt_his["zg"]
+
+fu_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc")
+uhis_ver_JJA = fu_his["ua"]
+
+fv_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc")
+vhis_ver_JJA = fv_his["va"]
+
+hgthis_ver_JJA_3lev = hgthis_ver_JJA.sel(level=[200.0, 500.0, 850.0])
+uhis_ver_JJA_3lev = uhis_ver_JJA.sel(level=[200.0, 500.0, 850.0])
+vhis_ver_JJA_3lev = vhis_ver_JJA.sel(level=[200.0, 500.0, 850.0])
+(
+    hgt_his_SAM_slope,
+    hgt_his_SAM_intercept,
+    hgt_his_SAM_rvalue,
+    hgt_his_SAM_pvalue,
+    hgt_his_SAM_hypothesis,
+) = ca.dim_linregress(his_SAM_index_detrend, hgthis_ver_JJA_3lev)
+
+(
+    u_his_SAM_slope,
+    u_his_SAM_intercept,
+    u_his_SAM_rvalue,
+    u_his_SAM_pvalue,
+    u_his_SAM_hypothesis,
+) = ca.dim_linregress(his_SAM_index_detrend, uhis_ver_JJA_3lev)
+
+(
+    v_his_SAM_slope,
+    v_his_SAM_intercept,
+    v_his_SAM_rvalue,
+    v_his_SAM_pvalue,
+    v_his_SAM_hypothesis,
+) = ca.dim_linregress(his_SAM_index_detrend, vhis_ver_JJA_3lev)
+
+# %%
+models = hgt_his_SAM_rvalue.coords["models"]
+lon = hgt_his_SAM_rvalue.coords["lon"]
+lat = hgt_his_SAM_rvalue.coords["lat"]
+level = hgt_his_SAM_rvalue.coords["level"]
+
+# %%
+#   create the dataset of hgt/u/v regress onto SAM index in historical run
+hgt_his_SAM_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], hgt_his_SAM_slope.data),
+        intercept=(["models", "level", "lat", "lon"], hgt_his_SAM_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], hgt_his_SAM_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], hgt_his_SAM_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], hgt_his_SAM_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of multi-models in historical run regress onto his_SAM_index"),
+)
+
+u_his_SAM_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], u_his_SAM_slope.data),
+        intercept=(["models", "level", "lat", "lon"], u_his_SAM_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], u_his_SAM_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], u_his_SAM_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], u_his_SAM_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of multi-models in historical run regress onto his_SAM_index"),
+)
+
+v_his_SAM_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], v_his_SAM_slope.data),
+        intercept=(["models", "level", "lat", "lon"], v_his_SAM_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], v_his_SAM_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], v_his_SAM_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], v_his_SAM_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of multi-models in historical run regress onto his_SAM_index"),
+)
+# %%
+#   output the regress result
+hgt_his_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/hgt_his_SAM_regress.nc")
+u_his_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/u_his_SAM_regress.nc")
+v_his_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/v_his_SAM_regress.nc")
