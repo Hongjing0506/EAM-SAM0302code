@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-13 16:04:45
 LastEditors: ChenHJ
-LastEditTime: 2022-04-13 19:53:24
+LastEditTime: 2022-04-13 19:56:50
 FilePath: /chenhj/0302code/calculate_regress.py
 Aim: 
 Mission: 
@@ -592,3 +592,133 @@ hgt_ssp585_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/S
 u_ssp585_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/u_ssp585_IWF_regress.nc")
 v_ssp585_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/v_ssp585_IWF_regress.nc")
 # %%
+#   calculate the uq and vq of multi-models in ssp585 run regress onto SAM index
+fuq_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_uq_dpg.nc")
+uqssp585_JJA = fuq_ssp585["uq_dpg"]
+
+fvq_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_vq_dpg.nc")
+vqssp585_JJA = fvq_ssp585["vq_dpg"]
+
+# %%
+(
+    uq_ssp585_SAM_slope,
+    uq_ssp585_SAM_intercept,
+    uq_ssp585_SAM_rvalue,
+    uq_ssp585_SAM_pvalue,
+    uq_ssp585_SAM_hypothesis,
+) = ca.dim_linregress(ssp585_SAM_index_detrend, uqssp585_JJA)
+
+(
+    vq_ssp585_SAM_slope,
+    vq_ssp585_SAM_intercept,
+    vq_ssp585_SAM_rvalue,
+    vq_ssp585_SAM_pvalue,
+    vq_ssp585_SAM_hypothesis,
+) = ca.dim_linregress(ssp585_SAM_index_detrend, vqssp585_JJA)
+
+
+# %%
+models = uq_ssp585_SAM_rvalue.coords["models"]
+lon = uq_ssp585_SAM_rvalue.coords["lon"]
+lat = uq_ssp585_SAM_rvalue.coords["lat"]
+
+# %%
+#   create the dataset of uq/vq regress onto SAM index in ssp585 run
+uq_ssp585_SAM_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], uq_ssp585_SAM_slope.data),
+        intercept=(["models", "lat", "lon"], uq_ssp585_SAM_intercept.data),
+        rvalue=(["models", "lat", "lon"], uq_ssp585_SAM_rvalue.data),
+        pvalue=(["models", "lat", "lon"], uq_ssp585_SAM_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], uq_ssp585_SAM_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="uq fields of multi-models in ssp585 run regress onto ssp585_SAM_index"),
+)
+
+vq_ssp585_SAM_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], vq_ssp585_SAM_slope.data),
+        intercept=(["models", "lat", "lon"], vq_ssp585_SAM_intercept.data),
+        rvalue=(["models", "lat", "lon"], vq_ssp585_SAM_rvalue.data),
+        pvalue=(["models", "lat", "lon"], vq_ssp585_SAM_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], vq_ssp585_SAM_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="vq fields of multi-models in ssp585 run regress onto ssp585_SAM_index"),
+)
+# %%
+#   output the regress result
+uq_ssp585_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/uq_ssp585_SAM_regress.nc")
+
+vq_ssp585_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/vq_ssp585_SAM_regress.nc")
+# %%
+#   calculate the uq and vq of multi-models in ssp585 run regress onto IWF index
+(
+    uq_ssp585_IWF_slope,
+    uq_ssp585_IWF_intercept,
+    uq_ssp585_IWF_rvalue,
+    uq_ssp585_IWF_pvalue,
+    uq_ssp585_IWF_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index_detrend, uqssp585_JJA)
+
+(
+    vq_ssp585_IWF_slope,
+    vq_ssp585_IWF_intercept,
+    vq_ssp585_IWF_rvalue,
+    vq_ssp585_IWF_pvalue,
+    vq_ssp585_IWF_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index_detrend, vqssp585_JJA)
+
+
+# %%
+models = uq_ssp585_IWF_rvalue.coords["models"]
+lon = uq_ssp585_IWF_rvalue.coords["lon"]
+lat = uq_ssp585_IWF_rvalue.coords["lat"]
+
+# %%
+#   create the dataset of uq/vq regress onto IWF index in ssp585 run
+uq_ssp585_IWF_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], uq_ssp585_IWF_slope.data),
+        intercept=(["models", "lat", "lon"], uq_ssp585_IWF_intercept.data),
+        rvalue=(["models", "lat", "lon"], uq_ssp585_IWF_rvalue.data),
+        pvalue=(["models", "lat", "lon"], uq_ssp585_IWF_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], uq_ssp585_IWF_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="uq fields of multi-models in ssp585 run regress onto ssp585_IWF_index"),
+)
+
+vq_ssp585_IWF_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], vq_ssp585_IWF_slope.data),
+        intercept=(["models", "lat", "lon"], vq_ssp585_IWF_intercept.data),
+        rvalue=(["models", "lat", "lon"], vq_ssp585_IWF_rvalue.data),
+        pvalue=(["models", "lat", "lon"], vq_ssp585_IWF_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], vq_ssp585_IWF_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="vq fields of multi-models in ssp585 run regress onto ssp585_IWF_index"),
+)
+# %%
+#   output the regress result
+uq_ssp585_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/uq_ssp585_IWF_regress.nc")
+
+vq_ssp585_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/vq_ssp585_IWF_regress.nc")
