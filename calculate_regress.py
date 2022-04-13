@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-13 16:04:45
 LastEditors: ChenHJ
-LastEditTime: 2022-04-13 17:59:10
+LastEditTime: 2022-04-13 19:42:25
 FilePath: /chenhj/0302code/calculate_regress.py
 Aim: 
 Mission: 
@@ -393,4 +393,110 @@ vq_his_IWF_regress = xr.Dataset(
 uq_his_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/uq_his_IWF_regress.nc")
 
 vq_his_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/vq_his_IWF_regress.nc")
+# %%
+# ===============================================
+# %%
+#   calculate the hgt/u/v of multi-models in ssp585 run regress onto SAM index
+fSAM_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_SAM_index_2015-2099.nc")
+ssp585_SAM_index_detrend = fSAM_ssp585["SAM"]
+
+fhgt_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
+hgtssp585_ver_JJA = fhgt_ssp585["zg"]
+
+fu_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_201501-209912.nc")
+ussp585_ver_JJA = fu_ssp585["ua"]
+
+fv_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
+vssp585_ver_JJA = fv_ssp585["va"]
+
+hgtssp585_ver_JJA_3lev = hgtssp585_ver_JJA.sel(level=[200.0, 500.0, 850.0])
+ussp585_ver_JJA_3lev = ussp585_ver_JJA.sel(level=[200.0, 500.0, 850.0])
+vssp585_ver_JJA_3lev = vssp585_ver_JJA.sel(level=[200.0, 500.0, 850.0])
+(
+    hgt_ssp585_SAM_slope,
+    hgt_ssp585_SAM_intercept,
+    hgt_ssp585_SAM_rvalue,
+    hgt_ssp585_SAM_pvalue,
+    hgt_ssp585_SAM_hypothesis,
+) = ca.dim_linregress(ssp585_SAM_index_detrend, hgtssp585_ver_JJA_3lev)
+
+(
+    u_ssp585_SAM_slope,
+    u_ssp585_SAM_intercept,
+    u_ssp585_SAM_rvalue,
+    u_ssp585_SAM_pvalue,
+    u_ssp585_SAM_hypothesis,
+) = ca.dim_linregress(ssp585_SAM_index_detrend, ussp585_ver_JJA_3lev)
+
+(
+    v_ssp585_SAM_slope,
+    v_ssp585_SAM_intercept,
+    v_ssp585_SAM_rvalue,
+    v_ssp585_SAM_pvalue,
+    v_ssp585_SAM_hypothesis,
+) = ca.dim_linregress(ssp585_SAM_index_detrend, vssp585_ver_JJA_3lev)
+
+# %%
+models = hgt_ssp585_SAM_rvalue.coords["models"]
+lon = hgt_ssp585_SAM_rvalue.coords["lon"]
+lat = hgt_ssp585_SAM_rvalue.coords["lat"]
+level = hgt_ssp585_SAM_rvalue.coords["level"]
+
+# %%
+#   create the dataset of hgt/u/v regress onto SAM index in ssp585 run
+hgt_ssp585_SAM_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], hgt_ssp585_SAM_slope.data),
+        intercept=(["models", "level", "lat", "lon"], hgt_ssp585_SAM_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], hgt_ssp585_SAM_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], hgt_ssp585_SAM_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], hgt_ssp585_SAM_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of multi-models in ssp585 run regress onto ssp585_SAM_index"),
+)
+
+u_ssp585_SAM_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], u_ssp585_SAM_slope.data),
+        intercept=(["models", "level", "lat", "lon"], u_ssp585_SAM_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], u_ssp585_SAM_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], u_ssp585_SAM_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], u_ssp585_SAM_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of multi-models in ssp585 run regress onto ssp585_SAM_index"),
+)
+
+v_ssp585_SAM_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], v_ssp585_SAM_slope.data),
+        intercept=(["models", "level", "lat", "lon"], v_ssp585_SAM_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], v_ssp585_SAM_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], v_ssp585_SAM_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], v_ssp585_SAM_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of multi-models in ssp585 run regress onto ssp585_SAM_index"),
+)
+# %%
+#   output the regress result
+hgt_ssp585_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/hgt_ssp585_SAM_regress.nc")
+u_ssp585_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/u_ssp585_SAM_regress.nc")
+v_ssp585_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/v_ssp585_SAM_regress.nc")
 # %%
