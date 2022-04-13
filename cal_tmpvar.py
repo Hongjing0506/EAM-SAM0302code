@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-12 23:51:26
+LastEditTime: 2022-04-13 10:32:20
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -787,3 +787,20 @@ ssp585_SAM_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj
 ssp585_EAM_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_EAM_index_2015-2099.nc")
 ssp585_IWF_index_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_IWF_index_2015-2099.nc")
 # %%
+
+ssp585_dsdpg_detrend = ca.detrend_dim(ssp585_dsdpg, "time", deg=1, demean=False)
+
+ssp585_dsdpg_detrend.name = "dsdpg"
+ssp585_dsdpg_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_dsdpg.nc")
+# %%
+uq_dpg_ssp585_JJA_detrend = ca.detrend_dim(uq_dpg_ssp585_JJA, "time", deg=1, demean=False)
+vq_dpg_ssp585_JJA_detrend = ca.detrend_dim(vq_dpg_ssp585_JJA, "time", deg=1, demean=False)
+
+uq_dpg_ssp585_JJA_detrend.name = "uq_dpg"
+vq_dpg_ssp585_JJA_detrend.name = "vq_dpg"
+
+uq_dpg_ssp585_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_uq_dpg.nc")
+vq_dpg_ssp585_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_vq_dpg.nc")
+# %%
+#   calculate the regression on SAM of different models in historical run
+
