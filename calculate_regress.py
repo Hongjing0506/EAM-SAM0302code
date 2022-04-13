@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-13 16:04:45
 LastEditors: ChenHJ
-LastEditTime: 2022-04-13 20:01:22
+LastEditTime: 2022-04-13 21:04:33
 FilePath: /chenhj/0302code/calculate_regress.py
 Aim: 
 Mission: 
@@ -723,3 +723,66 @@ uq_ssp585_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SA
 
 vq_ssp585_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/vq_ssp585_IWF_regress.nc")
 # %%
+#   calculate the divergence of uq and vq
+fuq_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_uq_dpg.nc")
+uqhis_ver_JJA = fuq_his["uq_dpg"]
+
+fvq_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_vq_dpg.nc")
+vqhis_ver_JJA = fvq_his["vq_dpg"]
+
+divuqvqhis_JJA = ca.cal_divergence(uqhis_ver_JJA, vqhis_ver_JJA)
+divuqvqhis_JJA.name = "div_uqvq"
+divuqvqhis_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_div_uqvq.nc")
+
+divuqvqhis_JJA_detrend = ca.detrend_dim(divuqvqhis_JJA, "time", deg=1, demean=False)
+divuqvqhis_JJA_detrend.name = "div_uqvq"
+divuqvqhis_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_div_uqvq.nc")
+
+# %%
+fuq_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_uq_dpg.nc")
+uqssp585_ver_JJA = fuq_ssp585["uq_dpg"]
+
+fvq_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_vq_dpg.nc")
+vqssp585_ver_JJA = fvq_ssp585["vq_dpg"]
+
+divuqvqssp585_JJA = ca.cal_divergence(uqssp585_ver_JJA, vqssp585_ver_JJA)
+divuqvqssp585_JJA.name = "div_uqvq"
+divuqvqssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_div_uqvq.nc")
+
+divuqvqssp585_JJA_detrend = ca.detrend_dim(divuqvqssp585_JJA, "time", deg=1, demean=False)
+divuqvqssp585_JJA_detrend.name = "div_uqvq"
+divuqvqssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_div_uqvq.nc")
+
+# %%
+#   calculate the linear trends of different variables in historical run
+
+fhgt_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/zg_historical_r144x72_195001-201412.nc")
+hgthis_ver_JJA = fhgt_his["zg"]
+
+fu_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/ua_historical_r144x72_195001-201412.nc")
+uhis_ver_JJA = fu_his["ua"]
+
+fv_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/va_historical_r144x72_195001-201412.nc")
+vhis_ver_JJA = fv_his["va"]
+
+fuq_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_uq_dpg.nc")
+uqhis_ver_JJA = fuq_his["uq_dpg"]
+
+fvq_his = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_vq_dpg.nc")
+vqhis_ver_JJA = fvq_his["vq_dpg"]
+
+# %%
+hgthis_ver_JJA_3lev = 
+
+
+tmp_time = np.arange(len(hgthis_ver_JJA_3lev.coords["time"]))
+
+# %%
+fhgt_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
+hgtssp585_ver_JJA = fhgt_ssp585["zg"]
+
+fu_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_201501-209912.nc")
+ussp585_ver_JJA = fu_ssp585["ua"]
+
+fv_ssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
+vssp585_ver_JJA = fv_ssp585["va"]
