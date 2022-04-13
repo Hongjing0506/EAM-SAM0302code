@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-13 17:04:18
+LastEditTime: 2022-04-13 19:26:03
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -804,6 +804,5 @@ vq_dpg_ssp585_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenh
 # %%
 
 # %%
-print(his_SAM_index_detrend.coords["models"])
-print(uhis_ver_JJA_3lev.coords["models"])
+
 # %%
