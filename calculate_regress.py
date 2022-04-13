@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-13 16:04:45
 LastEditors: ChenHJ
-LastEditTime: 2022-04-13 17:56:36
+LastEditTime: 2022-04-13 17:59:10
 FilePath: /chenhj/0302code/calculate_regress.py
 Aim: 
 Mission: 
@@ -294,18 +294,17 @@ lon = uq_his_SAM_rvalue.coords["lon"]
 lat = uq_his_SAM_rvalue.coords["lat"]
 
 # %%
-#   create the dataset of hgt/u/v regress onto SAM index in historical run
+#   create the dataset of uq/vq regress onto SAM index in historical run
 uq_his_SAM_regress = xr.Dataset(
     data_vars=dict(
-        slope=(["models", "level", "lat", "lon"], uq_his_SAM_slope.data),
-        intercept=(["models", "level", "lat", "lon"], uq_his_SAM_intercept.data),
-        rvalue=(["models", "level", "lat", "lon"], uq_his_SAM_rvalue.data),
-        pvalue=(["models", "level", "lat", "lon"], uq_his_SAM_pvalue.data),
-        hypothesis=(["models", "level", "lat", "lon"], uq_his_SAM_hypothesis.data),
+        slope=(["models", "lat", "lon"], uq_his_SAM_slope.data),
+        intercept=(["models", "lat", "lon"], uq_his_SAM_intercept.data),
+        rvalue=(["models", "lat", "lon"], uq_his_SAM_rvalue.data),
+        pvalue=(["models", "lat", "lon"], uq_his_SAM_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], uq_his_SAM_hypothesis.data),
     ),
     coords=dict(
         models=models.data,
-        level=level.data,
         lat=lat.data,
         lon=lon.data,
     ),
@@ -314,15 +313,14 @@ uq_his_SAM_regress = xr.Dataset(
 
 vq_his_SAM_regress = xr.Dataset(
     data_vars=dict(
-        slope=(["models", "level", "lat", "lon"], vq_his_SAM_slope.data),
-        intercept=(["models", "level", "lat", "lon"], vq_his_SAM_intercept.data),
-        rvalue=(["models", "level", "lat", "lon"], vq_his_SAM_rvalue.data),
-        pvalue=(["models", "level", "lat", "lon"], vq_his_SAM_pvalue.data),
-        hypothesis=(["models", "level", "lat", "lon"], vq_his_SAM_hypothesis.data),
+        slope=(["models", "lat", "lon"], vq_his_SAM_slope.data),
+        intercept=(["models", "lat", "lon"], vq_his_SAM_intercept.data),
+        rvalue=(["models", "lat", "lon"], vq_his_SAM_rvalue.data),
+        pvalue=(["models", "lat", "lon"], vq_his_SAM_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], vq_his_SAM_hypothesis.data),
     ),
     coords=dict(
         models=models.data,
-        level=level.data,
         lat=lat.data,
         lon=lon.data,
     ),
@@ -333,4 +331,66 @@ vq_his_SAM_regress = xr.Dataset(
 uq_his_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/uq_his_SAM_regress.nc")
 
 vq_his_SAM_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/vq_his_SAM_regress.nc")
+# %%
+#   calculate the uq and vq of multi-models in historical run regress onto IWF index
+(
+    uq_his_IWF_slope,
+    uq_his_IWF_intercept,
+    uq_his_IWF_rvalue,
+    uq_his_IWF_pvalue,
+    uq_his_IWF_hypothesis,
+) = ca.dim_linregress(his_IWF_index_detrend, uqhis_JJA)
+
+(
+    vq_his_IWF_slope,
+    vq_his_IWF_intercept,
+    vq_his_IWF_rvalue,
+    vq_his_IWF_pvalue,
+    vq_his_IWF_hypothesis,
+) = ca.dim_linregress(his_IWF_index_detrend, vqhis_JJA)
+
+
+# %%
+models = uq_his_IWF_rvalue.coords["models"]
+lon = uq_his_IWF_rvalue.coords["lon"]
+lat = uq_his_IWF_rvalue.coords["lat"]
+
+# %%
+#   create the dataset of uq/vq regress onto IWF index in historical run
+uq_his_IWF_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], uq_his_IWF_slope.data),
+        intercept=(["models", "lat", "lon"], uq_his_IWF_intercept.data),
+        rvalue=(["models", "lat", "lon"], uq_his_IWF_rvalue.data),
+        pvalue=(["models", "lat", "lon"], uq_his_IWF_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], uq_his_IWF_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="uq fields of multi-models in historical run regress onto his_IWF_index"),
+)
+
+vq_his_IWF_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], vq_his_IWF_slope.data),
+        intercept=(["models", "lat", "lon"], vq_his_IWF_intercept.data),
+        rvalue=(["models", "lat", "lon"], vq_his_IWF_rvalue.data),
+        pvalue=(["models", "lat", "lon"], vq_his_IWF_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], vq_his_IWF_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="vq fields of multi-models in historical run regress onto his_IWF_index"),
+)
+# %%
+#   output the regress result
+uq_his_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/uq_his_IWF_regress.nc")
+
+vq_his_IWF_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/vq_his_IWF_regress.nc")
 # %%
