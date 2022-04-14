@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-14 18:20:30
+LastEditTime: 2022-04-14 21:25:05
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -76,8 +76,8 @@ pressp585_JJA = fpressp585["pr"] * 3600 *24
 #   calculate the precipitation regress onto India precipitation
 preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
 
-lat = prehis.coords["lat"]
-lon = prehis.coords["lon"]
+lat = prehis_JJA.coords["lat"]
+lon = prehis_JJA.coords["lon"]
 
 lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
 lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
@@ -372,6 +372,7 @@ sepl.plt_sig(
 axs[2].format(
     rtitle="2015-2099", ltitle="ssp585 ensmean",
 )
+axs[2].colorbar(con, loc="b", width=0.13, length=0.7, label="")
 # ===================================================
 con = axs[3].contourf(
     pre_ssp585_India_pre_slope_gmodels_ens - pre_his_India_pre_slope_gmodels_ens,
@@ -392,3 +393,24 @@ axs[3].format(
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 # %%
+#   read the divuqvq/uq/vq data in historical and ssp585 run
+fdivuqvqhis = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_div_uqvq.nc")
+divuqvqhis_JJA = fdivuqvqhis["div_uqvq"]
+
+fuqhis = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_uq_dpg.nc")
+uqhis_JJA = fuqhis["uq_dpg"]
+
+fvqhis = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_vq_dpg.nc")
+vqhis_JJA = fvqhis["vq_dpg"]
+
+fdivuqvqssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_div_uqvq.nc")
+divuqvqssp585_JJA = fdivuqvqssp585["div_uqvq"]
+
+fuqssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_uq_dpg.nc")
+uqssp585_JJA = fuqssp585["uq_dpg"]
+
+fvqssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_vq_dpg.nc")
+vqssp585_JJA = fvqssp585["vq_dpg"]
+
+# %%
+#   calculate the
