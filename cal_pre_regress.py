@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-14 21:38:31
+LastEditTime: 2022-04-14 22:00:32
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -462,5 +462,89 @@ uq_dpg_ERA5_JJA.attrs["units"] = "100kg/(m*s)"
 vq_dpg_ERA5_JJA.attrs["units"] = "100kg/(m*s)"
 
 divuqvqERA5_JJA = ca.cal_divergence(uq_dpg_ERA5_JJA, vq_dpg_ERA5_JJA)
+divuqvqERA5_JJA = ca.detrend_dim(divuqvqERA5_JJA, "time", deg=1, demean=False)
 # %%
 #   pick up the good models in historical run and ssp585 run
+divuqvqhis_JJA_gmodels = divuqvqhis_JJA.sel(models=gmodels)
+uqhis_JJA_gmodels = uqhis_JJA.sel(models=gmodels)
+vqhis_JJA_gmodels = vqhis_JJA.sel(models=gmodels)
+
+divuqvqssp585_JJA_gmodels = divuqvqssp585_JJA.sel(models=gmodels)
+uqssp585_JJA_gmodels = uqssp585_JJA.sel(models=gmodels)
+vqssp585_JJA_gmodels = vqssp585_JJA.sel(models=gmodels)
+# %%
+#   calculate the divuqvq/uq/vq regress onto IndR
+preCRU_India_JJA.coords["time"] = divuqvqERA5_JJA.coords["time"]
+(
+    pre_CRU_India_divuqvq_slope,
+    pre_CRU_India_divuqvq_intercept,
+    pre_CRU_India_divuqvq_rvalue,
+    pre_CRU_India_divuqvq_pvalue,
+    pre_CRU_India_divuqvq_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, divuqvqERA5_JJA)
+
+(
+    pre_CRU_India_uq_slope,
+    pre_CRU_India_uq_intercept,
+    pre_CRU_India_uq_rvalue,
+    pre_CRU_India_uq_pvalue,
+    pre_CRU_India_uq_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, uq_dpg_ERA5_JJA)
+
+(
+    pre_CRU_India_vq_slope,
+    pre_CRU_India_vq_intercept,
+    pre_CRU_India_vq_rvalue,
+    pre_CRU_India_vq_pvalue,
+    pre_CRU_India_vq_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA, vq_dpg_ERA5_JJA)
+
+(
+    pre_his_India_divuqvq_slope,
+    pre_his_India_divuqvq_intercept,
+    pre_his_India_divuqvq_rvalue,
+    pre_his_India_divuqvq_pvalue,
+    pre_his_India_divuqvq_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, divuqvqhis_JJA)
+
+(
+    pre_his_India_uq_slope,
+    pre_his_India_uq_intercept,
+    pre_his_India_uq_rvalue,
+    pre_his_India_uq_pvalue,
+    pre_his_India_uq_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, uqhis_JJA)
+
+(
+    pre_his_India_vq_slope,
+    pre_his_India_vq_intercept,
+    pre_his_India_vq_rvalue,
+    pre_his_India_vq_pvalue,
+    pre_his_India_vq_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, vqhis_JJA)
+
+(
+    pre_ssp585_India_divuqvq_slope,
+    pre_ssp585_India_divuqvq_intercept,
+    pre_ssp585_India_divuqvq_rvalue,
+    pre_ssp585_India_divuqvq_pvalue,
+    pre_ssp585_India_divuqvq_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA, divuqvqssp585_JJA)
+
+(
+    pre_ssp585_India_uq_slope,
+    pre_ssp585_India_uq_intercept,
+    pre_ssp585_India_uq_rvalue,
+    pre_ssp585_India_uq_pvalue,
+    pre_ssp585_India_uq_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA, uqssp585_JJA)
+
+(
+    pre_ssp585_India_vq_slope,
+    pre_ssp585_India_vq_intercept,
+    pre_ssp585_India_vq_rvalue,
+    pre_ssp585_India_vq_pvalue,
+    pre_ssp585_India_vq_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA, vqssp585_JJA)
+
+# %%
