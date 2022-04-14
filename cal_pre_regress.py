@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-14 22:00:32
+LastEditTime: 2022-04-14 22:25:29
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -378,7 +378,7 @@ con = axs[3].contourf(
     pre_ssp585_India_pre_slope_gmodels_ens - pre_his_India_pre_slope_gmodels_ens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-0.5, 0.6, 0.05),
+    levels=np.arange(-0.5, 0.55, 0.05),
     zorder=0.8,
     extend="both",
     )
@@ -475,6 +475,8 @@ vqssp585_JJA_gmodels = vqssp585_JJA.sel(models=gmodels)
 # %%
 #   calculate the divuqvq/uq/vq regress onto IndR
 preCRU_India_JJA.coords["time"] = divuqvqERA5_JJA.coords["time"]
+prehis_India_JJA_gmodels = prehis_India_JJA.sel(models=gmodels)
+pressp585_India_JJA_gmodels = pressp585_India_JJA.sel(models=gmodels)
 (
     pre_CRU_India_divuqvq_slope,
     pre_CRU_India_divuqvq_intercept,
@@ -505,7 +507,7 @@ preCRU_India_JJA.coords["time"] = divuqvqERA5_JJA.coords["time"]
     pre_his_India_divuqvq_rvalue,
     pre_his_India_divuqvq_pvalue,
     pre_his_India_divuqvq_hypothesis,
-) = ca.dim_linregress(prehis_India_JJA, divuqvqhis_JJA)
+) = ca.dim_linregress(prehis_India_JJA_gmodels, divuqvqhis_JJA_gmodels)
 
 (
     pre_his_India_uq_slope,
@@ -513,7 +515,7 @@ preCRU_India_JJA.coords["time"] = divuqvqERA5_JJA.coords["time"]
     pre_his_India_uq_rvalue,
     pre_his_India_uq_pvalue,
     pre_his_India_uq_hypothesis,
-) = ca.dim_linregress(prehis_India_JJA, uqhis_JJA)
+) = ca.dim_linregress(prehis_India_JJA_gmodels, uqhis_JJA_gmodels)
 
 (
     pre_his_India_vq_slope,
@@ -521,7 +523,7 @@ preCRU_India_JJA.coords["time"] = divuqvqERA5_JJA.coords["time"]
     pre_his_India_vq_rvalue,
     pre_his_India_vq_pvalue,
     pre_his_India_vq_hypothesis,
-) = ca.dim_linregress(prehis_India_JJA, vqhis_JJA)
+) = ca.dim_linregress(prehis_India_JJA_gmodels, vqhis_JJA_gmodels)
 
 (
     pre_ssp585_India_divuqvq_slope,
@@ -529,7 +531,7 @@ preCRU_India_JJA.coords["time"] = divuqvqERA5_JJA.coords["time"]
     pre_ssp585_India_divuqvq_rvalue,
     pre_ssp585_India_divuqvq_pvalue,
     pre_ssp585_India_divuqvq_hypothesis,
-) = ca.dim_linregress(pressp585_India_JJA, divuqvqssp585_JJA)
+) = ca.dim_linregress(pressp585_India_JJA_gmodels, divuqvqssp585_JJA_gmodels)
 
 (
     pre_ssp585_India_uq_slope,
@@ -537,7 +539,7 @@ preCRU_India_JJA.coords["time"] = divuqvqERA5_JJA.coords["time"]
     pre_ssp585_India_uq_rvalue,
     pre_ssp585_India_uq_pvalue,
     pre_ssp585_India_uq_hypothesis,
-) = ca.dim_linregress(pressp585_India_JJA, uqssp585_JJA)
+) = ca.dim_linregress(pressp585_India_JJA_gmodels, uqssp585_JJA_gmodels)
 
 (
     pre_ssp585_India_vq_slope,
@@ -545,6 +547,24 @@ preCRU_India_JJA.coords["time"] = divuqvqERA5_JJA.coords["time"]
     pre_ssp585_India_vq_rvalue,
     pre_ssp585_India_vq_pvalue,
     pre_ssp585_India_vq_hypothesis,
-) = ca.dim_linregress(pressp585_India_JJA, vqssp585_JJA)
+) = ca.dim_linregress(pressp585_India_JJA_gmodels, vqssp585_JJA_gmodels)
 
 # %%
+#   calculate the ensemble mean of historical run and ssp585 run
+pre_his_India_divuqvq_slope_ens = pre_his_India_divuqvq_slope.mean(dim="models", skipna=True)
+pre_his_India_divuqvq_ens_mask = ca.MME_reg_mask(pre_his_India_divuqvq_slope_ens, pre_his_India_divuqvq_slope.std(dim="models", skipna=True), len(pre_his_India_divuqvq_slope.coords["models"]), True)
+
+pre_his_India_uq_slope_ens = pre_his_India_uq_slope.mean(dim="models", skipna=True)
+pre_his_India_uq_ens_mask = ca.MME_reg_mask(pre_his_India_uq_slope_ens, pre_his_India_uq_slope.std(dim="models", skipna=True), len(pre_his_India_uq_slope.coords["models"]), True)
+
+pre_his_India_vq_slope_ens = pre_his_India_vq_slope.mean(dim="models", skipna=True)
+pre_his_India_vq_ens_mask = ca.MME_reg_mask(pre_his_India_vq_slope_ens, pre_his_India_vq_slope.std(dim="models", skipna=True), len(pre_his_India_vq_slope.coords["models"]), True)
+
+pre_ssp585_India_divuqvq_slope_ens = pre_ssp585_India_divuqvq_slope.mean(dim="models", skipna=True)
+pre_ssp585_India_divuqvq_ens_mask = ca.MME_reg_mask(pre_ssp585_India_divuqvq_slope_ens, pre_ssp585_India_divuqvq_slope.std(dim="models", skipna=True), len(pre_ssp585_India_divuqvq_slope.coords["models"]), True)
+
+pre_ssp585_India_uq_slope_ens = pre_ssp585_India_uq_slope.mean(dim="models", skipna=True)
+pre_ssp585_India_uq_ens_mask = ca.MME_reg_mask(pre_ssp585_India_uq_slope_ens, pre_ssp585_India_uq_slope.std(dim="models", skipna=True), len(pre_ssp585_India_uq_slope.coords["models"]), True)
+
+pre_ssp585_India_vq_slope_ens = pre_ssp585_India_vq_slope.mean(dim="models", skipna=True)
+pre_ssp585_India_vq_ens_mask = ca.MME_reg_mask(pre_ssp585_India_vq_slope_ens, pre_ssp585_India_vq_slope.std(dim="models", skipna=True), len(pre_ssp585_India_vq_slope.coords["models"]), True)
