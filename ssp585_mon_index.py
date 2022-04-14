@@ -142,6 +142,13 @@ ssp585_IWF_index = fssp585_IWF_index["IWF"]
 fssp585_SAM_index = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_SAM_index_2015-2099.nc")
 ssp585_SAM_index = fssp585_SAM_index["SAM"]
 # %%
+#   calculate the IWF and SAM correlation coefficients in different models in historical run
+IWF_his_SAM_regress = ca.dim_linregress(ca.standardize(his_IWF_index), ca.standardize(his_SAM_index))
+tmp_models = his_SAM_index.coords["models"].where(IWF_his_SAM_regress[3]<=0.05, drop=True)
+print(IWF_his_SAM_regress[0].sel(models=tmp_models[:-1]).mean(dim="models", skipna=True))
+
+
+# %%
 #   calculate the ensemble mean SAM and IWF for historical run and ssp585 run
 his_IWF_index_ens = ca.standardize(his_IWF_index.mean(dim="models", skipna=True))
 his_SAM_index_ens = ca.standardize(his_SAM_index.mean(dim="models", skipna=True))
@@ -246,37 +253,7 @@ vq_dpg_ERA5_JJA = ca.detrend_dim(vq_dpg_ERA5_JJA, "time", deg=1, demean=False)
 uq_dpg_ERA5_JJA.attrs["units"] = "100kg/(m*s)"
 vq_dpg_ERA5_JJA.attrs["units"] = "100kg/(m*s)"
 
-hislevel = qhis_ver_JJA.coords["level"] * 100.0
-hislevel.attrs["units"] = "Pa"
-hisdp = geocat.comp.dpres_plevel(hislevel, sphis_JJA, ptop)
-hisdpg = hisdp / g
-hisdpg.attrs["units"] = "kg/m2"
-uqhis_ver_JJA = uhis_ver_JJA * qhis_ver_JJA.data * 1000.0
-vqhis_ver_JJA = vhis_ver_JJA * qhis_ver_JJA.data * 1000.0
-uqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-vqhis_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-uq_dpg_his_JJA = (uqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True) / 1e05
-vq_dpg_his_JJA = (vqhis_ver_JJA * hisdpg.data).sum(dim="level", skipna=True) / 1e05
-uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
-vq_dpg_his_JJA = ca.detrend_dim(vq_dpg_his_JJA, "time", deg=1, demean=False)
-uq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
-vq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
 
-ssp585level = qssp585_ver_JJA.coords["level"] * 100.0
-ssp585level.attrs["units"] = "Pa"
-ssp585dp = geocat.comp.dpres_plevel(ssp585level, spssp585_JJA, ptop)
-ssp585dpg = ssp585dp / g
-ssp585dpg.attrs["units"] = "kg/m2"
-uqssp585_ver_JJA = ussp585_ver_JJA * qssp585_ver_JJA.data * 1000.0
-vqssp585_ver_JJA = vssp585_ver_JJA * qssp585_ver_JJA.data * 1000.0
-uqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-vqssp585_ver_JJA.attrs["units"] = "[m/s][g/kg]"
-uq_dpg_ssp585_JJA = (uqssp585_ver_JJA * ssp585dpg.data).sum(dim="level", skipna=True) / 1e05
-vq_dpg_ssp585_JJA = (vqssp585_ver_JJA * ssp585dpg.data).sum(dim="level", skipna=True) / 1e05
-uq_dpg_ssp585_JJA = ca.detrend_dim(uq_dpg_ssp585_JJA, "time", deg=1, demean=False)
-vq_dpg_ssp585_JJA = ca.detrend_dim(vq_dpg_ssp585_JJA, "time", deg=1, demean=False)
-uq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
-vq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
 # %%
 #   calculate the India BOB and NCR uq\uq\vq area mean
 uq_dpg_ERA5_India_JJA = ca.cal_lat_weighted_mean(uq_dpg_ERA5_JJA.loc[:, 5:25, 50:80]).mean(dim="lon", skipna=True)
@@ -2989,3 +2966,38 @@ axs[0, 0].format(
     title="Uq reg SAM", rtitle="1950-2014", ltitle="ERA5",
 )
 # ======================================
+# %%
+#   calculate the hgt/u/v of ERA5 regress onto SAM index
+hgtERA5_ver_JJA_3lev = hgtERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0])
+uERA5_ver_JJA_3lev = uERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0])
+vERA5_ver_JJA_3lev = vERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0])
+
+(
+    SAM_ERA5_hgt_slope,
+    SAM_ERA5_hgt_intercept,
+    SAM_ERA5_hgt_rvalue,
+    SAM_ERA5_hgt_pvalue,
+    SAM_ERA5_hgt_hypothesis,
+) = ca.dim_linregress(ERA5_SAM_index, hgtERA5_ver_JJA_3lev)
+
+(
+    SAM_ERA5_u_slope,
+    SAM_ERA5_u_intercept,
+    SAM_ERA5_u_rvalue,
+    SAM_ERA5_u_pvalue,
+    SAM_ERA5_u_hypothesis,
+) = ca.dim_linregress(ERA5_SAM_index, uERA5_ver_JJA_3lev)
+
+(
+    SAM_ERA5_v_slope,
+    SAM_ERA5_v_intercept,
+    SAM_ERA5_v_rvalue,
+    SAM_ERA5_v_pvalue,
+    SAM_ERA5_v_hypothesis,
+) = ca.dim_linregress(ERA5_SAM_index, vERA5_ver_JJA_3lev)
+# %%
+#   read the data of hgt/u/v regress onto SAM index of different models in historical run
+hgt_his_SAM_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/hgt_his_SAM_regress.nc")
+u_his_SAM_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/u_his_SAM_regress.nc")
+v_his_SAM_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/v_his_SAM_regress.nc")
+# %%
