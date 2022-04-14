@@ -151,42 +151,80 @@ ssp585_SAM_index_ens = ca.standardize(ssp585_SAM_index.mean(dim="models", skipna
 # %%
 #   calculate the rolling correlation of SAM and IWF index in ssp585
 freq = "AS-JUL"
-window = 31
+window = 21
 
 ssp585_IWF_SAM_ens_rolling = ca.rolling_reg_index(
     ssp585_IWF_index_ens, ssp585_SAM_index_ens, ssp585_IWF_index_ens.time, window, freq, True
 )
+(ssp585_IWF_SAM_mm_rolling_avalue,
+ssp585_IWF_SAM_mm_rolling_bvalue,
+ssp585_IWF_SAM_mm_rolling_rvalue,
+ssp585_IWF_SAM_mm_rolling_pvalue,
+ssp585_IWF_SAM_mm_rolling_hyvalue) = ca.rolling_regression_pattern(ca.standardize(ssp585_IWF_index), ca.standardize(ssp585_SAM_index), ssp585_IWF_index.time, window, freq)
+
+rlim0 = ca.MME_reg_mask(ssp585_IWF_SAM_mm_rolling_avalue.mean(dim="models", skipna=True), ssp585_IWF_SAM_mm_rolling_avalue.std(dim="models", skipna=True), len(ssp585_IWF_SAM_mm_rolling_avalue.coords["models"]), False)
 # %%
 #   plot the rolling correlation coefficients of SAM and IWF index
 fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
-axs = fig.subplots(ncols=1, nrows=1)
+axs = fig.subplots(ncols=3, nrows=9)
 lw = 0.8
 # cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
-
-
+axs.format(grid=False, suptitle="ssp585 IWF & SAM", ylabel="", xlabel="year")
+# ===================================================
 m1 = axs[0].line(
     ssp585_IWF_index_ens.time.dt.year, ssp585_IWF_index_ens, lw=lw, color="black",)
 m2 = axs[0].line(ssp585_SAM_index_ens.time.dt.year, ssp585_SAM_index_ens, lw=lw, color="blue",)
 m3 = axs[0].line(
-    ssp585_IWF_index_ens.time.dt.year, ssp585_IWF_SAM_ens_rolling["rvalue"].data, lw=lw, color="red", linestyle="--",
+    ssp585_IWF_index_ens.time.dt.year, ssp585_IWF_SAM_ens_rolling["avalue"].data, lw=lw, color="green", linestyle="--",
+)
+m4 = axs[0].line(
+    ssp585_IWF_index_ens.time.dt.year, ssp585_IWF_SAM_mm_rolling_avalue.mean(dim="models", skipna=True).data, lw=lw, color="red", linestyle="--",
+)
+axs[0].line(
+    ssp585_IWF_index_ens.time.dt.year, rlim0.data, lw=lw, color="grey6", linestyle="--",
 )
 
-rlim = ca.cal_rlim1(0.95, len(ssp585_IWF_index_ens.time.dt.year))
+axs[0].axhline(0, lw=0.8, color="grey6")
 
-axs[0].axhline(0, lw=0.8, color="grey5", linestyle="--")
-axs[0].axhline(rlim, lw=0.8, color="grey5", linestyle="--")
-axs[0].axhline(-rlim, lw=0.8, color="grey5", linestyle="--")
 axs[0].format(
     ltitle="window={}".format(window),
-    rtitle="2015-2099",
-    title="IWF & SAM",
+    rtitle="ensmean",
     xrotation=0,
     ymin=-3.0,
     ymax=3.0,
     ylocator=0.5,
     yminorlocator=0.25,
 )
-axs[0].legend(handles=[m1, m2, m3], loc="ll", labels=["IWF", "SAM", "r"], ncols=1)
+
+# ===================================================
+models = ssp585_IWF_SAM_mm_rolling_avalue.coords["models"]
+for i,mod in enumerate(models):
+    m1 = axs[i+1].line(
+        ssp585_IWF_index.time.dt.year, ca.standardize(ssp585_IWF_index.sel(models=mod)), lw=lw, color="black",)
+    m2 = axs[i+1].line(ssp585_SAM_index.time.dt.year, ca.standardize(ssp585_SAM_index.sel(models=mod)), lw=lw, color="blue",)
+    m3 = axs[i+1].line(
+        ssp585_IWF_index.time.dt.year, ssp585_IWF_SAM_mm_rolling_avalue.sel(models=mod), lw=lw, color="red", linestyle="--",
+    )
+
+    axs[i+1].axhline(0, lw=0.8, color="grey6")
+
+    axs[i+1].format(
+        ltitle="window={}".format(window),
+        rtitle="{}".format(mod.data),
+        xrotation=0,
+        ymin=-3.0,
+        ymax=3.0,
+        ylocator=0.5,
+        yminorlocator=0.25,
+    )
+
+    rlim = ca.cal_rlim1(0.95, window)
+
+    axs[i+1].axhline(rlim, lw=0.8, color="grey6", linestyle="--")
+    axs[i+1].axhline(-rlim, lw=0.8, color="grey6", linestyle="--")
+# ===================================================
+fig.legend(handles=[m1, m2, m3], labels=["IWF", "SAM", "r"], loc="b")
+fig.format(abc="(a)", abcloc="l")
 # %%
 #   calculate the whole levels water vapor flux in ERA5 historical and ssp585
 ptop = 100 * 100
