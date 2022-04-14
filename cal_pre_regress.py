@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-14 22:25:29
+LastEditTime: 2022-04-14 23:51:55
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -63,14 +63,19 @@ fpreCRU = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/cru_ts4.01_r144x72_195001-201412.nc"
 )
 preCRU = fpreCRU["pre"]
-preCRU_JJA = ca.p_time(preCRU, 6, 8, True) / 30.67
+preCRU_JJA = ca.p_time(preCRU, 6, 8, True)/30.67
 preCRU_JJA = ca.detrend_dim(preCRU_JJA, "time", deg=1, demean=False)
+preCRU_JJA.attrs["units"] = "mm/day"
 
 fprehis = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pr_historical_r144x72_195001-201412.nc")
-prehis_JJA = fprehis["pr"] * 3600 * 24
+prehis_JJA = fprehis["pr"]
+prehis_JJA.attrs["units"] = "mm/day"
+prehis_JJA.attrs["standard_name"] = "precipitation"
 
 fpressp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pr_ssp585_r144x72_201501-209912.nc")
-pressp585_JJA = fpressp585["pr"] * 3600 *24
+pressp585_JJA = fpressp585["pr"]
+pressp585_JJA.attrs["units"] = "mm/day"
+pressp585_JJA.attrs["standard_name"] = "precipitation"
 
 # %%
 #   calculate the precipitation regress onto India precipitation
@@ -568,3 +573,187 @@ pre_ssp585_India_uq_ens_mask = ca.MME_reg_mask(pre_ssp585_India_uq_slope_ens, pr
 
 pre_ssp585_India_vq_slope_ens = pre_ssp585_India_vq_slope.mean(dim="models", skipna=True)
 pre_ssp585_India_vq_ens_mask = ca.MME_reg_mask(pre_ssp585_India_vq_slope_ens, pre_ssp585_India_vq_slope.std(dim="models", skipna=True), len(pre_ssp585_India_vq_slope.coords["models"]), True)
+
+pre_CRU_India_uqvq_mask = ca.wind_check(
+    xr.where(pre_CRU_India_uq_pvalue<=0.05, 1.0, 0.0),
+    xr.where(pre_CRU_India_vq_pvalue<=0.05, 1.0, 0.0),
+    xr.where(pre_CRU_India_uq_pvalue<=0.05, 1.0, 0.0),
+    xr.where(pre_CRU_India_vq_pvalue<=0.05, 1.0, 0.0)
+    )
+pre_his_India_uqvq_mask = ca.wind_check(
+    pre_his_India_uq_ens_mask, 
+    pre_his_India_vq_ens_mask, 
+    pre_his_India_uq_ens_mask, 
+    pre_his_India_vq_ens_mask
+    )
+pre_ssp585_India_uqvq_mask = ca.wind_check(
+    pre_ssp585_India_uq_ens_mask, 
+    pre_ssp585_India_vq_ens_mask, 
+    pre_ssp585_India_uq_ens_mask, 
+    pre_ssp585_India_vq_ens_mask
+    )
+# %%
+#   plot the divuqvq/uq/vq regress onto IndR
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=4, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+    ax.add_patch(rect)
+    # Inida area
+    x0 = 70
+    y0 = 8.0
+    width = 16
+    height = 20.0
+    patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0].contourf(
+    pre_CRU_India_divuqvq_slope,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-3.0e-7, 3.5e-7, 5.0e-8),
+    zorder=0.8,
+    extend="both",
+    )
+sepl.plt_sig(
+    pre_CRU_India_divuqvq_slope, axs[0], n, np.where(pre_CRU_India_divuqvq_pvalue[::n, ::n] <= 0.05), "denim", 3.0,
+)
+m = axs[0].quiver(
+    pre_CRU_India_uq_slope.where(pre_CRU_India_uqvq_mask > 0.0)[::ski, ::ski],
+    pre_CRU_India_vq_slope.where(pre_CRU_India_uqvq_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.10,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[0].quiverkey(
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+)
+
+axs[0].format(
+    rtitle="1950-2014", ltitle="CRU",
+)
+# ===================================================
+con = axs[1].contourf(
+    pre_his_India_divuqvq_slope_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-3.0e-7, 3.5e-7, 5.0e-8),
+    zorder=0.8,
+    extend="both",
+    )
+sepl.plt_sig(
+    pre_his_India_divuqvq_slope_ens, axs[1], n, np.where(pre_his_India_divuqvq_ens_mask[::n, ::n] > 0.0), "denim", 3.0,
+)
+m = axs[1].quiver(
+    pre_his_India_uq_slope_ens.where(pre_his_India_uqvq_mask > 0.0)[::ski, ::ski],
+    pre_his_India_vq_slope_ens.where(pre_his_India_uqvq_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.10,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[1].quiverkey(
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+)
+
+axs[1].format(
+    rtitle="1950-2014", ltitle="historical ensmean",
+)
+# ===================================================
+con = axs[2].contourf(
+    pre_ssp585_India_divuqvq_slope_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-3.0e-7, 3.5e-7, 5.0e-8),
+    zorder=0.8,
+    extend="both",
+    )
+sepl.plt_sig(
+    pre_ssp585_India_divuqvq_slope_ens, axs[2], n, np.where(pre_ssp585_India_divuqvq_ens_mask[::n, ::n] > 0.0), "denim", 3.0,
+)
+m = axs[2].quiver(
+    pre_ssp585_India_uq_slope_ens.where(pre_ssp585_India_uqvq_mask > 0.0)[::ski, ::ski],
+    pre_ssp585_India_vq_slope_ens.where(pre_ssp585_India_uqvq_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.10,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[2].quiverkey(
+    m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+)
+
+axs[2].format(
+    rtitle="2015-2099", ltitle="ssp585 ensmean",
+)
+axs[2].colorbar(con, loc="b", width=0.13, length=0.7, label="")
+# ===================================================
+con = axs[3].contourf(
+    pre_ssp585_India_divuqvq_slope_ens - pre_his_India_divuqvq_slope_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-5.0e-8, 5.5e-8, 5.0e-9),
+    zorder=0.8,
+    extend="both",
+    )
+# sepl.plt_sig(
+#     pre_ssp585_India_pre_slope_gmodels_ens, axs[3], n, np.where(pre_ssp585_India_pre_slope_gmodels_ens_mask[::n, ::n] > 0.0), "denim", 3.0,
+# )
+m = axs[3].quiver(
+    (pre_ssp585_India_uq_slope_ens-pre_his_India_uq_slope_ens)[::ski, ::ski],
+    (pre_ssp585_India_vq_slope_ens-pre_his_India_vq_slope_ens)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.015,
+    pivot="mid",
+    color="black",
+)
+
+qk = axs[3].quiverkey(
+    m, X=1 - w / 2, Y=0.7 * h, U=0.1, label="0.1", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+)
+
+axs[3].format(
+    rtitle="diff", ltitle="ssp585 - historical",
+)
+# ===================================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="Uq & div reg IndR")
+# %%
