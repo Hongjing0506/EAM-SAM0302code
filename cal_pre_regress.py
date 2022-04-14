@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-14 21:25:05
+LastEditTime: 2022-04-14 21:38:31
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -413,4 +413,54 @@ fvqssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EA
 vqssp585_JJA = fvqssp585["vq_dpg"]
 
 # %%
-#   calculate the
+#   calculate the divuqvq/uq/vq in ERA5 reanalysis
+fuERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
+)
+uERA5 = fuERA5["u"]
+
+fvERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc"
+)
+vERA5 = fvERA5["v"]
+
+fspERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
+)
+spERA5 = fspERA5["sp"]
+
+fqERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc")
+qERA5 = fqERA5["q"]
+
+uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
+vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
+qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True).loc[:, 100.0:, :, :]
+spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
+
+uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
+vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
+qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
+spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
+
+ptop = 100 * 100
+g = 9.8
+#  ERA5 data
+ERA5level = qERA5_ver_JJA.coords["level"] * 100.0
+ERA5level.attrs["units"] = "Pa"
+ERA5dp = geocat.comp.dpres_plevel(ERA5level, spERA5_JJA, ptop)
+ERA5dpg = ERA5dp / g
+ERA5dpg.attrs["units"] = "kg/m2"
+uqERA5_ver_JJA = uERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
+vqERA5_ver_JJA = vERA5_ver_JJA * qERA5_ver_JJA.data * 1000.0
+uqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+vqERA5_ver_JJA.attrs["units"] = "[m/s][g/kg]"
+uq_dpg_ERA5_JJA = (uqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True) / 1e05
+vq_dpg_ERA5_JJA = (vqERA5_ver_JJA * ERA5dpg.data).sum(dim="level", skipna=True) / 1e05
+uq_dpg_ERA5_JJA = ca.detrend_dim(uq_dpg_ERA5_JJA, "time", deg=1, demean=False)
+vq_dpg_ERA5_JJA = ca.detrend_dim(vq_dpg_ERA5_JJA, "time", deg=1, demean=False)
+uq_dpg_ERA5_JJA.attrs["units"] = "100kg/(m*s)"
+vq_dpg_ERA5_JJA.attrs["units"] = "100kg/(m*s)"
+
+divuqvqERA5_JJA = ca.cal_divergence(uq_dpg_ERA5_JJA, vq_dpg_ERA5_JJA)
+# %%
+#   pick up the good models in historical run and ssp585 run
