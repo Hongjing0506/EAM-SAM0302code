@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-14 23:51:55
+LastEditTime: 2022-04-15 16:53:45
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -756,4 +756,7 @@ axs[3].format(
 # ===================================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="Uq & div reg IndR")
+# %%
+#   bootstrap method test for the difference MME
+
 # %%
