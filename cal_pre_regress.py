@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-15 17:55:18
+LastEditTime: 2022-04-15 19:06:55
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -761,8 +761,8 @@ fig.format(abc="(a)", abcloc="l", suptitle="Uq & div reg IndR")
 B = 5000
 alpha = 0.95
 dim = "models"
-pre_his_India_pre_slope_lowlim, pre_his_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_his_India_pre_slope, B, alpha, dim)
-pre_ssp585_India_pre_slope_lowlim, pre_ssp585_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_ssp585_India_pre_slope, B, alpha, dim)
+pre_his_India_pre_slope_lowlim, pre_his_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_his_India_pre_slope_gmodels, B, alpha, dim)
+pre_ssp585_India_pre_slope_lowlim, pre_ssp585_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_ssp585_India_pre_slope_gmodels, B, alpha, dim)
 
 pre_his_India_divuqvq_slope_lowlim, pre_his_India_divuqvq_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_his_India_divuqvq_slope, B, alpha, dim)
 pre_ssp585_India_divuqvq_slope_lowlim, pre_ssp585_India_divuqvq_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_ssp585_India_divuqvq_slope, B, alpha, dim)
@@ -773,3 +773,36 @@ pre_ssp585_India_uq_slope_lowlim, pre_ssp585_India_uq_slope_highlim = ca.cal_mea
 pre_his_India_vq_slope_lowlim, pre_his_India_vq_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_his_India_vq_slope, B, alpha, dim)
 pre_ssp585_India_vq_slope_lowlim, pre_ssp585_India_vq_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_ssp585_India_vq_slope, B, alpha, dim)
 # %%
+pre_diff_India_pre_slope_mask = ca.generate_bootstrap_mask(pre_his_India_pre_slope_lowlim, pre_his_India_pre_slope_highlim, pre_ssp585_India_pre_slope_lowlim, pre_ssp585_India_pre_slope_highlim)
+
+pre_diff_India_divuqvq_slope_mask = ca.generate_bootstrap_mask(pre_his_India_divuqvq_slope_lowlim, pre_his_India_divuqvq_slope_highlim, pre_ssp585_India_divuqvq_slope_lowlim, pre_ssp585_India_divuqvq_slope_highlim)
+
+pre_diff_India_uq_slope_mask = ca.generate_bootstrap_mask(pre_his_India_uq_slope_lowlim, pre_his_India_uq_slope_highlim, pre_ssp585_India_uq_slope_lowlim, pre_ssp585_India_uq_slope_highlim)
+
+pre_diff_India_vq_slope_mask = ca.generate_bootstrap_mask(pre_his_India_vq_slope_lowlim, pre_his_India_vq_slope_highlim, pre_ssp585_India_vq_slope_lowlim, pre_ssp585_India_vq_slope_highlim)
+
+# %%
+#   output the lowlim and highlim for historical run and ssp585 run
+pre_his_India_pre_slope_lowlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pre_his_India_pre_slope_lowlim.nc")
+pre_his_India_pre_slope_highlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pre_his_India_pre_slope_highlim.nc")
+
+pre_ssp585_India_pre_slope_lowlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pre_ssp585_India_pre_slope_lowlim.nc")
+pre_ssp585_India_pre_slope_highlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pre_ssp585_India_pre_slope_highlim.nc")
+
+pre_his_India_divuqvq_slope_lowlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pre_his_India_divuqvq_slope_lowlim.nc")
+pre_his_India_divuqvq_slope_highlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pre_his_India_divuqvq_slope_highlim.nc")
+
+pre_ssp585_India_divuqvq_slope_lowlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pre_ssp585_India_divuqvq_slope_lowlim.nc")
+pre_ssp585_India_divuqvq_slope_highlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pre_ssp585_India_divuqvq_slope_highlim.nc")
+
+pre_his_India_uq_slope_lowlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pre_his_India_uq_slope_lowlim.nc")
+pre_his_India_uq_slope_highlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pre_his_India_uq_slope_highlim.nc")
+
+pre_ssp585_India_uq_slope_lowlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pre_ssp585_India_uq_slope_lowlim.nc")
+pre_ssp585_India_uq_slope_highlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pre_ssp585_India_uq_slope_highlim.nc")
+
+pre_his_India_divuqvq_slope_lowlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pre_his_India_divuqvq_slope_lowlim.nc")
+pre_his_India_divuqvq_slope_highlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pre_his_India_divuqvq_slope_highlim.nc")
+
+pre_ssp585_India_vq_slope_lowlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pre_ssp585_India_vq_slope_lowlim.nc")
+pre_ssp585_India_vq_slope_highlim.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pre_ssp585_India_vq_slope_highlim.nc")
