@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-15 16:53:45
+LastEditTime: 2022-04-15 17:55:18
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -758,5 +758,18 @@ fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="Uq & div reg IndR")
 # %%
 #   bootstrap method test for the difference MME
+B = 5000
+alpha = 0.95
+dim = "models"
+pre_his_India_pre_slope_lowlim, pre_his_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_his_India_pre_slope, B, alpha, dim)
+pre_ssp585_India_pre_slope_lowlim, pre_ssp585_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_ssp585_India_pre_slope, B, alpha, dim)
 
+pre_his_India_divuqvq_slope_lowlim, pre_his_India_divuqvq_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_his_India_divuqvq_slope, B, alpha, dim)
+pre_ssp585_India_divuqvq_slope_lowlim, pre_ssp585_India_divuqvq_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_ssp585_India_divuqvq_slope, B, alpha, dim)
+
+pre_his_India_uq_slope_lowlim, pre_his_India_uq_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_his_India_uq_slope, B, alpha, dim)
+pre_ssp585_India_uq_slope_lowlim, pre_ssp585_India_uq_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_ssp585_India_uq_slope, B, alpha, dim)
+
+pre_his_India_vq_slope_lowlim, pre_his_India_vq_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_his_India_vq_slope, B, alpha, dim)
+pre_ssp585_India_vq_slope_lowlim, pre_ssp585_India_vq_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_ssp585_India_vq_slope, B, alpha, dim)
 # %%
