@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-16 11:28:18
+LastEditTime: 2022-04-16 20:52:09
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -88,11 +88,11 @@ pressp585_JJA.attrs["standard_name"] = "precipitation"
 #   calculate the precipitation regress onto India precipitation
 lat = preGPCP_JJA.coords["lat"]
 lon = preGPCP_JJA.coords["lon"]
-# lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
+lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
 # lat_India_range = lat[(lat >= 15.0) & (lat <= 28.0)]
-# lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
-lat_India_range = lat[(lat >= 30.0) & (lat <= 35.0)]
-lon_India_range = lon[(lon >= 112.5) & (lon <= 120.0)]
+lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+# lat_India_range = lat[(lat >= 30.0) & (lat <= 35.0)]
+# lon_India_range = lon[(lon >= 112.5) & (lon <= 120.0)]
 
 # preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 preCRU_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
@@ -100,11 +100,11 @@ preCRU_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_India_range,
 lat = prehis_JJA.coords["lat"]
 lon = prehis_JJA.coords["lon"]
 
-# lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
+lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
 # lat_India_range = lat[(lat >= 15.0) & (lat <= 28.0)]
-# lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
-lat_India_range = lat[(lat >= 30.0) & (lat <= 35.0)]
-lon_India_range = lon[(lon >= 112.5) & (lon <= 120.0)]
+lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+# lat_India_range = lat[(lat >= 30.0) & (lat <= 35.0)]
+# lon_India_range = lon[(lon >= 112.5) & (lon <= 120.0)]
 
 prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
@@ -320,6 +320,7 @@ pre_his_India_pre_slope_gmodels = pre_his_India_pre_slope.sel(models=gmodels)
 pre_ssp585_India_pre_slope_gmodels = pre_ssp585_India_pre_slope.sel(models=gmodels)
 pre_his_India_pre_pvalue_gmodels = pre_his_India_pre_pvalue.sel(models=gmodels)
 pre_ssp585_India_pre_pvalue_gmodels = pre_ssp585_India_pre_pvalue.sel(models=gmodels)
+pre_his_India_pre_rvalue_gmodels = pre_his_India_pre_rvalue.sel(models=gmodels)
 
 pre_his_India_pre_slope_gmodels_ens = pre_his_India_pre_slope_gmodels.mean(dim="models", skipna=True)
 pre_ssp585_India_pre_slope_gmodels_ens = pre_ssp585_India_pre_slope_gmodels.mean(dim="models", skipna=True)
@@ -856,8 +857,10 @@ fig.format(abc="(a)", abcloc="l", suptitle="Uq & div reg IndR")
 gmodels = ["CNRM-CM6-1", "MIROC-ES2L", "NorESM2-LM", "HadGEM3-GC31-LL", "MRI-ESM2-0", "ACCESS-CM2", "MIROC6", "EC-Earth3", "CESM2-WACCM", "CAMS-CSM1-0"]
 pre_ssp585_p3_India_pre_slope_gmodels = pre_ssp585_p3_India_pre_slope.sel(models=gmodels)
 pre_ssp585_p3_India_pre_pvalue_gmodels = pre_ssp585_p3_India_pre_pvalue.sel(models=gmodels)
+pre_ssp585_p3_India_pre_rvalue_gmodels = pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels)
 
 pre_ssp585_p3_India_pre_slope_gmodels_ens = pre_ssp585_p3_India_pre_slope_gmodels.mean(dim="models", skipna=True)
+
 
 pre_ssp585_p3_India_pre_slope_gmodels_ens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_slope_gmodels_ens, pre_ssp585_p3_India_pre_slope_gmodels.std(dim="models", skipna=True), len(gmodels), True)
 
@@ -865,8 +868,8 @@ pre_ssp585_p3_India_pre_slope_gmodels_ens_mask = ca.MME_reg_mask(pre_ssp585_p3_I
 B = 1000
 alpha = 0.90
 dim = "models"
-pre_his_India_pre_slope_lowlim, pre_his_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_his_India_pre_slope_gmodels, B, alpha, dim)
-pre_ssp585_p3_India_pre_slope_lowlim, pre_ssp585_p3_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_ssp585_p3_India_pre_slope_gmodels, B, alpha, dim)
+pre_his_India_pre_slope_lowlim, pre_his_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_his_India_pre_rvalue_gmodels, B, alpha, dim)
+pre_ssp585_p3_India_pre_slope_lowlim, pre_ssp585_p3_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_ssp585_p3_India_pre_rvalue_gmodels, B, alpha, dim)
 
 pre_diff_p3_India_pre_slope_mask = ca.generate_bootstrap_mask(pre_his_India_pre_slope_lowlim, pre_his_India_pre_slope_highlim, pre_ssp585_p3_India_pre_slope_lowlim, pre_ssp585_p3_India_pre_slope_highlim)
 # %%
@@ -894,11 +897,11 @@ w, h = 0.12, 0.14
 # ===================================================
 for ax in axs:
     # Inida area
-    x0 = 112.5
-    # y0 = 8.0
-    y0 = 30.0
-    width = 7.5
-    height = 5.0
+    x0 = 70
+    y0 = 8.0
+    # y0 = 30.0
+    width = 16.0
+    height = 20.0
     patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
