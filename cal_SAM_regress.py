@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-16 23:56:17
 LastEditors: ChenHJ
-LastEditTime: 2022-04-17 00:02:47
+LastEditTime: 2022-04-17 00:10:09
 FilePath: /chenhj/0302code/cal_SAM_regress.py
 Aim: 
 Mission: 
@@ -120,15 +120,19 @@ ERA5_SAM_index = ca.SAM(vERA5_ver_JJA)
 ERA5_SAM_index = ca.detrend_dim(ERA5_SAM_index, "time", deg=1, demean=False)
 
 # %%
-# read the SAM index of historical run and ssp585
+# read the SAM index and precipitation in historical run and ssp585
 fhis_SAM_index = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_SAM_index_1950-2014.nc")
 his_SAM_index = fhis_SAM_index["SAM"]
 
 fssp585_SAM_index = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_SAM_index_2015-2099.nc")
 ssp585_SAM_index = fssp585_SAM_index["SAM"]
 
+fprehis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pr_historical_r144x72_195001-201412.nc")
+prehis_JJA = fprehis_JJA["pr"]
+
+fpressp585_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pr_ssp585_r144x72_201501-209912.nc")
+pressp585_JJA = fpressp585_JJA["pr"]
 # %%
-#   calculate the correlation coefficients between SAM and IndR
 #   pick up the precipitation in India area
 lat = preCRU_JJA.coords["lat"]
 lon = preCRU_JJA.coords["lon"]
@@ -141,3 +145,23 @@ lon = preGPCP_JJA.coords["lon"]
 lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
 lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
 preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
+
+lat = prehis_JJA.coords["lat"]
+lon = prehis_JJA.coords["lon"]
+lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
+lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
+
+lat = pressp585_JJA.coords["lat"]
+lon = pressp585_JJA.coords["lon"]
+lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
+lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
+
+del(lat, lon)
+
+#   calculate the correlation coefficients between SAM and IndR
+IndR_ERA5_SAM_regress = stats.linregress(preCRU_India_JJA, ERA5_SAM_index)
+IndR_his_SAM_regress = ca.dim_linregress(prehis_India_JJA, his_SAM_index)
+IndR_ssp585_SAM_regress = ca.dim_linregress(pressp585_India_JJA, ssp585_SAM_index)
+# %%
