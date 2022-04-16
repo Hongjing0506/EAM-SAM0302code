@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-16 10:46:04
+LastEditTime: 2022-04-16 11:17:16
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -163,3 +163,21 @@ ssp585_IWF_index_gmodels = ssp585_IWF_index.sel(models=gmodels)
 ) = ca.dim_linregress(ssp585_IWF_index_gmodels, ssp585_SAM_index_gmodels)
 
 # %%
+#   calculate the ensemble mean
+IWF_his_gmodels_SAM_slope_ens = IWF_his_gmodels_SAM_slope.mean(dim="models", skipna=True)
+IWF_ssp585_gmodels_SAM_slope_ens = IWF_ssp585_gmodels_SAM_slope.mean(dim="models", skipna=True)
+
+print(IWF_his_gmodels_SAM_slope_ens, IWF_ssp585_gmodels_SAM_slope_ens)
+print(ca.MME_reg_mask(IWF_his_gmodels_SAM_slope_ens, IWF_his_gmodels_SAM_slope.std(dim="models", skipna=True), len(IWF_his_gmodels_SAM_slope.coords["models"]), True))
+print(ca.MME_reg_mask(IWF_ssp585_gmodels_SAM_slope_ens, IWF_ssp585_gmodels_SAM_slope.std(dim="models", skipna=True), len(IWF_ssp585_gmodels_SAM_slope.coords["models"]), True))
+
+# %%
+(
+    IWF_his_SAM_slope,
+    IWF_his_SAM_intercept,
+    IWF_his_SAM_rvalue,
+    IWF_his_SAM_pvalue,
+    IWF_his_SAM_hypothesis,
+) = ca.dim_linregress(his_IWF_index, his_SAM_index)
+# %%
+#   
