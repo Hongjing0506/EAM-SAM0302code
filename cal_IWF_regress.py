@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-16 11:41:32
+LastEditTime: 2022-04-16 12:16:32
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -194,5 +194,12 @@ vhis_ver_JJA_shear = vhis_ver_JJA.sel(level=850) - vhis_ver_JJA.sel(level=200)
 
 
 # %%
-lat = uhis
-uhis_ver_JJA_IWF = uhis_ver_JJA_IWF.sel
+lat = uhis_ver_JJA.coords["lat"]
+lon = uhis_ver_JJA.coords["lon"]
+lat_range = lat[(lat >= 5.0) & (lat <= 32.5)]
+lon_range = lon[(lon >= 90.0) & (lon <= 140.0)]
+uhis_ver_JJA_IWF = uhis_ver_JJA.sel(lat=lat_range, lon=lon_range, level=850.0)
+vhis_ver_JJA_IWF = vhis_ver_JJA.sel(lat=lat_range, lon=lon_range, level=850.0)
+# %%
+vort = mpcalc.vorticity(uhis_ver_JJA_IWF, vhis_ver_JJA_IWF)
+# %%
