@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-15 20:51:00
+LastEditTime: 2022-04-16 10:46:04
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -134,4 +134,32 @@ his_IWF_index = fhis_IWF_index["IWF"]
 
 fssp585_IWF_index = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_IWF_index_2015-2099.nc")
 ssp585_IWF_index = fssp585_IWF_index["IWF"]
+# %%
+#   pick up the good models in historical run and ssp585 run
+gmodels = ["CNRM-CM6-1", "MIROC-ES2L", "NorESM2-LM", "HadGEM3-GC31-LL", "MRI-ESM2-0", "ACCESS-CM2", "MIROC6", "EC-Earth3", "CESM2-WACCM", "CAMS-CSM1-0"]
+
+his_SAM_index_gmodels = his_SAM_index.sel(models=gmodels)
+his_IWF_index_gmodels = his_IWF_index.sel(models=gmodels)
+
+ssp585_SAM_index_gmodels = ssp585_SAM_index.sel(models=gmodels)
+ssp585_IWF_index_gmodels = ssp585_IWF_index.sel(models=gmodels)
+
+# %%
+#   calculate the IWF regress on SAM in historical run and ssp585 run
+(
+    IWF_his_gmodels_SAM_slope,
+    IWF_his_gmodels_SAM_intercept,
+    IWF_his_gmodels_SAM_rvalue,
+    IWF_his_gmodels_SAM_pvalue,
+    IWF_his_gmodels_SAM_hypothesis,
+) = ca.dim_linregress(his_IWF_index_gmodels, his_SAM_index_gmodels)
+
+(
+    IWF_ssp585_gmodels_SAM_slope,
+    IWF_ssp585_gmodels_SAM_intercept,
+    IWF_ssp585_gmodels_SAM_rvalue,
+    IWF_ssp585_gmodels_SAM_pvalue,
+    IWF_ssp585_gmodels_SAM_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index_gmodels, ssp585_SAM_index_gmodels)
+
 # %%
