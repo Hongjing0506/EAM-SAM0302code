@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-16 23:56:17
 LastEditors: ChenHJ
-LastEditTime: 2022-04-16 23:59:46
+LastEditTime: 2022-04-17 00:02:47
 FilePath: /chenhj/0302code/cal_SAM_regress.py
 Aim: 
 Mission: 
@@ -129,3 +129,15 @@ ssp585_SAM_index = fssp585_SAM_index["SAM"]
 
 # %%
 #   calculate the correlation coefficients between SAM and IndR
+#   pick up the precipitation in India area
+lat = preCRU_JJA.coords["lat"]
+lon = preCRU_JJA.coords["lon"]
+lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
+lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
+
+lat = preGPCP_JJA.coords["lat"]
+lon = preGPCP_JJA.coords["lon"]
+lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
+lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
