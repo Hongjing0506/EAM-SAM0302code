@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-04-13 19:26:03
+LastEditTime: 2022-04-16 12:18:08
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -314,32 +314,32 @@ uhis_ver_JJA = fuhis_ver_JJA["ua"]
 fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/va_historical_r144x72_195001-201412.nc")
 vhis_ver_JJA = fvhis_ver_JJA["va"]
 # %%
-#   interpolate the nan in 850hPa wind fields
-from scipy.interpolate import interp2d
-lat = uhis_ver_JJA.coords["lat"]
-lon = uhis_ver_JJA.coords["lon"]
-time = uhis_ver_JJA.coords["time"]
-models = uhis_ver_JJA.coords["models"]
-uhis_ver_JJA_filled = uhis_ver_JJA.sel(level=850.0).copy()
-vhis_ver_JJA_filled = vhis_ver_JJA.sel(level=850.0).copy()
-for i,mod in enumerate(models):
-    for ti in range(len(time)):
-        u_filled_func = interp2d(lon, lat, uhis_ver_JJA.sel(level=850.0)[i,ti,:,:], kind="linear", bounds_error=False)
-        uhis_ver_JJA_filled[i,ti,:,:] = u_filled_func(lon, lat)
-        v_filled_func = interp2d(lon, lat, vhis_ver_JJA.sel(level=850.0)[i,ti,:,:], kind="linear", bounds_error=False)
-        vhis_ver_JJA_filled[i,ti,:,:] = v_filled_func(lon, lat)
-lenmodels = np.arange(len(models))
-uhis_ver_JJA_filled.coords["models"] = lenmodels
-vhis_ver_JJA_filled.coords["models"] = lenmodels
+# #   interpolate the nan in 850hPa wind fields
+# from scipy.interpolate import interp2d
+# lat = uhis_ver_JJA.coords["lat"]
+# lon = uhis_ver_JJA.coords["lon"]
+# time = uhis_ver_JJA.coords["time"]
+# models = uhis_ver_JJA.coords["models"]
+# uhis_ver_JJA_filled = uhis_ver_JJA.sel(level=850.0).copy()
+# vhis_ver_JJA_filled = vhis_ver_JJA.sel(level=850.0).copy()
+# for i,mod in enumerate(models):
+#     for ti in range(len(time)):
+#         u_filled_func = interp2d(lon, lat, uhis_ver_JJA.sel(level=850.0)[i,ti,:,:], kind="linear", bounds_error=False)
+#         uhis_ver_JJA_filled[i,ti,:,:] = u_filled_func(lon, lat)
+#         v_filled_func = interp2d(lon, lat, vhis_ver_JJA.sel(level=850.0)[i,ti,:,:], kind="linear", bounds_error=False)
+#         vhis_ver_JJA_filled[i,ti,:,:] = v_filled_func(lon, lat)
+# lenmodels = np.arange(len(models))
+# uhis_ver_JJA_filled.coords["models"] = lenmodels
+# vhis_ver_JJA_filled.coords["models"] = lenmodels
 
-uhis_ver_JJA_filled = uhis_ver_JJA_filled.interpolate_na(dim="models",method="nearest", fill_value="extrapolate")
-vhis_ver_JJA_filled = vhis_ver_JJA_filled.interpolate_na(dim="models",method="nearest", fill_value="extrapolate")
-uhis_ver_JJA_filled.coords["models"] = models
-vhis_ver_JJA_filled.coords["models"] = models
+# uhis_ver_JJA_filled = uhis_ver_JJA_filled.interpolate_na(dim="models",method="nearest", fill_value="extrapolate")
+# vhis_ver_JJA_filled = vhis_ver_JJA_filled.interpolate_na(dim="models",method="nearest", fill_value="extrapolate")
+# uhis_ver_JJA_filled.coords["models"] = models
+# vhis_ver_JJA_filled.coords["models"] = models
 
-# %%
-uhis_ver_JJA_filled = uhis_ver_JJA_filled.expand_dims("level")
-vhis_ver_JJA_filled = vhis_ver_JJA_filled.expand_dims("level")
+# # %%
+# uhis_ver_JJA_filled = uhis_ver_JJA_filled.expand_dims("level")
+# vhis_ver_JJA_filled = vhis_ver_JJA_filled.expand_dims("level")
 # %%
 #   calculate the non-detrend SAM/EAM/IWF
 his_SAM_index = ca.SAM(uhis_ver_JJA)
