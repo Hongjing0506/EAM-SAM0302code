@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-16 23:51:12
+LastEditTime: 2022-04-16 23:56:37
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -23,6 +23,7 @@ import pandas as pd
 from importlib import reload
 
 import metpy.calc as mpcalc
+import metpy.xarray as mpxr
 import metpy.constants as constants
 import geocat.comp
 from windspharm.xarray import VectorWind
