@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-16 11:17:16
+LastEditTime: 2022-04-16 11:41:32
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -180,4 +180,19 @@ print(ca.MME_reg_mask(IWF_ssp585_gmodels_SAM_slope_ens, IWF_ssp585_gmodels_SAM_s
     IWF_his_SAM_hypothesis,
 ) = ca.dim_linregress(his_IWF_index, his_SAM_index)
 # %%
-#   
+#   read the historical run data
+fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc")
+vhis_ver_JJA = fvhis_ver_JJA["va"]
+fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc")
+uhis_ver_JJA = fuhis_ver_JJA["ua"]
+
+# %%
+#   calculate the vertical shear in ERA5/historical
+vERA5_ver_JJA_shear = vERA5_ver_JJA.sel(level=850) - vERA5_ver_JJA.sel(level=200)
+
+vhis_ver_JJA_shear = vhis_ver_JJA.sel(level=850) - vhis_ver_JJA.sel(level=200)
+
+
+# %%
+lat = uhis
+uhis_ver_JJA_IWF = uhis_ver_JJA_IWF.sel
