@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-15 21:22:08
+LastEditTime: 2022-04-16 11:28:18
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -67,6 +67,13 @@ preCRU_JJA = ca.p_time(preCRU, 6, 8, True)/30.67
 preCRU_JJA = ca.detrend_dim(preCRU_JJA, "time", deg=1, demean=False)
 preCRU_JJA.attrs["units"] = "mm/day"
 
+fpreGPCP = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/GPCP_r144x72_197901-201412.nc"
+)
+preGPCP = fpreGPCP["precip"]
+preGPCP_JJA = ca.p_time(preGPCP, 6, 8, True)/30.67
+preGPCP_JJA = ca.detrend_dim(preGPCP_JJA, "time", deg=1, demean=False)
+
 fprehis = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pr_historical_r144x72_195001-201412.nc")
 prehis_JJA = fprehis["pr"]
 prehis_JJA.attrs["units"] = "mm/day"
@@ -79,25 +86,45 @@ pressp585_JJA.attrs["standard_name"] = "precipitation"
 
 # %%
 #   calculate the precipitation regress onto India precipitation
-preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.loc[:, 8:28, 70:86]).mean(dim="lon", skipna=True)
+lat = preGPCP_JJA.coords["lat"]
+lon = preGPCP_JJA.coords["lon"]
+# lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
+# lat_India_range = lat[(lat >= 15.0) & (lat <= 28.0)]
+# lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+lat_India_range = lat[(lat >= 30.0) & (lat <= 35.0)]
+lon_India_range = lon[(lon >= 112.5) & (lon <= 120.0)]
+
+# preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
+preCRU_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 
 lat = prehis_JJA.coords["lat"]
 lon = prehis_JJA.coords["lon"]
 
-lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
-lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+# lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
+# lat_India_range = lat[(lat >= 15.0) & (lat <= 28.0)]
+# lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+lat_India_range = lat[(lat >= 30.0) & (lat <= 35.0)]
+lon_India_range = lon[(lon >= 112.5) & (lon <= 120.0)]
 
 prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 
 # %%
+# (
+#     pre_CRU_India_pre_slope,
+#     pre_CRU_India_pre_intercept,
+#     pre_CRU_India_pre_rvalue,
+#     pre_CRU_India_pre_pvalue,
+#     pre_CRU_India_pre_hypothesis,
+# ) = ca.dim_linregress(preCRU_India_JJA, preCRU_JJA)
+
 (
     pre_CRU_India_pre_slope,
     pre_CRU_India_pre_intercept,
     pre_CRU_India_pre_rvalue,
     pre_CRU_India_pre_pvalue,
     pre_CRU_India_pre_hypothesis,
-) = ca.dim_linregress(preCRU_India_JJA, preCRU_JJA)
+) = ca.dim_linregress(preCRU_India_JJA, preGPCP_JJA)
 
 (
     pre_his_India_pre_slope,
@@ -105,7 +132,7 @@ pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_India_r
     pre_his_India_pre_rvalue,
     pre_his_India_pre_pvalue,
     pre_his_India_pre_hypothesis,
-) = ca.dim_linregress(prehis_India_JJA, prehis_JJA)
+) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_JJA.sel(time=prehis_JJA.time.dt.year>=1979))
 (
     pre_ssp585_India_pre_slope,
     pre_ssp585_India_pre_intercept,
@@ -303,7 +330,7 @@ pre_ssp585_India_pre_slope_gmodels_ens_mask = ca.MME_reg_mask(pre_ssp585_India_p
 # %%
 #   bootstrap method test for the difference MME
 B = 1000
-alpha = 0.95
+alpha = 0.90
 dim = "models"
 pre_his_India_pre_slope_lowlim, pre_his_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_his_India_pre_slope_gmodels, B, alpha, dim)
 pre_ssp585_India_pre_slope_lowlim, pre_ssp585_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_ssp585_India_pre_slope_gmodels, B, alpha, dim)
@@ -836,8 +863,9 @@ pre_ssp585_p3_India_pre_slope_gmodels_ens_mask = ca.MME_reg_mask(pre_ssp585_p3_I
 
 #   bootstrap method test for the difference MME
 B = 1000
-alpha = 0.95
+alpha = 0.90
 dim = "models"
+pre_his_India_pre_slope_lowlim, pre_his_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_his_India_pre_slope_gmodels, B, alpha, dim)
 pre_ssp585_p3_India_pre_slope_lowlim, pre_ssp585_p3_India_pre_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals_pattern(pre_ssp585_p3_India_pre_slope_gmodels, B, alpha, dim)
 
 pre_diff_p3_India_pre_slope_mask = ca.generate_bootstrap_mask(pre_his_India_pre_slope_lowlim, pre_his_India_pre_slope_highlim, pre_ssp585_p3_India_pre_slope_lowlim, pre_ssp585_p3_India_pre_slope_highlim)
@@ -866,10 +894,11 @@ w, h = 0.12, 0.14
 # ===================================================
 for ax in axs:
     # Inida area
-    x0 = 70
-    y0 = 8.0
-    width = 16
-    height = 20.0
+    x0 = 112.5
+    # y0 = 8.0
+    y0 = 30.0
+    width = 7.5
+    height = 5.0
     patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
@@ -884,8 +913,11 @@ sepl.plt_sig(
     pre_CRU_India_pre_slope, axs[0], n, np.where(pre_CRU_India_pre_pvalue[::n, ::n] <= 0.05), "bright purple", 4.0,
 )
 
+# axs[0].format(
+#     rtitle="1950-2014", ltitle="CRU",
+# )
 axs[0].format(
-    rtitle="1950-2014", ltitle="CRU",
+    rtitle="1979-2014", ltitle="GPCP",
 )
 # ===================================================
 con = axs[1].contourf(
@@ -900,8 +932,11 @@ sepl.plt_sig(
     pre_his_India_pre_slope_gmodels_ens, axs[1], n, np.where(pre_his_India_pre_slope_gmodels_ens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
 )
 
+# axs[1].format(
+#     rtitle="1950-2014", ltitle="historical ensmean",
+# )
 axs[1].format(
-    rtitle="1950-2014", ltitle="historical ensmean",
+    rtitle="1979-2014", ltitle="historical ensmean",
 )
 # ===================================================
 con = axs[2].contourf(
@@ -940,5 +975,5 @@ axs[3].format(
 # ===================================================
 cb = fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 cb.set_ticks(np.arange(-0.5, 0.55, 0.1))
-fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
+fig.format(abc="(a)", abcloc="l", suptitle="pre reg YZRR")
 # %%
