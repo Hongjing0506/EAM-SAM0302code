@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-17 16:25:37
+LastEditTime: 2022-04-17 20:35:47
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -250,3 +250,10 @@ lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
 pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 
 del(lat, lon)
+# %%
+#   calculate the correlation coefficients between IWF and IndR
+IndRGPCP_ERA5_IWF_regress = stats.linregress(preGPCP_India_JJA, ERA5_IWF_index.sel(time=ERA5_IWF_index.time.dt.year>=1979))
+IndR_ERA5_IWF_regress = stats.linregress(preCRU_India_JJA, ERA5_IWF_index)
+IndR_his_IWF_regress = ca.dim_linregress(prehis_India_JJA, his_IWF_index)
+IndR_ssp585_IWF_regress = ca.dim_linregress(pressp585_India_JJA, ssp585_IWF_index)
+# %%
