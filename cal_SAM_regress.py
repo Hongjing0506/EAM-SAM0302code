@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-16 23:56:17
 LastEditors: ChenHJ
-LastEditTime: 2022-04-17 00:10:09
+LastEditTime: 2022-04-17 11:34:37
 FilePath: /chenhj/0302code/cal_SAM_regress.py
 Aim: 
 Mission: 
@@ -161,6 +161,7 @@ pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_India_r
 del(lat, lon)
 
 #   calculate the correlation coefficients between SAM and IndR
+IndRGPCP_ERA5_SAM_regress = stats.linregress(preGPCP_India_JJA, ERA5_SAM_index.sel(time=ERA5_SAM_index.time.dt.year>=1979))
 IndR_ERA5_SAM_regress = stats.linregress(preCRU_India_JJA, ERA5_SAM_index)
 IndR_his_SAM_regress = ca.dim_linregress(prehis_India_JJA, his_SAM_index)
 IndR_ssp585_SAM_regress = ca.dim_linregress(pressp585_India_JJA, ssp585_SAM_index)
