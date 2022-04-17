@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-17 15:42:23
+LastEditTime: 2022-04-17 16:25:37
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -198,17 +198,55 @@ fpreCRU = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/cru_ts4.01_r144x72_195001-201412.nc"
 )
 preCRU = fpreCRU["pre"]
+preCRU = fpreCRU["pre"]
+preCRU_JJA = ca.p_time(preCRU, 6, 8, True)/30.67
+preCRU_JJA = ca.detrend_dim(preCRU_JJA, "time", deg=1, demean=False)
+preCRU_JJA.attrs["units"] = "mm/day"
 
 # GPCP data just have 1979-2014 year
 fpreGPCP = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/GPCP_r144x72_197901-201412.nc"
 )
 preGPCP = fpreGPCP["precip"]
+preGPCP_JJA = ca.p_time(preGPCP, 6, 8, True)
+preGPCP_JJA = ca.detrend_dim(preGPCP_JJA, "time", deg=1, demean=False)
 
-fprehis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pr_historical_r144x72_195001-201412.nc")
-prehis_JJA = fprehis_JJA["pr"]
+fprehis = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pr_historical_r144x72_195001-201412.nc")
+prehis_JJA = fprehis["pr"]
+prehis_JJA.attrs["units"] = "mm/day"
+prehis_JJA.attrs["standard_name"] = "precipitation"
 
-fpressp585_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pr_ssp585_r144x72_201501-209912.nc")
-pressp585_JJA = fpressp585_JJA["pr"]
+fpressp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pr_ssp585_r144x72_201501-209912.nc")
+pressp585_JJA = fpressp585["pr"]
+pressp585_JJA.attrs["units"] = "mm/day"
+pressp585_JJA.attrs["standard_name"] = "precipitation"
+
+
 
 # %%
+#   pick up the India precipitation in different data
+lat = preCRU_JJA.coords["lat"]
+lon = preCRU_JJA.coords["lon"]
+lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
+lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
+
+lat = preGPCP_JJA.coords["lat"]
+lon = preGPCP_JJA.coords["lon"]
+lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
+lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
+
+lat = prehis_JJA.coords["lat"]
+lon = prehis_JJA.coords["lon"]
+lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
+lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
+
+lat = pressp585_JJA.coords["lat"]
+lon = pressp585_JJA.coords["lon"]
+lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
+lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
+
+del(lat, lon)
