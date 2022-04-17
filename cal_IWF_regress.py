@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-17 20:35:47
+LastEditTime: 2022-04-17 20:55:51
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -256,4 +256,40 @@ IndRGPCP_ERA5_IWF_regress = stats.linregress(preGPCP_India_JJA, ERA5_IWF_index.s
 IndR_ERA5_IWF_regress = stats.linregress(preCRU_India_JJA, ERA5_IWF_index)
 IndR_his_IWF_regress = ca.dim_linregress(prehis_India_JJA, his_IWF_index)
 IndR_ssp585_IWF_regress = ca.dim_linregress(pressp585_India_JJA, ssp585_IWF_index)
+# %%
+#   calculate the precipitation data regression onto IWF
+preCRU_JJA.coords["time"] = ERA5_IWF_index.coords["time"]
+(
+    IWF_ERA5_preCRU_slope,
+    IWF_ERA5_preCRU_intercept,
+    IWF_ERA5_preCRU_rvalue,
+    IWF_ERA5_preCRU_pvalue,
+    IWF_ERA5_preCRU_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index, preCRU_JJA)
+
+(
+    IWF_ERA5_preGPCP_slope,
+    IWF_ERA5_preGPCP_intercept,
+    IWF_ERA5_preGPCP_rvalue,
+    IWF_ERA5_preGPCP_pvalue,
+    IWF_ERA5_preGPCP_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index.sel(time=ERA5_IWF_index.time.dt.year>=1979), preGPCP_JJA)
+
+(
+    IWF_his_pre_slope,
+    IWF_his_pre_intercept,
+    IWF_his_pre_rvalue,
+    IWF_his_pre_pvalue,
+    IWF_his_pre_hypothesis,
+) = ca.dim_linregress(his_IWF_index, prehis_JJA)
+
+(
+    IWF_ssp585_pre_slope,
+    IWF_ssp585_pre_intercept,
+    IWF_ssp585_pre_rvalue,
+    IWF_ssp585_pre_pvalue,
+    IWF_ssp585_pre_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index, pressp585_JJA)
+
+
 # %%
