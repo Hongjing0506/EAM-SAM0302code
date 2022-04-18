@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-18 21:29:49
+LastEditTime: 2022-04-19 00:05:14
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -49,6 +49,8 @@ from scipy.stats import t
 from scipy import signal
 from eofs.multivariate.standard import MultivariateEof
 from eofs.standard import Eof
+from statsmodels.distributions.empirical_distribution import ECDF
+import dask
 
 
 def patches(ax, x0, y0, width, height, proj):
@@ -99,6 +101,7 @@ preGPCP = fpreGPCP["precip"]
 
 # %%
 hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
+hgtERA5_ver_JJA = hgtERA5_ver_JJA - hgtERA5_ver_JJA.mean(dim="lon", skipna=True)
 uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
 qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True).loc[:, 100.0:, :, :]
@@ -577,6 +580,7 @@ fig.format(abc="(a)", abcloc="l", suptitle="precip reg IWF")
 #   read the hgt&u&v data of historicla and ssp585
 fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc")
 hgthis_ver_JJA = fhgthis_ver_JJA["zg"]
+hgthis_ver_JJA = hgthis_ver_JJA - hgthis_ver_JJA.mean(dim="lon", skipna=True)
 
 fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc")
 uhis_ver_JJA = fuhis_ver_JJA["ua"]
@@ -586,6 +590,7 @@ vhis_ver_JJA = fvhis_ver_JJA["va"]
 
 fhgtssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
 hgtssp585_ver_JJA = fhgtssp585_ver_JJA["zg"]
+hgtssp585_ver_JJA = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lon", skipna=True)
 
 fussp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_201501-209912.nc")
 ussp585_ver_JJA = fussp585_ver_JJA["ua"]
@@ -1557,4 +1562,78 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IWF".format(lev))
+# %%
+#   test the bootstrap test and permutation test
+a = [136.3,136.3,135.8,135.4,134.7,135.0,134.1,143.3,147.8,148.8,134.8,135.2,134.9,149.5,141.2,135.4,134.8,135.8,135.0,133.7,134.4,134.9,134.8,134.5,134.3,135.2]
+b = [136.3,136.3,135.8,135.4,134.7,135.0,134.1,143.3,147.8,148.8,134.8,135.2,134.9,136.3,136.3,135.8,135.4,134.7,135.0,134.1,143.3,147.8,148.8,134.8,135.2,134.9]
+K = 10000
+n1 = 13
+n2 = 13
+loc_num = range(0,n1+n2)
+# %%
+re_x_sample1 = [a[i] for i in range(13)]
+re_y_sample1 = [b[i] for i in range(13)]
+re_x_sample2 = [a[i] for i in np.arange(13,26)]
+re_y_sample2 = [b[i] for i in np.arange(13,26)]
+re_d = stats.linregress(re_x_sample1, re_y_sample1)[0] - stats.linregress(re_x_sample2, re_y_sample2)[0]
+# %%
+bs_d = np.zeros(K)
+for test_i in range(K):
+    bs_sample_list1 = np.random.choice(loc_num, size=13)
+    bs_sample_list2 = np.random.choice(loc_num, size=13)
+    bs_x_sample1 = [a[i] for i in bs_sample_list1]
+    bs_y_sample1 = [b[i] for i in bs_sample_list1]
+    bs_x_sample2 = [a[i] for i in bs_sample_list2]
+    bs_y_sample2 = [b[i] for i in bs_sample_list2]
+    bs_regress1 = stats.linregress(bs_x_sample1, bs_y_sample1)
+    bs_regress2 = stats.linregress(bs_x_sample2, bs_y_sample2)
+    d = bs_regress1[0]- bs_regress2[0]
+    bs_d[test_i] = d
+bs_d = np.sort(bs_d)
+bs_freq = stats.relfreq(bs_d, numbins=10)
+bs_pdf = bs_freq.frequency
+bs_cdf = np.cumsum(bs_pdf)
+# %%
+fi_d = np.zeros(K)
+for test_i in range(K):
+    fi_sample_list1 = np.random.choice(loc_num, size=13, replace=False)
+    fi_sample_list2 = list(set(loc_num) ^ set(fi_sample_list1))
+    fi_x_sample1 = [a[i] for i in fi_sample_list1]
+    fi_y_sample1 = [b[i] for i in fi_sample_list1]
+    fi_x_sample2 = [a[i] for i in fi_sample_list2]
+    fi_y_sample2 = [b[i] for i in fi_sample_list2]
+        
+    fi_regress1 = stats.linregress(fi_x_sample1, fi_y_sample1)
+    fi_regress2 = stats.linregress(fi_x_sample2, fi_y_sample2)
+    d = fi_regress1[0]- fi_regress2[0]
+    fi_d[test_i] = d
+fi_d = np.sort(fi_d)
+fi_freq = stats.relfreq(fi_d, numbins=10)
+fi_pdf = fi_freq.frequency
+fi_cdf = np.cumsum(fi_pdf)
+# %%
+bs_freq = stats.relfreq(bs_d, numbins=200)
+bs_pdf = bs_freq.frequency
+bs_cdf = np.cumsum(bs_pdf)
+fi_freq = stats.relfreq(fi_d, numbins=200)
+fi_pdf = fi_freq.frequency
+fi_cdf = np.cumsum(fi_pdf)
+x1 = bs_freq.lowerlimit + np.linspace(0, bs_freq.binsize*bs_freq.frequency.size, bs_freq.frequency.size)
+x2 = fi_freq.lowerlimit + np.linspace(0, fi_freq.binsize*fi_freq.frequency.size, fi_freq.frequency.size)
+fig = pplt.figure(refwidth=5.0, refheight=2.5, span=False, share=False)
+axs = fig.subplots(ncols=1, nrows=1)
+lw = 0.8
+# cycle = pplt.Cycle('Pastel1', 'Pastel2', 27, left=0.1)
+# axs.format(grid=False, suptitle="ssp585 IWF & SAM", ylabel="", xlabel="year")
+# ===================================================
+m1 = axs[0].line(
+    x1, bs_cdf, lw=lw, color="black",)
+m1 = axs[0].line(
+    x1, bs_pdf, lw=lw, color="black",)
+
+m1 = axs[0].line(
+    x2, fi_cdf, lw=lw, color="blue",)
+m1 = axs[0].line(
+    x2, fi_pdf, lw=lw, color="blue",)
+axs[0].axvline(re_d)
 # %%
