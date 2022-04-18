@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-18 14:18:15
+LastEditTime: 2022-04-18 14:43:42
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -1028,7 +1028,10 @@ for lev in [200.0, 500.0, 850.0]:
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IWF".format(lev))
 # %%
 #   plot the avalue of hgt&u&v regress onto IWF in ERA5 and historical
-for lev in [200.0, 500.0, 850.0]:
+startlevel = [-3.0e7, -2.0e7, -1.5e7]
+endlevel = [3.0e7, 2.0e7, 1.5e7]
+spacinglevel = [3.0e6, 2.0e6, 1.0e6]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     pplt.rc.grid = False
     pplt.rc.reso = "lo"
     cl = 0  # 设置地图投影的中心纬度
@@ -1071,7 +1074,7 @@ for lev in [200.0, 500.0, 850.0]:
         IWF_ERA5_hgt_slope.sel(level=lev),
         cmap="ColdHot",
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-        levels=np.arange(-1.0e0, 1.1e0, 2.0e-1),
+        levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
         zorder=0.8,
         extend="both"
     )
@@ -1086,7 +1089,7 @@ for lev in [200.0, 500.0, 850.0]:
         headlength=2.3,
         headaxislength=2.3,
         scale_units="xy",
-        scale=0.17,
+        scale=700000.0,
         pivot="mid",
         color="grey6",
     )
@@ -1099,7 +1102,7 @@ for lev in [200.0, 500.0, 850.0]:
         headlength=2.3,
         headaxislength=2.3,
         scale_units="xy",
-        scale=0.17,
+        scale=700000.0,
         pivot="mid",
         color="black",
     )
@@ -1116,7 +1119,7 @@ for lev in [200.0, 500.0, 850.0]:
             IWF_his_hgt_slope.sel(models=mod,level=lev),
             cmap="ColdHot",
             cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-            levels=np.arange(-1.0e0, 1.1e0, 2.0e-1),
+            levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
             zorder=0.8,
             extend="both"
         )
@@ -1131,7 +1134,7 @@ for lev in [200.0, 500.0, 850.0]:
             headlength=2.3,
             headaxislength=2.3,
             scale_units="xy",
-            scale=0.17,
+            scale=700000.0,
             pivot="mid",
             color="grey6",
         )
@@ -1144,7 +1147,7 @@ for lev in [200.0, 500.0, 850.0]:
             headlength=2.3,
             headaxislength=2.3,
             scale_units="xy",
-            scale=0.17,
+            scale=700000.0,
             pivot="mid",
             color="black",
         )
@@ -1158,3 +1161,4 @@ for lev in [200.0, 500.0, 850.0]:
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IWF".format(lev))
+# %%
