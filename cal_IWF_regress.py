@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-18 13:42:56
+LastEditTime: 2022-04-18 13:46:27
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -818,4 +818,5 @@ for lev in [200.0, 500.0, 850.0]:
         )
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-    fig.format(abc="(a)", abcloc="l", suptitle="{}hPa hgt&U reg IWF".format(lev))
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IWF".format(lev))
+# %%
