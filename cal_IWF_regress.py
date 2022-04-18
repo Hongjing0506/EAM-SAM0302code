@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-18 13:23:06
+LastEditTime: 2022-04-18 13:42:56
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -650,6 +650,13 @@ IWF_ERA5_wind_mask = ca.wind_check(
     IWF_his_v_hypothesis,
 ) = ca.dim_linregress(his_IWF_index.sel(time=his_IWF_index.time.dt.year>=1979), vhis_ver_JJA.sel(time=vhis_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 
+IWF_his_wind_mask = ca.wind_check(
+    xr.where(IWF_his_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_his_v_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_his_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_his_v_pvalue <= 0.05, 1.0, 0.0),
+)
+
 (
     IWF_ssp585_hgt_slope,
     IWF_ssp585_hgt_intercept,
@@ -673,4 +680,142 @@ IWF_ERA5_wind_mask = ca.wind_check(
     IWF_ssp585_v_pvalue,
     IWF_ssp585_v_hypothesis,
 ) = ca.dim_linregress(ssp585_IWF_index.sel(time=ssp585_IWF_index.time.dt.year>=1979), vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+
+IWF_ssp585_wind_mask = ca.wind_check(
+    xr.where(IWF_ssp585_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ssp585_v_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ssp585_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ssp585_v_pvalue <= 0.05, 1.0, 0.0),
+)
 # %%
+#   plot the rvalue of hgt&u&v regress onto IWF in ERA5 and historical
+for lev in [200.0, 500.0, 850.0]:
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 29), (7, 4))
+    plot_array[6,3] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 1
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        #   Indian area
+        x0 = 70
+        y0 = 8.0
+        width = 16
+        height = 20.0
+        patches(ax, x0 - cl, y0, width, height, proj)
+        #   IWF area
+        x0 = 90
+        y0 = 5.0
+        width = 50.0
+        height = 27.5
+        patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        IWF_ERA5_hgt_rvalue.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(-1.0e0, 1.1e0, 2.0e-1),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IWF_ERA5_hgt_rvalue.sel(level=lev), axs[0], n, np.where(IWF_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[0].quiver(
+        IWF_ERA5_u_rvalue.sel(level=lev)[::ski, ::ski],
+        IWF_ERA5_v_rvalue.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.17,
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[0].quiver(
+        IWF_ERA5_u_rvalue.sel(level=lev).where(IWF_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IWF_ERA5_v_rvalue.sel(level=lev).where(IWF_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.17,
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[0].format(
+        rtitle="1979-2014", ltitle="ERA5",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(models):
+        con = axs[num_mod+1].contourf(
+            IWF_his_hgt_rvalue.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(-1.0e0, 1.1e0, 2.0e-1),
+            zorder=0.8,
+            extend="both"
+        )
+        sepl.plt_sig(
+            IWF_his_hgt_rvalue.sel(models=mod,level=lev), axs[num_mod+1], n, np.where(IWF_his_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        )
+        axs[num_mod+1].quiver(
+            IWF_his_u_rvalue.sel(models=mod,level=lev)[::ski, ::ski],
+            IWF_his_v_rvalue.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=0.17,
+            pivot="mid",
+            color="grey6",
+        )
+
+        m = axs[num_mod+1].quiver(
+            IWF_his_u_rvalue.sel(models=mod,level=lev).where(IWF_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            IWF_his_v_rvalue.sel(models=mod,level=lev).where(IWF_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=0.17,
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod+1].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        axs[num_mod+1].format(
+            rtitle="1979-2014", ltitle="{}".format(mod.data),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{}hPa hgt&U reg IWF".format(lev))
