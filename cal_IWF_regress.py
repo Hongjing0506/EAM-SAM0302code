@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-19 00:05:14
+LastEditTime: 2022-04-19 00:43:14
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -63,7 +63,7 @@ def patches(ax, x0, y0, width, height, proj):
 # %%
 #   read the ERA5 reanalysis data and calculate the SAM and IWF index
 fhgtERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc"
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc", chunks={'lat':10,'lon':10}
 )
 hgtERA5 = fhgtERA5["z"]
 
@@ -1636,4 +1636,118 @@ m1 = axs[0].line(
 m1 = axs[0].line(
     x2, fi_pdf, lw=lw, color="blue",)
 axs[0].axvline(re_d)
+# %%
+#   calculate the avalue difference of ssp585 p3 and historical
+IWF_diff_hgt_slope = IWF_ssp585_p3_hgt_slope - IWF_his_hgt_slope
+IWF_diff_hgt_slope_ens = IWF_diff_hgt_slope.mean(dim="models", skipna=True)
+IWF_diff_u_slope = IWF_ssp585_p3_u_slope - IWF_his_u_slope
+IWF_diff_u_slope_ens = IWF_diff_u_slope.mean(dim="models", skipna=True)
+IWF_diff_v_slope = IWF_ssp585_p3_v_slope - IWF_his_v_slope
+IWF_diff_v_slope_ens = IWF_diff_v_slope.mean(dim="models", skipna=True)
+# %%
+#   plot the avalue of hgt&u&v difference of ssp585 p3 - historical
+startlevel = [-2.0e7, -0.6e7, -0.6e7]
+endlevel = [2.0e7, 0.6e7, 0.6e7]
+spacinglevel = [1.0e6, 0.3e6, 0.3e6]
+scalelevel=[1000000, 500000, 300000]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 29), (7, 4))
+    plot_array[6,3] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 1
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        #   Indian area
+        x0 = 70
+        y0 = 8.0
+        width = 16
+        height = 20.0
+        patches(ax, x0 - cl, y0, width, height, proj)
+        #   IWF area
+        x0 = 90
+        y0 = 5.0
+        width = 50.0
+        height = 27.5
+        patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        IWF_diff_hgt_slope_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+
+    m = axs[0].quiver(
+        IWF_diff_u_slope_ens.sel(level=lev)[::ski, ::ski],
+        IWF_diff_v_slope_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=5e6, label="5e6", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[0].format(
+        rtitle="diff", ltitle="MME",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(models):
+        con = axs[num_mod+1].contourf(
+            IWF_diff_hgt_slope.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
+            zorder=0.8,
+            extend="both"
+        )
+
+        m = axs[num_mod+1].quiver(
+            IWF_diff_u_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            IWF_diff_v_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod+1].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=5e6, label="5e6", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        axs[num_mod+1].format(
+            rtitle="diff", ltitle="{}".format(mod.data),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IWF".format(lev))
 # %%
