@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-18 20:29:57
+LastEditTime: 2022-04-18 20:40:44
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -1374,3 +1374,36 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IWF".format(lev))
+# %%
+#   calculate the 2064-2099yr p3 regression
+(
+    IWF_ssp585_p3_hgt_slope,
+    IWF_ssp585_p3_hgt_intercept,
+    IWF_ssp585_p3_hgt_rvalue,
+    IWF_ssp585_p3_hgt_pvalue,
+    IWF_ssp585_p3_hgt_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index.sel(time=ssp585_IWF_index.time.dt.year>=2064), hgtssp585_ver_JJA.sel(time=hgtssp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+
+(
+    IWF_ssp585_p3_u_slope,
+    IWF_ssp585_p3_u_intercept,
+    IWF_ssp585_p3_u_rvalue,
+    IWF_ssp585_p3_u_pvalue,
+    IWF_ssp585_p3_u_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index.sel(time=ssp585_IWF_index.time.dt.year>=2064), ussp585_ver_JJA.sel(time=ussp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+
+(
+    IWF_ssp585_p3_v_slope,
+    IWF_ssp585_p3_v_intercept,
+    IWF_ssp585_p3_v_rvalue,
+    IWF_ssp585_p3_v_pvalue,
+    IWF_ssp585_p3_v_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index.sel(time=ssp585_IWF_index.time.dt.year>=2064), vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+
+IWF_ssp585_p3_wind_mask = ca.wind_check(
+    xr.where(IWF_ssp585_p3_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ssp585_p3_v_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ssp585_p3_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ssp585_p3_v_pvalue <= 0.05, 1.0, 0.0),
+)
+# %%
