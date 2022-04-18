@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-18 13:07:39
+LastEditTime: 2022-04-18 13:23:06
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -594,10 +594,83 @@ fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj
 vssp585_ver_JJA = fvssp585_ver_JJA["va"]
 
 # %%
+#   calculate the hgt&u&v regress onto IWF in ERA5, historical, ssp585
 (
-    IWF_ERA5_preCRU_slope,
-    IWF_ERA5_preCRU_intercept,
-    IWF_ERA5_preCRU_rvalue,
-    IWF_ERA5_preCRU_pvalue,
-    IWF_ERA5_preCRU_hypothesis,
-) = ca.dim_linregress(ERA5_IWF_index.sel(time=ERA5_IWF_index.time.dt.year>=1979), preCRU_JJA.sel(time=preCRU_JJA.time.dt.year>=1979))
+    IWF_ERA5_hgt_slope,
+    IWF_ERA5_hgt_intercept,
+    IWF_ERA5_hgt_rvalue,
+    IWF_ERA5_hgt_pvalue,
+    IWF_ERA5_hgt_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index.sel(time=ERA5_IWF_index.time.dt.year>=1979), hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+
+(
+    IWF_ERA5_u_slope,
+    IWF_ERA5_u_intercept,
+    IWF_ERA5_u_rvalue,
+    IWF_ERA5_u_pvalue,
+    IWF_ERA5_u_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index.sel(time=ERA5_IWF_index.time.dt.year>=1979), uERA5_ver_JJA.sel(time=uERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+
+(
+    IWF_ERA5_v_slope,
+    IWF_ERA5_v_intercept,
+    IWF_ERA5_v_rvalue,
+    IWF_ERA5_v_pvalue,
+    IWF_ERA5_v_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index.sel(time=ERA5_IWF_index.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+
+IWF_ERA5_wind_mask = ca.wind_check(
+    xr.where(IWF_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ERA5_v_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IWF_ERA5_v_pvalue <= 0.05, 1.0, 0.0),
+)
+
+(
+    IWF_his_hgt_slope,
+    IWF_his_hgt_intercept,
+    IWF_his_hgt_rvalue,
+    IWF_his_hgt_pvalue,
+    IWF_his_hgt_hypothesis,
+) = ca.dim_linregress(his_IWF_index.sel(time=his_IWF_index.time.dt.year>=1979), hgthis_ver_JJA.sel(time=hgthis_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+
+(
+    IWF_his_u_slope,
+    IWF_his_u_intercept,
+    IWF_his_u_rvalue,
+    IWF_his_u_pvalue,
+    IWF_his_u_hypothesis,
+) = ca.dim_linregress(his_IWF_index.sel(time=his_IWF_index.time.dt.year>=1979), uhis_ver_JJA.sel(time=uhis_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+
+(
+    IWF_his_v_slope,
+    IWF_his_v_intercept,
+    IWF_his_v_rvalue,
+    IWF_his_v_pvalue,
+    IWF_his_v_hypothesis,
+) = ca.dim_linregress(his_IWF_index.sel(time=his_IWF_index.time.dt.year>=1979), vhis_ver_JJA.sel(time=vhis_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+
+(
+    IWF_ssp585_hgt_slope,
+    IWF_ssp585_hgt_intercept,
+    IWF_ssp585_hgt_rvalue,
+    IWF_ssp585_hgt_pvalue,
+    IWF_ssp585_hgt_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index.sel(time=ssp585_IWF_index.time.dt.year>=1979), hgtssp585_ver_JJA.sel(time=hgtssp585_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+
+(
+    IWF_ssp585_u_slope,
+    IWF_ssp585_u_intercept,
+    IWF_ssp585_u_rvalue,
+    IWF_ssp585_u_pvalue,
+    IWF_ssp585_u_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index.sel(time=ssp585_IWF_index.time.dt.year>=1979), ussp585_ver_JJA.sel(time=ussp585_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+
+(
+    IWF_ssp585_v_slope,
+    IWF_ssp585_v_intercept,
+    IWF_ssp585_v_rvalue,
+    IWF_ssp585_v_pvalue,
+    IWF_ssp585_v_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index.sel(time=ssp585_IWF_index.time.dt.year>=1979), vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+# %%
