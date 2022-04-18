@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-18 13:46:27
+LastEditTime: 2022-04-18 14:06:44
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -815,6 +815,95 @@ for lev in [200.0, 500.0, 850.0]:
         )
         axs[num_mod+1].format(
             rtitle="1979-2014", ltitle="{}".format(mod.data),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IWF".format(lev))
+# %%
+#   plot the rvalue of hgt&u&v regress onto IWF in ssp585
+for lev in [200.0, 500.0, 850.0]:
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 29), (7, 4))
+    plot_array[6,0] = 0
+    plot_array[6,3] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 1
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        #   Indian area
+        x0 = 70
+        y0 = 8.0
+        width = 16
+        height = 20.0
+        patches(ax, x0 - cl, y0, width, height, proj)
+        #   IWF area
+        x0 = 90
+        y0 = 5.0
+        width = 50.0
+        height = 27.5
+        patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    for num_mod, mod in enumerate(models):
+        con = axs[num_mod].contourf(
+            IWF_ssp585_hgt_rvalue.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(-1.0e0, 1.1e0, 2.0e-1),
+            zorder=0.8,
+            extend="both"
+        )
+        sepl.plt_sig(
+            IWF_ssp585_hgt_rvalue.sel(models=mod,level=lev), axs[num_mod], n, np.where(IWF_ssp585_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        )
+        axs[num_mod].quiver(
+            IWF_ssp585_u_rvalue.sel(models=mod,level=lev)[::ski, ::ski],
+            IWF_ssp585_v_rvalue.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=0.17,
+            pivot="mid",
+            color="grey6",
+        )
+
+        m = axs[num_mod].quiver(
+            IWF_ssp585_u_rvalue.sel(models=mod,level=lev).where(IWF_ssp585_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            IWF_ssp585_v_rvalue.sel(models=mod,level=lev).where(IWF_ssp585_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=0.17,
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        axs[num_mod].format(
+            rtitle="2015-2099", ltitle="{}".format(mod.data),
         )
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
