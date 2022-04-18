@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-17 22:20:42
+LastEditTime: 2022-04-18 13:07:39
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -469,7 +469,8 @@ proj = pplt.PlateCarree(central_longitude=cl)
 
 fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 plot_array = np.reshape(range(1, 29), (7, 4))
-plot_array[6,2:4] = 0
+plot_array[6,0] = 0
+plot_array[6,3] = 0
 axs = fig.subplots(plot_array, proj=proj)
 #   set the geo_ticks and map projection to the plots
 xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
@@ -524,7 +525,8 @@ proj = pplt.PlateCarree(central_longitude=cl)
 
 fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 plot_array = np.reshape(range(1, 29), (7, 4))
-plot_array[6,2:4] = 0
+plot_array[6,0] = 0
+plot_array[6,3] = 0
 axs = fig.subplots(plot_array, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
@@ -572,3 +574,30 @@ for num_mod, mod in enumerate(models):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="precip reg IWF")
 # %%
+#   read the hgt&u&v data of historicla and ssp585
+fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc")
+hgthis_ver_JJA = fhgthis_ver_JJA["zg"]
+
+fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc")
+uhis_ver_JJA = fuhis_ver_JJA["ua"]
+
+fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc")
+vhis_ver_JJA = fvhis_ver_JJA["va"]
+
+fhgtssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
+hgtssp585_ver_JJA = fhgtssp585_ver_JJA["zg"]
+
+fussp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_201501-209912.nc")
+ussp585_ver_JJA = fussp585_ver_JJA["ua"]
+
+fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
+vssp585_ver_JJA = fvssp585_ver_JJA["va"]
+
+# %%
+(
+    IWF_ERA5_preCRU_slope,
+    IWF_ERA5_preCRU_intercept,
+    IWF_ERA5_preCRU_rvalue,
+    IWF_ERA5_preCRU_pvalue,
+    IWF_ERA5_preCRU_hypothesis,
+) = ca.dim_linregress(ERA5_IWF_index.sel(time=ERA5_IWF_index.time.dt.year>=1979), preCRU_JJA.sel(time=preCRU_JJA.time.dt.year>=1979))
