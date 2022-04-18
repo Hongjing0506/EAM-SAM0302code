@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-18 14:43:42
+LastEditTime: 2022-04-18 19:20:44
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -1027,6 +1027,24 @@ for lev in [200.0, 500.0, 850.0]:
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IWF".format(lev))
 # %%
+#   generate the historical hgt and wind mask
+IWF_his_hgt_slope_ens = IWF_his_hgt_slope.mean(dim="models", skipna=True)
+IWF_his_hgt_slope_ens_mask = ca.MME_reg_mask(IWF_his_hgt_slope_ens, IWF_his_hgt_slope.std(dim="models", skipna=True), len(models), True)
+
+IWF_his_u_slope_ens = IWF_his_u_slope.mean(dim="models", skipna=True)
+IWF_his_u_slope_ens_mask = ca.MME_reg_mask(IWF_his_u_slope_ens, IWF_his_u_slope.std(dim="models", skipna=True), len(models), True)
+
+IWF_his_v_slope_ens = IWF_his_v_slope.mean(dim="models", skipna=True)
+IWF_his_v_slope_ens_mask = ca.MME_reg_mask(IWF_his_v_slope_ens, IWF_his_v_slope.std(dim="models", skipna=True), len(models), True)
+
+IWF_his_wind_slope_ens_mask = ca.wind_check(
+    xr.where(IWF_his_u_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IWF_his_v_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IWF_his_u_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IWF_his_v_slope_ens_mask > 0.0, 1.0, 0.0),
+)
+
+# %%
 #   plot the avalue of hgt&u&v regress onto IWF in ERA5 and historical
 startlevel = [-3.0e7, -2.0e7, -1.5e7]
 endlevel = [3.0e7, 2.0e7, 1.5e7]
@@ -1039,7 +1057,6 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
 
     fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
     plot_array = np.reshape(range(1, 29), (7, 4))
-    plot_array[6,3] = 0
     axs = fig.subplots(plot_array, proj=proj)
 
     #   set the geo_ticks and map projection to the plots
@@ -1108,14 +1125,58 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     )
 
     qk = axs[0].quiverkey(
-        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        m, X=1 - w / 2, Y=0.7 * h, U=5e6, label="5e6", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     axs[0].format(
         rtitle="1979-2014", ltitle="ERA5",
     )
     # ======================================
+    con = axs[1].contourf(
+        IWF_his_hgt_slope_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IWF_his_hgt_slope_ens.sel(level=lev), axs[1], n, np.where(IWF_his_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[1].quiver(
+        IWF_his_u_slope_ens.sel(level=lev)[::ski, ::ski],
+        IWF_his_v_slope_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=700000.0,
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[1].quiver(
+        IWF_his_u_slope_ens.sel(level=lev).where(IWF_his_wind_slope_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IWF_his_v_slope_ens.sel(level=lev).where(IWF_his_wind_slope_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=700000.0,
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=5e6, label="5e6", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[1].format(
+        rtitle="1979-2014", ltitle="MME",
+    )
+    # ======================================
     for num_mod, mod in enumerate(models):
-        con = axs[num_mod+1].contourf(
+        con = axs[num_mod+2].contourf(
             IWF_his_hgt_slope.sel(models=mod,level=lev),
             cmap="ColdHot",
             cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
@@ -1124,9 +1185,9 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             extend="both"
         )
         sepl.plt_sig(
-            IWF_his_hgt_slope.sel(models=mod,level=lev), axs[num_mod+1], n, np.where(IWF_his_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+            IWF_his_hgt_slope.sel(models=mod,level=lev), axs[num_mod+2], n, np.where(IWF_his_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
         )
-        axs[num_mod+1].quiver(
+        axs[num_mod+2].quiver(
             IWF_his_u_slope.sel(models=mod,level=lev)[::ski, ::ski],
             IWF_his_v_slope.sel(models=mod,level=lev)[::ski, ::ski],
             zorder=1.1,
@@ -1139,7 +1200,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             color="grey6",
         )
 
-        m = axs[num_mod+1].quiver(
+        m = axs[num_mod+2].quiver(
             IWF_his_u_slope.sel(models=mod,level=lev).where(IWF_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
             IWF_his_v_slope.sel(models=mod,level=lev).where(IWF_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
             zorder=1.1,
@@ -1152,10 +1213,10 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             color="black",
         )
 
-        qk = axs[num_mod+1].quiverkey(
-            m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        qk = axs[num_mod+2].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=5e6, label="5e6", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
         )
-        axs[num_mod+1].format(
+        axs[num_mod+2].format(
             rtitle="1979-2014", ltitle="{}".format(mod.data),
         )
     # ======================================
