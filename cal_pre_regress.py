@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-19 11:29:53
+LastEditTime: 2022-04-19 12:11:14
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -749,7 +749,7 @@ con = axs[0].contourf(
     )
 
 axs[0].format(
-    rtitle="2064-2099", ltitle="MME",
+    rtitle="diff", ltitle="MME",
 )
 # ===================================================
 for num_models,mod in enumerate(pre_diff_India_pre_rvalue.coords["models"].data):
@@ -762,10 +762,75 @@ for num_models,mod in enumerate(pre_diff_India_pre_rvalue.coords["models"].data)
     )
 
     axs[num_models+1].format(
-        rtitle="2064-2099", ltitle="{}".format(mod),
+        rtitle="diff", ltitle="{}".format(mod),
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
+# %%
+#   read the var in ERA5 and historical/ssp585
+fhgtERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10})
+hgtERA5 = fhgtERA5["z"]
+
+fuERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10}
+)
+uERA5 = fuERA5["u"]
+
+fvERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10}
+)
+vERA5 = fvERA5["v"]
+
+fspERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10}
+)
+spERA5 = fspERA5["sp"]
+
+fqERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10})
+qERA5 = fqERA5["q"]
+
+hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True)
+hgtERA5_ver_JJA = hgtERA5_ver_JJA-hgtERA5_ver_JJA.mean(dim="lon", skipna=True)
+uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True)
+vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True)
+qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True)
+spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
+
+hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
+uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
+vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
+qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
+spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
+
+fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10})
+hgthis_ver_JJA = fhgthis_ver_JJA["zg"]
+hgthis_ver_JJA = hgthis_ver_JJA - hgthis_ver_JJA.mean(dim="lon", skipna=True)
+
+fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10})
+uhis_ver_JJA = fuhis_ver_JJA["ua"]
+
+fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10})
+vhis_ver_JJA = fvhis_ver_JJA["va"]
+
+fhgtssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc", chunks={"lat":10, "lon":10})
+hgtssp585_ver_JJA = fhgtssp585_ver_JJA["zg"]
+hgtssp585_ver_JJA = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lon", skipna=True)
+
+fussp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_201501-209912.nc", chunks={"lat":10, "lon":10})
+ussp585_ver_JJA = fussp585_ver_JJA["ua"]
+
+fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc", chunks={"lat":10, "lon":10})
+vssp585_ver_JJA = fvssp585_ver_JJA["va"]
+
+# %%
+#   calculate the hgt/u/v regression onto IndR in ERA5, historical, ssp585, ssp585_p3
+(
+    pre_CRU_India_pre_slope,
+    pre_CRU_India_pre_intercept,
+    pre_CRU_India_pre_rvalue,
+    pre_CRU_India_pre_pvalue,
+    pre_CRU_India_pre_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), preCRU_JJA.sel(time=preCRU_JJA.time.dt.year>=1979))
 # %%
 # # pick_up the good models
 # gmodels = ["CNRM-CM6-1", "MIROC-ES2L", "NorESM2-LM", "HadGEM3-GC31-LL", "MRI-ESM2-0", "ACCESS-CM2", "MIROC6", "EC-Earth3", "CESM2-WACCM", "CAMS-CSM1-0"]
@@ -914,34 +979,7 @@ fvqssp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EA
 vqssp585_JJA = fvqssp585["vq_dpg"]
 
 # %%
-#   calculate the divuqvq/uq/vq in ERA5 reanalysis
-fuERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
-)
-uERA5 = fuERA5["u"]
 
-fvERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc"
-)
-vERA5 = fvERA5["v"]
-
-fspERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
-)
-spERA5 = fspERA5["sp"]
-
-fqERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc")
-qERA5 = fqERA5["q"]
-
-uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
-vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
-qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True).loc[:, 100.0:, :, :]
-spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
-
-uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
-vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
-qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
-spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
 
 ptop = 100 * 100
 g = 9.8
