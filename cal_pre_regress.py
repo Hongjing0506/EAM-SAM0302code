@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-19 12:18:22
+LastEditTime: 2022-04-19 12:35:47
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -832,7 +832,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndRCRU_ERA5_hgt_rvalue,
     IndRCRU_ERA5_hgt_pvalue,
     IndRCRU_ERA5_hgt_hypothesis,
-) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 
 (
     IndRCRU_ERA5_u_slope,
@@ -840,7 +840,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndRCRU_ERA5_u_rvalue,
     IndRCRU_ERA5_u_pvalue,
     IndRCRU_ERA5_u_hypothesis,
-) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), uERA5_ver_JJA.sel(time=uERA5_ver_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), uERA5_ver_JJA.sel(time=uERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 
 (
     IndRCRU_ERA5_v_slope,
@@ -848,7 +848,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndRCRU_ERA5_v_rvalue,
     IndRCRU_ERA5_v_pvalue,
     IndRCRU_ERA5_v_hypothesis,
-) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 
 (
     IndRGPCP_ERA5_hgt_slope,
@@ -856,7 +856,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndRGPCP_ERA5_hgt_rvalue,
     IndRGPCP_ERA5_hgt_pvalue,
     IndRGPCP_ERA5_hgt_hypothesis,
-) = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 
 (
     IndRGPCP_ERA5_u_slope,
@@ -864,7 +864,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndRGPCP_ERA5_u_rvalue,
     IndRGPCP_ERA5_u_pvalue,
     IndRGPCP_ERA5_u_hypothesis,
-) = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), uERA5_ver_JJA.sel(time=uERA5_ver_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), uERA5_ver_JJA.sel(time=uERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 
 (
     IndRGPCP_ERA5_v_slope,
@@ -872,7 +872,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndRGPCP_ERA5_v_rvalue,
     IndRGPCP_ERA5_v_pvalue,
     IndRGPCP_ERA5_v_hypothesis,
-) = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 
 (
     IndR_his_hgt_slope,
@@ -880,7 +880,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndR_his_hgt_rvalue,
     IndR_his_hgt_pvalue,
     IndR_his_hgt_hypothesis,
-) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), hgthis_ver_JJA.sel(time=hgthis_ver_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), hgthis_ver_JJA.sel(time=hgthis_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 
 (
     IndR_his_u_slope,
@@ -888,7 +888,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndR_his_u_rvalue,
     IndR_his_u_pvalue,
     IndR_his_u_hypothesis,
-) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), uhis_ver_JJA.sel(time=uhis_ver_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), uhis_ver_JJA.sel(time=uhis_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 
 (
     IndR_his_v_slope,
@@ -896,7 +896,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndR_his_v_rvalue,
     IndR_his_v_pvalue,
     IndR_his_v_hypothesis,
-) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), vhis_ver_JJA.sel(time=vhis_ver_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), vhis_ver_JJA.sel(time=vhis_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 
 (
     IndR_ssp585_hgt_slope,
@@ -904,7 +904,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndR_ssp585_hgt_rvalue,
     IndR_ssp585_hgt_pvalue,
     IndR_ssp585_hgt_hypothesis,
-) = ca.dim_linregress(pressp585_India_JJA, hgtssp585_ver_JJA)
+) = ca.dim_linregress(pressp585_India_JJA, hgtssp585_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
 
 (
     IndR_ssp585_u_slope,
@@ -912,7 +912,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndR_ssp585_u_rvalue,
     IndR_ssp585_u_pvalue,
     IndR_ssp585_u_hypothesis,
-) = ca.dim_linregress(pressp585_India_JJA, ussp585_ver_JJA)
+) = ca.dim_linregress(pressp585_India_JJA, ussp585_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
 
 (
     IndR_ssp585_v_slope,
@@ -920,7 +920,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndR_ssp585_v_rvalue,
     IndR_ssp585_v_pvalue,
     IndR_ssp585_v_hypothesis,
-) = ca.dim_linregress(pressp585_India_JJA, vssp585_ver_JJA)
+) = ca.dim_linregress(pressp585_India_JJA, vssp585_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
 
 (
     IndR_ssp585_p3_hgt_slope,
@@ -928,7 +928,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndR_ssp585_p3_hgt_rvalue,
     IndR_ssp585_p3_hgt_pvalue,
     IndR_ssp585_p3_hgt_hypothesis,
-) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), hgtssp585_ver_JJA.sel(time=hgtssp585_ver_JJA.time.dt.year>=2064))
+) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), hgtssp585_ver_JJA.sel(time=hgtssp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
 
 (
     IndR_ssp585_p3_u_slope,
@@ -936,7 +936,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndR_ssp585_p3_u_rvalue,
     IndR_ssp585_p3_u_pvalue,
     IndR_ssp585_p3_u_hypothesis,
-) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), ussp585_ver_JJA.sel(time=ussp585_ver_JJA.time.dt.year>=2064))
+) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), ussp585_ver_JJA.sel(time=ussp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
 
 (
     IndR_ssp585_p3_v_slope,
@@ -944,7 +944,117 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndR_ssp585_p3_v_rvalue,
     IndR_ssp585_p3_v_pvalue,
     IndR_ssp585_p3_v_hypothesis,
-) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year>=2064))
+) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+# %%
+#   calculate the windcheck and ensmean
+IndRCRU_ERA5_wind_mask = ca.wind_check(
+    xr.where(IndRCRU_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndRCRU_ERA5_v_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndRCRU_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndRCRU_ERA5_v_pvalue <= 0.05, 1.0, 0.0),
+)
+
+IndRGPCP_ERA5_wind_mask = ca.wind_check(
+    xr.where(IndRGPCP_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndRGPCP_ERA5_v_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndRGPCP_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndRGPCP_ERA5_v_pvalue <= 0.05, 1.0, 0.0),
+)
+
+IndR_his_wind_mask = ca.wind_check(
+    xr.where(IndR_his_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndR_his_v_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndR_his_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndR_his_v_pvalue <= 0.05, 1.0, 0.0),
+)
+
+IndR_ssp585_wind_mask = ca.wind_check(
+    xr.where(IndR_ssp585_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_v_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_v_pvalue <= 0.05, 1.0, 0.0),
+)
+
+IndR_ssp585_p3_wind_mask = ca.wind_check(
+    xr.where(IndR_ssp585_p3_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_v_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_v_pvalue <= 0.05, 1.0, 0.0),
+)
+
+IndR_his_hgt_slope_ens = IndR_his_hgt_slope.mean(dim="models", skipna=True)
+IndR_his_hgt_slope_ens_mask = ca.MME_reg_mask(IndR_his_hgt_slope_ens, IndR_his_hgt_slope.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_hgt_slope_ens = IndR_ssp585_hgt_slope.mean(dim="models", skipna=True)
+IndR_ssp585_hgt_slope_ens_mask = ca.MME_reg_mask(IndR_ssp585_hgt_slope_ens, IndR_ssp585_hgt_slope.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_p3_hgt_slope_ens = IndR_ssp585_p3_hgt_slope.mean(dim="models", skipna=True)
+IndR_ssp585_p3_hgt_slope_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_hgt_slope_ens, IndR_ssp585_p3_hgt_slope.std(dim="models", skipna=True), len(models), True)
+
+IndR_his_u_slope_ens = IndR_his_u_slope.mean(dim="models", skipna=True)
+IndR_his_u_slope_ens_mask = ca.MME_reg_mask(IndR_his_u_slope_ens, IndR_his_u_slope.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_u_slope_ens = IndR_ssp585_u_slope.mean(dim="models", skipna=True)
+IndR_ssp585_u_slope_ens_mask = ca.MME_reg_mask(IndR_ssp585_u_slope_ens, IndR_ssp585_u_slope.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_p3_u_slope_ens = IndR_ssp585_p3_u_slope.mean(dim="models", skipna=True)
+IndR_ssp585_p3_u_slope_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_u_slope_ens, IndR_ssp585_p3_u_slope.std(dim="models", skipna=True), len(models), True)
+
+IndR_his_v_slope_ens = IndR_his_v_slope.mean(dim="models", skipna=True)
+IndR_his_v_slope_ens_mask = ca.MME_reg_mask(IndR_his_v_slope_ens, IndR_his_v_slope.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_v_slope_ens = IndR_ssp585_v_slope.mean(dim="models", skipna=True)
+IndR_ssp585_v_slope_ens_mask = ca.MME_reg_mask(IndR_ssp585_v_slope_ens, IndR_ssp585_v_slope.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_p3_v_slope_ens = IndR_ssp585_p3_v_slope.mean(dim="models", skipna=True)
+IndR_ssp585_p3_v_slope_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_v_slope_ens, IndR_ssp585_p3_v_slope.std(dim="models", skipna=True), len(models), True)
+
+IndR_his_hgt_rvalue_ens = IndR_his_hgt_rvalue.mean(dim="models", skipna=True)
+IndR_his_hgt_rvalue_ens_mask = ca.MME_reg_mask(IndR_his_hgt_rvalue_ens, IndR_his_hgt_rvalue.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_hgt_rvalue_ens = IndR_ssp585_hgt_rvalue.mean(dim="models", skipna=True)
+IndR_ssp585_hgt_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_hgt_rvalue_ens, IndR_ssp585_hgt_rvalue.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_p3_hgt_rvalue_ens = IndR_ssp585_p3_hgt_rvalue.mean(dim="models", skipna=True)
+IndR_ssp585_p3_hgt_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_hgt_rvalue_ens, IndR_ssp585_p3_hgt_rvalue.std(dim="models", skipna=True), len(models), True)
+
+IndR_his_u_rvalue_ens = IndR_his_u_rvalue.mean(dim="models", skipna=True)
+IndR_his_u_rvalue_ens_mask = ca.MME_reg_mask(IndR_his_u_rvalue_ens, IndR_his_u_rvalue.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_u_rvalue_ens = IndR_ssp585_u_rvalue.mean(dim="models", skipna=True)
+IndR_ssp585_u_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_u_rvalue_ens, IndR_ssp585_u_rvalue.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_p3_u_rvalue_ens = IndR_ssp585_p3_u_rvalue.mean(dim="models", skipna=True)
+IndR_ssp585_p3_u_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_u_rvalue_ens, IndR_ssp585_p3_u_rvalue.std(dim="models", skipna=True), len(models), True)
+
+IndR_his_v_rvalue_ens = IndR_his_v_rvalue.mean(dim="models", skipna=True)
+IndR_his_v_rvalue_ens_mask = ca.MME_reg_mask(IndR_his_v_rvalue_ens, IndR_his_v_rvalue.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_v_rvalue_ens = IndR_ssp585_v_rvalue.mean(dim="models", skipna=True)
+IndR_ssp585_v_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_v_rvalue_ens, IndR_ssp585_v_rvalue.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_p3_v_rvalue_ens = IndR_ssp585_p3_v_rvalue.mean(dim="models", skipna=True)
+IndR_ssp585_p3_v_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_v_rvalue_ens, IndR_ssp585_p3_v_rvalue.std(dim="models", skipna=True), len(models), True)
+
+IndR_his_wind_ens_mask = ca.wind_check(
+    xr.where(IndR_his_u_slope_ens_mask <= 0.05, 1.0, 0.0),
+    xr.where(IndR_his_v_slope_ens_mask <= 0.05, 1.0, 0.0),
+    xr.where(IndR_his_u_slope_ens_mask <= 0.05, 1.0, 0.0),
+    xr.where(IndR_his_v_slope_ens_mask <= 0.05, 1.0, 0.0),
+)
+IndR_ssp585_wind_ens_mask = ca.wind_check(
+    xr.where(IndR_ssp585_u_slope_ens_mask <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_v_slope_ens_mask <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_u_slope_ens_mask <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_v_slope_ens_mask <= 0.05, 1.0, 0.0),
+)
+IndR_ssp585_p3_wind_ens_mask = ca.wind_check(
+    xr.where(IndR_ssp585_p3_u_slope_ens_mask <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_v_slope_ens_mask <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_u_slope_ens_mask <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_v_slope_ens_mask <= 0.05, 1.0, 0.0),
+)
+
 # %%
 # # pick_up the good models
 # gmodels = ["CNRM-CM6-1", "MIROC-ES2L", "NorESM2-LM", "HadGEM3-GC31-LL", "MRI-ESM2-0", "ACCESS-CM2", "MIROC6", "EC-Earth3", "CESM2-WACCM", "CAMS-CSM1-0"]
