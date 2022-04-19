@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-19 10:56:52
+LastEditTime: 2022-04-19 11:05:04
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -486,6 +486,17 @@ for num_models,mod in enumerate(pre_ssp585_India_pre_rvalue.coords["models"].dat
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
+# %%
+#   calculate the 2064-2099 ssp585 p3 precipitation regression onto IndR
+(
+    pre_ssp585_p3_India_pre_slope,
+    pre_ssp585_p3_India_pre_intercept,
+    pre_ssp585_p3_India_pre_rvalue,
+    pre_ssp585_p3_India_pre_pvalue,
+    pre_ssp585_p3_India_pre_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_JJA.sel(time=pressp585_JJA.time.dt.year>=2064))
+
+
 # %%
 # # pick_up the good models
 # gmodels = ["CNRM-CM6-1", "MIROC-ES2L", "NorESM2-LM", "HadGEM3-GC31-LL", "MRI-ESM2-0", "ACCESS-CM2", "MIROC6", "EC-Earth3", "CESM2-WACCM", "CAMS-CSM1-0"]
