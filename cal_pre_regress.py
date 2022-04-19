@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-19 11:22:03
+LastEditTime: 2022-04-19 11:25:55
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -644,6 +644,72 @@ for num_models,mod in enumerate(pre_ssp585_p3_India_pre_rvalue.coords["models"].
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
+
+# %%
+#   plot the regression coefficients avalue in ssp585 p3-historical
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 29), (7, 4))
+plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    # Inida area
+    x0 = 70
+    y0 = 8.0
+    width = 16
+    height = 20.0
+    patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0].contourf(
+    pre_diff_India_pre_slope_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-2.0, 2.1, 0.1),
+    zorder=0.8,
+    extend="both",
+    )
+sepl.plt_sig(
+    pre_diff_India_pre_slope_ens, axs[0], n, np.where(pre_diff_India_pre_slope_ens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
+)
+
+axs[0].format(
+    rtitle="diff", ltitle="MME",
+)
+# ===================================================
+for num_models,mod in enumerate(pre_diff_India_pre_slope.coords["models"].data):
+    con = axs[num_models+1].contourf(
+    pre_diff_India_pre_slope.sel(models=mod),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-2.0, 2.1, 0.1),
+    zorder=0.8,
+    extend="both",
+    )
+
+    axs[num_models+1].format(
+        rtitle="diff", ltitle="{}".format(mod),
+    )
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
+
 # %%
 # # pick_up the good models
 # gmodels = ["CNRM-CM6-1", "MIROC-ES2L", "NorESM2-LM", "HadGEM3-GC31-LL", "MRI-ESM2-0", "ACCESS-CM2", "MIROC6", "EC-Earth3", "CESM2-WACCM", "CAMS-CSM1-0"]
