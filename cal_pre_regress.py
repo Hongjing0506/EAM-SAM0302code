@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-19 17:33:24
+LastEditTime: 2022-04-19 17:52:45
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -1390,9 +1390,10 @@ IndR_ssp585_p3_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj
 IndR_ssp585_p3_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_p3_v_regress.nc")
 # %%
 #   plot the avalue of hgt&u&v regress onto IndR in ERA5 and historical
-startlevel=[-20, -16, -10]
-endlevel=[20, 16, 10]
-spacinglevel=[2, 1.6, 1.0]
+startlevel=[-15, -8, -6]
+endlevel=[15, 8, 6]
+spacinglevel=[0.75, 0.4, 0.3]
+scalelevel=[0.23, 0.17, 0.14]
 for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     pplt.rc.grid = False
     pplt.rc.reso = "lo"
@@ -1400,8 +1401,8 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     proj = pplt.PlateCarree(central_longitude=cl)
 
     fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
-    plot_array = np.reshape(range(1, 29), (7, 4))
-    # plot_array[6,3] = 0
+    plot_array = np.reshape(range(1, 31), (6, 5))
+    plot_array[-1,-1] = 0
     axs = fig.subplots(plot_array, proj=proj)
 
     #   set the geo_ticks and map projection to the plots
@@ -1443,35 +1444,35 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     sepl.plt_sig(
         IndRCRU_ERA5_hgt_slope.sel(level=lev), axs[0], n, np.where(IndRCRU_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
     )
-    # axs[0].quiver(
-    #     IndRCRU_ERA5_u_slope_load.sel(level=lev)[::ski, ::ski],
-    #     IndRCRU_ERA5_v_slope_load.sel(level=lev)[::ski, ::ski],
-    #     zorder=1.1,
-    #     headwidth=2.6,
-    #     headlength=2.3,
-    #     headaxislength=2.3,
-    #     scale_units="xy",
-    #     scale=0.17,
-    #     pivot="mid",
-    #     color="grey6",
-    # )
+    axs[0].quiver(
+        IndRCRU_ERA5_u_slope.sel(level=lev)[::ski, ::ski],
+        IndRCRU_ERA5_v_slope.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
 
-    # m = axs[0].quiver(
-    #     IndRCRU_ERA5_u_slope_load.sel(level=lev).where(IndRCRU_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
-    #     IndRCRU_ERA5_v_slope_load.sel(level=lev).where(IndRCRU_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
-    #     zorder=1.1,
-    #     headwidth=2.6,
-    #     headlength=2.3,
-    #     headaxislength=2.3,
-    #     scale_units="xy",
-    #     scale=0.17,
-    #     pivot="mid",
-    #     color="black",
-    # )
+    m = axs[0].quiver(
+        IndRCRU_ERA5_u_slope.sel(level=lev).where(IndRCRU_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndRCRU_ERA5_v_slope.sel(level=lev).where(IndRCRU_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
 
-    # qk = axs[0].quiverkey(
-    #     m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
-    # )
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
     axs[0].format(
         rtitle="1979-2014", ltitle="CRU & ERA5",
     )
@@ -1487,35 +1488,35 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     sepl.plt_sig(
         IndRGPCP_ERA5_hgt_slope.sel(level=lev), axs[1], n, np.where(IndRGPCP_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
     )
-    # axs[1].quiver(
-    #     IndRGPCP_ERA5_u_slope_load.sel(level=lev)[::ski, ::ski],
-    #     IndRGPCP_ERA5_v_slope_load.sel(level=lev)[::ski, ::ski],
-    #     zorder=1.1,
-    #     headwidth=2.6,
-    #     headlength=2.3,
-    #     headaxislength=2.3,
-    #     scale_units="xy",
-    #     scale=0.17,
-    #     pivot="mid",
-    #     color="grey6",
-    # )
+    axs[1].quiver(
+        IndRGPCP_ERA5_u_slope.sel(level=lev)[::ski, ::ski],
+        IndRGPCP_ERA5_v_slope.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
 
-    # m = axs[1].quiver(
-    #     IndRGPCP_ERA5_u_slope_load.sel(level=lev).where(IndRGPCP_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
-    #     IndRGPCP_ERA5_v_slope_load.sel(level=lev).where(IndRGPCP_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
-    #     zorder=1.1,
-    #     headwidth=2.6,
-    #     headlength=2.3,
-    #     headaxislength=2.3,
-    #     scale_units="xy",
-    #     scale=0.17,
-    #     pivot="mid",
-    #     color="black",
-    # )
+    m = axs[1].quiver(
+        IndRGPCP_ERA5_u_slope.sel(level=lev).where(IndRGPCP_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndRGPCP_ERA5_v_slope.sel(level=lev).where(IndRGPCP_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
 
-    # qk = axs[1].quiverkey(
-    #     m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
-    # )
+    qk = axs[1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
     axs[1].format(
         rtitle="1979-2014", ltitle="GPCP & ERA5",
     )
@@ -1531,35 +1532,35 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     sepl.plt_sig(
         IndR_his_hgt_slope_ens.sel(level=lev), axs[2], n, np.where(IndR_his_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
     )
-    # axs[2].quiver(
-    #     IndR_his_u_slope_ens_load.sel(level=lev)[::ski, ::ski],
-    #     IndR_his_v_slope_ens_load.sel(level=lev)[::ski, ::ski],
-    #     zorder=1.1,
-    #     headwidth=2.6,
-    #     headlength=2.3,
-    #     headaxislength=2.3,
-    #     scale_units="xy",
-    #     scale=0.17,
-    #     pivot="mid",
-    #     color="grey6",
-    # )
+    axs[2].quiver(
+        IndR_his_u_slope_ens.sel(level=lev)[::ski, ::ski],
+        IndR_his_v_slope_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
 
-    # m = axs[2].quiver(
-    #     IndR_his_u_slope_ens_load.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
-    #     IndR_his_v_slope_ens_load.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
-    #     zorder=1.1,
-    #     headwidth=2.6,
-    #     headlength=2.3,
-    #     headaxislength=2.3,
-    #     scale_units="xy",
-    #     scale=0.17,
-    #     pivot="mid",
-    #     color="black",
-    # )
+    m = axs[2].quiver(
+        IndR_his_u_slope_ens.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_his_v_slope_ens.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
 
-    # qk = axs[2].quiverkey(
-    #     m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
-    # )
+    qk = axs[2].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
     axs[2].format(
         rtitle="1979-2014", ltitle="MME",
     )
@@ -1576,35 +1577,35 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         sepl.plt_sig(
             IndR_his_hgt_slope.sel(models=mod,level=lev), axs[num_mod+3], n, np.where(IndR_his_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
         )
-        # axs[num_mod+3].quiver(
-        #     IndR_his_u_slope_load.sel(models=mod,level=lev)[::ski, ::ski],
-        #     IndR_his_v_slope_load.sel(models=mod,level=lev)[::ski, ::ski],
-        #     zorder=1.1,
-        #     headwidth=2.6,
-        #     headlength=2.3,
-        #     headaxislength=2.3,
-        #     scale_units="xy",
-        #     scale=0.17,
-        #     pivot="mid",
-        #     color="grey6",
-        # )
+        axs[num_mod+3].quiver(
+            IndR_his_u_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            IndR_his_v_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="grey6",
+        )
 
-        # m = axs[num_mod+3].quiver(
-        #     IndR_his_u_slope_load.sel(models=mod,level=lev).where(IndR_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
-        #     IndR_his_v_slope_load.sel(models=mod,level=lev).where(IndR_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
-        #     zorder=1.1,
-        #     headwidth=2.6,
-        #     headlength=2.3,
-        #     headaxislength=2.3,
-        #     scale_units="xy",
-        #     scale=0.17,
-        #     pivot="mid",
-        #     color="black",
-        # )
+        m = axs[num_mod+3].quiver(
+            IndR_his_u_slope.sel(models=mod,level=lev).where(IndR_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            IndR_his_v_slope.sel(models=mod,level=lev).where(IndR_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="black",
+        )
 
-        # qk = axs[num_mod+3].quiverkey(
-        #     m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
-        # )
+        qk = axs[num_mod+3].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
         axs[num_mod+3].format(
             rtitle="1979-2014", ltitle="{}".format(mod.data),
         )
