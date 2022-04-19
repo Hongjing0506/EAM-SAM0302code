@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-19 12:11:14
+LastEditTime: 2022-04-19 12:18:22
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -824,13 +824,127 @@ vssp585_ver_JJA = fvssp585_ver_JJA["va"]
 
 # %%
 #   calculate the hgt/u/v regression onto IndR in ERA5, historical, ssp585, ssp585_p3
+preCRU_India_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
+preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979).coords["time"]
 (
-    pre_CRU_India_pre_slope,
-    pre_CRU_India_pre_intercept,
-    pre_CRU_India_pre_rvalue,
-    pre_CRU_India_pre_pvalue,
-    pre_CRU_India_pre_hypothesis,
-) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), preCRU_JJA.sel(time=preCRU_JJA.time.dt.year>=1979))
+    IndRCRU_ERA5_hgt_slope,
+    IndRCRU_ERA5_hgt_intercept,
+    IndRCRU_ERA5_hgt_rvalue,
+    IndRCRU_ERA5_hgt_pvalue,
+    IndRCRU_ERA5_hgt_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979))
+
+(
+    IndRCRU_ERA5_u_slope,
+    IndRCRU_ERA5_u_intercept,
+    IndRCRU_ERA5_u_rvalue,
+    IndRCRU_ERA5_u_pvalue,
+    IndRCRU_ERA5_u_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), uERA5_ver_JJA.sel(time=uERA5_ver_JJA.time.dt.year>=1979))
+
+(
+    IndRCRU_ERA5_v_slope,
+    IndRCRU_ERA5_v_intercept,
+    IndRCRU_ERA5_v_rvalue,
+    IndRCRU_ERA5_v_pvalue,
+    IndRCRU_ERA5_v_hypothesis,
+) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979))
+
+(
+    IndRGPCP_ERA5_hgt_slope,
+    IndRGPCP_ERA5_hgt_intercept,
+    IndRGPCP_ERA5_hgt_rvalue,
+    IndRGPCP_ERA5_hgt_pvalue,
+    IndRGPCP_ERA5_hgt_hypothesis,
+) = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979))
+
+(
+    IndRGPCP_ERA5_u_slope,
+    IndRGPCP_ERA5_u_intercept,
+    IndRGPCP_ERA5_u_rvalue,
+    IndRGPCP_ERA5_u_pvalue,
+    IndRGPCP_ERA5_u_hypothesis,
+) = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), uERA5_ver_JJA.sel(time=uERA5_ver_JJA.time.dt.year>=1979))
+
+(
+    IndRGPCP_ERA5_v_slope,
+    IndRGPCP_ERA5_v_intercept,
+    IndRGPCP_ERA5_v_rvalue,
+    IndRGPCP_ERA5_v_pvalue,
+    IndRGPCP_ERA5_v_hypothesis,
+) = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979))
+
+(
+    IndR_his_hgt_slope,
+    IndR_his_hgt_intercept,
+    IndR_his_hgt_rvalue,
+    IndR_his_hgt_pvalue,
+    IndR_his_hgt_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), hgthis_ver_JJA.sel(time=hgthis_ver_JJA.time.dt.year>=1979))
+
+(
+    IndR_his_u_slope,
+    IndR_his_u_intercept,
+    IndR_his_u_rvalue,
+    IndR_his_u_pvalue,
+    IndR_his_u_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), uhis_ver_JJA.sel(time=uhis_ver_JJA.time.dt.year>=1979))
+
+(
+    IndR_his_v_slope,
+    IndR_his_v_intercept,
+    IndR_his_v_rvalue,
+    IndR_his_v_pvalue,
+    IndR_his_v_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), vhis_ver_JJA.sel(time=vhis_ver_JJA.time.dt.year>=1979))
+
+(
+    IndR_ssp585_hgt_slope,
+    IndR_ssp585_hgt_intercept,
+    IndR_ssp585_hgt_rvalue,
+    IndR_ssp585_hgt_pvalue,
+    IndR_ssp585_hgt_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA, hgtssp585_ver_JJA)
+
+(
+    IndR_ssp585_u_slope,
+    IndR_ssp585_u_intercept,
+    IndR_ssp585_u_rvalue,
+    IndR_ssp585_u_pvalue,
+    IndR_ssp585_u_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA, ussp585_ver_JJA)
+
+(
+    IndR_ssp585_v_slope,
+    IndR_ssp585_v_intercept,
+    IndR_ssp585_v_rvalue,
+    IndR_ssp585_v_pvalue,
+    IndR_ssp585_v_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA, vssp585_ver_JJA)
+
+(
+    IndR_ssp585_p3_hgt_slope,
+    IndR_ssp585_p3_hgt_intercept,
+    IndR_ssp585_p3_hgt_rvalue,
+    IndR_ssp585_p3_hgt_pvalue,
+    IndR_ssp585_p3_hgt_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), hgtssp585_ver_JJA.sel(time=hgtssp585_ver_JJA.time.dt.year>=2064))
+
+(
+    IndR_ssp585_p3_u_slope,
+    IndR_ssp585_p3_u_intercept,
+    IndR_ssp585_p3_u_rvalue,
+    IndR_ssp585_p3_u_pvalue,
+    IndR_ssp585_p3_u_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), ussp585_ver_JJA.sel(time=ussp585_ver_JJA.time.dt.year>=2064))
+
+(
+    IndR_ssp585_p3_v_slope,
+    IndR_ssp585_p3_v_intercept,
+    IndR_ssp585_p3_v_rvalue,
+    IndR_ssp585_p3_v_pvalue,
+    IndR_ssp585_p3_v_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year>=2064))
 # %%
 # # pick_up the good models
 # gmodels = ["CNRM-CM6-1", "MIROC-ES2L", "NorESM2-LM", "HadGEM3-GC31-LL", "MRI-ESM2-0", "ACCESS-CM2", "MIROC6", "EC-Earth3", "CESM2-WACCM", "CAMS-CSM1-0"]
