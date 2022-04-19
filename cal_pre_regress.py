@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-19 12:35:47
+LastEditTime: 2022-04-19 17:33:24
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -768,25 +768,25 @@ fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 # %%
 #   read the var in ERA5 and historical/ssp585
-fhgtERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10})
+fhgtERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc")
 hgtERA5 = fhgtERA5["z"]
 
 fuERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10}
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
 )
 uERA5 = fuERA5["u"]
 
 fvERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10}
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc"
 )
 vERA5 = fvERA5["v"]
 
 fspERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10}
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
 )
 spERA5 = fspERA5["sp"]
 
-fqERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10})
+fqERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc")
 qERA5 = fqERA5["q"]
 
 hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True)
@@ -802,24 +802,24 @@ vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
 qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
 spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
 
-fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10})
+fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc")
 hgthis_ver_JJA = fhgthis_ver_JJA["zg"]
 hgthis_ver_JJA = hgthis_ver_JJA - hgthis_ver_JJA.mean(dim="lon", skipna=True)
 
-fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10})
+fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc")
 uhis_ver_JJA = fuhis_ver_JJA["ua"]
 
-fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc", chunks={"lat":10, "lon":10})
+fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc")
 vhis_ver_JJA = fvhis_ver_JJA["va"]
 
-fhgtssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc", chunks={"lat":10, "lon":10})
+fhgtssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
 hgtssp585_ver_JJA = fhgtssp585_ver_JJA["zg"]
 hgtssp585_ver_JJA = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lon", skipna=True)
 
-fussp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_201501-209912.nc", chunks={"lat":10, "lon":10})
+fussp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_201501-209912.nc")
 ussp585_ver_JJA = fussp585_ver_JJA["ua"]
 
-fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc", chunks={"lat":10, "lon":10})
+fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
 vssp585_ver_JJA = fvssp585_ver_JJA["va"]
 
 # %%
@@ -1054,6 +1054,563 @@ IndR_ssp585_p3_wind_ens_mask = ca.wind_check(
     xr.where(IndR_ssp585_p3_u_slope_ens_mask <= 0.05, 1.0, 0.0),
     xr.where(IndR_ssp585_p3_v_slope_ens_mask <= 0.05, 1.0, 0.0),
 )
+
+# %%
+# IndRCRU_ERA5_u_slope_load = IndRCRU_ERA5_u_slope.load()
+# IndRCRU_ERA5_v_slope_load = IndRCRU_ERA5_v_slope.load()
+
+# IndRGPCP_ERA5_u_slope_load = IndRGPCP_ERA5_u_slope.load()
+# IndRGPCP_ERA5_v_slope_load = IndRGPCP_ERA5_v_slope.load()
+
+# IndR_his_u_slope_load = IndR_his_u_slope.load()
+# IndR_his_v_slope_load = IndR_his_v_slope.load()
+
+# IndR_ssp585_u_slope_load = IndR_ssp585_u_slope.load()
+# IndR_ssp585_v_slope_load = IndR_ssp585_v_slope.load()
+
+# IndR_ssp585_p3_u_slope_load = IndR_ssp585_p3_u_slope.load()
+# IndR_ssp585_p3_v_slope_load = IndR_ssp585_p3_v_slope.load()
+
+# IndRCRU_ERA5_wind_mask_load = IndRCRU_ERA5_wind_mask.load()
+# IndRGPCP_ERA5_wind_mask_load = IndRGPCP_ERA5_wind_mask.load()
+# IndR_his_wind_mask_load = IndR_his_wind_mask.load()
+# IndR_ssp585_wind_mask_load = IndR_ssp585_wind_mask.load()
+# IndR_ssp585_p3_wind_mask_load = IndR_ssp585_p3_wind_mask.load()
+
+# IndR_his_u_slope_ens_load = IndR_his_u_slope_ens.load()
+# IndR_his_v_slope_ens_load = IndR_his_v_slope_ens.load()
+# IndR_his_wind_slope_ens_mask_load = IndR_his_wind_slope_ens_mask.load()
+
+# IndR_ssp585_u_slope_ens_load = IndR_ssp585_u_slope_ens.load()
+# IndR_ssp585_v_slope_ens_load = IndR_ssp585_v_slope_ens.load()
+# IndR_ssp585_wind_ens_mask_load = IndR_ssp585_wind_ens_mask.load()
+
+# IndR_ssp585_p3_u_slope_ens_load = IndR_ssp585_p3_u_slope_ens.load()
+# IndR_ssp585_p3_v_slope_ens_load = IndR_ssp585_p3_v_slope_ens.load()
+# IndR_ssp585_p3_wind_ens_mask_load = IndR_ssp585_p3_wind_ens_mask.load()
+# # %%
+# IndRCRU_ERA5_u_rvalue_load = IndRCRU_ERA5_u_rvalue.load()
+# IndRCRU_ERA5_v_rvalue_load = IndRCRU_ERA5_v_rvalue.load()
+
+# IndRGPCP_ERA5_u_rvalue_load = IndRGPCP_ERA5_u_rvalue.load()
+# IndRGPCP_ERA5_v_rvalue_load = IndRGPCP_ERA5_v_rvalue.load()
+
+# IndR_his_u_rvalue_load = IndR_his_u_rvalue.load()
+# IndR_his_v_rvalue_load = IndR_his_v_rvalue.load()
+
+# IndR_ssp585_u_rvalue_load = IndR_ssp585_u_rvalue.load()
+# IndR_ssp585_v_rvalue_load = IndR_ssp585_v_rvalue.load()
+
+# IndR_ssp585_p3_u_rvalue_load = IndR_ssp585_p3_u_rvalue.load()
+# IndR_ssp585_p3_v_rvalue_load = IndR_ssp585_p3_v_rvalue.load()
+
+# IndR_his_u_rvalue_ens_load = IndR_his_u_rvalue_ens.load()
+# IndR_his_v_rvalue_ens_load = IndR_his_v_rvalue_ens.load()
+
+# IndR_ssp585_u_rvalue_ens_load = IndR_ssp585_u_rvalue_ens.load()
+# IndR_ssp585_v_rvalue_ens_load = IndR_ssp585_v_rvalue_ens.load()
+
+# IndR_ssp585_p3_u_rvalue_ens_load = IndR_ssp585_p3_u_rvalue_ens.load()
+# IndR_ssp585_p3_v_rvalue_ens_load = IndR_ssp585_p3_v_rvalue_ens.load()
+# %%
+#   output the regression data
+#   creatte the dataset first
+models=IndR_his_hgt_slope.coords["models"]
+level=IndR_his_hgt_slope.coords["level"]
+lat=IndR_his_hgt_slope.coords["lat"]
+lon=IndR_his_hgt_slope.coords["lon"]
+
+IndRCRU_ERA5_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], IndRCRU_ERA5_hgt_slope.data),
+        intercept=(["level", "lat", "lon"], IndRCRU_ERA5_hgt_intercept.data),
+        rvalue=(["level", "lat", "lon"], IndRCRU_ERA5_hgt_rvalue.data),
+        pvalue=(["level", "lat", "lon"], IndRCRU_ERA5_hgt_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], IndRCRU_ERA5_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of ERA5 regress onto 1979-2014 CRU IndR"),
+)
+
+IndRCRU_ERA5_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], IndRCRU_ERA5_u_slope.data),
+        intercept=(["level", "lat", "lon"], IndRCRU_ERA5_u_intercept.data),
+        rvalue=(["level", "lat", "lon"], IndRCRU_ERA5_u_rvalue.data),
+        pvalue=(["level", "lat", "lon"], IndRCRU_ERA5_u_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], IndRCRU_ERA5_u_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of ERA5 regress onto 1979-2014 CRU IndR"),
+)
+
+IndRCRU_ERA5_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], IndRCRU_ERA5_v_slope.data),
+        intercept=(["level", "lat", "lon"], IndRCRU_ERA5_v_intercept.data),
+        rvalue=(["level", "lat", "lon"], IndRCRU_ERA5_v_rvalue.data),
+        pvalue=(["level", "lat", "lon"], IndRCRU_ERA5_v_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], IndRCRU_ERA5_v_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of ERA5 regress onto 1979-2014 CRU IndR"),
+)
+
+IndRGPCP_ERA5_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], IndRGPCP_ERA5_hgt_slope.data),
+        intercept=(["level", "lat", "lon"], IndRGPCP_ERA5_hgt_intercept.data),
+        rvalue=(["level", "lat", "lon"], IndRGPCP_ERA5_hgt_rvalue.data),
+        pvalue=(["level", "lat", "lon"], IndRGPCP_ERA5_hgt_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], IndRGPCP_ERA5_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of ERA5 regress onto 1979-2014 GPCP IndR"),
+)
+
+IndRGPCP_ERA5_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], IndRGPCP_ERA5_u_slope.data),
+        intercept=(["level", "lat", "lon"], IndRGPCP_ERA5_u_intercept.data),
+        rvalue=(["level", "lat", "lon"], IndRGPCP_ERA5_u_rvalue.data),
+        pvalue=(["level", "lat", "lon"], IndRGPCP_ERA5_u_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], IndRGPCP_ERA5_u_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of ERA5 regress onto 1979-2014 GPCP IndR"),
+)
+
+IndRGPCP_ERA5_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], IndRGPCP_ERA5_v_slope.data),
+        intercept=(["level", "lat", "lon"], IndRGPCP_ERA5_v_intercept.data),
+        rvalue=(["level", "lat", "lon"], IndRGPCP_ERA5_v_rvalue.data),
+        pvalue=(["level", "lat", "lon"], IndRGPCP_ERA5_v_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], IndRGPCP_ERA5_v_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of ERA5 regress onto 1979-2014 GPCP IndR"),
+)
+
+IndR_his_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_his_hgt_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_his_hgt_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_his_hgt_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_his_hgt_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_his_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of historical regress onto 1979-2014 IndR"),
+)
+
+IndR_his_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_his_u_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_his_u_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_his_u_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_his_u_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_his_u_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of historical regress onto 1979-2014 IndR"),
+)
+
+IndR_his_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_his_v_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_his_v_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_his_v_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_his_v_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_his_v_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of historical regress onto 1979-2014 IndR"),
+)
+
+IndR_ssp585_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_ssp585_hgt_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_ssp585_hgt_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_ssp585_hgt_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_ssp585_hgt_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_ssp585_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of ssp585 regress onto 2015-2099 IndR"),
+)
+
+IndR_ssp585_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_ssp585_u_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_ssp585_u_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_ssp585_u_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_ssp585_u_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_ssp585_u_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of ssp585 regress onto 2015-2099 IndR"),
+)
+
+IndR_ssp585_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_ssp585_v_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_ssp585_v_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_ssp585_v_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_ssp585_v_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_ssp585_v_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of ssp585 regress onto 2015-2099 IndR"),
+)
+
+IndR_ssp585_p3_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_ssp585_p3_hgt_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_ssp585_p3_hgt_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_ssp585_p3_hgt_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_ssp585_p3_hgt_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_ssp585_p3_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of ssp585_p3 regress onto 2064-2099 IndR"),
+)
+
+IndR_ssp585_p3_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_ssp585_p3_u_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_ssp585_p3_u_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_ssp585_p3_u_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_ssp585_p3_u_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_ssp585_p3_u_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of ssp585_p3 regress onto 2064-2099 IndR"),
+)
+
+IndR_ssp585_p3_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_ssp585_p3_v_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_ssp585_p3_v_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_ssp585_p3_v_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_ssp585_p3_v_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_ssp585_p3_v_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of ssp585_p3 regress onto 2064-2099 IndR"),
+)
+#   output the data
+IndRCRU_ERA5_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndRCRU_ERA5_hgt_regress.nc")
+IndRCRU_ERA5_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndRCRU_ERA5_u_regress.nc")
+IndRCRU_ERA5_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndRCRU_ERA5_v_regress.nc")
+
+IndRGPCP_ERA5_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndRGPCP_ERA5_hgt_regress.nc")
+IndRGPCP_ERA5_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndRGPCP_ERA5_u_regress.nc")
+IndRGPCP_ERA5_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndRGPCP_ERA5_v_regress.nc")
+
+IndR_his_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndR_his_hgt_regress.nc")
+IndR_his_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndR_his_u_regress.nc")
+IndR_his_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndR_his_v_regress.nc")
+
+IndR_ssp585_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_hgt_regress.nc")
+IndR_ssp585_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_u_regress.nc")
+IndR_ssp585_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_v_regress.nc")
+
+IndR_ssp585_p3_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_p3_hgt_regress.nc")
+IndR_ssp585_p3_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_p3_u_regress.nc")
+IndR_ssp585_p3_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_p3_v_regress.nc")
+# %%
+#   plot the avalue of hgt&u&v regress onto IndR in ERA5 and historical
+startlevel=[-20, -16, -10]
+endlevel=[20, 16, 10]
+spacinglevel=[2, 1.6, 1.0]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 29), (7, 4))
+    # plot_array[6,3] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 1
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        #   Indian area
+        x0 = 70
+        y0 = 8.0
+        width = 16
+        height = 20.0
+        patches(ax, x0 - cl, y0, width, height, proj)
+        # #   IWF area
+        # x0 = 90
+        # y0 = 5.0
+        # width = 50.0
+        # height = 27.5
+        # patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        IndRCRU_ERA5_hgt_slope.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndRCRU_ERA5_hgt_slope.sel(level=lev), axs[0], n, np.where(IndRCRU_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    # axs[0].quiver(
+    #     IndRCRU_ERA5_u_slope_load.sel(level=lev)[::ski, ::ski],
+    #     IndRCRU_ERA5_v_slope_load.sel(level=lev)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=0.17,
+    #     pivot="mid",
+    #     color="grey6",
+    # )
+
+    # m = axs[0].quiver(
+    #     IndRCRU_ERA5_u_slope_load.sel(level=lev).where(IndRCRU_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+    #     IndRCRU_ERA5_v_slope_load.sel(level=lev).where(IndRCRU_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=0.17,
+    #     pivot="mid",
+    #     color="black",
+    # )
+
+    # qk = axs[0].quiverkey(
+    #     m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    # )
+    axs[0].format(
+        rtitle="1979-2014", ltitle="CRU & ERA5",
+    )
+    # ======================================
+    con = axs[1].contourf(
+        IndRGPCP_ERA5_hgt_slope.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndRGPCP_ERA5_hgt_slope.sel(level=lev), axs[1], n, np.where(IndRGPCP_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    # axs[1].quiver(
+    #     IndRGPCP_ERA5_u_slope_load.sel(level=lev)[::ski, ::ski],
+    #     IndRGPCP_ERA5_v_slope_load.sel(level=lev)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=0.17,
+    #     pivot="mid",
+    #     color="grey6",
+    # )
+
+    # m = axs[1].quiver(
+    #     IndRGPCP_ERA5_u_slope_load.sel(level=lev).where(IndRGPCP_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+    #     IndRGPCP_ERA5_v_slope_load.sel(level=lev).where(IndRGPCP_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=0.17,
+    #     pivot="mid",
+    #     color="black",
+    # )
+
+    # qk = axs[1].quiverkey(
+    #     m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    # )
+    axs[1].format(
+        rtitle="1979-2014", ltitle="GPCP & ERA5",
+    )
+    # ======================================
+    con = axs[2].contourf(
+        IndR_his_hgt_slope_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_hgt_slope_ens.sel(level=lev), axs[2], n, np.where(IndR_his_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    # axs[2].quiver(
+    #     IndR_his_u_slope_ens_load.sel(level=lev)[::ski, ::ski],
+    #     IndR_his_v_slope_ens_load.sel(level=lev)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=0.17,
+    #     pivot="mid",
+    #     color="grey6",
+    # )
+
+    # m = axs[2].quiver(
+    #     IndR_his_u_slope_ens_load.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+    #     IndR_his_v_slope_ens_load.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=0.17,
+    #     pivot="mid",
+    #     color="black",
+    # )
+
+    # qk = axs[2].quiverkey(
+    #     m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    # )
+    axs[2].format(
+        rtitle="1979-2014", ltitle="MME",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(models):
+        con = axs[num_mod+3].contourf(
+            IndR_his_hgt_slope.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+            zorder=0.8,
+            extend="both"
+        )
+        sepl.plt_sig(
+            IndR_his_hgt_slope.sel(models=mod,level=lev), axs[num_mod+3], n, np.where(IndR_his_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        )
+        # axs[num_mod+3].quiver(
+        #     IndR_his_u_slope_load.sel(models=mod,level=lev)[::ski, ::ski],
+        #     IndR_his_v_slope_load.sel(models=mod,level=lev)[::ski, ::ski],
+        #     zorder=1.1,
+        #     headwidth=2.6,
+        #     headlength=2.3,
+        #     headaxislength=2.3,
+        #     scale_units="xy",
+        #     scale=0.17,
+        #     pivot="mid",
+        #     color="grey6",
+        # )
+
+        # m = axs[num_mod+3].quiver(
+        #     IndR_his_u_slope_load.sel(models=mod,level=lev).where(IndR_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+        #     IndR_his_v_slope_load.sel(models=mod,level=lev).where(IndR_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+        #     zorder=1.1,
+        #     headwidth=2.6,
+        #     headlength=2.3,
+        #     headaxislength=2.3,
+        #     scale_units="xy",
+        #     scale=0.17,
+        #     pivot="mid",
+        #     color="black",
+        # )
+
+        # qk = axs[num_mod+3].quiverkey(
+        #     m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        # )
+        axs[num_mod+3].format(
+            rtitle="1979-2014", ltitle="{}".format(mod.data),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
 
 # %%
 # # pick_up the good models
