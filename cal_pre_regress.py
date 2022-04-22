@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-19 20:39:18
+LastEditTime: 2022-04-19 21:38:04
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -2616,6 +2616,11 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
+
+# %%
+#   pick up the strong IndR year and weak IndR year in CRU and GPGP
+
+
 
 # %%
 # # pick_up the good models

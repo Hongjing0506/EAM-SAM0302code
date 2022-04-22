@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-13 16:04:45
 LastEditors: ChenHJ
-LastEditTime: 2022-04-13 22:38:45
+LastEditTime: 2022-04-16 23:48:41
 FilePath: /chenhj/0302code/calculate_regress.py
 Aim: 
 Mission: 
