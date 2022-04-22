@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-22 19:31:31
+LastEditTime: 2022-04-22 20:19:22
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -2623,7 +2623,35 @@ for num_mod, mod in enumerate(models):
 
 print(sorted(IndR_EAM_list, key=lambda x : x["pcc"]))
 
+# %%
+#   calculate the BOB precipitation
+lat = preCRU_JJA.coords["lat"]
+lon = preCRU_JJA.coords["lon"]
+lat_BOB_range = lat[(lat >= 0.0) & (lat <= 20.0)]
+lon_BOB_range = lon[(lon >= 80.0) & (lon <= 100.0)]
 
+preCRU_BOB_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_BOB_range, lon=lon_BOB_range)).mean(dim="lon", skipna=True)
+lat = preGPCP_JJA.coords["lat"]
+lon = preGPCP_JJA.coords["lon"]
+lat_BOB_range = lat[(lat >= 0.0) & (lat <= 20.0)]
+lon_BOB_range = lon[(lon >= 80.0) & (lon <= 100.0)]
+# lat_BOB_range = lat[(lat >= 15.0) & (lat <= 28.0)]
+# lat_BOB_range = lat[(lat >= 30.0) & (lat <= 35.0)]
+# lon_BOB_range = lon[(lon >= 112.5) & (lon <= 120.0)]
+
+preGPCP_BOB_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_BOB_range, lon=lon_BOB_range)).mean(dim="lon", skipna=True)
+
+lat = prehis_JJA.coords["lat"]
+lon = prehis_JJA.coords["lon"]
+
+lat_BOB_range = lat[(lat >= 0.0) & (lat <= 20.0)]
+# lat_BOB_range = lat[(lat >= 15.0) & (lat <= 28.0)]
+lon_BOB_range = lon[(lon >= 80.0) & (lon <= 100.0)]
+# lat_BOB_range = lat[(lat >= 30.0) & (lat <= 35.0)]
+# lon_BOB_range = lon[(lon >= 112.5) & (lon <= 120.0)]
+
+prehis_BOB_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_BOB_range, lon=lon_BOB_range)).mean(dim="lon", skipna=True)
+pressp585_BOB_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_BOB_range, lon=lon_BOB_range)).mean(dim="lon", skipna=True)
 
 # %%
 # # pick_up the good models
