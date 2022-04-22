@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-22 21:00:28
+LastEditTime: 2022-04-22 21:14:42
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -2622,6 +2622,37 @@ for num_mod, mod in enumerate(models):
     IndR_EAM_list.append({"models": mod.data, "pcc": ca.cal_pcc(pre_GPCP_India_pre_rvalue.loc[0.0:45.0, 90.0:135.0], pre_his_India_pre_rvalue.sel(models=mod, lat=lat_EAM_range, lon=lon_EAM_range))})
 
 print(sorted(IndR_EAM_list, key=lambda x : x["pcc"]))
+
+# %%
+#   pick up the good models
+gmodels = ['MPI-ESM1-2-HR', 'EC-Earth3-Veg', 'UKESM1-0-LL', 'EC-Earth3', 'CMCC-ESM2', 'MRI-ESM2-0', 'HadGEM3-GC31-LL', 'TaiESM1', 'NorESM2-LM', 'MIROC-ES2L']
+
+#   recalculate the MME of these gmodels
+pre_his_India_pre_slope_gmodels_ens = pre_his_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+pre_ssp585_India_pre_slope_gmodels_ens = pre_ssp585_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+pre_ssp585_p3_India_pre_slope_gmodels_ens = pre_ssp585_p3_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+pre_his_India_pre_slope_gmodels_ens_mask = ca.MME_reg_mask(pre_his_India_pre_slope_gmodels_ens, pre_his_India_pre_slope.sel(models=gmodels).std(dim="models", skipna=True), len(pre_his_India_pre_slope.sel(models=gmodels).coords["models"]), True)
+
+pre_ssp585_India_pre_slope_gmodels_ens_mask = ca.MME_reg_mask(pre_ssp585_India_pre_slope_gmodels_ens, pre_ssp585_India_pre_slope.sel(models=gmodels).std(dim="models", skipna=True), len(pre_ssp585_India_pre_slope.sel(models=gmodels).coords["models"]), True)
+
+pre_ssp585_p3_India_pre_slop_gmodels_ens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_slope_gmodels_ens, pre_ssp585_p3_India_pre_slope.sel(models=gmodels).std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_slope.sel(models=gmodels).coords["models"]), True)
+
+pre_his_India_pre_rvalue_gmodels_ens = pre_his_India_pre_rvalue.sel(models=gmodels).mean(dim="models", skipna=True)
+
+pre_ssp585_India_pre_rvalue_gmodels_ens = pre_ssp585_India_pre_rvalue.sel(models=gmodels).mean(dim="models", skipna=True)
+
+pre_ssp585_p3_India_pre_rvalue_gmodels_ens = pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels).mean(dim="models", skipna=True)
+
+pre_his_India_pre_rvalue_gmodels_ens_mask = ca.MME_reg_mask(pre_his_India_pre_rvalue_gmodels_ens, pre_his_India_pre_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(pre_his_India_pre_rvalue.sel(models=gmodels).coords["models"]), True)
+
+pre_ssp585_India_pre_rvalue_gmodels_ens_mask = ca.MME_reg_mask(pre_ssp585_India_pre_rvalue_gmodels_ens, pre_ssp585_India_pre_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(pre_ssp585_India_pre_rvalue.sel(models=gmodels).coords["models"]), True)
+
+pre_ssp585_p3_India_pre_slop_gmodels_ens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_gmodels_ens, pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels).coords["models"]), True)
+# %%
+
 
 # %%
 #   calculate the BOB precipitation
