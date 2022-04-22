@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-22 20:44:01
+LastEditTime: 2022-04-22 21:00:28
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -2704,9 +2704,9 @@ cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
 fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
-# plot_array = np.reshape(range(1, 31), (6, 5))
-# plot_array[5,-1] = 0
-axs = fig.subplots(ncols=1, nrows=2, proj=proj)
+plot_array = np.reshape(range(1, 31), (6, 5))
+plot_array[5,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
 xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
@@ -2761,9 +2761,8 @@ axs[1].format(
     rtitle="1979-2014", ltitle="GPCP",
 )
 # ===================================================
-# ===================================================
 con = axs[2].contourf(
-    pre_his_India_pre_slope_ens,
+    pre_his_BOB_pre_slope_ens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
     levels=np.arange(-2.0, 2.1, 0.1),
@@ -2771,16 +2770,16 @@ con = axs[2].contourf(
     extend="both",
     )
 sepl.plt_sig(
-    pre_his_India_pre_slope_ens, axs[2], n, np.where(pre_his_India_pre_slope_ens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
+    pre_his_BOB_pre_slope_ens, axs[2], n, np.where(pre_his_BOB_pre_slope_ens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
 )
 
 axs[2].format(
     rtitle="1979-2014", ltitle="MME",
 )
 # ===================================================
-for num_models,mod in enumerate(pre_his_India_pre_slope.coords["models"].data):
+for num_models,mod in enumerate(pre_his_BOB_pre_slope.coords["models"].data):
     con = axs[num_models+3].contourf(
-    pre_his_India_pre_slope.sel(models=mod),
+    pre_his_BOB_pre_slope.sel(models=mod),
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
     levels=np.arange(-2.0, 2.1, 0.1),
@@ -2788,14 +2787,14 @@ for num_models,mod in enumerate(pre_his_India_pre_slope.coords["models"].data):
     extend="both",
     )
     sepl.plt_sig(
-        pre_his_India_pre_slope.sel(models=mod), axs[num_models+3], n, np.where(pre_his_India_pre_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 4.0,
+        pre_his_BOB_pre_slope.sel(models=mod), axs[num_models+3], n, np.where(pre_his_BOB_pre_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 4.0,
     )
 
     axs[num_models+3].format(
         rtitle="1979-2014", ltitle="{}".format(mod),
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
+fig.format(abc="(a)", abcloc="l", suptitle="pre reg BOBR")
 
 # %%
 #   plot the correlation coefficients rvalue in CRU, GPCP, historical run
@@ -2831,14 +2830,14 @@ for ax in axs:
     patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
-    pre_CRU_India_pre_rvalue,
+    pre_CRU_BOB_pre_rvalue,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
     )
 sepl.plt_sig(
-    pre_CRU_India_pre_rvalue, axs[0], n, np.where(pre_CRU_India_pre_pvalue[::n, ::n] <= 0.05), "bright purple", 4.0,
+    pre_CRU_BOB_pre_rvalue, axs[0], n, np.where(pre_CRU_BOB_pre_pvalue[::n, ::n] <= 0.05), "bright purple", 4.0,
 )
 
 axs[0].format(
@@ -2846,14 +2845,14 @@ axs[0].format(
 )
 # ===================================================
 con = axs[1].contourf(
-    pre_GPCP_India_pre_rvalue,
+    pre_GPCP_BOB_pre_rvalue,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
     )
 sepl.plt_sig(
-    pre_GPCP_India_pre_rvalue, axs[1], n, np.where(pre_GPCP_India_pre_pvalue[::n, ::n] <= 0.05), "bright purple", 4.0,
+    pre_GPCP_BOB_pre_rvalue, axs[1], n, np.where(pre_GPCP_BOB_pre_pvalue[::n, ::n] <= 0.05), "bright purple", 4.0,
 )
 
 axs[1].format(
@@ -2861,7 +2860,7 @@ axs[1].format(
 )
 # # ===================================================
 con = axs[2].contourf(
-    pre_his_India_pre_rvalue_ens,
+    pre_his_BOB_pre_rvalue_ens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
     levels=np.arange(-1.0, 1.1, 0.1),
@@ -2869,30 +2868,30 @@ con = axs[2].contourf(
     
     )
 sepl.plt_sig(
-    pre_his_India_pre_rvalue_ens, axs[2], n, np.where(pre_his_India_pre_rvalue_ens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
+    pre_his_BOB_pre_rvalue_ens, axs[2], n, np.where(pre_his_BOB_pre_rvalue_ens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
 )
 
 axs[2].format(
     rtitle="1979-2014", ltitle="MME",
 )
 # ===================================================
-for num_models,mod in enumerate(pre_his_India_pre_slope.coords["models"].data):
+for num_models,mod in enumerate(pre_his_BOB_pre_slope.coords["models"].data):
     con = axs[num_models+3].contourf(
-    pre_his_India_pre_rvalue.sel(models=mod),
+    pre_his_BOB_pre_rvalue.sel(models=mod),
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
     levels=np.arange(-1.0, 1.1, 0.1),
     zorder=0.8,
     )
     sepl.plt_sig(
-        pre_his_India_pre_rvalue.sel(models=mod), axs[num_models+3], n, np.where(pre_his_India_pre_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 4.0,
+        pre_his_BOB_pre_rvalue.sel(models=mod), axs[num_models+3], n, np.where(pre_his_BOB_pre_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 4.0,
     )
 
     axs[num_models+3].format(
         rtitle="1979-2014", ltitle="{}".format(mod),
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
+fig.format(abc="(a)", abcloc="l", suptitle="pre reg BOBR")
 # %%
 # # pick_up the good models
 # gmodels = ["CNRM-CM6-1", "MIROC-ES2L", "NorESM2-LM", "HadGEM3-GC31-LL", "MRI-ESM2-0", "ACCESS-CM2", "MIROC6", "EC-Earth3", "CESM2-WACCM", "CAMS-CSM1-0"]
