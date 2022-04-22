@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-19 21:38:04
+LastEditTime: 2022-04-22 19:31:31
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -1664,7 +1664,6 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
         levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
         zorder=0.8,
-        extend="both"
     )
     sepl.plt_sig(
         IndRCRU_ERA5_hgt_rvalue.sel(level=lev), axs[0], n, np.where(IndRCRU_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
@@ -1708,7 +1707,6 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
         levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
         zorder=0.8,
-        extend="both"
     )
     sepl.plt_sig(
         IndRGPCP_ERA5_hgt_rvalue.sel(level=lev), axs[1], n, np.where(IndRGPCP_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
@@ -1752,7 +1750,6 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
         levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
         zorder=0.8,
-        extend="both"
     )
     sepl.plt_sig(
         IndR_his_hgt_rvalue_ens.sel(level=lev), axs[2], n, np.where(IndR_his_hgt_rvalue_ens_mask.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
@@ -1797,7 +1794,6 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
             levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
             zorder=0.8,
-            extend="both"
         )
         sepl.plt_sig(
             IndR_his_hgt_rvalue.sel(models=mod,level=lev), axs[num_mod+3], n, np.where(IndR_his_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
@@ -2026,7 +2022,6 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
         levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
         zorder=0.8,
-        extend="both"
     )
     sepl.plt_sig(
         IndR_ssp585_hgt_rvalue_ens.sel(level=lev), axs[0], n, np.where(IndR_ssp585_hgt_rvalue_ens_mask.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
@@ -2071,7 +2066,6 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
             levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
             zorder=0.8,
-            extend="both"
         )
         sepl.plt_sig(
             IndR_ssp585_hgt_rvalue.sel(models=mod,level=lev), axs[num_mod+1], n, np.where(IndR_ssp585_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
@@ -2299,7 +2293,6 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
         levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
         zorder=0.8,
-        extend="both"
     )
     sepl.plt_sig(
         IndR_ssp585_p3_hgt_rvalue_ens.sel(level=lev), axs[0], n, np.where(IndR_ssp585_p3_hgt_rvalue_ens_mask.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
@@ -2344,7 +2337,6 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
             levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
             zorder=0.8,
-            extend="both"
         )
         sepl.plt_sig(
             IndR_ssp585_p3_hgt_rvalue.sel(models=mod,level=lev), axs[num_mod+1], n, np.where(IndR_ssp585_p3_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
@@ -2618,7 +2610,18 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
 
 # %%
-#   pick up the strong IndR year and weak IndR year in CRU and GPGP
+#   calculate the pcc and sort to reveal the rank of different models
+models = pre_his_India_pre_slope.coords["models"]
+lat = prehis_JJA.coords["lat"]
+lon = prehis_JJA.coords["lon"]
+lat_EAM_range = lat[(lat>=0.0) & (lat<=45.0)]
+lon_EAM_range = lon[(lon>=90.0) & (lon<=135.0)]
+
+IndR_EAM_list = []
+for num_mod, mod in enumerate(models):
+    IndR_EAM_list.append({"models": mod.data, "pcc": ca.cal_pcc(pre_GPCP_India_pre_rvalue.loc[0.0:45.0, 90.0:135.0], pre_his_India_pre_rvalue.sel(models=mod, lat=lat_EAM_range, lon=lon_EAM_range))})
+
+print(sorted(IndR_EAM_list, key=lambda x : x["pcc"]))
 
 
 
