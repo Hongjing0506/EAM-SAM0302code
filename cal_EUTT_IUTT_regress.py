@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-23 13:16:52
+LastEditTime: 2022-04-24 00:34:16
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -82,6 +82,11 @@ vERA5 = fvERA5["v"]
 ftERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/temp_mon_r144x72_195001-201412.nc")
 tERA5 = ftERA5["t"]
 
+fspERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
+)
+spERA5 = fspERA5["sp"]
+
 #   read the precipitation data
 fpreCRU = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/cru_ts4.01_r144x72_195001-201412.nc"
@@ -104,7 +109,7 @@ preGPCP_JJA = ca.detrend_dim(preGPCP_JJA, "time", deg=1, demean=False)
 
 fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc")
 hgthis_ver_JJA = fhgthis_ver_JJA["zg"]
-hgthis_ver_JJA = hgthis_ver_JJA - hgthis_ver_JJA.mean(dim="lon", skipna=True)
+# hgthis_ver_JJA = hgthis_ver_JJA - hgthis_ver_JJA.mean(dim="lon", skipna=True)
 
 fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc")
 uhis_ver_JJA = fuhis_ver_JJA["ua"]
@@ -120,9 +125,12 @@ prehis_JJA = fprehis["pr"]
 prehis_JJA.attrs["units"] = "mm/day"
 prehis_JJA.attrs["standard_name"] = "precipitation"
 
+fsphis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/ps_historical_r144x72_195001-201412.nc")
+sphis_JJA = fsphis_JJA["ps"]
+
 fhgtssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
 hgtssp585_ver_JJA = fhgtssp585_ver_JJA["zg"]
-hgtssp585_ver_JJA = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lon", skipna=True)
+# hgtssp585_ver_JJA = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lon", skipna=True)
 
 fussp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_201501-209912.nc")
 ussp585_ver_JJA = fussp585_ver_JJA["ua"]
@@ -138,5 +146,67 @@ pressp585_JJA = fpressp585["pr"]
 pressp585_JJA.attrs["units"] = "mm/day"
 pressp585_JJA.attrs["standard_name"] = "precipitation"
 
+fspssp585_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ps_ssp585_r144x72_201501-209912.nc")
+spssp585_JJA = fspssp585_JJA["ps"]
+
 
 # %%
+hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
+# hgtERA5_ver_JJA = hgtERA5_ver_JJA - hgtERA5_ver_JJA.mean(dim="lon", skipna=True)
+uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
+vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
+preCRU_JJA = ca.p_time(preCRU, 6, 8, True) / 30.67
+spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
+
+hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
+uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
+vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
+preCRU_JJA = ca.detrend_dim(preCRU_JJA, "time", deg=1, demean=False)
+spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
+
+preGPCP_JJA = ca.p_time(preGPCP, 6, 8, True)
+preGPCP_JJA = ca.detrend_dim(preGPCP_JJA, "time", deg=1, demean=False)
+# %%
+#   calculate the historical dsdpg between 200hPa to 500hPa
+ptop = 1 * 200
+g = 9.8
+his_dslevel = hgthis_ver_JJA.coords["level"].loc[500.0:200.0] * 100.0
+his_dslevel.attrs["units"] = "Pa"
+# his_dsdp = geocat.comp.dpres_plevel(his_dslevel, sphis_JJA, ptop)
+# print(sphis_ds_JJA)
+his_dsdp = xr.apply_ufunc(
+    geocat.comp.dpres_plevel,
+    his_dslevel,
+    sphis_JJA,
+    ptop,
+    input_core_dims=[["level"], [], []],
+    output_core_dims=[["level"]],
+    vectorize=True,
+    dask="parallelized",
+)
+# # for i in np.arange(0,26):
+# #     print(his_dsdp[i, 0, 0, 0, :])
+his_dsdp = his_dsdp.transpose("models", "time", "level", "lat", "lon")
+his_dsdpg = his_dsdp / g
+his_dsdpg.attrs["units"] = "kg/m2"
+
+# %%
+ssp585_dslevel = qssp585_ver_JJA.coords["level"] * 100.0
+ssp585_dslevel.attrs["units"] = "Pa"
+# ssp585_dsdp = geocat.comp.dpres_plevel(ssp585_dslevel, spssp585_JJA, ptop)
+# print(spssp585_ds_JJA)
+ssp585_dsdp = xr.apply_ufunc(
+    geocat.comp.dpres_plevel,
+    ssp585_dslevel,
+    spssp585_JJA,
+    ptop,
+    input_core_dims=[["level"], [], []],
+    output_core_dims=[["level"]],
+    vectorize=True,
+    dask="parallelized",
+)
+# for i in np.arange(0,26):
+#     print(ssp585_dsdp[i, 0, 0, 0, :])
+ssp585_dsdp = ssp585_dsdp.transpose("models", "time", "level", "lat", "lon")
+ssp585_dsdpg = ssp585_dsdp / g
+ssp585_dsdpg.attrs["units"] = "kg/m2"
