@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 00:34:16
+LastEditTime: 2022-04-24 00:39:29
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -189,9 +189,18 @@ his_dsdp = xr.apply_ufunc(
 his_dsdp = his_dsdp.transpose("models", "time", "level", "lat", "lon")
 his_dsdpg = his_dsdp / g
 his_dsdpg.attrs["units"] = "kg/m2"
-
 # %%
-ssp585_dslevel = qssp585_ver_JJA.coords["level"] * 100.0
+#   calculate the historical vertical intergrated temperature
+
+utthis_JJA = (this_ver_JJA.loc[:,:,500.0:200.0,:,:] * his_dsdpg.data).sum(dim="level", skipna=True)
+# uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
+# uq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
+utthis_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_utt_500-200hPa.nc")
+# %%
+#   calculate the ssp585 dsdpg between 200hPa to 500hPa
+ptop = 1 * 200
+g = 9.8
+ssp585_dslevel = hgtssp585_ver_JJA.coords["level"].loc[500.0:200.0] * 100.0
 ssp585_dslevel.attrs["units"] = "Pa"
 # ssp585_dsdp = geocat.comp.dpres_plevel(ssp585_dslevel, spssp585_JJA, ptop)
 # print(spssp585_ds_JJA)
@@ -205,8 +214,9 @@ ssp585_dsdp = xr.apply_ufunc(
     vectorize=True,
     dask="parallelized",
 )
-# for i in np.arange(0,26):
-#     print(ssp585_dsdp[i, 0, 0, 0, :])
+# # for i in np.arange(0,26):
+# #     print(ssp585_dsdp[i, 0, 0, 0, :])
 ssp585_dsdp = ssp585_dsdp.transpose("models", "time", "level", "lat", "lon")
 ssp585_dsdpg = ssp585_dsdp / g
 ssp585_dsdpg.attrs["units"] = "kg/m2"
+# %%
