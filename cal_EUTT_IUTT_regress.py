@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 13:54:59
+LastEditTime: 2022-04-24 14:00:49
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -301,4 +301,14 @@ EIthdiffERA5_JJA = ca.cal_lat_weighted_mean((hgtERA5_ver_JJA.sel(level=200,lat=l
 EIthdiffhis_JJA = ca.cal_lat_weighted_mean((hgthis_ver_JJA.sel(level=200,lat=lat_EUTT_range,lon=lon_EUTT_range)-hgthis_ver_JJA.sel(level=500.0,lat=lat_EUTT_range,lon=lon_EUTT_range))).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean((hgthis_ver_JJA.sel(level=200,lat=lat_IUTT_range,lon=lon_IUTT_range)-hgthis_ver_JJA.sel(level=500.0,lat=lat_IUTT_range,lon=lon_IUTT_range))).mean(dim="lon",skipna=True)
 
 EIthdiffssp585_JJA = ca.cal_lat_weighted_mean((hgtssp585_ver_JJA.sel(level=200,lat=lat_EUTT_range,lon=lon_EUTT_range)-hgtssp585_ver_JJA.sel(level=500.0,lat=lat_EUTT_range,lon=lon_EUTT_range))).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean((hgtssp585_ver_JJA.sel(level=200,lat=lat_IUTT_range,lon=lon_IUTT_range)-hgtssp585_ver_JJA.sel(level=500.0,lat=lat_IUTT_range,lon=lon_IUTT_range))).mean(dim="lon",skipna=True)
+
+EIthdiffERA5_JJA_detrend = ca.detrend_dim(EIthdiffERA5_JJA, "time", deg=1, demean=True)
+
+EIthdiffhis_JJA_detrend = ca.detrend_dim(EIthdiffhis_JJA, "time", deg=1, demean=True)
+
+EIthdiffssp585_JJA_detrend = ca.detrend_dim(EIthdiffssp585_JJA, "time", deg=1, demean=True)
+# %%
+#   calculate the correlation coefficients between EIMTG and EIthdiff
+print(stats.linregress(EIMTGERA5_JJA_detrend, EIthdiffERA5_JJA_detrend))
+print(ca.dim_linregress(EIMTGhis_JJA_detrend, EIthdiffhis_JJA_detrend)[2])
 # %%
