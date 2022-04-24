@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 14:09:48
+LastEditTime: 2022-04-24 14:20:37
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -322,4 +322,21 @@ his_IWF_index = fhis_IWF_index["IWF"]
 
 fssp585_IWF_index = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_IWF_index_2015-2099.nc")
 ssp585_IWF_index = fssp585_IWF_index["IWF"]
+# %%
+#   calculate the correlation between IWF and EIMTG
+(
+    IWF_his_EIMTG_slope,
+    IWF_his_EIMTG_intercept,
+    IWF_his_EIMTG_rvalue,
+    IWF_his_EIMTG_pvalue,
+    IWF_his_EIMTG_hypothesis,
+) = ca.dim_linregress(his_IWF_index, EIMTGhis_JJA_detrend)
+
+(
+    IWF_ssp585_p3_EIMTG_slope,
+    IWF_ssp585_p3_EIMTG_intercept,
+    IWF_ssp585_p3_EIMTG_rvalue,
+    IWF_ssp585_p3_EIMTG_pvalue,
+    IWF_ssp585_p3_EIMTG_hypothesis,
+) = ca.dim_linregress(ssp585_IWF_index.sel(time=ssp585_IWF_index.time.dt.year>=2064), EIMTGssp585_JJA_detrend.sel(time=EIMTGssp585_JJA_detrend.time.dt.year>=2064))
 # %%
