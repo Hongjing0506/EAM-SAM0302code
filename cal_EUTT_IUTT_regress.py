@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 13:29:45
+LastEditTime: 2022-04-24 13:41:34
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -155,12 +155,14 @@ hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True).loc[:, 100.0:, :, :]
 # hgtERA5_ver_JJA = hgtERA5_ver_JJA - hgtERA5_ver_JJA.mean(dim="lon", skipna=True)
 uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True).loc[:, 100.0:, :, :]
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True).loc[:, 100.0:, :, :]
+tERA5_ver_JJA = ca.p_time(tERA5, 6, 8, True).loc[:, 100.0:, :, :]
 preCRU_JJA = ca.p_time(preCRU, 6, 8, True) / 30.67
 spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
 
 hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
 uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
 vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
+tERA5_ver_JJA = ca.detrend_dim(tERA5_ver_JJA, "time", deg=1, demean=False)
 preCRU_JJA = ca.detrend_dim(preCRU_JJA, "time", deg=1, demean=False)
 spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
 
@@ -278,3 +280,18 @@ EIMTGssp585_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/
 
 # %%
 #   calculate the EUTT-IUTT in ERA5
+ptop = 1 * 200
+g = 9.8
+ERA5_dslevel = uERA5_ver_JJA.coords["level"].loc[200.0:500.0] * 100.0
+ERA5_dslevel.attrs["units"] = "Pa"
+ERA5_dsdp = geocat.comp.dpres_plevel(ERA5_dslevel, spERA5_JJA, ptop)
+ERA5_dsdpg = ERA5_dsdp / g
+ERA5_dsdpg.attrs["units"] = "kg/m2"
+ERA5_dsdpg.name = "dsdpg"
+
+uttERA5_JJA = (tERA5_ver_JJA.loc[:,200.0:500.0,:,:] * ERA5_dsdpg.data).sum(dim="level", skipna=True)
+uttERA5_JJA.name = "utt"
+
+EIMTGERA5_JJA = ca.cal_lat_weighted_mean(uttERA5_JJA.sel(lat=lat_EUTT_range,lon=lon_EUTT_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(uttERA5_JJA.sel(lat=lat_IUTT_range,lon=lon_IUTT_range)).mean(dim="lon",skipna=True)
+EIMTGERA5_JJA_detrend = ca.detrend_dim(EIMTGERA5_JJA, "time", deg=1, demean=False)
+# %%
