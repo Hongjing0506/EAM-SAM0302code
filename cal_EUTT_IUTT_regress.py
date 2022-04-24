@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 00:39:29
+LastEditTime: 2022-04-24 12:26:21
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -189,13 +189,30 @@ his_dsdp = xr.apply_ufunc(
 his_dsdp = his_dsdp.transpose("models", "time", "level", "lat", "lon")
 his_dsdpg = his_dsdp / g
 his_dsdpg.attrs["units"] = "kg/m2"
-# %%
+his_dsdpg.name = "dsdpg"
+his_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_dsdpg500-200.nc")
+
 #   calculate the historical vertical intergrated temperature
 
 utthis_JJA = (this_ver_JJA.loc[:,:,500.0:200.0,:,:] * his_dsdpg.data).sum(dim="level", skipna=True)
+utthis_JJA.name = "utt"
 # uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
 # uq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
 utthis_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_utt_500-200hPa.nc")
+# %%
+#   read the dsdpg and utt in historical run and ssp585 run
+his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_dsdpg500-200.nc")
+ssp585_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg500-200.nc")
+
+futthis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_utt_500-200hPa.nc")
+utthis_JJA = futthis_JJA["utt"]
+
+futtssp585_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_utt_500-200hPa.nc")
+uttssp585_JJA = futtssp585_JJA["utt"]
+# %%
+
+# %%
+
 # %%
 #   calculate the ssp585 dsdpg between 200hPa to 500hPa
 ptop = 1 * 200
@@ -219,4 +236,15 @@ ssp585_dsdp = xr.apply_ufunc(
 ssp585_dsdp = ssp585_dsdp.transpose("models", "time", "level", "lat", "lon")
 ssp585_dsdpg = ssp585_dsdp / g
 ssp585_dsdpg.attrs["units"] = "kg/m2"
+# %%
+#   calculate the historical vertical intergrated temperature
+
+uttssp585_JJA = (tssp585_ver_JJA.loc[:,:,500.0:200.0,:,:] * ssp585_dsdpg.data).sum(dim="level", skipna=True)
+uttssp585_JJA.name = "utt"
+# uq_dpg_ssp585_JJA = ca.detrend_dim(uq_dpg_ssp585_JJA, "time", deg=1, demean=False)
+# uq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
+uttssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_utt_500-200hPa.nc")
+# %%
+ssp585_dsdpg.name = "dsdpg"
+ssp585_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg500-200.nc")
 # %%
