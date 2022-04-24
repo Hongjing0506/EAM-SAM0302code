@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 14:00:49
+LastEditTime: 2022-04-24 14:09:48
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -311,4 +311,15 @@ EIthdiffssp585_JJA_detrend = ca.detrend_dim(EIthdiffssp585_JJA, "time", deg=1, d
 #   calculate the correlation coefficients between EIMTG and EIthdiff
 print(stats.linregress(EIMTGERA5_JJA_detrend, EIthdiffERA5_JJA_detrend))
 print(ca.dim_linregress(EIMTGhis_JJA_detrend, EIthdiffhis_JJA_detrend)[2])
+# %%
+#   calculate the IWF in ERA5 and read the IWF in historical and ssp585 run
+ERA5_IWF_index = ca.IWF(uERA5_ver_JJA, vERA5_ver_JJA)
+ERA5_IWF_index = ca.detrend_dim(ERA5_IWF_index, "time", deg=1, demean=False)
+ERA5_SAM_index = ca.SAM(vERA5_ver_JJA)
+ERA5_SAM_index = ca.detrend_dim(ERA5_SAM_index, "time", deg=1, demean=False)
+fhis_IWF_index = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_IWF_index_1950-2014.nc")
+his_IWF_index = fhis_IWF_index["IWF"]
+
+fssp585_IWF_index = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_IWF_index_2015-2099.nc")
+ssp585_IWF_index = fssp585_IWF_index["IWF"]
 # %%
