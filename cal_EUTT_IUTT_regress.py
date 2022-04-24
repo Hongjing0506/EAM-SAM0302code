@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 12:26:21
+LastEditTime: 2022-04-24 12:27:43
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -236,6 +236,8 @@ ssp585_dsdp = xr.apply_ufunc(
 ssp585_dsdp = ssp585_dsdp.transpose("models", "time", "level", "lat", "lon")
 ssp585_dsdpg = ssp585_dsdp / g
 ssp585_dsdpg.attrs["units"] = "kg/m2"
+ssp585_dsdpg.name = "dsdpg"
+ssp585_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg500-200.nc")
 # %%
 #   calculate the historical vertical intergrated temperature
 
@@ -245,6 +247,5 @@ uttssp585_JJA.name = "utt"
 # uq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
 uttssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_utt_500-200hPa.nc")
 # %%
-ssp585_dsdpg.name = "dsdpg"
-ssp585_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg500-200.nc")
+
 # %%
