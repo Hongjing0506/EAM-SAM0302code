@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 17:11:01
+LastEditTime: 2022-04-24 18:07:30
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -352,7 +352,7 @@ hgtssp585_ver_JJA_delatmean = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lo
     EIMTG_ERA5_hgt_rvalue,
     EIMTG_ERA5_hgt_pvalue,
     EIMTG_ERA5_hgt_hypothesis,
-) = ca.dim_linregress(EIMTGERA5_JJA_detrend, hgtERA5_ver_JJA_delatmean.sel(level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(EIMTGERA5_JJA_detrend.sel(time=EIMTGERA5_JJA_detrend.time.dt.year>=1979), hgtERA5_ver_JJA_delatmean.sel(time=hgtERA5_ver_JJA_delatmean.time.dt.year>=1979,level=[200.0, 500.0, 850.0]))
 
 (
     EIMTG_his_hgt_slope,
@@ -360,7 +360,7 @@ hgtssp585_ver_JJA_delatmean = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lo
     EIMTG_his_hgt_rvalue,
     EIMTG_his_hgt_pvalue,
     EIMTG_his_hgt_hypothesis,
-) = ca.dim_linregress(EIMTGhis_JJA_detrend, hgthis_ver_JJA_delatmean.sel(level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(EIMTGhis_JJA_detrend.sel(time=EIMTGhis_JJA_detrend.time.dt.year>=1979), hgthis_ver_JJA_delatmean.sel(time=hgthis_ver_JJA_delatmean.time.dt.year>=1979,level=[200.0, 500.0, 850.0]))
 
 (
     EIMTG_ssp585_p3_hgt_slope,
@@ -376,7 +376,7 @@ hgtssp585_ver_JJA_delatmean = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lo
     EIMTG_ERA5_u_rvalue,
     EIMTG_ERA5_u_pvalue,
     EIMTG_ERA5_u_hypothesis,
-) = ca.dim_linregress(EIMTGERA5_JJA_detrend, uERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(EIMTGERA5_JJA_detrend.sel(time=EIMTGERA5_JJA_detrend.time.dt.year>=1979), uERA5_ver_JJA.sel(time=uERA5_ver_JJA.time.dt.year>=1979,level=[200.0, 500.0, 850.0]))
 
 (
     EIMTG_his_u_slope,
@@ -384,7 +384,7 @@ hgtssp585_ver_JJA_delatmean = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lo
     EIMTG_his_u_rvalue,
     EIMTG_his_u_pvalue,
     EIMTG_his_u_hypothesis,
-) = ca.dim_linregress(EIMTGhis_JJA_detrend, uhis_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(EIMTGhis_JJA_detrend.sel(time=EIMTGhis_JJA_detrend.time.dt.year>=1979), uhis_ver_JJA.sel(time=uhis_ver_JJA.time.dt.year>=1979,level=[200.0, 500.0, 850.0]))
 
 (
     EIMTG_ssp585_p3_u_slope,
@@ -400,7 +400,7 @@ hgtssp585_ver_JJA_delatmean = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lo
     EIMTG_ERA5_v_rvalue,
     EIMTG_ERA5_v_pvalue,
     EIMTG_ERA5_v_hypothesis,
-) = ca.dim_linregress(EIMTGERA5_JJA_detrend, vERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(EIMTGERA5_JJA_detrend.sel(time=EIMTGERA5_JJA_detrend.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979,level=[200.0, 500.0, 850.0]))
 
 (
     EIMTG_his_v_slope,
@@ -408,7 +408,7 @@ hgtssp585_ver_JJA_delatmean = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lo
     EIMTG_his_v_rvalue,
     EIMTG_his_v_pvalue,
     EIMTG_his_v_hypothesis,
-) = ca.dim_linregress(EIMTGhis_JJA_detrend, vhis_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(EIMTGhis_JJA_detrend.sel(time=EIMTGhis_JJA_detrend.time.dt.year>=1979), vhis_ver_JJA.sel(time=uhis_ver_JJA.time.dt.year>=1979,level=[200.0, 500.0, 850.0]))
 
 (
     EIMTG_ssp585_p3_v_slope,
@@ -598,6 +598,19 @@ EIMTG_ssp585_p3_wind_slope_ens_mask = ca.wind_check(
     xr.where(EIMTG_ssp585_p3_v_slope_ens_mask > 0.0, 1.0, 0.0),
 )
 #===================================================
+EIMTG_his_wind_rvalue_ens_mask = ca.wind_check(
+    xr.where(EIMTG_his_u_rvalue_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(EIMTG_his_v_rvalue_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(EIMTG_his_u_rvalue_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(EIMTG_his_v_rvalue_ens_mask > 0.0, 1.0, 0.0),
+)
+EIMTG_ssp585_p3_wind_rvalue_ens_mask = ca.wind_check(
+    xr.where(EIMTG_ssp585_p3_u_rvalue_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(EIMTG_ssp585_p3_v_rvalue_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(EIMTG_ssp585_p3_u_rvalue_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(EIMTG_ssp585_p3_v_rvalue_ens_mask > 0.0, 1.0, 0.0),
+)
+#===================================================
 EIMTG_diff_hgt_slope = EIMTG_ssp585_p3_hgt_slope-EIMTG_his_hgt_slope
 EIMTG_diff_u_slope = EIMTG_ssp585_p3_u_slope-EIMTG_his_u_slope
 EIMTG_diff_v_slope = EIMTG_ssp585_p3_v_slope-EIMTG_his_v_slope
@@ -605,6 +618,10 @@ EIMTG_diff_v_slope = EIMTG_ssp585_p3_v_slope-EIMTG_his_v_slope
 EIMTG_diff_hgt_rvalue = EIMTG_ssp585_p3_hgt_rvalue-EIMTG_his_hgt_rvalue
 EIMTG_diff_u_rvalue = EIMTG_ssp585_p3_u_rvalue-EIMTG_his_u_rvalue
 EIMTG_diff_v_rvalue = EIMTG_ssp585_p3_v_rvalue-EIMTG_his_v_rvalue
+#===================================================
+EIMTG_diff_hgt_slope_ens = EIMTG_diff_hgt_slope.mean(dim="models",skipna=True)
+EIMTG_diff_u_slope_ens = EIMTG_diff_u_slope.mean(dim="models",skipna=True)
+EIMTG_diff_v_slope_ens = EIMTG_diff_v_slope.mean(dim="models",skipna=True)
 # %%
 #   plot the avalue of hgt&u&v regress onto EIMTG in ERA5 and historical
 startlevel = np.array([-6.0e-3, -5.0e-3, -3.0e-3])
@@ -834,7 +851,6 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
         levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
         zorder=0.8,
-        extend="both"
     )
     sepl.plt_sig(
         EIMTG_ERA5_hgt_rvalue.sel(level=lev), axs[0], n, np.where(EIMTG_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 5.0,
@@ -866,7 +882,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     )
 
     qk = axs[0].quiverkey(
-        m, X=1 - w / 2, Y=0.7 * h, U=5e-4, label="5e-4", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     axs[0].format(
         rtitle="1979-2014", ltitle="ERA5",
@@ -878,7 +894,6 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
         levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
         zorder=0.8,
-        extend="both"
     )
     sepl.plt_sig(
         EIMTG_his_hgt_rvalue_ens.sel(level=lev), axs[1], n, np.where(EIMTG_his_hgt_rvalue_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 5.0,
@@ -910,7 +925,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     )
 
     qk = axs[1].quiverkey(
-        m, X=1 - w / 2, Y=0.7 * h, U=5e-4, label="5e-4", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     axs[1].format(
         rtitle="1979-2014", ltitle="MME",
@@ -923,7 +938,6 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
             levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
             zorder=0.8,
-            extend="both"
         )
         sepl.plt_sig(
             EIMTG_his_hgt_rvalue.sel(models=mod,level=lev), axs[num_mod+2], n, np.where(EIMTG_his_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 5.0,
@@ -955,10 +969,146 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         )
 
         qk = axs[num_mod+2].quiverkey(
-            m, X=1 - w / 2, Y=0.7 * h, U=5e-4, label="5e-4", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+            m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
         )
         axs[num_mod+2].format(
             rtitle="1979-2014", ltitle="{}".format(mod.data),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg EIMTG".format(lev))
+# %%
+#   plot the avalue of hgt&u&v regress onto EIMTG in ssp585_p3
+startlevel = np.array([-6.0e-3, -5.0e-3, -3.0e-3])
+endlevel = -startlevel
+spacinglevel = -startlevel/10.0
+scalelevel = [9.5e-5, 6.5e-5, 4.5e-5]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 29), (7, 4))
+    plot_array[-1,-1] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 3
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        #   EUTT area
+        x0 = 60
+        y0 = 20
+        width = 40
+        height = 20.0
+        patches(ax, x0 - cl, y0, width, height, proj)
+        #   IUTT area
+        x0 = 60
+        y0 = -10
+        width = 40
+        height = 20
+        patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        EIMTG_ssp585_p3_hgt_slope_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        EIMTG_ssp585_p3_hgt_slope_ens.sel(level=lev), axs[0], n, np.where(EIMTG_ssp585_p3_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 5.0,
+    )
+    axs[0].quiver(
+        EIMTG_ssp585_p3_u_slope_ens.sel(level=lev)[::ski, ::ski],
+        EIMTG_ssp585_p3_v_slope_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[0].quiver(
+        EIMTG_ssp585_p3_u_slope_ens.sel(level=lev).where(EIMTG_ssp585_p3_wind_slope_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        EIMTG_ssp585_p3_v_slope_ens.sel(level=lev).where(EIMTG_ssp585_p3_wind_slope_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=5e-4, label="5e-4", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[0].format(
+        rtitle="2064-2099", ltitle="MME",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(models):
+        con = axs[num_mod+1].contourf(
+            EIMTG_ssp585_p3_hgt_slope.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
+            zorder=0.8,
+            extend="both"
+        )
+        sepl.plt_sig(
+            EIMTG_ssp585_p3_hgt_slope.sel(models=mod,level=lev), axs[num_mod+1], n, np.where(EIMTG_ssp585_p3_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 5.0,
+        )
+        axs[num_mod+1].quiver(
+            EIMTG_ssp585_p3_u_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            EIMTG_ssp585_p3_v_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="grey6",
+        )
+
+        m = axs[num_mod+1].quiver(
+            EIMTG_ssp585_p3_u_slope.sel(models=mod,level=lev).where(EIMTG_ssp585_p3_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            EIMTG_ssp585_p3_v_slope.sel(models=mod,level=lev).where(EIMTG_ssp585_p3_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod+1].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=5e-4, label="5e-4", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        axs[num_mod+1].format(
+            rtitle="2064-2099", ltitle="{}".format(mod.data),
         )
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
