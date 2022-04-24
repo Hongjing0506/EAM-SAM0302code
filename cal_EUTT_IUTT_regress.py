@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 12:27:43
+LastEditTime: 2022-04-24 13:04:02
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -244,4 +244,18 @@ utthis_JJA = futthis_JJA["utt"]
 
 futtssp585_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_utt_500-200hPa.nc")
 uttssp585_JJA = futtssp585_JJA["utt"]
+# %%
+#   calculate the EUTT-IUTT in historical and ssp585 run
+lat = utthis_JJA.coords["lat"]
+lon = utthis_JJA.coords["lon"]
+
+lat_EUTT_range = lat[(lat >= 20.0) & (lat <= 40.0)]
+lon_EUTT_range = lon[(lon >= 60.0) & (lon <= 100.0)]
+
+lat_IUTT_range = lat[(lat >= -10.0) & (lat <= 10.0)]
+lon_IUTT_range = lon[(lon >= 60.0) & (lon <= 100.0)]
+
+EIMTGhis_JJA = ca.cal_lat_weighted_mean(utthis_JJA.sel(lat=lat_EUTT_range,lon=lon_EUTT_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(utthis_JJA.sel(lat=lat_IUTT_range,lon=lon_IUTT_range)).mean(dim="lon",skipna=True)
+
+EIMTGssp585_JJA = ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_EUTT_range,lon=lon_EUTT_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_IUTT_range,lon=lon_IUTT_range)).mean(dim="lon",skipna=True)
 # %%
