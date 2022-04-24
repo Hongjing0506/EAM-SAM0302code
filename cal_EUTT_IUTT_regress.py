@@ -199,19 +199,6 @@ utthis_JJA.name = "utt"
 # uq_dpg_his_JJA = ca.detrend_dim(uq_dpg_his_JJA, "time", deg=1, demean=False)
 # uq_dpg_his_JJA.attrs["units"] = "100kg/(m*s)"
 utthis_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_utt_500-200hPa.nc")
-# %%
-#   read the dsdpg and utt in historical run and ssp585 run
-his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_dsdpg500-200.nc")
-ssp585_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg500-200.nc")
-
-futthis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_utt_500-200hPa.nc")
-utthis_JJA = futthis_JJA["utt"]
-
-futtssp585_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_utt_500-200hPa.nc")
-uttssp585_JJA = futtssp585_JJA["utt"]
-# %%
-
-# %%
 
 # %%
 #   calculate the ssp585 dsdpg between 200hPa to 500hPa
@@ -239,7 +226,7 @@ ssp585_dsdpg.attrs["units"] = "kg/m2"
 ssp585_dsdpg.name = "dsdpg"
 ssp585_dsdpg.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg500-200.nc")
 # %%
-#   calculate the historical vertical intergrated temperature
+#   calculate the ssp585 vertical intergrated temperature
 
 uttssp585_JJA = (tssp585_ver_JJA.loc[:,:,500.0:200.0,:,:] * ssp585_dsdpg.data).sum(dim="level", skipna=True)
 uttssp585_JJA.name = "utt"
@@ -247,5 +234,14 @@ uttssp585_JJA.name = "utt"
 # uq_dpg_ssp585_JJA.attrs["units"] = "100kg/(m*s)"
 uttssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_utt_500-200hPa.nc")
 # %%
+# %%
+#   read the dsdpg and utt in historical run and ssp585 run
+his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_dsdpg500-200.nc")
+ssp585_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg500-200.nc")
 
+futthis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_utt_500-200hPa.nc")
+utthis_JJA = futthis_JJA["utt"]
+
+futtssp585_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_utt_500-200hPa.nc")
+uttssp585_JJA = futtssp585_JJA["utt"]
 # %%
