@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 13:10:33
+LastEditTime: 2022-04-24 13:29:45
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -270,7 +270,11 @@ EIMTGssp585_JJA = ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_EUTT_range,
 EIMTGssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_EIMTG.nc")
 
 # %%
+#   calculate the detrended EIMTG in historical and ssp585 run
+EIMTGhis_JJA_detrend = ca.detrend_dim(EIMTGhis_JJA, "time", deg=1, demean=False)
+EIMTGssp585_JJA_detrend = ca.detrend_dim(EIMTGssp585_JJA, "time", deg=1, demean=False)
+EIMTGhis_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_EIMTG.nc")
+EIMTGssp585_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_EIMTG.nc")
 
-EIMTGhis_JJA = ca.detrend_dim(EIMTGhis_JJA, "time", deg=1, demean=False)
-EIMTGssp585_JJA = ca.detrend_dim(EIMTGssp585_JJA, "time", deg=1, demean=False)
+# %%
 #   calculate the EUTT-IUTT in ERA5
