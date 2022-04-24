@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 14:48:54
+LastEditTime: 2022-04-24 15:25:28
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -345,3 +345,77 @@ hgtERA5_ver_JJA_delatmean = hgtERA5_ver_JJA - hgtERA5_ver_JJA.mean(dim="lon", sk
 hgthis_ver_JJA_delatmean = hgthis_ver_JJA - hgthis_ver_JJA.mean(dim="lon", skipna=True)
 hgtssp585_ver_JJA_delatmean = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lon", skipna=True)
 # %%
+#   calculate the hgt,u,v regression onto EIMTG
+(
+    EIMTG_ERA5_hgt_slope,
+    EIMTG_ERA5_hgt_intercept,
+    EIMTG_ERA5_hgt_rvalue,
+    EIMTG_ERA5_hgt_pvalue,
+    EIMTG_ERA5_hgt_hypothesis,
+) = ca.dim_linregress(EIMTGERA5_JJA_detrend, hgtERA5_ver_JJA_delatmean.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    EIMTG_his_hgt_slope,
+    EIMTG_his_hgt_intercept,
+    EIMTG_his_hgt_rvalue,
+    EIMTG_his_hgt_pvalue,
+    EIMTG_his_hgt_hypothesis,
+) = ca.dim_linregress(EIMTGhis_JJA_detrend, hgthis_ver_JJA_delatmean.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    EIMTG_ssp585_p3_hgt_slope,
+    EIMTG_ssp585_p3_hgt_intercept,
+    EIMTG_ssp585_p3_hgt_rvalue,
+    EIMTG_ssp585_p3_hgt_pvalue,
+    EIMTG_ssp585_p3_hgt_hypothesis,
+) = ca.dim_linregress(EIMTGssp585_JJA_detrend.sel(time=EIMTGssp585_JJA_detrend.time.dt.year>=2064), hgtssp585_ver_JJA_delatmean.sel(time=hgtssp585_ver_JJA_delatmean.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+
+(
+    EIMTG_ERA5_u_slope,
+    EIMTG_ERA5_u_intercept,
+    EIMTG_ERA5_u_rvalue,
+    EIMTG_ERA5_u_pvalue,
+    EIMTG_ERA5_u_hypothesis,
+) = ca.dim_linregress(EIMTGERA5_JJA_detrend, uERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    EIMTG_his_u_slope,
+    EIMTG_his_u_intercept,
+    EIMTG_his_u_rvalue,
+    EIMTG_his_u_pvalue,
+    EIMTG_his_u_hypothesis,
+) = ca.dim_linregress(EIMTGhis_JJA_detrend, uhis_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    EIMTG_ssp585_p3_u_slope,
+    EIMTG_ssp585_p3_u_intercept,
+    EIMTG_ssp585_p3_u_rvalue,
+    EIMTG_ssp585_p3_u_pvalue,
+    EIMTG_ssp585_p3_u_hypothesis,
+) = ca.dim_linregress(EIMTGssp585_JJA_detrend.sel(time=EIMTGssp585_JJA_detrend.time.dt.year>=2064), ussp585_ver_JJA.sel(time=ussp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+
+(
+    EIMTG_ERA5_v_slope,
+    EIMTG_ERA5_v_intercept,
+    EIMTG_ERA5_v_rvalue,
+    EIMTG_ERA5_v_pvalue,
+    EIMTG_ERA5_v_hypothesis,
+) = ca.dim_linregress(EIMTGERA5_JJA_detrend, vERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    EIMTG_his_v_slope,
+    EIMTG_his_v_intercept,
+    EIMTG_his_v_rvalue,
+    EIMTG_his_v_pvalue,
+    EIMTG_his_v_hypothesis,
+) = ca.dim_linregress(EIMTGhis_JJA_detrend, vhis_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    EIMTG_ssp585_p3_v_slope,
+    EIMTG_ssp585_p3_v_intercept,
+    EIMTG_ssp585_p3_v_rvalue,
+    EIMTG_ssp585_p3_v_pvalue,
+    EIMTG_ssp585_p3_v_hypothesis,
+) = ca.dim_linregress(EIMTGssp585_JJA_detrend.sel(time=EIMTGssp585_JJA_detrend.time.dt.year>=2064), vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+# %%
+#   calculate the wind_check and MME
