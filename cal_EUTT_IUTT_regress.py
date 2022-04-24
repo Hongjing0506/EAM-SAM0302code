@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 14:20:37
+LastEditTime: 2022-04-24 14:48:54
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -339,4 +339,9 @@ ssp585_IWF_index = fssp585_IWF_index["IWF"]
     IWF_ssp585_p3_EIMTG_pvalue,
     IWF_ssp585_p3_EIMTG_hypothesis,
 ) = ca.dim_linregress(ssp585_IWF_index.sel(time=ssp585_IWF_index.time.dt.year>=2064), EIMTGssp585_JJA_detrend.sel(time=EIMTGssp585_JJA_detrend.time.dt.year>=2064))
+# %%
+#   calculate the delatmean hgt
+hgtERA5_ver_JJA_delatmean = hgtERA5_ver_JJA - hgtERA5_ver_JJA.mean(dim="lon", skipna=True)
+hgthis_ver_JJA_delatmean = hgthis_ver_JJA - hgthis_ver_JJA.mean(dim="lon", skipna=True)
+hgtssp585_ver_JJA_delatmean = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lon", skipna=True)
 # %%
