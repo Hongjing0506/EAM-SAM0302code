@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 13:08:12
+LastEditTime: 2022-04-24 13:10:33
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -253,7 +253,7 @@ uttssp585_JJA_detrend.name = "utt"
 utthis_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_utt_500-200hPa.nc")
 uttssp585_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_utt_500-200hPa.nc")
 # %%
-#   calculate the EUTT-IUTT in historical and ssp585 run
+#   calculate and output the EUTT-IUTT in historical and ssp585 run
 lat = utthis_JJA.coords["lat"]
 lon = utthis_JJA.coords["lon"]
 
@@ -264,9 +264,10 @@ lat_IUTT_range = lat[(lat >= -10.0) & (lat <= 10.0)]
 lon_IUTT_range = lon[(lon >= 60.0) & (lon <= 100.0)]
 
 EIMTGhis_JJA = ca.cal_lat_weighted_mean(utthis_JJA.sel(lat=lat_EUTT_range,lon=lon_EUTT_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(utthis_JJA.sel(lat=lat_IUTT_range,lon=lon_IUTT_range)).mean(dim="lon",skipna=True)
-
+EIMTGhis_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_EIMTG.nc")
 
 EIMTGssp585_JJA = ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_EUTT_range,lon=lon_EUTT_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_IUTT_range,lon=lon_IUTT_range)).mean(dim="lon",skipna=True)
+EIMTGssp585_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_EIMTG.nc")
 
 # %%
 
