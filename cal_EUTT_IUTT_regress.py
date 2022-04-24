@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 15:38:03
+LastEditTime: 2022-04-24 15:55:03
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -418,6 +418,114 @@ hgtssp585_ver_JJA_delatmean = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lo
     EIMTG_ssp585_p3_v_hypothesis,
 ) = ca.dim_linregress(EIMTGssp585_JJA_detrend.sel(time=EIMTGssp585_JJA_detrend.time.dt.year>=2064), vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
 # %%
+#   ouput the correlation coefficient result into .nc files
+models = EIMTG_his_hgt_slope.coords["models"]
+level = EIMTG_his_hgt_slope.coords["level"]
+lat = EIMTG_his_hgt_slope.coords["lat"]
+lon = EIMTG_his_hgt_slope.coords["lon"]
+EIMTG_his_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], EIMTG_his_hgt_slope.data),
+        intercept=(["models", "level", "lat", "lon"], EIMTG_his_hgt_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], EIMTG_his_hgt_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], EIMTG_his_hgt_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], EIMTG_his_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of multi-models in historical run regress onto his_EIMTG_index"),
+)
+EIMTG_his_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], EIMTG_his_u_slope.data),
+        intercept=(["models", "level", "lat", "lon"], EIMTG_his_u_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], EIMTG_his_u_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], EIMTG_his_u_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], EIMTG_his_u_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of multi-models in historical run regress onto his_EIMTG_index"),
+)
+EIMTG_his_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], EIMTG_his_v_slope.data),
+        intercept=(["models", "level", "lat", "lon"], EIMTG_his_v_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], EIMTG_his_v_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], EIMTG_his_v_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], EIMTG_his_v_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of multi-models in historical run regress onto his_EIMTG_index"),
+)
+EIMTG_ssp585_p3_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_hgt_slope.data),
+        intercept=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_hgt_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_hgt_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_hgt_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of multi-models in ssp585_p3 run regress onto ssp585_p3_EIMTG_index"),
+)
+EIMTG_ssp585_p3_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_u_slope.data),
+        intercept=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_u_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_u_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_u_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_u_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of multi-models in ssp585_p3 run regress onto ssp585_p3_EIMTG_index"),
+)
+EIMTG_ssp585_p3_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_v_slope.data),
+        intercept=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_v_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_v_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_v_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], EIMTG_ssp585_p3_v_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of multi-models in ssp585_p3 run regress onto ssp585_p3_EIMTG_index"),
+)
+EIMTG_his_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/EIMTG_his_hgt_regress.nc")
+EIMTG_his_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/EIMTG_his_u_regress.nc")
+EIMTG_his_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/EIMTG_his_v_regress.nc")
+EIMTG_ssp585_p3_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/EIMTG_ssp585_p3_hgt_regress.nc")
+EIMTG_ssp585_p3_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/EIMTG_ssp585_p3_u_regress.nc")
+EIMTG_ssp585_p3_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/EIMTG_ssp585_p3_v_regress.nc")
+# %%
 #   calculate the wind_check and MME
 EIMTG_ERA5_wind_mask = ca.wind_check(
     xr.where(EIMTG_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
@@ -440,7 +548,7 @@ EIMTG_ssp585_p3_wind_mask = ca.wind_check(
     xr.where(EIMTG_ssp585_p3_v_pvalue <= 0.05, 1.0, 0.0),
 )
 #===================================================
-models = EIMTG_his_hgt_slope.coords["models"]
+
 EIMTG_his_hgt_slope_ens = EIMTG_his_hgt_slope.mean(dim="models", skipna=True)
 EIMTG_his_hgt_rvalue_ens = EIMTG_his_hgt_rvalue.mean(dim="models", skipna=True)
 
@@ -498,7 +606,7 @@ EIMTG_diff_hgt_rvalue = EIMTG_ssp585_p3_hgt_rvalue-EIMTG_his_hgt_rvalue
 EIMTG_diff_u_rvalue = EIMTG_ssp585_p3_u_rvalue-EIMTG_his_u_rvalue
 EIMTG_diff_v_rvalue = EIMTG_ssp585_p3_v_rvalue-EIMTG_his_v_rvalue
 # %%
-#   plot the avalue of hgt&u&v regress onto IWF in ERA5 and historical
+#   plot the avalue of hgt&u&v regress onto EIMTG in ERA5 and historical
 startlevel = [-3.0e7, -2.0e7, -1.5e7]
 endlevel = [3.0e7, 2.0e7, 1.5e7]
 spacinglevel = [3.0e6, 2.0e6, 1.0e6]
@@ -527,21 +635,21 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     for ax in axs:
         rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
         ax.add_patch(rect)
-        #   Indian area
-        x0 = 70
-        y0 = 8.0
-        width = 16
+        #   EUTT area
+        x0 = 60
+        y0 = 20
+        width = 40
         height = 20.0
         patches(ax, x0 - cl, y0, width, height, proj)
-        #   IWF area
-        x0 = 90
-        y0 = 5.0
-        width = 50.0
-        height = 27.5
+        #   IUTT area
+        x0 = 60
+        y0 = -10
+        width = 40
+        height = 20
         patches(ax, x0 - cl, y0, width, height, proj)
     # ======================================
     con = axs[0].contourf(
-        IWF_ERA5_hgt_slope.sel(level=lev),
+        EIMTG_ERA5_hgt_slope.sel(level=lev),
         cmap="ColdHot",
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
         levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
@@ -549,11 +657,11 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         extend="both"
     )
     sepl.plt_sig(
-        IWF_ERA5_hgt_slope.sel(level=lev), axs[0], n, np.where(IWF_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        EIMTG_ERA5_hgt_slope.sel(level=lev), axs[0], n, np.where(EIMTG_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
     )
     axs[0].quiver(
-        IWF_ERA5_u_slope.sel(level=lev)[::ski, ::ski],
-        IWF_ERA5_v_slope.sel(level=lev)[::ski, ::ski],
+        EIMTG_ERA5_u_slope.sel(level=lev)[::ski, ::ski],
+        EIMTG_ERA5_v_slope.sel(level=lev)[::ski, ::ski],
         zorder=1.1,
         headwidth=2.6,
         headlength=2.3,
@@ -565,8 +673,8 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     )
 
     m = axs[0].quiver(
-        IWF_ERA5_u_slope.sel(level=lev).where(IWF_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
-        IWF_ERA5_v_slope.sel(level=lev).where(IWF_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        EIMTG_ERA5_u_slope.sel(level=lev).where(EIMTG_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        EIMTG_ERA5_v_slope.sel(level=lev).where(EIMTG_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
         zorder=1.1,
         headwidth=2.6,
         headlength=2.3,
@@ -585,7 +693,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     )
     # ======================================
     con = axs[1].contourf(
-        IWF_his_hgt_slope_ens.sel(level=lev),
+        EIMTG_his_hgt_slope_ens.sel(level=lev),
         cmap="ColdHot",
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
         levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
@@ -593,11 +701,11 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         extend="both"
     )
     sepl.plt_sig(
-        IWF_his_hgt_slope_ens.sel(level=lev), axs[1], n, np.where(IWF_his_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+        EIMTG_his_hgt_slope_ens.sel(level=lev), axs[1], n, np.where(EIMTG_his_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
     )
     axs[1].quiver(
-        IWF_his_u_slope_ens.sel(level=lev)[::ski, ::ski],
-        IWF_his_v_slope_ens.sel(level=lev)[::ski, ::ski],
+        EIMTG_his_u_slope_ens.sel(level=lev)[::ski, ::ski],
+        EIMTG_his_v_slope_ens.sel(level=lev)[::ski, ::ski],
         zorder=1.1,
         headwidth=2.6,
         headlength=2.3,
@@ -609,8 +717,8 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     )
 
     m = axs[1].quiver(
-        IWF_his_u_slope_ens.sel(level=lev).where(IWF_his_wind_slope_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
-        IWF_his_v_slope_ens.sel(level=lev).where(IWF_his_wind_slope_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        EIMTG_his_u_slope_ens.sel(level=lev).where(EIMTG_his_wind_slope_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        EIMTG_his_v_slope_ens.sel(level=lev).where(EIMTG_his_wind_slope_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
         zorder=1.1,
         headwidth=2.6,
         headlength=2.3,
@@ -630,7 +738,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     # ======================================
     for num_mod, mod in enumerate(models):
         con = axs[num_mod+2].contourf(
-            IWF_his_hgt_slope.sel(models=mod,level=lev),
+            EIMTG_his_hgt_slope.sel(models=mod,level=lev),
             cmap="ColdHot",
             cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
             levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
@@ -638,11 +746,11 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             extend="both"
         )
         sepl.plt_sig(
-            IWF_his_hgt_slope.sel(models=mod,level=lev), axs[num_mod+2], n, np.where(IWF_his_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+            EIMTG_his_hgt_slope.sel(models=mod,level=lev), axs[num_mod+2], n, np.where(EIMTG_his_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
         )
         axs[num_mod+2].quiver(
-            IWF_his_u_slope.sel(models=mod,level=lev)[::ski, ::ski],
-            IWF_his_v_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            EIMTG_his_u_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            EIMTG_his_v_slope.sel(models=mod,level=lev)[::ski, ::ski],
             zorder=1.1,
             headwidth=2.6,
             headlength=2.3,
@@ -654,8 +762,8 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         )
 
         m = axs[num_mod+2].quiver(
-            IWF_his_u_slope.sel(models=mod,level=lev).where(IWF_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
-            IWF_his_v_slope.sel(models=mod,level=lev).where(IWF_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            EIMTG_his_u_slope.sel(models=mod,level=lev).where(EIMTG_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            EIMTG_his_v_slope.sel(models=mod,level=lev).where(EIMTG_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
             zorder=1.1,
             headwidth=2.6,
             headlength=2.3,
@@ -674,4 +782,4 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         )
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IWF".format(lev))
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg EIMTG".format(lev))
