@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-25 14:25:45
+LastEditTime: 2022-04-26 00:38:38
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -26,6 +26,7 @@ import metpy.calc as mpcalc
 import metpy.constants as constants
 import geocat.comp
 from windspharm.xarray import VectorWind
+import skill_metrics as sm
 
 reload(sepl)
 
@@ -2810,15 +2811,131 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
 # models = pre_his_India_pre_slope.coords["models"]
 lat = prehis_JJA.coords["lat"]
 lon = prehis_JJA.coords["lon"]
-lat_EAM_range = lat[(lat>=0.0) & (lat<=45.0)]
+lat_EAM_range = lat[(lat>=22.5) & (lat<=40.0)]
 lon_EAM_range = lon[(lon>=90.0) & (lon<=135.0)]
 
 IndR_EAM_list = []
+IndR_EAM_pcc = []
+IndR_EAM_RMSE = []
+IndR_EAM_std = []
+
 for num_mod, mod in enumerate(models):
-    IndR_EAM_list.append({"models": mod.data, "pcc": ca.cal_pcc(pre_GPCP_India_pre_rvalue.loc[0.0:45.0, 90.0:135.0], pre_his_India_pre_rvalue.sel(models=mod, lat=lat_EAM_range, lon=lon_EAM_range))})
+    IndR_EAM_list.append({"models": mod.data, "pcc": ca.cal_pcc(pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0], pre_his_India_pre_rvalue.sel(models=mod, lat=lat_EAM_range, lon=lon_EAM_range))})
+    IndR_EAM_pcc.append(ca.cal_pcc(pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0], pre_his_India_pre_rvalue.sel(models=mod, lat=lat_EAM_range, lon=lon_EAM_range)))
+    IndR_EAM_RMSE.append(np.sqrt(np.power((pre_his_India_pre_rvalue.sel(models=mod,lat=lat_EAM_range,lon=lon_EAM_range)-pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0]),2).mean(dim=["lat","lon"],skipna=True).data))
+    IndR_EAM_std.append(float((pre_his_India_pre_rvalue.sel(models=mod,lat=lat_EAM_range,lon=lon_EAM_range).std(dim=["lat","lon"],skipna=True)/pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0].std(dim=["lat","lon"],skipna=True)).data))
+#   for MME
+IndR_EAM_pcc.append(ca.cal_pcc(pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0], pre_his_India_pre_rvalue_ens.sel(lat=lat_EAM_range, lon=lon_EAM_range)))
+IndR_EAM_RMSE.append(np.sqrt(np.power((pre_his_India_pre_rvalue_ens.sel(lat=lat_EAM_range,lon=lon_EAM_range)-pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0]),2).mean(dim=["lat","lon"],skipna=True).data))
+IndR_EAM_std.append(float((pre_his_India_pre_rvalue_ens.sel(lat=lat_EAM_range,lon=lon_EAM_range).std(dim=["lat","lon"],skipna=True)/pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0].std(dim=["lat","lon"],skipna=True)).data))
 
 print(sorted(IndR_EAM_list, key=lambda x : x["pcc"]))
+# %%
+#   plot the Taylor plot 
+labels = list(models.data)
+labels.append("MME")
+# plt.rcParams["figure.figsize"] = [6, 6]
+# plt.rcParams["figure.facecolor"] = "white"
+# plt.rcParams["figure.edgecolor"] = "white"
+# plt.rcParams["figure.dpi"] = 80
+# plt.rcParams['lines.linewidth'] = 1 # 
+# plt.rcParams.update({'font.size': 12}) # 
+# plt.close('all')
+# # 开始绘图
+# text_font = {'size':'10','weight':'bold','color':'black'}
+# sm.taylor_diagram(np.array(IndR_EAM_std),np.array(IndR_EAM_RMSE),np.array(IndR_EAM_pcc), markerLabel=labels, markerLegend = 'on', colRMS='m', axismax=1.5, markerSize=5, titleRMS='off', titleRMSDangle=90.0, titleCOR='off', tickCOR=np.arange(-1.0, 1.1, 0.2),alpha=0.0,titleSTD='off', markerLegend)
+# plt.title("pre reg IndR",fontdict=text_font,pad=35)
+def tar(ax,r,std, dotlabels):
+    ax.set_thetalim(thetamin=0, thetamax=180)
+    r_small, r_big, r_interval=0,1.5+0.1,0.5  #横纵坐标范围，最小值 最大值 间隔
+    ax.set_rlim(r_small,r_big)
+    rad_list=[-1,-0.99,-0.95,-0.9,-0.8,-0.7,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.7,0.8,0.9,0.95,0.99,1] #需要显示数值的主要R的值
+    # minor_rad_list=[0,0.1,0.2,0.3,0.4,0.5,0.6,0.65,0.7,0.75,0.8,0.85,0.86,0.87,0.88,0.89,
+                    # 0.9,0.91,0.92,0.93,0.94,0.95,0.96,0.97,0.98,0.99,1] #需要显示刻度的次要R的值
+    angle_list = np.rad2deg(np.arccos(rad_list))
+    angle_list_rad=np.arccos(rad_list)
+    angle_minor_list = np.arccos(minor_rad_list)
+    ax.set_thetagrids(angle_list, rad_list)
+    ax.tick_params(pad=8)
+    # lines, labels = plt.thetagrids(angle_list, labels=rad_list, frac=1.25)
+    v = 0.11
+    for i in np.arange(r_small, r_big, r_interval):
+        if i == 1:
+            ax.text(np.arctan(i/v)-0.5*np.pi, np.sqrt(v**2+i**2), s='REF', ha='center', va='top') 
+            ax.text(1.5*np.pi-np.arctan(i/v), np.sqrt(v**2+i**2), s='REF', ha='center', va='top')
+            #text的第一个坐标是角度（弧度制），第二个是距离
+        elif i == 0:
+            ax.text(1.5*np.pi, v, s=str(i), ha='center', va='top')
+        else: 
+            ax.text(np.arctan(i/v)-0.5*np.pi, np.sqrt(v**2+i**2), s=str(i), ha='center', va='top') 
+            ax.text(1.5*np.pi-np.arctan(i/v), np.sqrt(v**2+i**2), s=str(i), ha='center', va='top') 
+    ax.set_rgrids([])
+    labels = ax.get_xticklabels() + ax.get_yticklabels()
+    ax.grid(False)
+    angle_linewidth,angle_length,angle_minor_length=0.8,0.02,0.01
+    tick = [ax.get_rmax(), ax.get_rmax() * (1 - angle_length)]
+    # tick_minor = [ax.get_rmax(), ax.get_rmax() * (1 - angle_minor_length)]
+    for t in angle_list_rad:
+        ax.plot([t, t], tick, lw=angle_linewidth, color="k")  # 第一个坐标是角度（角度制），第二个是距离
+    # for t in angle_minor_list:
+    #     ax.plot([t, t], tick_minor, lw=angle_linewidth, color="k")  # 第一个坐标是角度（角度制），第二个是距离
 
+    # 然后开始绘制以REF为原点的圈，可以自己加圈
+    circle = plt.Circle((1, 0), 0.5, transform=ax.transData._b, facecolor=(0, 0, 0, 0), edgecolor='gray',linestyle='--', linewidth=0.8)
+    ax.add_artist(circle)
+    circle = plt.Circle((1, 0), 1.0, transform=ax.transData._b, facecolor=(0, 0, 0, 0), edgecolor='gray',linestyle='--', linewidth=0.8)
+    ax.add_artist(circle)
+
+    # 绘制以原点为圆点的圆圈：
+    circle4 = plt.Circle((0, 0), 0.5, transform=ax.transData._b, facecolor=(0, 0, 0, 0), edgecolor='grey',linestyle='--', linewidth=1.0)
+    circle5 = plt.Circle((0, 0), 1, transform=ax.transData._b, facecolor=(0, 0, 0, 0), edgecolor='grey',linestyle='-', linewidth=1.5)
+    circle6 = plt.Circle((0, 0), 1.5, transform=ax.transData._b, facecolor=(0, 0, 0, 0), edgecolor='grey',linestyle='--', linewidth=1.0)
+    ax.add_artist(circle4)
+    ax.add_artist(circle5)
+    ax.add_artist(circle6)
+
+    #ax.set_xlabel('Normalized')
+    ax.text(np.deg2rad(40), 1.85, s='Correlation', ha='center', va='bottom', rotation=-45)  
+
+    # 这里的网格包括：以原点为圆点的圆圈。首先绘制从原点发散的线段，长度等于半径
+    ax.plot([0,np.arccos(0.4)],[0,3],lw=1,color='gray',linestyle='--')
+    ax.plot([0,np.arccos(0.8)],[0,3],lw=1,color='gray',linestyle='--')
+    ax.plot([0,np.arccos(0.0)],[0,3],lw=1,color='gray',linestyle='--')
+    ax.plot([0,np.arccos(-0.4)],[0,3],lw=1,color='gray',linestyle='--')
+    ax.plot([0,np.arccos(-0.8)],[0,3],lw=1,color='gray',linestyle='--')
+
+    # 画点，参数一相关系数，参数二标准差 
+    for i in np.arange(0,len(r)):
+        ax.plot(np.arccos(r[i]), std[i], 'o',color='r',markersize=0, label='{} {}'.format(i+1,dotlabels[i]))
+        ax.text(np.arccos(r[i]), std[i], s='{}'.format(i+1), c='r',fontsize=10)
+        # ax.text(np.arccos(r[i]-0.05), std[i], s='2', c='r',fontsize=13)
+        # ax.plot(np.arccos(r[0]), std[0], 'o',color='#FF8000',markersize=10, label='1')
+        # ax.text(np.arccos(r[0]-0.05), std[0], s='1', c='#FF8000',fontsize=13)
+    # ax.plot(np.arccos(r[2]), std[2], 'o',color='g',markersize=10, label='3')
+    # ax.text(np.arccos(r[2]-0.05), std[2], s='3',c='g', fontsize=13)
+    # ax.plot(np.arccos(r[3]), std[3], 'o',color='b',markersize=10, label='4')
+    # ax.text(np.arccos(r[3]-0.05), std[3], s='4', c='b',fontsize=13)
+    # ax.plot(np.arccos(r[4]), std[4], 'o',color='#E800E8',markersize=10, label='5')
+    # ax.text(np.arccos(r[4]-0.05), std[4], s='5', c='#E800E8',fontsize=13)
+    # ax.plot(np.arccos(r[5]), std[5], '^',color='#00AEAE',markersize=10, label='6')
+    # ax.text(np.arccos(r[5]-0.05), std[5], s='6', c='#00AEAE',fontsize=13)
+    ax.text(1.5*np.pi, 0.3, s='Std (Normalized)',ha='center', va='top')
+    # ax.text(1.5np.pi,'Std (Normalized)',labelpad=0)
+plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文
+plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
+
+#绘图
+fig=plt.figure(figsize=(12,8),dpi=300)
+plt.rc('font',family='Arial',size=13)
+
+#调用函数
+ax1=fig.add_subplot(111,projection='polar')
+box = ax1.get_position()
+ax1.set_position([0, box.y0, box.width*1.2, box.height])
+# ax1.text(0.6,0.1,'(a)',fontsize=15)
+tar(ax1,np.array(IndR_EAM_pcc),np.array(IndR_EAM_std),labels)
+plt.legend(loc="center left", bbox_to_anchor=(1.1,0.5), ncol=2, frameon=True, numpoints=1, handlelength=0)
+# plt.tight_layout()
 # %%
 #   pick up the good models
 gmodels = ['MPI-ESM1-2-HR', 'EC-Earth3-Veg', 'UKESM1-0-LL', 'EC-Earth3', 'CMCC-ESM2', 'MRI-ESM2-0', 'HadGEM3-GC31-LL', 'TaiESM1', 'NorESM2-LM', 'MIROC-ES2L']
@@ -4430,7 +4547,9 @@ axs[3].format(
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="Uq & div reg IndR")
 # %%
-
+#   combined the three variables 200hPa hgt, u, v into one variables
+#   first select the MV-EOF area
+lat = IndR_diff_hgt_avalue.coords["lat"]
 
 # %%
 # #   output the lowlim and highlim for historical run and ssp585 run
