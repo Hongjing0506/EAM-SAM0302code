@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-26 00:38:38
+LastEditTime: 2022-04-26 01:05:27
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -2933,7 +2933,8 @@ ax1=fig.add_subplot(111,projection='polar')
 box = ax1.get_position()
 ax1.set_position([0, box.y0, box.width*1.2, box.height])
 # ax1.text(0.6,0.1,'(a)',fontsize=15)
-tar(ax1,np.array(IndR_EAM_pcc),np.array(IndR_EAM_std),labels)
+# tar(ax1,np.array(IndR_EAM_pcc),np.array(IndR_EAM_std),labels)
+sepl.taylor_diagram(ax1,np.array(IndR_EAM_pcc),np.array(IndR_EAM_std),labels)
 plt.legend(loc="center left", bbox_to_anchor=(1.1,0.5), ncol=2, frameon=True, numpoints=1, handlelength=0)
 # plt.tight_layout()
 # %%
