@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-25 14:21:40
+LastEditTime: 2022-04-25 14:25:45
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -620,10 +620,10 @@ for ax in axs:
     # patches(ax, x0 - cl, y0, width, height, proj)    
 # ======================================
 con = axs[0].contourf(
-    pre_diff_India_pre_sig_ens,
+    pre_diff_India_pre_sig_gmodels_ens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.05},
-    levels=np.arange(-1.0,1.1,0.1),
+    levels=np.arange(-1.0,1.1,0.2),
     zorder=0.8,
     extend="both"
 )
@@ -636,7 +636,7 @@ for num_mod, mod in enumerate(gmodels):
         pre_diff_India_pre_sig.sel(models=mod),
         cmap="ColdHot",
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.05},
-        levels=np.arange(-1.0,1.1,0.1),
+        levels=np.arange(-1.0,1.1,0.2),
         zorder=0.8,
         extend="both"
     )
