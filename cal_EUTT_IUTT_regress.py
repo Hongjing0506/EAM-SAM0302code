@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-23 12:49:42
 LastEditors: ChenHJ
-LastEditTime: 2022-04-24 18:25:36
+LastEditTime: 2022-04-24 23:19:48
 FilePath: /chenhj/0302code/cal_EUTT_IUTT_regress.py
 Aim: 
 Mission: 
@@ -355,6 +355,22 @@ hgtssp585_ver_JJA_delatmean = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lo
 ) = ca.dim_linregress(EIMTGERA5_JJA_detrend.sel(time=EIMTGERA5_JJA_detrend.time.dt.year>=1979), hgtERA5_ver_JJA_delatmean.sel(time=hgtERA5_ver_JJA_delatmean.time.dt.year>=1979,level=[200.0, 500.0, 850.0]))
 
 (
+    EIMTG_ERA5_u_slope,
+    EIMTG_ERA5_u_intercept,
+    EIMTG_ERA5_u_rvalue,
+    EIMTG_ERA5_u_pvalue,
+    EIMTG_ERA5_u_hypothesis,
+) = ca.dim_linregress(EIMTGERA5_JJA_detrend.sel(time=EIMTGERA5_JJA_detrend.time.dt.year>=1979), uERA5_ver_JJA.sel(time=uERA5_ver_JJA.time.dt.year>=1979,level=[200.0, 500.0, 850.0]))
+
+(
+    EIMTG_ERA5_v_slope,
+    EIMTG_ERA5_v_intercept,
+    EIMTG_ERA5_v_rvalue,
+    EIMTG_ERA5_v_pvalue,
+    EIMTG_ERA5_v_hypothesis,
+) = ca.dim_linregress(EIMTGERA5_JJA_detrend.sel(time=EIMTGERA5_JJA_detrend.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979,level=[200.0, 500.0, 850.0]))
+# %%
+(
     EIMTG_his_hgt_slope,
     EIMTG_his_hgt_intercept,
     EIMTG_his_hgt_rvalue,
@@ -370,13 +386,7 @@ hgtssp585_ver_JJA_delatmean = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lo
     EIMTG_ssp585_p3_hgt_hypothesis,
 ) = ca.dim_linregress(EIMTGssp585_JJA_detrend.sel(time=EIMTGssp585_JJA_detrend.time.dt.year>=2064), hgtssp585_ver_JJA_delatmean.sel(time=hgtssp585_ver_JJA_delatmean.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
 
-(
-    EIMTG_ERA5_u_slope,
-    EIMTG_ERA5_u_intercept,
-    EIMTG_ERA5_u_rvalue,
-    EIMTG_ERA5_u_pvalue,
-    EIMTG_ERA5_u_hypothesis,
-) = ca.dim_linregress(EIMTGERA5_JJA_detrend.sel(time=EIMTGERA5_JJA_detrend.time.dt.year>=1979), uERA5_ver_JJA.sel(time=uERA5_ver_JJA.time.dt.year>=1979,level=[200.0, 500.0, 850.0]))
+
 
 (
     EIMTG_his_u_slope,
@@ -394,13 +404,7 @@ hgtssp585_ver_JJA_delatmean = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lo
     EIMTG_ssp585_p3_u_hypothesis,
 ) = ca.dim_linregress(EIMTGssp585_JJA_detrend.sel(time=EIMTGssp585_JJA_detrend.time.dt.year>=2064), ussp585_ver_JJA.sel(time=ussp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
 
-(
-    EIMTG_ERA5_v_slope,
-    EIMTG_ERA5_v_intercept,
-    EIMTG_ERA5_v_rvalue,
-    EIMTG_ERA5_v_pvalue,
-    EIMTG_ERA5_v_hypothesis,
-) = ca.dim_linregress(EIMTGERA5_JJA_detrend.sel(time=EIMTGERA5_JJA_detrend.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979,level=[200.0, 500.0, 850.0]))
+
 
 (
     EIMTG_his_v_slope,
@@ -526,6 +530,33 @@ EIMTG_ssp585_p3_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/che
 EIMTG_ssp585_p3_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/EIMTG_ssp585_p3_u_regress.nc")
 EIMTG_ssp585_p3_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/EIMTG_ssp585_p3_v_regress.nc")
 # %%
+EIMTG_his_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/EIMTG_his_hgt_regress.nc")
+EIMTG_his_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/EIMTG_his_u_regress.nc")
+EIMTG_his_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/EIMTG_his_v_regress.nc")
+EIMTG_ssp585_p3_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/EIMTG_ssp585_p3_hgt_regress.nc")
+EIMTG_ssp585_p3_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/EIMTG_ssp585_p3_u_regress.nc")
+EIMTG_ssp585_p3_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/EIMTG_ssp585_p3_v_regress.nc")
+
+EIMTG_his_hgt_slope = EIMTG_his_hgt_regress["slope"]
+EIMTG_his_hgt_rvalue = EIMTG_his_hgt_regress["rvalue"]
+EIMTG_his_hgt_pvalue = EIMTG_his_hgt_regress["pvalue"]
+EIMTG_his_u_slope = EIMTG_his_u_regress["slope"]
+EIMTG_his_u_rvalue = EIMTG_his_u_regress["rvalue"]
+EIMTG_his_u_pvalue = EIMTG_his_u_regress["pvalue"]
+EIMTG_his_v_slope = EIMTG_his_v_regress["slope"]
+EIMTG_his_v_rvalue = EIMTG_his_v_regress["rvalue"]
+EIMTG_his_v_pvalue = EIMTG_his_v_regress["pvalue"]
+
+EIMTG_ssp585_p3_hgt_slope = EIMTG_ssp585_p3_hgt_regress["slope"]
+EIMTG_ssp585_p3_hgt_rvalue = EIMTG_ssp585_p3_hgt_regress["rvalue"]
+EIMTG_ssp585_p3_hgt_pvalue = EIMTG_ssp585_p3_hgt_regress["pvalue"]
+EIMTG_ssp585_p3_u_slope = EIMTG_ssp585_p3_u_regress["slope"]
+EIMTG_ssp585_p3_u_rvalue = EIMTG_ssp585_p3_u_regress["rvalue"]
+EIMTG_ssp585_p3_u_pvalue = EIMTG_ssp585_p3_u_regress["pvalue"]
+EIMTG_ssp585_p3_v_slope = EIMTG_ssp585_p3_v_regress["slope"]
+EIMTG_ssp585_p3_v_rvalue = EIMTG_ssp585_p3_v_regress["rvalue"]
+EIMTG_ssp585_p3_v_pvalue = EIMTG_ssp585_p3_v_regress["pvalue"]
+# %%
 #   calculate the wind_check and MME
 EIMTG_ERA5_wind_mask = ca.wind_check(
     xr.where(EIMTG_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
@@ -622,6 +653,10 @@ EIMTG_diff_v_rvalue = EIMTG_ssp585_p3_v_rvalue-EIMTG_his_v_rvalue
 EIMTG_diff_hgt_slope_ens = EIMTG_diff_hgt_slope.mean(dim="models",skipna=True)
 EIMTG_diff_u_slope_ens = EIMTG_diff_u_slope.mean(dim="models",skipna=True)
 EIMTG_diff_v_slope_ens = EIMTG_diff_v_slope.mean(dim="models",skipna=True)
+#===================================================
+EIMTG_diff_hgt_rvalue_ens = EIMTG_diff_hgt_rvalue.mean(dim="models",skipna=True)
+EIMTG_diff_u_rvalue_ens = EIMTG_diff_u_rvalue.mean(dim="models",skipna=True)
+EIMTG_diff_v_rvalue_ens = EIMTG_diff_v_rvalue.mean(dim="models",skipna=True)
 # %%
 #   plot the avalue of hgt&u&v regress onto EIMTG in ERA5 and historical
 startlevel = np.array([-6.0e-3, -5.0e-3, -3.0e-3])
@@ -1198,7 +1233,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     axs[0].format(
-        rtitle="1979-2014", ltitle="MME",
+        rtitle="2064-2099", ltitle="MME",
     )
     # ======================================
     for num_mod, mod in enumerate(models):
@@ -1242,13 +1277,13 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
         )
         axs[num_mod+1].format(
-            rtitle="1979-2014", ltitle="{}".format(mod.data),
+            rtitle="2064-2099", ltitle="{}".format(mod.data),
         )
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg EIMTG".format(lev))
 # %%
-#   plot the avalue of hgt&u&v regress onto EIMTG in ssp585_p3
+#   plot the avalue of hgt&u&v regress onto EIMTG in diff
 startlevel = np.array([-3.0e-3, -2.5e-3, -1.5e-3])
 endlevel = -startlevel
 spacinglevel = -startlevel/10.0
@@ -1349,6 +1384,348 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         )
         axs[num_mod+1].format(
             rtitle="diff", ltitle="{}".format(mod.data),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg EIMTG".format(lev))
+# %%
+#   plot the rvalue of hgt&u&v regress onto EIMTG in diff
+startlevel = np.array([-1, -1, -1])
+endlevel = -startlevel
+spacinglevel = -startlevel/10.0
+scalelevel = [0.17, 0.17, 0.17]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 29), (7, 4))
+    plot_array[-1,-1] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 3
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        #   EUTT area
+        x0 = 60
+        y0 = 20
+        width = 40
+        height = 20.0
+        patches(ax, x0 - cl, y0, width, height, proj)
+        #   IUTT area
+        x0 = 60
+        y0 = -10
+        width = 40
+        height = 20
+        patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        EIMTG_diff_hgt_rvalue_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+
+    m = axs[0].quiver(
+        EIMTG_diff_u_rvalue_ens.sel(level=lev)[::ski, ::ski],
+        EIMTG_diff_v_rvalue_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=5e-4, label="5e-4", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[0].format(
+        rtitle="diff", ltitle="MME",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(models):
+        con = axs[num_mod+1].contourf(
+            EIMTG_diff_hgt_rvalue.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
+            zorder=0.8,
+            extend="both"
+        )
+
+        m = axs[num_mod+1].quiver(
+            EIMTG_diff_u_rvalue.sel(models=mod,level=lev)[::ski, ::ski],
+            EIMTG_diff_v_rvalue.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod+1].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=5e-4, label="5e-4", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        axs[num_mod+1].format(
+            rtitle="diff", ltitle="{}".format(mod.data),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg EIMTG".format(lev))
+# %%
+#   calculate the historical models pcc
+#   calculate the pcc and sort to reveal the rank of different models
+models = EIMTG_his_hgt_slope.coords["models"]
+lat = EIMTG_his_hgt_slope.coords["lat"]
+lon = EIMTG_his_hgt_slope.coords["lon"]
+lat_Asia_range = lat[(lat>=15.0) & (lat<=45.0)]
+lon_Asia_range = lon[(lon>=60.0) & (lon<=135.0)]
+
+EIMTG_Asia_list = []
+for num_mod, mod in enumerate(models):
+    EIMTG_Asia_list.append({"models": mod.data, "pcc": ca.cal_pcc(EIMTG_ERA5_hgt_rvalue.sel(level=200.0).loc[15.0:45.0, 60.0:135.0], EIMTG_his_hgt_rvalue.sel(models=mod, lat=lat_Asia_range, lon=lon_Asia_range, level=200.0))+ca.cal_pcc(EIMTG_ERA5_u_rvalue.sel(level=200.0).loc[15.0:45.0, 60.0:135.0], EIMTG_his_u_rvalue.sel(models=mod, lat=lat_Asia_range, lon=lon_Asia_range, level=200.0))+ca.cal_pcc(EIMTG_ERA5_v_rvalue.sel(level=200.0).loc[15.0:45.0, 60.0:135.0], EIMTG_his_v_rvalue.sel(models=mod, lat=lat_Asia_range, lon=lon_Asia_range, level=200.0))})
+    
+
+print(sorted(EIMTG_Asia_list, key=lambda x : x["pcc"]))
+# %%
+gmodels = ['EC-Earth3-Veg','MPI-ESM1-2-HR','MRI-ESM2-0','HadGEM3-GC31-LL','CNRM-ESM2-1','CMCC-ESM2','MIROC-ES2L','CESM2','EC-Earth3','MIROC6']
+EIMTG_diff_hgt_slope_gmodels_ens = EIMTG_diff_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+EIMTG_diff_hgt_rvalue_gmodels_ens = EIMTG_diff_hgt_rvalue.sel(models=gmodels).mean(dim="models", skipna=True)
+EIMTG_diff_u_slope_gmodels_ens = EIMTG_diff_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+EIMTG_diff_u_rvalue_gmodels_ens = EIMTG_diff_u_rvalue.sel(models=gmodels).mean(dim="models", skipna=True)
+EIMTG_diff_v_slope_gmodels_ens = EIMTG_diff_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+EIMTG_diff_v_rvalue_gmodels_ens = EIMTG_diff_v_rvalue.sel(models=gmodels).mean(dim="models", skipna=True)
+
+# %%
+#   plot the avalue of hgt&u&v regress onto EIMTG in diff
+startlevel = np.array([-3.0e-3, -2.5e-3, -1.5e-3])
+endlevel = -startlevel
+spacinglevel = -startlevel/10.0
+scalelevel = [9.5e-5, 6.5e-5, 4.5e-5]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 13), (3, 4))
+    plot_array[-1,-1] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 3
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        #   EUTT area
+        x0 = 60
+        y0 = 20
+        width = 40
+        height = 20.0
+        patches(ax, x0 - cl, y0, width, height, proj)
+        #   IUTT area
+        x0 = 60
+        y0 = -10
+        width = 40
+        height = 20
+        patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        EIMTG_diff_hgt_slope_gmodels_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+
+    m = axs[0].quiver(
+        EIMTG_diff_u_slope_gmodels_ens.sel(level=lev)[::ski, ::ski],
+        EIMTG_diff_v_slope_gmodels_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=5e-4, label="5e-4", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[0].format(
+        rtitle="diff", ltitle="MME",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(gmodels):
+        con = axs[num_mod+1].contourf(
+            EIMTG_diff_hgt_slope.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
+            zorder=0.8,
+            extend="both"
+        )
+
+        m = axs[num_mod+1].quiver(
+            EIMTG_diff_u_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            EIMTG_diff_v_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod+1].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=5e-4, label="5e-4", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        axs[num_mod+1].format(
+            rtitle="diff", ltitle="{}".format(mod),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg EIMTG".format(lev))
+# %%
+#   plot the avalue of hgt&u&v regress onto EIMTG in diff
+startlevel = np.array([-1.0, -1.0, -1.0])
+endlevel = -startlevel
+spacinglevel = -startlevel/10.0
+scalelevel = [0.17, 0.17, 0.17]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 13), (3, 4))
+    plot_array[-1,-1] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 3
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        #   EUTT area
+        x0 = 60
+        y0 = 20
+        width = 40
+        height = 20.0
+        patches(ax, x0 - cl, y0, width, height, proj)
+        #   IUTT area
+        x0 = 60
+        y0 = -10
+        width = 40
+        height = 20
+        patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        EIMTG_diff_hgt_rvalue_gmodels_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+
+    m = axs[0].quiver(
+        EIMTG_diff_u_rvalue_gmodels_ens.sel(level=lev)[::ski, ::ski],
+        EIMTG_diff_v_rvalue_gmodels_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=5e-4, label="5e-4", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[0].format(
+        rtitle="diff", ltitle="MME",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(gmodels):
+        con = axs[num_mod+1].contourf(
+            EIMTG_diff_hgt_rvalue.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(startlevel[num_lev], endlevel[num_lev]+spacinglevel[num_lev]/2, spacinglevel[num_lev]),
+            zorder=0.8,
+            extend="both"
+        )
+
+        m = axs[num_mod+1].quiver(
+            EIMTG_diff_u_rvalue.sel(models=mod,level=lev)[::ski, ::ski],
+            EIMTG_diff_v_rvalue.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod+1].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=5e-4, label="5e-4", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        axs[num_mod+1].format(
+            rtitle="diff", ltitle="{}".format(mod),
         )
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
