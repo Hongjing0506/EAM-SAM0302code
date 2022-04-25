@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-22 22:16:25
+LastEditTime: 2022-04-25 14:16:18
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -510,7 +510,75 @@ pre_diff_India_pre_slope_ens_mask = ca.MME_reg_mask(pre_diff_India_pre_slope_ens
 pre_diff_India_pre_rvalue = pre_ssp585_p3_India_pre_rvalue-pre_his_India_pre_rvalue
 pre_diff_India_pre_rvalue_ens = pre_diff_India_pre_rvalue.mean(dim="models", skipna=True)
 pre_diff_India_pre_rvalue_ens_mask = ca.MME_reg_mask(pre_diff_India_pre_rvalue_ens, pre_diff_India_pre_rvalue.std(dim="models", skipna=True), len(models), True)
+# %%
+#   calculate the significance area change
+pre_diff_India_pre_sig = xr.where(pre_ssp585_p3_India_pre_pvalue <= 0.05, 1.0, 0.0) - xr.where(pre_his_India_pre_pvalue <= 0.05, 1.0, 0.0)
+pre_diff_India_pre_sig_ens = pre_diff_India_pre_sig.mean(dim="models", skipna=True)
 
+#   plot the significance area change in precipitation regress onto IndR
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 29), (7, 4))
+plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ======================================
+for ax in axs:
+    #   Indian area
+    x0 = 70
+    y0 = 8.0
+    width = 16
+    height = 20.0
+    patches(ax, x0 - cl, y0, width, height, proj)
+    # #   IWF area
+    # x0 = 90
+    # y0 = 5.0
+    # width = 50.0
+    # height = 27.5
+    # patches(ax, x0 - cl, y0, width, height, proj)    
+# ======================================
+con = axs[0].contourf(
+    pre_diff_India_pre_sig_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.05},
+    levels=np.arange(-1.0,1.1,0.1),
+    zorder=0.8,
+    extend="both"
+)
+axs[0].format(
+    rtitle="diff", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models):
+    con = axs[num_mod+1].contourf(
+        pre_diff_India_pre_sig.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.05},
+        levels=np.arange(-1.0,1.1,0.1),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1].format(
+        rtitle="diff", ltitle="{}".format(mod.data),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 # %%
 #   plot the regression coefficients avalue in ssp585 p3
 pplt.rc.grid = False
@@ -921,7 +989,7 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndR_ssp585_v_pvalue,
     IndR_ssp585_v_hypothesis,
 ) = ca.dim_linregress(pressp585_India_JJA, vssp585_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
-
+# %%
 (
     IndR_ssp585_p3_hgt_slope,
     IndR_ssp585_p3_hgt_intercept,
@@ -1037,22 +1105,22 @@ IndR_ssp585_p3_v_rvalue_ens = IndR_ssp585_p3_v_rvalue.mean(dim="models", skipna=
 IndR_ssp585_p3_v_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_v_rvalue_ens, IndR_ssp585_p3_v_rvalue.std(dim="models", skipna=True), len(models), True)
 
 IndR_his_wind_ens_mask = ca.wind_check(
-    xr.where(IndR_his_u_slope_ens_mask <= 0.05, 1.0, 0.0),
-    xr.where(IndR_his_v_slope_ens_mask <= 0.05, 1.0, 0.0),
-    xr.where(IndR_his_u_slope_ens_mask <= 0.05, 1.0, 0.0),
-    xr.where(IndR_his_v_slope_ens_mask <= 0.05, 1.0, 0.0),
+    xr.where(IndR_his_u_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_his_v_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_his_u_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_his_v_slope_ens_mask > 0.0, 1.0, 0.0),
 )
 IndR_ssp585_wind_ens_mask = ca.wind_check(
-    xr.where(IndR_ssp585_u_slope_ens_mask <= 0.05, 1.0, 0.0),
-    xr.where(IndR_ssp585_v_slope_ens_mask <= 0.05, 1.0, 0.0),
-    xr.where(IndR_ssp585_u_slope_ens_mask <= 0.05, 1.0, 0.0),
-    xr.where(IndR_ssp585_v_slope_ens_mask <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_u_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_ssp585_v_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_ssp585_u_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_ssp585_v_slope_ens_mask > 0.0, 1.0, 0.0),
 )
 IndR_ssp585_p3_wind_ens_mask = ca.wind_check(
-    xr.where(IndR_ssp585_p3_u_slope_ens_mask <= 0.05, 1.0, 0.0),
-    xr.where(IndR_ssp585_p3_v_slope_ens_mask <= 0.05, 1.0, 0.0),
-    xr.where(IndR_ssp585_p3_u_slope_ens_mask <= 0.05, 1.0, 0.0),
-    xr.where(IndR_ssp585_p3_v_slope_ens_mask <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_u_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_v_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_u_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_v_slope_ens_mask > 0.0, 1.0, 0.0),
 )
 
 # %%
@@ -1388,6 +1456,67 @@ IndR_ssp585_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SA
 IndR_ssp585_p3_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_p3_hgt_regress.nc")
 IndR_ssp585_p3_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_p3_u_regress.nc")
 IndR_ssp585_p3_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_p3_v_regress.nc")
+
+# %%
+IndRCRU_ERA5_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndRCRU_ERA5_hgt_regress.nc")
+IndRCRU_ERA5_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndRCRU_ERA5_u_regress.nc")
+IndRCRU_ERA5_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndRCRU_ERA5_v_regress.nc")
+
+IndRGPCP_ERA5_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndRGPCP_ERA5_hgt_regress.nc")
+IndRGPCP_ERA5_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndRGPCP_ERA5_u_regress.nc")
+IndRGPCP_ERA5_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndRGPCP_ERA5_v_regress.nc")
+
+IndR_his_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndR_his_hgt_regress.nc")
+IndR_his_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndR_his_u_regress.nc")
+IndR_his_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/IndR_his_v_regress.nc")
+
+IndR_ssp585_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_hgt_regress.nc")
+IndR_ssp585_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_u_regress.nc")
+IndR_ssp585_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_v_regress.nc")
+
+IndR_ssp585_p3_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_p3_hgt_regress.nc")
+IndR_ssp585_p3_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_p3_u_regress.nc")
+IndR_ssp585_p3_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/IndR_ssp585_p3_v_regress.nc")
+
+IndRCRU_ERA5_hgt_slope = IndRCRU_ERA5_hgt_regress["slope"]
+IndRCRU_ERA5_u_slope = IndRCRU_ERA5_u_regress["slope"]
+IndRCRU_ERA5_v_slope = IndRCRU_ERA5_v_regress["slope"]
+IndRCRU_ERA5_hgt_rvalue = IndRCRU_ERA5_hgt_regress["rvalue"]
+IndRCRU_ERA5_u_rvalue = IndRCRU_ERA5_u_regress["rvalue"]
+IndRCRU_ERA5_v_rvalue = IndRCRU_ERA5_v_regress["rvalue"]
+IndRCRU_ERA5_hgt_pvalue = IndRCRU_ERA5_hgt_regress["pvalue"]
+IndRCRU_ERA5_u_pvalue = IndRCRU_ERA5_u_regress["pvalue"]
+IndRCRU_ERA5_v_pvalue = IndRCRU_ERA5_v_regress["pvalue"]
+
+IndRGPCP_ERA5_hgt_slope = IndRGPCP_ERA5_hgt_regress["slope"]
+IndRGPCP_ERA5_u_slope = IndRGPCP_ERA5_u_regress["slope"]
+IndRGPCP_ERA5_v_slope = IndRGPCP_ERA5_v_regress["slope"]
+IndRGPCP_ERA5_hgt_rvalue = IndRGPCP_ERA5_hgt_regress["rvalue"]
+IndRGPCP_ERA5_u_rvalue = IndRGPCP_ERA5_u_regress["rvalue"]
+IndRGPCP_ERA5_v_rvalue = IndRGPCP_ERA5_v_regress["rvalue"]
+IndRGPCP_ERA5_hgt_pvalue = IndRGPCP_ERA5_hgt_regress["pvalue"]
+IndRGPCP_ERA5_u_pvalue = IndRGPCP_ERA5_u_regress["pvalue"]
+IndRGPCP_ERA5_v_pvalue = IndRGPCP_ERA5_v_regress["pvalue"]
+
+IndR_his_hgt_slope = IndR_his_hgt_regress["slope"]
+IndR_his_u_slope = IndR_his_u_regress["slope"]
+IndR_his_v_slope = IndR_his_v_regress["slope"]
+IndR_his_hgt_rvalue = IndR_his_hgt_regress["rvalue"]
+IndR_his_u_rvalue = IndR_his_u_regress["rvalue"]
+IndR_his_v_rvalue = IndR_his_v_regress["rvalue"]
+IndR_his_hgt_pvalue = IndR_his_hgt_regress["pvalue"]
+IndR_his_u_pvalue = IndR_his_u_regress["pvalue"]
+IndR_his_v_pvalue = IndR_his_v_regress["pvalue"]
+
+IndR_ssp585_hgt_slope = IndR_ssp585_hgt_regress["slope"]
+IndR_ssp585_u_slope = IndR_ssp585_u_regress["slope"]
+IndR_ssp585_v_slope = IndR_ssp585_v_regress["slope"]
+IndR_ssp585_hgt_rvalue = IndR_ssp585_hgt_regress["rvalue"]
+IndR_ssp585_u_rvalue = IndR_ssp585_u_regress["rvalue"]
+IndR_ssp585_v_rvalue = IndR_ssp585_v_regress["rvalue"]
+IndR_ssp585_hgt_pvalue = IndR_ssp585_hgt_regress["pvalue"]
+IndR_ssp585_u_pvalue = IndR_ssp585_u_regress["pvalue"]
+IndR_ssp585_v_pvalue = IndR_ssp585_v_regress["pvalue"]
 # %%
 #   plot the avalue of hgt&u&v regress onto IndR in ERA5 and historical
 startlevel=[-15, -8, -6]
@@ -1530,7 +1659,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         extend="both"
     )
     sepl.plt_sig(
-        IndR_his_hgt_slope_ens.sel(level=lev), axs[2], n, np.where(IndR_his_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        IndR_his_hgt_slope_ens.sel(level=lev), axs[2], n, np.where(IndR_his_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
     )
     axs[2].quiver(
         IndR_his_u_slope_ens.sel(level=lev)[::ski, ::ski],
@@ -1752,7 +1881,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         zorder=0.8,
     )
     sepl.plt_sig(
-        IndR_his_hgt_rvalue_ens.sel(level=lev), axs[2], n, np.where(IndR_his_hgt_rvalue_ens_mask.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        IndR_his_hgt_rvalue_ens.sel(level=lev), axs[2], n, np.where(IndR_his_hgt_rvalue_ens_mask.sel(level=lev)[::n, ::n] > 0.0), "bright purple", 3.0,
     )
     axs[2].quiver(
         IndR_his_u_rvalue_ens.sel(level=lev)[::ski, ::ski],
@@ -1888,7 +2017,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         extend="both"
     )
     sepl.plt_sig(
-        IndR_ssp585_hgt_slope_ens.sel(level=lev), axs[0], n, np.where(IndR_ssp585_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        IndR_ssp585_hgt_slope_ens.sel(level=lev), axs[0], n, np.where(IndR_ssp585_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
     )
     axs[0].quiver(
         IndR_ssp585_u_slope_ens.sel(level=lev)[::ski, ::ski],
@@ -2024,7 +2153,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         zorder=0.8,
     )
     sepl.plt_sig(
-        IndR_ssp585_hgt_rvalue_ens.sel(level=lev), axs[0], n, np.where(IndR_ssp585_hgt_rvalue_ens_mask.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        IndR_ssp585_hgt_rvalue_ens.sel(level=lev), axs[0], n, np.where(IndR_ssp585_hgt_rvalue_ens_mask.sel(level=lev)[::n, ::n] > 0.0), "bright purple", 3.0,
     )
     axs[0].quiver(
         IndR_ssp585_u_rvalue_ens.sel(level=lev)[::ski, ::ski],
@@ -2159,7 +2288,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         extend="both"
     )
     sepl.plt_sig(
-        IndR_ssp585_p3_hgt_slope_ens.sel(level=lev), axs[0], n, np.where(IndR_ssp585_p3_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        IndR_ssp585_p3_hgt_slope_ens.sel(level=lev), axs[0], n, np.where(IndR_ssp585_p3_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] > 0.0), "bright purple", 3.0,
     )
     axs[0].quiver(
         IndR_ssp585_p3_u_slope_ens.sel(level=lev)[::ski, ::ski],
@@ -2295,7 +2424,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         zorder=0.8,
     )
     sepl.plt_sig(
-        IndR_ssp585_p3_hgt_rvalue_ens.sel(level=lev), axs[0], n, np.where(IndR_ssp585_p3_hgt_rvalue_ens_mask.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        IndR_ssp585_p3_hgt_rvalue_ens.sel(level=lev), axs[0], n, np.where(IndR_ssp585_p3_hgt_rvalue_ens_mask.sel(level=lev)[::n, ::n] > 0.0), "bright purple", 3.0,
     )
     axs[0].quiver(
         IndR_ssp585_p3_u_rvalue_ens.sel(level=lev)[::ski, ::ski],
@@ -2611,7 +2740,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
 
 # %%
 #   calculate the pcc and sort to reveal the rank of different models
-models = pre_his_India_pre_slope.coords["models"]
+# models = pre_his_India_pre_slope.coords["models"]
 lat = prehis_JJA.coords["lat"]
 lon = prehis_JJA.coords["lon"]
 lat_EAM_range = lat[(lat>=0.0) & (lat<=45.0)]
@@ -2767,7 +2896,7 @@ for num_models,mod in enumerate(gmodels):
     extend="both",
     )
     sepl.plt_sig(
-        pre_his_India_pre_slope.sel(models=mod), axs[num_models+3], n, np.where(pre_his_India_pre_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 4.0,
+        pre_his_India_pre_slope.sel(models=mod), axs[num_models+3], n, np.where(pre_his_India_pre_pvalue.sel(models=mod)[::n, ::n] > 0.0), "bright purple", 4.0,
     )
 
     axs[num_models+3].format(
