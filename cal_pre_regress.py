@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-26 10:15:08
+LastEditTime: 2022-04-26 11:36:45
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -4099,6 +4099,26 @@ IndR_ssp585_NCR_rvalue_ens = IndR_ssp585_NCR_regress[2].mean(dim="models",skipna
 IndR_ssp585_p3_NCR_rvalue_ens = IndR_ssp585_p3_NCR_regress[2].mean(dim="models",skipna=True)
 # %%
 #   plot the bar-plot
+plot_data = np.zeros((27,3))
+plot_data[:-1,0] = IndR_his_NCR_regress[0].data
+plot_data[:-1,1] = IndR_ssp585_p3_NCR_regress[0].data
+plot_data[:-1,2] = IndR_diff_NCR_slope.data
+plot_data[-1,0] = IndR_his_NCR_slope_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_NCR_slope_ens.data
+plot_data[-1,2] = IndR_diff_NCR_slope_ens.data
+
+models = list(IndR_his_NCR_regress[0].coords["models"].data)
+models.append("MME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-0.5,0.5),ylocator=np.arange(-0.5,0.6,0.1),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="RegC IndR and NCR")
 
 # %%
 # # pick_up the good models
