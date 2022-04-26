@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-26 01:05:27
+LastEditTime: 2022-04-26 10:06:02
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -4069,6 +4069,23 @@ for num_models,mod in enumerate(pre_his_BOB_pre_slope.coords["models"].data):
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg BOBR")
+# %%
+#   calculate the precipitation in Northern China
+lat = prehis_JJA.coords["lat"]
+lon = prehis_JJA.coords["lon"]
+lat_NC_range = lat[(lat>=27.5) & (lat<=37.5)]
+lon_NC_range = lon[(lon>=105.0) & (lon<=125.0)]
+
+prehis_NC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
+pressp585_NC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
+# %%
+#   calculate the linregress
+IndR_his_NCR_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979))
+IndR_ssp585_regress = ca.dim_linregress(pressp585_India_JJA, pressp585_NC_JJA)
+IndR_ssp585_p3_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_NC_JJA.sel(time=pressp585_NC_JJA.time.dt.year>=2064))
+# %%
+#   plot the bar-plot
+
 # %%
 # # pick_up the good models
 # gmodels = ["CNRM-CM6-1", "MIROC-ES2L", "NorESM2-LM", "HadGEM3-GC31-LL", "MRI-ESM2-0", "ACCESS-CM2", "MIROC6", "EC-Earth3", "CESM2-WACCM", "CAMS-CSM1-0"]
