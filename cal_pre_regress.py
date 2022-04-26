@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-26 10:06:02
+LastEditTime: 2022-04-26 10:15:08
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -4081,8 +4081,22 @@ pressp585_NC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_NC_range, 
 # %%
 #   calculate the linregress
 IndR_his_NCR_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979))
-IndR_ssp585_regress = ca.dim_linregress(pressp585_India_JJA, pressp585_NC_JJA)
-IndR_ssp585_p3_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_NC_JJA.sel(time=pressp585_NC_JJA.time.dt.year>=2064))
+IndR_ssp585_NCR_regress = ca.dim_linregress(pressp585_India_JJA, pressp585_NC_JJA)
+IndR_ssp585_p3_NCR_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_NC_JJA.sel(time=pressp585_NC_JJA.time.dt.year>=2064))
+
+IndR_diff_NCR_slope = IndR_ssp585_p3_NCR_regress[0]-IndR_his_NCR_regress[0]
+IndR_diff_NCR_rvalue = IndR_ssp585_p3_NCR_regress[2]-IndR_his_NCR_regress[2]
+
+IndR_diff_NCR_slope_ens = IndR_diff_NCR_slope.mean(dim="models",skipna=True)
+IndR_diff_NCR_rvalue_ens = IndR_diff_NCR_rvalue.mean(dim="models",skipna=True)
+
+IndR_his_NCR_slope_ens = IndR_his_NCR_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_NCR_slope_ens = IndR_ssp585_NCR_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_p3_NCR_slope_ens = IndR_ssp585_p3_NCR_regress[0].mean(dim="models",skipna=True)
+
+IndR_his_NCR_rvalue_ens = IndR_his_NCR_regress[2].mean(dim="models",skipna=True)
+IndR_ssp585_NCR_rvalue_ens = IndR_ssp585_NCR_regress[2].mean(dim="models",skipna=True)
+IndR_ssp585_p3_NCR_rvalue_ens = IndR_ssp585_p3_NCR_regress[2].mean(dim="models",skipna=True)
 # %%
 #   plot the bar-plot
 
