@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-27 00:28:19
+LastEditTime: 2022-04-27 00:43:05
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -4955,39 +4955,39 @@ fig.format(suptitle="Cor. Coeff. IndR and SCR")
 #   calculate the U in East Asia
 lat = prehis_JJA.coords["lat"]
 lon = prehis_JJA.coords["lon"]
-lat_SC_range = lat[(lat>=27.5) & (lat<=37.5)]
-lon_SC_range = lon[(lon>=100.0) & (lon<=125.0)]
+lat_EA_range = lat[(lat>=27.5) & (lat<=37.5)]
+lon_EA_range = lon[(lon>=100.0) & (lon<=125.0)]
 
-prehis_SC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
-pressp585_SC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
+uhis_EA_JJA = ca.cal_lat_weighted_mean(uhis_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
+ussp585_EA_JJA = ca.cal_lat_weighted_mean(ussp585_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
 # %%
 #   calculate the linregress
-IndR_his_SCR_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_SC_JJA.sel(time=prehis_SC_JJA.time.dt.year>=1979))
-IndR_ssp585_SCR_regress = ca.dim_linregress(pressp585_India_JJA, pressp585_SC_JJA)
-IndR_ssp585_p3_SCR_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_SC_JJA.sel(time=pressp585_SC_JJA.time.dt.year>=2064))
+IndR_his_EAU_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979))
+IndR_ssp585_EAU_regress = ca.dim_linregress(pressp585_India_JJA, ussp585_EA_JJA)
+IndR_ssp585_p3_EAU_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064))
 
-IndR_diff_SCR_slope = IndR_ssp585_p3_SCR_regress[0]-IndR_his_SCR_regress[0]
-IndR_diff_SCR_rvalue = ca.cal_rdiff(IndR_ssp585_p3_SCR_regress[2],IndR_his_SCR_regress[2])
+IndR_diff_EAU_slope = IndR_ssp585_p3_EAU_regress[0]-IndR_his_EAU_regress[0]
+IndR_diff_EAU_rvalue = ca.cal_rdiff(IndR_ssp585_p3_EAU_regress[2],IndR_his_EAU_regress[2])
 
-IndR_diff_SCR_rvalue_mask = ca.Fisher_Z_test(IndR_his_SCR_regress[2], IndR_ssp585_p3_SCR_regress[2], 36, 36, **{"return_mask":True})
+IndR_diff_EAU_rvalue_mask = ca.Fisher_Z_test(IndR_his_EAU_regress[2], IndR_ssp585_p3_EAU_regress[2], 36, 36, **{"return_mask":True})
 
 prehis_India_JJA_copy = prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979).copy()
-prehis_SC_JJA_copy = prehis_SC_JJA.sel(time=prehis_SC_JJA.time.dt.year>=1979).copy()
+uhis_EA_JJA_copy = uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).copy()
 pressp585_p3_India_JJA_copy = pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064).copy()
-pressp585_p3_SC_JJA_copy = pressp585_SC_JJA.sel(time=pressp585_SC_JJA.time.dt.year>=2064).copy()
+ussp585_p3_EA_JJA_copy = ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).copy()
 
 prehis_India_JJA_copy.coords["time"] = np.arange(len(prehis_India_JJA_copy.coords["time"]))
-prehis_SC_JJA_copy.coords["time"] = np.arange(len(prehis_SC_JJA_copy.coords["time"]))
+uhis_EA_JJA_copy.coords["time"] = np.arange(len(uhis_EA_JJA_copy.coords["time"]))
 
 pressp585_p3_India_JJA_copy.coords["time"] = np.arange(len(pressp585_p3_India_JJA_copy.coords["time"]))
-pressp585_p3_SC_JJA_copy.coords["time"] = np.arange(len(pressp585_p3_SC_JJA_copy.coords["time"]))
+ussp585_p3_EA_JJA_copy.coords["time"] = np.arange(len(ussp585_p3_EA_JJA_copy.coords["time"]))
 
-IndR_diff_SCR_slope_mask = xr.apply_ufunc(
+IndR_diff_EAU_slope_mask = xr.apply_ufunc(
     ca.Fisher_permutation_test,
     prehis_India_JJA_copy,
-    prehis_SC_JJA_copy,
+    uhis_EA_JJA_copy,
     pressp585_p3_India_JJA_copy,
-    pressp585_p3_SC_JJA_copy,
+    ussp585_p3_EA_JJA_copy,
     input_core_dims=[["time"],["time"],["time"],["time"]],
     output_core_dims=[[]],
     vectorize=True,
@@ -4995,64 +4995,64 @@ IndR_diff_SCR_slope_mask = xr.apply_ufunc(
     kwargs={"return_mask":True}
 )
 
-IndR_diff_SCR_slope_ens = IndR_diff_SCR_slope.mean(dim="models",skipna=True)
-IndR_diff_SCR_rvalue_ens = ca.cal_rMME(IndR_diff_SCR_rvalue,"models")
+IndR_diff_EAU_slope_ens = IndR_diff_EAU_slope.mean(dim="models",skipna=True)
+IndR_diff_EAU_rvalue_ens = ca.cal_rMME(IndR_diff_EAU_rvalue,"models")
 
-IndR_his_SCR_slope_ens = IndR_his_SCR_regress[0].mean(dim="models",skipna=True)
-IndR_ssp585_SCR_slope_ens = IndR_ssp585_SCR_regress[0].mean(dim="models",skipna=True)
-IndR_ssp585_p3_SCR_slope_ens = IndR_ssp585_p3_SCR_regress[0].mean(dim="models",skipna=True)
+IndR_his_EAU_slope_ens = IndR_his_EAU_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_EAU_slope_ens = IndR_ssp585_EAU_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_p3_EAU_slope_ens = IndR_ssp585_p3_EAU_regress[0].mean(dim="models",skipna=True)
 
-IndR_his_SCR_slope_lowlim,IndR_his_SCR_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_his_SCR_regress[0], 1000, 0.95)
-IndR_ssp585_p3_SCR_slope_lowlim,IndR_ssp585_p3_SCR_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_ssp585_p3_SCR_regress[0], 1000, 0.95)
+IndR_his_EAU_slope_lowlim,IndR_his_EAU_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_his_EAU_regress[0], 1000, 0.95)
+IndR_ssp585_p3_EAU_slope_lowlim,IndR_ssp585_p3_EAU_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_ssp585_p3_EAU_regress[0], 1000, 0.95)
 
-IndR_his_SCR_rvalue_ens = ca.cal_rMME(IndR_his_SCR_regress[2],"models")
-IndR_ssp585_SCR_rvalue_ens = ca.cal_rMME(IndR_ssp585_SCR_regress[2],"models")
-IndR_ssp585_p3_SCR_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_SCR_regress[2],"models")
+IndR_his_EAU_rvalue_ens = ca.cal_rMME(IndR_his_EAU_regress[2],"models")
+IndR_ssp585_EAU_rvalue_ens = ca.cal_rMME(IndR_ssp585_EAU_regress[2],"models")
+IndR_ssp585_p3_EAU_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_EAU_regress[2],"models")
 # %%
 #   plot the bar-plot for regression coefficients
 plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_SCR_regress[0].data
-plot_data[:-1,1] = IndR_ssp585_p3_SCR_regress[0].data
-plot_data[:-1,2] = IndR_diff_SCR_slope.data
-plot_data[-1,0] = IndR_his_SCR_slope_ens.data
-plot_data[-1,1] = IndR_ssp585_p3_SCR_slope_ens.data
-plot_data[-1,2] = IndR_diff_SCR_slope_ens.data
+plot_data[:-1,0] = IndR_his_EAU_regress[0].data
+plot_data[:-1,1] = IndR_ssp585_p3_EAU_regress[0].data
+plot_data[:-1,2] = IndR_diff_EAU_slope.data
+plot_data[-1,0] = IndR_his_EAU_slope_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_EAU_slope_ens.data
+plot_data[-1,2] = IndR_diff_EAU_slope_ens.data
 
 bar_data = np.zeros((2,27))
 # bar_data[0,:-1,:] = plot_data[:-1,:]
 # bar_data[1,:-1,:] = plot_data[:-1,:]
-# bar_data[0,-1,0] = IndR_his_SCR_slope_lowlim
-# bar_data[1,-1,0] = IndR_his_SCR_slope_highlim
-bar_data[0,-1] = IndR_ssp585_p3_SCR_slope_lowlim
-bar_data[1,-1] = IndR_ssp585_p3_SCR_slope_highlim
+# bar_data[0,-1,0] = IndR_his_EAU_slope_lowlim
+# bar_data[1,-1,0] = IndR_his_EAU_slope_highlim
+bar_data[0,-1] = IndR_ssp585_p3_EAU_slope_lowlim
+bar_data[1,-1] = IndR_ssp585_p3_EAU_slope_highlim
 
-models = list(IndR_his_SCR_regress[0].coords["models"].data)
+models = list(IndR_his_EAU_regress[0].coords["models"].data)
 models.append("MME")
 
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
 m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
 axs[0].axhline(0,lw=1.5,color="grey7")
-for num,i in enumerate(IndR_diff_SCR_slope_mask.data):
+for num,i in enumerate(IndR_diff_EAU_slope_mask.data):
     if i > 0:
         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[0].format(ylim=(-0.5,0.5),ylocator=np.arange(-0.5,0.6,0.1),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+axs[0].format(ylim=(-2.0,2.0),ylocator=np.arange(-2.0,2.1,0.4),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
-fig.format(suptitle="Reg. Coeff. IndR and SCR")
+fig.format(suptitle="Reg. Coeff. IndR and EAU")
 
 # %%
 #   plot the bar-plot for correlation coefficients
 plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_SCR_regress[2].data
-plot_data[:-1,1] = IndR_ssp585_p3_SCR_regress[2].data
-plot_data[:-1,2] = IndR_diff_SCR_rvalue.data
-plot_data[-1,0] = IndR_his_SCR_rvalue_ens.data
-plot_data[-1,1] = IndR_ssp585_p3_SCR_rvalue_ens.data
-plot_data[-1,2] = IndR_diff_SCR_rvalue_ens.data
+plot_data[:-1,0] = IndR_his_EAU_regress[2].data
+plot_data[:-1,1] = IndR_ssp585_p3_EAU_regress[2].data
+plot_data[:-1,2] = IndR_diff_EAU_rvalue.data
+plot_data[-1,0] = IndR_his_EAU_rvalue_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_EAU_rvalue_ens.data
+plot_data[-1,2] = IndR_diff_EAU_rvalue_ens.data
 
-models = list(IndR_his_SCR_regress[0].coords["models"].data)
+models = list(IndR_his_EAU_regress[0].coords["models"].data)
 models.append("MME")
 
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
@@ -5061,11 +5061,12 @@ m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
 axs[0].axhline(0,lw=1.5,color="grey7")
 axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
 axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
-for num,i in enumerate(IndR_diff_SCR_rvalue_mask.data):
+for num,i in enumerate(IndR_diff_EAU_rvalue_mask.data):
     if i > 0:
         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
-fig.format(suptitle="Cor. Coeff. IndR and SCR")
+fig.format(suptitle="Cor. Coeff. IndR and EAU")
+# %%
