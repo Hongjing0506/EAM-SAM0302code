@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-28 11:35:55
+LastEditTime: 2022-04-28 11:50:33
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -2808,7 +2808,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
 
 # %%
 #   calculate the pcc and sort to reveal the rank of different models
-# models = pre_his_India_pre_slope.coords["models"]
+models = pre_his_India_pre_slope.coords["models"]
 lat = prehis_JJA.coords["lat"]
 lon = prehis_JJA.coords["lon"]
 lat_EAM_range = lat[(lat>=22.5) & (lat<=40.0)]
@@ -5091,4 +5091,18 @@ for num_models, mod in enumerate(models):
 # fig.legend(loc="bottom", labels=models)
 m = axs[0].scatter(IndR_his_SCR_rvalue_ens, IndR_his_NCR_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
 axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="SCR", ylabel="NCR", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 2064-2099
+models=IndR_his_SCR_regress[2].coords["models"].data
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SCR_regress[2], IndR_CRU_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+# m = axs[0].scatter(IndR_GPCP_SCR_regress[2], IndR_GPCP_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models):
+    m = axs[0].scatter(IndR_ssp585_SCR_regress[2].sel(models=mod), IndR_ssp585_NCR_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+m = axs[0].scatter(IndR_ssp585_SCR_rvalue_ens, IndR_ssp585_NCR_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="SCR", ylabel="NCR", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
 # %%
