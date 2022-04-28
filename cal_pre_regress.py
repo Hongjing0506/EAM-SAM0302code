@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-29 00:57:26
+LastEditTime: 2022-04-29 01:34:26
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -5305,11 +5305,11 @@ tssp585_ver_JJA = ftssp585_ver_JJA["ta"]
 lon = tERA5_ver_JJA.coords["lon"]
 lon_EA_range = lon[(lon>=100.0)&(lon<=125.0)]
 
-uERA5_EA_lm_JJA = uERA5_ver_JJA.loc[:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+uERA5_EA_lm_JJA = uERA5_ver_JJA.loc[:,10.0:,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
 uhis_EA_lm_JJA = uhis_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
 ussp585_EA_lm_JJA = ussp585_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
 
-tERA5_EA_lm_JJA = tERA5_ver_JJA.loc[:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+tERA5_EA_lm_JJA = tERA5_ver_JJA.loc[:,10.0:,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
 this_EA_lm_JJA = this_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
 tssp585_EA_lm_JJA = tssp585_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
 # %%
@@ -5337,7 +5337,7 @@ preCRU_India_JJA.coords["time"] = uERA5_EA_lm_JJA.coords["time"]
     IndRCRU_ERA5_t_rvalue,
     IndRCRU_ERA5_t_pvalue,
     IndRCRU_ERA5_t_hypothesis,
-) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), uERA5_EA_lm_JJA.sel(time=uERA5_EA_lm_JJA.time.dt.year>=1979))
+) = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), tERA5_EA_lm_JJA.sel(time=tERA5_EA_lm_JJA.time.dt.year>=1979))
 
 (
     IndRGPCP_ERA5_t_slope,
@@ -5378,4 +5378,79 @@ preCRU_India_JJA.coords["time"] = uERA5_EA_lm_JJA.coords["time"]
     IndR_ssp585_p3_t_pvalue,
     IndR_ssp585_p3_t_hypothesis,
 ) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), tssp585_EA_lm_JJA.sel(time=tssp585_EA_lm_JJA.time.dt.year>=2064))
+
+IndR_his_u_slope_ens = IndR_his_u_slope.mean(dim="models",skipna=True)
+IndR_his_t_slope_ens = IndR_his_t_slope.mean(dim="models",skipna=True)
+# %%
+#   plot the temperature and u height-lat plots for ERA5 and historical
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (6, 5))
+plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array)
+axs.format(xformatter='deglat', xlim=(0,90.0), xlocator=15.0,ylim=(100.0,1000.0), ylocator=np.array([1000.0, 925.0, 850.0, 700.0, 500.0, 200.0, 100.0]), yscale="height")
+#================================
+con = axs[0].contourf(
+    IndRCRU_ERA5_t_slope,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.05},
+    levels=np.arange(-0.6,0.61,0.03),
+    extend="both",
+    )
+axs[0].contour(
+    IndRCRU_ERA5_u_slope,
+    levels=np.arange(-4,4.1,0.4),
+    extend="both",
+    color="black"
+)
+axs[0].format(ltitle="CRU & ERA5", rtitle="1979-2014")
+#================================
+con = axs[1].contourf(
+    IndRGPCP_ERA5_t_slope,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.05},
+    levels=np.arange(-0.6,0.61,0.03),
+    extend="both",
+    )
+axs[1].contour(
+    IndRGPCP_ERA5_u_slope,
+    levels=np.arange(-4,4.1,0.4),
+    extend="both",
+    color="black"
+)
+axs[1].format(ltitle="GPCP & ERA5", rtitle="1979-2014")
+#================================
+con = axs[2].contourf(
+    IndR_his_t_slope_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.05},
+    levels=np.arange(-0.6,0.61,0.03),
+    extend="both",
+    )
+axs[2].contour(
+    IndR_his_u_slope_ens,
+    levels=np.arange(-4,4.1,0.4),
+    extend="both",
+    color="black"
+)
+axs[2].format(ltitle="MME", rtitle="1979-2014")
+#================================
+models = IndR_his_u_slope.coords["models"]
+for num_mod,mod in enumerate(models):
+    con = axs[num_mod+3].contourf(
+        IndR_his_t_slope.sel(models=mod)[::-1,:],
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.05},
+        levels=np.arange(-0.6,0.61,0.03),
+        extend="both",
+        )
+    axs[num_mod+3].contour(
+        IndR_his_u_slope.sel(models=mod)[::-1,:],
+        levels=np.arange(-4,4.1,0.4),
+        extend="both",
+        color="black"
+    )
+    axs[num_mod+3].format(ltitle="{}".format(mod.data), rtitle="1979-2014")
+#================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="T&U reg IndR")
 # %%
