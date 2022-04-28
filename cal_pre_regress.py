@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-28 22:10:32
+LastEditTime: 2022-04-29 00:47:49
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -5290,5 +5290,24 @@ fig.legend(handles=[m1,m2], loc="bottom", labels=["IndR", "EAU"])
 fig.format(abc="(a)", abcloc="l", suptitle="IndR and EAU")
 
 # %%
-
+#   calculate the regressed temperature
+#read the temperature data in ERA5/historical/ssp585
+ftERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/temp_mon_r144x72_195001-201412.nc")
+tERA5 = ftERA5["t"]
+tERA5_ver_JJA = ca.p_time(tERA5, 6, 8, True)
+tERA5_ver_JJA = ca.detrend_dim(tERA5_ver_JJA, "time", deg=1, demean=False)
+fthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ta_historical_r144x72_195001-201412.nc")
+this_ver_JJA = fthis_ver_JJA["ta"]
+ftssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ta_ssp585_r144x72_201501-209912.nc")
+tssp585_ver_JJA = ftssp585_ver_JJA["ta"]
+# %%
+#calculate the longitude mean over 100.0° to 125°E
+lon = tERA5_ver_JJA.coords["lon"]
+(
+    IndR_his_v_slope,
+    IndR_his_v_intercept,
+    IndR_his_v_rvalue,
+    IndR_his_v_pvalue,
+    IndR_his_v_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), vhis_ver_JJA.sel(time=vhis_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 # %%
