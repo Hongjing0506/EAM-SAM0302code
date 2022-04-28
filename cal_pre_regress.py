@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-27 00:43:05
+LastEditTime: 2022-04-28 11:35:55
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -4078,7 +4078,8 @@ lat_NC_range = lat[(lat>=27.5) & (lat<=37.5)]
 lon_NC_range = lon[(lon>=105.0) & (lon<=125.0)]
 # lat_NC_range = lat[(lat>=20.0) & (lat<=27.5)]
 # lon_NC_range = lon[(lon>=105.0) & (lon<=125.0)]
-
+preCRU_NC_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
+preGPCP_NC_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
 prehis_NC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
 pressp585_NC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
 # %%
@@ -4839,7 +4840,8 @@ lat = prehis_JJA.coords["lat"]
 lon = prehis_JJA.coords["lon"]
 lat_SC_range = lat[(lat>=20.0) & (lat<=27.5)]
 lon_SC_range = lon[(lon>=105.0) & (lon<=125.0)]
-
+preCRU_SC_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
+preGPCP_SC_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
 prehis_SC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
 pressp585_SC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
 # %%
@@ -5069,4 +5071,24 @@ axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Cor. Coeff. IndR and EAU")
+# %%
+IndR_CRU_SCR_regress = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), preCRU_SC_JJA.sel(time=preCRU_SC_JJA.time.dt.year>=1979))
+IndR_CRU_NCR_regress = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), preCRU_NC_JJA.sel(time=preCRU_NC_JJA.time.dt.year>=1979))
+
+IndR_GPCP_SCR_regress = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), preGPCP_SC_JJA.sel(time=preGPCP_SC_JJA.time.dt.year>=1979))
+IndR_GPCP_NCR_regress = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), preGPCP_NC_JJA.sel(time=preGPCP_NC_JJA.time.dt.year>=1979))
+# %%
+#   plot the x-y scatter plots for 1979-2014
+models=IndR_his_SCR_regress[2].coords["models"].data
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SCR_regress[2], IndR_CRU_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(IndR_GPCP_SCR_regress[2], IndR_GPCP_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models):
+    m = axs[0].scatter(IndR_his_SCR_regress[2].sel(models=mod), IndR_his_NCR_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+m = axs[0].scatter(IndR_his_SCR_rvalue_ens, IndR_his_NCR_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="SCR", ylabel="NCR", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
 # %%
