@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-29 00:47:49
+LastEditTime: 2022-04-29 00:52:08
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -5303,6 +5303,16 @@ tssp585_ver_JJA = ftssp585_ver_JJA["ta"]
 # %%
 #calculate the longitude mean over 100.0° to 125°E
 lon = tERA5_ver_JJA.coords["lon"]
+lon_EA_range = lon[(lon>=100.0)&(lon<=125.0)]
+
+uERA5_EA_lm_JJA = uERA5_ver_JJA.loc[:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+uhis_EA_lm_JJA = uhis_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+ussp585_EA_lm_JJA = ussp585_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+
+tERA5_EA_lm_JJA = tERA5_ver_JJA.loc[:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+this_EA_lm_JJA = this_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+tssp585_EA_lm_JJA = tssp585_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+# %%
 (
     IndR_his_v_slope,
     IndR_his_v_intercept,
