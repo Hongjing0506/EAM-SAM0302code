@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-29 01:34:26
+LastEditTime: 2022-04-29 01:37:06
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -5420,14 +5420,14 @@ axs[1].contour(
 axs[1].format(ltitle="GPCP & ERA5", rtitle="1979-2014")
 #================================
 con = axs[2].contourf(
-    IndR_his_t_slope_ens,
+    IndR_his_t_slope_ens[::-1,:],
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.05},
     levels=np.arange(-0.6,0.61,0.03),
     extend="both",
     )
 axs[2].contour(
-    IndR_his_u_slope_ens,
+    IndR_his_u_slope_ens[::-1,:],
     levels=np.arange(-4,4.1,0.4),
     extend="both",
     color="black"
@@ -5454,3 +5454,46 @@ for num_mod,mod in enumerate(models):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="T&U reg IndR")
 # %%
+#   plot the temperature and u height-lat plots for ssp585_p3
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (6, 5))
+plot_array[-1,-3:] = 0
+axs = fig.subplots(plot_array)
+axs.format(xformatter='deglat', xlim=(0,90.0), xlocator=15.0,ylim=(100.0,1000.0), ylocator=np.array([1000.0, 925.0, 850.0, 700.0, 500.0, 200.0, 100.0]), yscale="height")
+#================================
+con = axs[0].contourf(
+    IndR_his_t_slope_ens[::-1,:],
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.05},
+    levels=np.arange(-0.6,0.61,0.03),
+    extend="both",
+    )
+axs[0].contour(
+    IndR_his_u_slope_ens[::-1,:],
+    levels=np.arange(-4,4.1,0.4),
+    extend="both",
+    color="black"
+)
+axs[0].format(ltitle="MME", rtitle="2064-2099")
+#================================
+models = IndR_his_u_slope.coords["models"]
+for num_mod,mod in enumerate(models):
+    con = axs[num_mod+1].contourf(
+        IndR_his_t_slope.sel(models=mod)[::-1,:],
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.05},
+        levels=np.arange(-0.6,0.61,0.03),
+        extend="both",
+        )
+    axs[num_mod+1].contour(
+        IndR_his_u_slope.sel(models=mod)[::-1,:],
+        levels=np.arange(-4,4.1,0.4),
+        extend="both",
+        color="black"
+    )
+    axs[num_mod+1].format(ltitle="{}".format(mod.data), rtitle="2064-2099")
+#================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="T&U reg IndR")
+# %%
+#   plot the diff
