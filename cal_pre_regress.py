@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-28 20:24:51
+LastEditTime: 2022-04-28 20:34:40
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -5146,32 +5146,32 @@ vorhis_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uhis_EAhigh_JJA, v
 vorssp585_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_EAhigh_JJA, vssp585_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
 # %%
 #   calculate the linregress
-IndR_his_EAU_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979))
-IndR_ssp585_EAU_regress = ca.dim_linregress(pressp585_India_JJA, ussp585_EA_JJA)
-IndR_ssp585_p3_EAU_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064))
+IndR_his_EAhigh_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), vorhis_EAhigh_JJA.sel(time=vorhis_EAhigh_JJA.time.dt.year>=1979))
+IndR_ssp585_EAhigh_regress = ca.dim_linregress(pressp585_India_JJA, vorssp585_EAhigh_JJA)
+IndR_ssp585_p3_EAhigh_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), vorssp585_EAhigh_JJA.sel(time=vorssp585_EAhigh_JJA.time.dt.year>=2064))
 
-IndR_diff_EAU_slope = IndR_ssp585_p3_EAU_regress[0]-IndR_his_EAU_regress[0]
-IndR_diff_EAU_rvalue = ca.cal_rdiff(IndR_ssp585_p3_EAU_regress[2],IndR_his_EAU_regress[2])
+IndR_diff_EAhigh_slope = IndR_ssp585_p3_EAhigh_regress[0]-IndR_his_EAhigh_regress[0]
+IndR_diff_EAhigh_rvalue = ca.cal_rdiff(IndR_ssp585_p3_EAhigh_regress[2],IndR_his_EAhigh_regress[2])
 
-IndR_diff_EAU_rvalue_mask = ca.Fisher_Z_test(IndR_his_EAU_regress[2], IndR_ssp585_p3_EAU_regress[2], 36, 36, **{"return_mask":True})
+IndR_diff_EAhigh_rvalue_mask = ca.Fisher_Z_test(IndR_his_EAhigh_regress[2], IndR_ssp585_p3_EAhigh_regress[2], 36, 36, **{"return_mask":True})
 
 prehis_India_JJA_copy = prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979).copy()
-uhis_EA_JJA_copy = uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).copy()
+vorhis_EAhigh_JJA_copy = vorhis_EAhigh_JJA.sel(time=vorhis_EAhigh_JJA.time.dt.year>=1979).copy()
 pressp585_p3_India_JJA_copy = pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064).copy()
-ussp585_p3_EA_JJA_copy = ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).copy()
+vorssp585_p3_EAhigh_JJA_copy = vorssp585_EAhigh_JJA.sel(time=vorssp585_EAhigh_JJA.time.dt.year>=2064).copy()
 
 prehis_India_JJA_copy.coords["time"] = np.arange(len(prehis_India_JJA_copy.coords["time"]))
-uhis_EA_JJA_copy.coords["time"] = np.arange(len(uhis_EA_JJA_copy.coords["time"]))
+vorhis_EAhigh_JJA_copy.coords["time"] = np.arange(len(vorhis_EAhigh_JJA_copy.coords["time"]))
 
 pressp585_p3_India_JJA_copy.coords["time"] = np.arange(len(pressp585_p3_India_JJA_copy.coords["time"]))
-ussp585_p3_EA_JJA_copy.coords["time"] = np.arange(len(ussp585_p3_EA_JJA_copy.coords["time"]))
+vorssp585_p3_EAhigh_JJA_copy.coords["time"] = np.arange(len(vorssp585_p3_EAhigh_JJA_copy.coords["time"]))
 
-IndR_diff_EAU_slope_mask = xr.apply_ufunc(
+IndR_diff_EAhigh_slope_mask = xr.apply_ufunc(
     ca.Fisher_permutation_test,
     prehis_India_JJA_copy,
-    uhis_EA_JJA_copy,
+    vorhis_EAhigh_JJA_copy,
     pressp585_p3_India_JJA_copy,
-    ussp585_p3_EA_JJA_copy,
+    vorssp585_p3_EAhigh_JJA_copy,
     input_core_dims=[["time"],["time"],["time"],["time"]],
     output_core_dims=[[]],
     vectorize=True,
@@ -5179,64 +5179,64 @@ IndR_diff_EAU_slope_mask = xr.apply_ufunc(
     kwargs={"return_mask":True}
 )
 
-IndR_diff_EAU_slope_ens = IndR_diff_EAU_slope.mean(dim="models",skipna=True)
-IndR_diff_EAU_rvalue_ens = ca.cal_rMME(IndR_diff_EAU_rvalue,"models")
+IndR_diff_EAhigh_slope_ens = IndR_diff_EAhigh_slope.mean(dim="models",skipna=True)
+IndR_diff_EAhigh_rvalue_ens = ca.cal_rMME(IndR_diff_EAhigh_rvalue,"models")
 
-IndR_his_EAU_slope_ens = IndR_his_EAU_regress[0].mean(dim="models",skipna=True)
-IndR_ssp585_EAU_slope_ens = IndR_ssp585_EAU_regress[0].mean(dim="models",skipna=True)
-IndR_ssp585_p3_EAU_slope_ens = IndR_ssp585_p3_EAU_regress[0].mean(dim="models",skipna=True)
+IndR_his_EAhigh_slope_ens = IndR_his_EAhigh_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_EAhigh_slope_ens = IndR_ssp585_EAhigh_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_p3_EAhigh_slope_ens = IndR_ssp585_p3_EAhigh_regress[0].mean(dim="models",skipna=True)
 
-IndR_his_EAU_slope_lowlim,IndR_his_EAU_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_his_EAU_regress[0], 1000, 0.95)
-IndR_ssp585_p3_EAU_slope_lowlim,IndR_ssp585_p3_EAU_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_ssp585_p3_EAU_regress[0], 1000, 0.95)
+IndR_his_EAhigh_slope_lowlim,IndR_his_EAhigh_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_his_EAhigh_regress[0], 1000, 0.95)
+IndR_ssp585_p3_EAhigh_slope_lowlim,IndR_ssp585_p3_EAhigh_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_ssp585_p3_EAhigh_regress[0], 1000, 0.95)
 
-IndR_his_EAU_rvalue_ens = ca.cal_rMME(IndR_his_EAU_regress[2],"models")
-IndR_ssp585_EAU_rvalue_ens = ca.cal_rMME(IndR_ssp585_EAU_regress[2],"models")
-IndR_ssp585_p3_EAU_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_EAU_regress[2],"models")
+IndR_his_EAhigh_rvalue_ens = ca.cal_rMME(IndR_his_EAhigh_regress[2],"models")
+IndR_ssp585_EAhigh_rvalue_ens = ca.cal_rMME(IndR_ssp585_EAhigh_regress[2],"models")
+IndR_ssp585_p3_EAhigh_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_EAhigh_regress[2],"models")
 # %%
 #   plot the bar-plot for regression coefficients
 plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_EAU_regress[0].data
-plot_data[:-1,1] = IndR_ssp585_p3_EAU_regress[0].data
-plot_data[:-1,2] = IndR_diff_EAU_slope.data
-plot_data[-1,0] = IndR_his_EAU_slope_ens.data
-plot_data[-1,1] = IndR_ssp585_p3_EAU_slope_ens.data
-plot_data[-1,2] = IndR_diff_EAU_slope_ens.data
+plot_data[:-1,0] = IndR_his_EAhigh_regress[0].data
+plot_data[:-1,1] = IndR_ssp585_p3_EAhigh_regress[0].data
+plot_data[:-1,2] = IndR_diff_EAhigh_slope.data
+plot_data[-1,0] = IndR_his_EAhigh_slope_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_EAhigh_slope_ens.data
+plot_data[-1,2] = IndR_diff_EAhigh_slope_ens.data
 
 bar_data = np.zeros((2,27))
 # bar_data[0,:-1,:] = plot_data[:-1,:]
 # bar_data[1,:-1,:] = plot_data[:-1,:]
-# bar_data[0,-1,0] = IndR_his_EAU_slope_lowlim
-# bar_data[1,-1,0] = IndR_his_EAU_slope_highlim
-bar_data[0,-1] = IndR_ssp585_p3_EAU_slope_lowlim
-bar_data[1,-1] = IndR_ssp585_p3_EAU_slope_highlim
+# bar_data[0,-1,0] = IndR_his_EAhigh_slope_lowlim
+# bar_data[1,-1,0] = IndR_his_EAhigh_slope_highlim
+bar_data[0,-1] = IndR_ssp585_p3_EAhigh_slope_lowlim
+bar_data[1,-1] = IndR_ssp585_p3_EAhigh_slope_highlim
 
-models = list(IndR_his_EAU_regress[0].coords["models"].data)
+models = list(IndR_his_EAhigh_regress[0].coords["models"].data)
 models.append("MME")
 
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
 m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
 axs[0].axhline(0,lw=1.5,color="grey7")
-for num,i in enumerate(IndR_diff_EAU_slope_mask.data):
+for num,i in enumerate(IndR_diff_EAhigh_slope_mask.data):
     if i > 0:
         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[0].format(ylim=(-2.0,2.0),ylocator=np.arange(-2.0,2.1,0.4),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+axs[0].format(ylim=(-1.5e-6,1.5e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
-fig.format(suptitle="Reg. Coeff. IndR and EAU")
+fig.format(suptitle="Reg. Coeff. IndR and EAhigh")
 
 # %%
 #   plot the bar-plot for correlation coefficients
 plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_EAU_regress[2].data
-plot_data[:-1,1] = IndR_ssp585_p3_EAU_regress[2].data
-plot_data[:-1,2] = IndR_diff_EAU_rvalue.data
-plot_data[-1,0] = IndR_his_EAU_rvalue_ens.data
-plot_data[-1,1] = IndR_ssp585_p3_EAU_rvalue_ens.data
-plot_data[-1,2] = IndR_diff_EAU_rvalue_ens.data
+plot_data[:-1,0] = IndR_his_EAhigh_regress[2].data
+plot_data[:-1,1] = IndR_ssp585_p3_EAhigh_regress[2].data
+plot_data[:-1,2] = IndR_diff_EAhigh_rvalue.data
+plot_data[-1,0] = IndR_his_EAhigh_rvalue_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_EAhigh_rvalue_ens.data
+plot_data[-1,2] = IndR_diff_EAhigh_rvalue_ens.data
 
-models = list(IndR_his_EAU_regress[0].coords["models"].data)
+models = list(IndR_his_EAhigh_regress[0].coords["models"].data)
 models.append("MME")
 
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
@@ -5245,11 +5245,12 @@ m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
 axs[0].axhline(0,lw=1.5,color="grey7")
 axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
 axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
-for num,i in enumerate(IndR_diff_EAU_rvalue_mask.data):
+for num,i in enumerate(IndR_diff_EAhigh_rvalue_mask.data):
     if i > 0:
         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
-fig.format(suptitle="Cor. Coeff. IndR and EAU")
+fig.format(suptitle="Cor. Coeff. IndR and EAhigh")
+# %%
