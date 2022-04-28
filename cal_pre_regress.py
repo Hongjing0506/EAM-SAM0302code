@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-28 20:34:40
+LastEditTime: 2022-04-28 22:10:32
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -27,6 +27,7 @@ import metpy.constants as constants
 import geocat.comp
 from windspharm.xarray import VectorWind
 import skill_metrics as sm
+from brokenaxes import brokenaxes
 
 reload(sepl)
 
@@ -5253,4 +5254,41 @@ axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Cor. Coeff. IndR and EAhigh")
+# %%
+#   plot the historical and ssp585_p3 IndR and EAU index using broken x axis
+# from matplotlib.gridspec import GridSpec
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=7.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (6, 5))
+plot_array[-1,-3:] = 0
+axs = fig.subplots(plot_array)
+# for MME
+scale = pplt.CutoffScale(2016,np.inf,2062)
+axs.format(xlim=(1979,2099),xscale=scale,xlocator=np.append(np.arange(1979,2015,5),np.arange(2064, 2100,5)),ylim=(-3.0,3.0))
+# axs = pplt.GridSpec(6,5)
+# ax = fig.subplot(axs[0])
+# bax = brokenaxes(xlims=((1979, 2014), (2064, 2099)), despine=False, subplot_spec=ax)
+
+m1 = axs[0].plot(np.arange(1979,2015,1), ca.standardize(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979).mean(dim="models")), color="black", lw=1.0)
+axs[0].plot(np.arange(2064,2100,1), ca.standardize(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064).mean(dim="models")), color="black", lw=1.0)
+m2 = axs[0].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).mean(dim="models")), color="blue", lw=1.0)
+axs[0].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).mean(dim="models")), color="blue", lw=1.0)
+axs[0].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.0,color="grey7")
+axs[0].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.0,color="grey7")
+axs[0].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
+axs[0].format(ltitle="MME")
+models = prehis_India_JJA.coords["models"]
+for num_mod,mod in enumerate(models):
+    axs[num_mod+1].plot(np.arange(1979,2015,1), ca.standardize(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979, models=mod)), color="black", lw=1.0)
+    axs[num_mod+1].plot(np.arange(2064,2100,1), ca.standardize(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064, models=mod)), color="black", lw=1.0)
+    axs[num_mod+1].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979, models=mod)), color="blue", lw=1.0)
+    axs[num_mod+1].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064, models=mod)), color="blue", lw=1.0)
+    axs[num_mod+1].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.0,color="grey7")
+    axs[num_mod+1].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.0,color="grey7")
+    axs[num_mod+1].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
+    axs[num_mod+1].format(ltitle=mod.data)
+fig.legend(handles=[m1,m2], loc="bottom", labels=["IndR", "EAU"])
+fig.format(abc="(a)", abcloc="l", suptitle="IndR and EAU")
+
+# %%
+
 # %%
