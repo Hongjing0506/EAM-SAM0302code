@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-28 12:24:21
+LastEditTime: 2022-04-28 20:24:51
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -1594,7 +1594,7 @@ scalelevel=[0.23, 0.17, 0.14]
 for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     pplt.rc.grid = False
     pplt.rc.reso = "lo"
-    cl = 0  # 设置地图投影的中心纬度
+    cl = 180  # 设置地图投影的中心纬度
     proj = pplt.PlateCarree(central_longitude=cl)
 
     fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
@@ -1603,11 +1603,12 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     axs = fig.subplots(plot_array, proj=proj)
 
     #   set the geo_ticks and map projection to the plots
-    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
-    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    xticks = np.arange(0, 361, 60)
+    yticks = np.arange(-30, 91, 15)  # 设置经度刻度
     # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
     # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
-    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    extents = [xticks[0], xticks[-1], yticks[0], 90.0]
     sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
     # ===================================================
     ski = 2
@@ -5128,3 +5129,127 @@ axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95,
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="SCR", ylabel="NCR", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
 # %%
+#   calculate the 200hPa anomalos high over the EA area
+lat = prehis_JJA.coords["lat"]
+lon = prehis_JJA.coords["lon"]
+lat_EAhigh_range = lat[(lat>=25.0) & (lat<=50.0)]
+lon_EAhigh_range = lon[(lon>=105.0) & (lon<=135.0)]
+# lat_EAhigh_range = lat[(lat>=20.0) & (lat<=27.5)]
+# lon_EAhigh_range = lon[(lon>=105.0) & (lon<=125.0)]
+uhis_EAhigh_JJA = uhis_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
+ussp585_EAhigh_JJA = ussp585_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
+
+vhis_EAhigh_JJA = vhis_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
+vssp585_EAhigh_JJA = vssp585_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
+
+vorhis_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uhis_EAhigh_JJA, vhis_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
+vorssp585_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_EAhigh_JJA, vssp585_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
+# %%
+#   calculate the linregress
+IndR_his_EAU_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979))
+IndR_ssp585_EAU_regress = ca.dim_linregress(pressp585_India_JJA, ussp585_EA_JJA)
+IndR_ssp585_p3_EAU_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064))
+
+IndR_diff_EAU_slope = IndR_ssp585_p3_EAU_regress[0]-IndR_his_EAU_regress[0]
+IndR_diff_EAU_rvalue = ca.cal_rdiff(IndR_ssp585_p3_EAU_regress[2],IndR_his_EAU_regress[2])
+
+IndR_diff_EAU_rvalue_mask = ca.Fisher_Z_test(IndR_his_EAU_regress[2], IndR_ssp585_p3_EAU_regress[2], 36, 36, **{"return_mask":True})
+
+prehis_India_JJA_copy = prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979).copy()
+uhis_EA_JJA_copy = uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).copy()
+pressp585_p3_India_JJA_copy = pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064).copy()
+ussp585_p3_EA_JJA_copy = ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).copy()
+
+prehis_India_JJA_copy.coords["time"] = np.arange(len(prehis_India_JJA_copy.coords["time"]))
+uhis_EA_JJA_copy.coords["time"] = np.arange(len(uhis_EA_JJA_copy.coords["time"]))
+
+pressp585_p3_India_JJA_copy.coords["time"] = np.arange(len(pressp585_p3_India_JJA_copy.coords["time"]))
+ussp585_p3_EA_JJA_copy.coords["time"] = np.arange(len(ussp585_p3_EA_JJA_copy.coords["time"]))
+
+IndR_diff_EAU_slope_mask = xr.apply_ufunc(
+    ca.Fisher_permutation_test,
+    prehis_India_JJA_copy,
+    uhis_EA_JJA_copy,
+    pressp585_p3_India_JJA_copy,
+    ussp585_p3_EA_JJA_copy,
+    input_core_dims=[["time"],["time"],["time"],["time"]],
+    output_core_dims=[[]],
+    vectorize=True,
+    dask="parallelized",
+    kwargs={"return_mask":True}
+)
+
+IndR_diff_EAU_slope_ens = IndR_diff_EAU_slope.mean(dim="models",skipna=True)
+IndR_diff_EAU_rvalue_ens = ca.cal_rMME(IndR_diff_EAU_rvalue,"models")
+
+IndR_his_EAU_slope_ens = IndR_his_EAU_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_EAU_slope_ens = IndR_ssp585_EAU_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_p3_EAU_slope_ens = IndR_ssp585_p3_EAU_regress[0].mean(dim="models",skipna=True)
+
+IndR_his_EAU_slope_lowlim,IndR_his_EAU_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_his_EAU_regress[0], 1000, 0.95)
+IndR_ssp585_p3_EAU_slope_lowlim,IndR_ssp585_p3_EAU_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_ssp585_p3_EAU_regress[0], 1000, 0.95)
+
+IndR_his_EAU_rvalue_ens = ca.cal_rMME(IndR_his_EAU_regress[2],"models")
+IndR_ssp585_EAU_rvalue_ens = ca.cal_rMME(IndR_ssp585_EAU_regress[2],"models")
+IndR_ssp585_p3_EAU_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_EAU_regress[2],"models")
+# %%
+#   plot the bar-plot for regression coefficients
+plot_data = np.zeros((27,3))
+plot_data[:-1,0] = IndR_his_EAU_regress[0].data
+plot_data[:-1,1] = IndR_ssp585_p3_EAU_regress[0].data
+plot_data[:-1,2] = IndR_diff_EAU_slope.data
+plot_data[-1,0] = IndR_his_EAU_slope_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_EAU_slope_ens.data
+plot_data[-1,2] = IndR_diff_EAU_slope_ens.data
+
+bar_data = np.zeros((2,27))
+# bar_data[0,:-1,:] = plot_data[:-1,:]
+# bar_data[1,:-1,:] = plot_data[:-1,:]
+# bar_data[0,-1,0] = IndR_his_EAU_slope_lowlim
+# bar_data[1,-1,0] = IndR_his_EAU_slope_highlim
+bar_data[0,-1] = IndR_ssp585_p3_EAU_slope_lowlim
+bar_data[1,-1] = IndR_ssp585_p3_EAU_slope_highlim
+
+models = list(IndR_his_EAU_regress[0].coords["models"].data)
+models.append("MME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+for num,i in enumerate(IndR_diff_EAU_slope_mask.data):
+    if i > 0:
+        axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-2.0,2.0),ylocator=np.arange(-2.0,2.1,0.4),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and EAU")
+
+# %%
+#   plot the bar-plot for correlation coefficients
+plot_data = np.zeros((27,3))
+plot_data[:-1,0] = IndR_his_EAU_regress[2].data
+plot_data[:-1,1] = IndR_ssp585_p3_EAU_regress[2].data
+plot_data[:-1,2] = IndR_diff_EAU_rvalue.data
+plot_data[-1,0] = IndR_his_EAU_rvalue_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_EAU_rvalue_ens.data
+plot_data[-1,2] = IndR_diff_EAU_rvalue_ens.data
+
+models = list(IndR_his_EAU_regress[0].coords["models"].data)
+models.append("MME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+for num,i in enumerate(IndR_diff_EAU_rvalue_mask.data):
+    if i > 0:
+        axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Cor. Coeff. IndR and EAU")
