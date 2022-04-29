@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-30 00:01:01
+LastEditTime: 2022-04-30 00:16:50
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -140,11 +140,47 @@ ussp585_ver_JJA = fussp585_ver_JJA["ua"]
 fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
 vssp585_ver_JJA = fvssp585_ver_JJA["va"]
 
+#read the temperature data in ERA5/historical/ssp585
+ftERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/temp_mon_r144x72_195001-201412.nc")
+tERA5 = ftERA5["t"]
+tERA5_ver_JJA = ca.p_time(tERA5, 6, 8, True)
+tERA5_ver_JJA = ca.detrend_dim(tERA5_ver_JJA, "time", deg=1, demean=False)
+fthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ta_historical_r144x72_195001-201412.nc")
+this_ver_JJA = fthis_ver_JJA["ta"]
+ftssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ta_ssp585_r144x72_201501-209912.nc")
+tssp585_ver_JJA = ftssp585_ver_JJA["ta"]
+
+#   read the his_dpg and ssp585_dpg
+his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_dsdpg500-200.nc")
+ssp585_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg500-200.nc")
+
+#   calculate the utt in historical and ssp585
+utthis_JJA = (this_ver_JJA.loc[:,:,500.0:200.0,:,:]*his_dsdpg.data).sum(dim="level",skipna=True)
+uttssp585_JJA = (tssp585_ver_JJA.loc[:,:,500.0:200.0,:,:]*ssp585_dsdpg.data).sum(dim="level",skipna=True)
+utthis_JJA = ca.detrend_dim(utthis_JJA, "time", deg=1, demean=False)
+uttssp585_JJA = ca.detrend_dim(uttssp585_JJA, "time", deg=1, demean=False)
+utthis_JJA.name="utt"
+uttssp585_JJA.name="utt"
+
 #   deal with the time index for CRU and GPCP data
 preCRU_JJA.coords["time"] = prehis_JJA.coords["time"]
 preGPCP_JJA.coords["time"] = prehis_JJA.sel(time=prehis_JJA.time.dt.year>=1979).coords["time"]
 # %%
-#   calculate the precipitation regress onto India precipitation
+#   calculate the ERA5 upper level troposphere temperature between 500hPa to 200hPa
+ptop = 1 * 200
+g = 9.8
+ERA5_dslevel = uERA5_ver_JJA.coords["level"].loc[200.0:500.0] * 100.0
+ERA5_dslevel.attrs["units"] = "Pa"
+ERA5_dsdp = geocat.comp.dpres_plevel(ERA5_dslevel, spERA5_JJA, ptop)
+ERA5_dsdpg = ERA5_dsdp / g
+ERA5_dsdpg.attrs["units"] = "kg/m2"
+ERA5_dsdpg.name = "dsdpg"
+
+uttERA5_JJA = (tERA5_ver_JJA.loc[:,200.0:500.0,:,:] * ERA5_dsdpg.data).sum(dim="level", skipna=True)
+uttERA5_JJA.name = "utt"
+# %%
+#   pick up the area data
+#   calculate the precipitation in India
 lat = preCRU_JJA.coords["lat"]
 lon = preCRU_JJA.coords["lon"]
 lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
@@ -163,6 +199,36 @@ preGPCP_NC_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_NC_range, lon=
 prehis_NC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
 pressp585_NC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
 
+#   calculate the precipitation in Southern China
+lat_SC_range = lat[(lat>=20.0) & (lat<=27.5)]
+lon_SC_range = lon[(lon>=105.0) & (lon<=125.0)]
+preCRU_SC_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
+preGPCP_SC_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
+prehis_SC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
+pressp585_SC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
+
+#   calculate the 200hPa u-wind over the East Asia
+lat_EA_range = lat[(lat>=27.5) & (lat<=37.5)]
+lon_EA_range = lon[(lon>=100.0) & (lon<=125.0)]
+
+uERA5_EA_JJA = ca.cal_lat_weighted_mean(uERA5_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
+uhis_EA_JJA = ca.cal_lat_weighted_mean(uhis_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
+ussp585_EA_JJA = ca.cal_lat_weighted_mean(ussp585_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
+
+#   calculate the 200hPa vorticity over the East Asia
+lat_EAhigh_range = lat[(lat>=25.0) & (lat<=50.0)]
+lon_EAhigh_range = lon[(lon>=105.0) & (lon<=135.0)]
+uERA5_EAhigh_JJA = uERA5_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
+uhis_EAhigh_JJA = uhis_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
+ussp585_EAhigh_JJA = ussp585_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
+
+vERA5_EAhigh_JJA = vERA5_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
+vhis_EAhigh_JJA = vhis_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
+vssp585_EAhigh_JJA = vssp585_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
+
+vorERA5_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uERA5_EAhigh_JJA, vERA5_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
+vorhis_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uhis_EAhigh_JJA, vhis_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
+vorssp585_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_EAhigh_JJA, vssp585_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
 # %%
 (
     pre_CRU_India_pre_slope,
@@ -4820,16 +4886,6 @@ cb = fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 cb.set_ticks(np.arange(-0.5, 0.55, 0.1))
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg YZRR")
 # %%
-#   calculate the precipitation in Southern China
-lat = prehis_JJA.coords["lat"]
-lon = prehis_JJA.coords["lon"]
-lat_SC_range = lat[(lat>=20.0) & (lat<=27.5)]
-lon_SC_range = lon[(lon>=105.0) & (lon<=125.0)]
-preCRU_SC_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
-preGPCP_SC_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
-prehis_SC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
-pressp585_SC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
-# %%
 #   calculate the linregress
 IndR_his_SCR_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_SC_JJA.sel(time=prehis_SC_JJA.time.dt.year>=1979))
 IndR_ssp585_SCR_regress = ca.dim_linregress(pressp585_India_JJA, pressp585_SC_JJA)
@@ -4938,16 +4994,7 @@ axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Cor. Coeff. IndR and SCR")
-# %%
-#   calculate the U in East Asia
-lat = prehis_JJA.coords["lat"]
-lon = prehis_JJA.coords["lon"]
-lat_EA_range = lat[(lat>=27.5) & (lat<=37.5)]
-lon_EA_range = lon[(lon>=100.0) & (lon<=125.0)]
 
-uERA5_EA_JJA = ca.cal_lat_weighted_mean(uERA5_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
-uhis_EA_JJA = ca.cal_lat_weighted_mean(uhis_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
-ussp585_EA_JJA = ca.cal_lat_weighted_mean(ussp585_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
 # %%
 #   calculate the linregress
 IndR_his_EAU_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979))
@@ -5114,22 +5161,7 @@ axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95
 axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="SCR", ylabel="NCR", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
-# %%
-#   calculate the 200hPa anomalos high over the EA area
-lat = prehis_JJA.coords["lat"]
-lon = prehis_JJA.coords["lon"]
-lat_EAhigh_range = lat[(lat>=25.0) & (lat<=50.0)]
-lon_EAhigh_range = lon[(lon>=105.0) & (lon<=135.0)]
-# lat_EAhigh_range = lat[(lat>=20.0) & (lat<=27.5)]
-# lon_EAhigh_range = lon[(lon>=105.0) & (lon<=125.0)]
-uhis_EAhigh_JJA = uhis_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
-ussp585_EAhigh_JJA = ussp585_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
 
-vhis_EAhigh_JJA = vhis_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
-vssp585_EAhigh_JJA = vssp585_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
-
-vorhis_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uhis_EAhigh_JJA, vhis_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
-vorssp585_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_EAhigh_JJA, vssp585_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
 # %%
 #   calculate the linregress
 IndR_his_EAhigh_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), vorhis_EAhigh_JJA.sel(time=vorhis_EAhigh_JJA.time.dt.year>=1979))
@@ -5274,17 +5306,6 @@ for num_mod,mod in enumerate(models):
 fig.legend(handles=[m1,m2], loc="bottom", labels=["IndR", "EAU"])
 fig.format(abc="(a)", abcloc="l", suptitle="IndR and EAU")
 
-# %%
-#   calculate the regressed temperature
-#read the temperature data in ERA5/historical/ssp585
-ftERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/temp_mon_r144x72_195001-201412.nc")
-tERA5 = ftERA5["t"]
-tERA5_ver_JJA = ca.p_time(tERA5, 6, 8, True)
-tERA5_ver_JJA = ca.detrend_dim(tERA5_ver_JJA, "time", deg=1, demean=False)
-fthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ta_historical_r144x72_195001-201412.nc")
-this_ver_JJA = fthis_ver_JJA["ta"]
-ftssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ta_ssp585_r144x72_201501-209912.nc")
-tssp585_ver_JJA = ftssp585_ver_JJA["ta"]
 # %%
 #calculate the longitude mean over 100.0° to 125°E
 lon = tERA5_ver_JJA.coords["lon"]
@@ -5525,14 +5546,8 @@ for num_mod,mod in enumerate(models):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="T&U reg IndR")
 # %%
-#   read the his_dpg and ssp585_dpg
-his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_dsdpg500-200.nc")
-ssp585_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg500-200.nc")
-#   calculate the utt in historical and ssp585
-utthis_JJA = (this_ver_JJA.loc[:,:,500.0:200.0,:,:]*his_dsdpg.data).sum(dim="level",skipna=True)
-uttssp585_JJA = (tssp585_ver_JJA.loc[:,:,500.0:200.0,:,:]*ssp585_dsdpg.data).sum(dim="level",skipna=True)
-utthis_JJA.name="utt"
-uttssp585_JJA.name="utt"
+
+
 
 lat = utthis_JJA.coords["lat"]
 lon = utthis_JJA.coords["lon"]
@@ -5548,18 +5563,7 @@ EAU_TMTGssp585_JJA = ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area2_ra
 
 EAU_TMTGhis_JJA = ca.detrend_dim(EAU_TMTGhis_JJA, "time", deg=1, demean=False)
 EAU_TMTGssp585_JJA = ca.detrend_dim(EAU_TMTGssp585_JJA, "time", deg=1, demean=False)
-# %%
-ptop = 1 * 200
-g = 9.8
-ERA5_dslevel = uERA5_ver_JJA.coords["level"].loc[200.0:500.0] * 100.0
-ERA5_dslevel.attrs["units"] = "Pa"
-ERA5_dsdp = geocat.comp.dpres_plevel(ERA5_dslevel, spERA5_JJA, ptop)
-ERA5_dsdpg = ERA5_dsdp / g
-ERA5_dsdpg.attrs["units"] = "kg/m2"
-ERA5_dsdpg.name = "dsdpg"
 
-uttERA5_JJA = (tERA5_ver_JJA.loc[:,200.0:500.0,:,:] * ERA5_dsdpg.data).sum(dim="level", skipna=True)
-uttERA5_JJA.name = "utt"
 
 EAU_TMTGERA5_JJA = ca.cal_lat_weighted_mean(uttERA5_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(uttERA5_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
 EAU_TMTGERA5_JJA = ca.detrend_dim(EAU_TMTGERA5_JJA, "time", deg=1, demean=False)
