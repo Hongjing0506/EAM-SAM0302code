@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-29 23:57:09
+LastEditTime: 2022-04-30 00:01:01
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -139,6 +139,10 @@ ussp585_ver_JJA = fussp585_ver_JJA["ua"]
 
 fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
 vssp585_ver_JJA = fvssp585_ver_JJA["va"]
+
+#   deal with the time index for CRU and GPCP data
+preCRU_JJA.coords["time"] = prehis_JJA.coords["time"]
+preGPCP_JJA.coords["time"] = prehis_JJA.sel(time=prehis_JJA.time.dt.year>=1979).coords["time"]
 # %%
 #   calculate the precipitation regress onto India precipitation
 lat = preCRU_JJA.coords["lat"]
@@ -151,7 +155,13 @@ preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_India_range
 prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 
-
+#   calculate the precipitation in Northern China
+lat_NC_range = lat[(lat>=27.5) & (lat<=37.5)]
+lon_NC_range = lon[(lon>=105.0) & (lon<=125.0)]
+preCRU_NC_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
+preGPCP_NC_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
+prehis_NC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
+pressp585_NC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
 
 # %%
 (
@@ -4056,18 +4066,7 @@ for num_models,mod in enumerate(pre_his_BOB_pre_slope.coords["models"].data):
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg BOBR")
-# %%
-#   calculate the precipitation in Northern China
-lat = prehis_JJA.coords["lat"]
-lon = prehis_JJA.coords["lon"]
-lat_NC_range = lat[(lat>=27.5) & (lat<=37.5)]
-lon_NC_range = lon[(lon>=105.0) & (lon<=125.0)]
-# lat_NC_range = lat[(lat>=20.0) & (lat<=27.5)]
-# lon_NC_range = lon[(lon>=105.0) & (lon<=125.0)]
-preCRU_NC_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
-preGPCP_NC_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
-prehis_NC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
-pressp585_NC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
+
 # %%
 #   calculate the linregress
 IndR_his_NCR_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979))
