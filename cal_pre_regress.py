@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-29 10:31:03
+LastEditTime: 2022-04-29 23:57:09
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -60,7 +60,7 @@ def patches(ax, x0, y0, width, height, proj):
     )
     ax.add_patch(rect)
 # %%
-#   read the data in CRU/historical/ssp585
+#   read the data in CRU/GPCP/ERA5/historical/ssp585
 fpreCRU = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/cru_ts4.01_r144x72_195001-201412.nc"
 )
@@ -86,6 +86,59 @@ pressp585_JJA = fpressp585["pr"]
 pressp585_JJA.attrs["units"] = "mm/day"
 pressp585_JJA.attrs["standard_name"] = "precipitation"
 
+fhgtERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc")
+hgtERA5 = fhgtERA5["z"]
+
+fuERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
+)
+uERA5 = fuERA5["u"]
+
+fvERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc"
+)
+vERA5 = fvERA5["v"]
+
+fspERA5 = xr.open_dataset(
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
+)
+spERA5 = fspERA5["sp"]
+
+fqERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc")
+qERA5 = fqERA5["q"]
+
+hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True)
+hgtERA5_ver_JJA = hgtERA5_ver_JJA-hgtERA5_ver_JJA.mean(dim="lon", skipna=True)
+uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True)
+vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True)
+qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True)
+spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
+
+hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
+uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
+vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
+qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
+spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
+
+fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc")
+hgthis_ver_JJA = fhgthis_ver_JJA["zg"]
+hgthis_ver_JJA = hgthis_ver_JJA - hgthis_ver_JJA.mean(dim="lon", skipna=True)
+
+fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc")
+uhis_ver_JJA = fuhis_ver_JJA["ua"]
+
+fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc")
+vhis_ver_JJA = fvhis_ver_JJA["va"]
+
+fhgtssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
+hgtssp585_ver_JJA = fhgtssp585_ver_JJA["zg"]
+hgtssp585_ver_JJA = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lon", skipna=True)
+
+fussp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_201501-209912.nc")
+ussp585_ver_JJA = fussp585_ver_JJA["ua"]
+
+fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
+vssp585_ver_JJA = fvssp585_ver_JJA["va"]
 # %%
 #   calculate the precipitation regress onto India precipitation
 lat = preCRU_JJA.coords["lat"]
@@ -94,27 +147,11 @@ lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
 lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
 
 preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
-lat = preGPCP_JJA.coords["lat"]
-lon = preGPCP_JJA.coords["lon"]
-lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
-lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
-# lat_India_range = lat[(lat >= 15.0) & (lat <= 28.0)]
-# lat_India_range = lat[(lat >= 30.0) & (lat <= 35.0)]
-# lon_India_range = lon[(lon >= 112.5) & (lon <= 120.0)]
-
 preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
-
-lat = prehis_JJA.coords["lat"]
-lon = prehis_JJA.coords["lon"]
-
-lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
-# lat_India_range = lat[(lat >= 15.0) & (lat <= 28.0)]
-lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
-# lat_India_range = lat[(lat >= 30.0) & (lat <= 35.0)]
-# lon_India_range = lon[(lon >= 112.5) & (lon <= 120.0)]
-
 prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
+
+
 
 # %%
 (
@@ -904,60 +941,7 @@ for num_models,mod in enumerate(pre_diff_India_pre_rvalue.coords["models"].data)
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 # %%
-#   read the var in ERA5 and historical/ssp585
-fhgtERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc")
-hgtERA5 = fhgtERA5["z"]
 
-fuERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/uwind_mon_r144x72_195001-201412.nc"
-)
-uERA5 = fuERA5["u"]
-
-fvERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc"
-)
-vERA5 = fvERA5["v"]
-
-fspERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/sp_mon_r144x72_195001-201412.nc"
-)
-spERA5 = fspERA5["sp"]
-
-fqERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc")
-qERA5 = fqERA5["q"]
-
-hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True)
-hgtERA5_ver_JJA = hgtERA5_ver_JJA-hgtERA5_ver_JJA.mean(dim="lon", skipna=True)
-uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True)
-vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True)
-qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True)
-spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
-
-hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
-uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
-vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
-qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
-spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
-
-fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc")
-hgthis_ver_JJA = fhgthis_ver_JJA["zg"]
-hgthis_ver_JJA = hgthis_ver_JJA - hgthis_ver_JJA.mean(dim="lon", skipna=True)
-
-fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc")
-uhis_ver_JJA = fuhis_ver_JJA["ua"]
-
-fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc")
-vhis_ver_JJA = fvhis_ver_JJA["va"]
-
-fhgtssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
-hgtssp585_ver_JJA = fhgtssp585_ver_JJA["zg"]
-hgtssp585_ver_JJA = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lon", skipna=True)
-
-fussp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_201501-209912.nc")
-ussp585_ver_JJA = fussp585_ver_JJA["ua"]
-
-fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
-vssp585_ver_JJA = fvssp585_ver_JJA["va"]
 
 # %%
 #   calculate the hgt/u/v regression onto IndR in ERA5, historical, ssp585, ssp585_p3
@@ -5075,6 +5059,7 @@ axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickm
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Cor. Coeff. IndR and EAU")
 # %%
+preCRU_India_JJA.coords["time"] = preCRU_SC_JJA.coords["time"]
 IndR_CRU_SCR_regress = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), preCRU_SC_JJA.sel(time=preCRU_SC_JJA.time.dt.year>=1979))
 IndR_CRU_NCR_regress = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), preCRU_NC_JJA.sel(time=preCRU_NC_JJA.time.dt.year>=1979))
 
@@ -5117,9 +5102,9 @@ cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
 # m = axs[0].scatter(IndR_CRU_SCR_regress[2], IndR_CRU_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
 # m = axs[0].scatter(IndR_GPCP_SCR_regress[2], IndR_GPCP_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
 for num_models, mod in enumerate(models):
-    m = axs[0].scatter(IndR_ssp585_SCR_regress[2].sel(models=mod), IndR_ssp585_NCR_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+    m = axs[0].scatter(IndR_ssp585_p3_SCR_regress[2].sel(models=mod), IndR_ssp585_p3_NCR_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
 # fig.legend(loc="bottom", labels=models)
-m = axs[0].scatter(IndR_ssp585_SCR_rvalue_ens, IndR_ssp585_NCR_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+m = axs[0].scatter(IndR_ssp585_SCR_rvalue_ens, IndR_ssp585_p3_NCR_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
 axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -5728,9 +5713,59 @@ cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
 # m = axs[0].scatter(IndR_CRU_EAU_TMTG_regress[2], IndR_CRU_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
 # m = axs[0].scatter(IndR_GPCP_EAU_TMTG_regress[2], IndR_GPCP_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
 for num_models, mod in enumerate(models):
-    m = axs[0].scatter(IndR_ssp585_EAU_TMTG_regress[2].sel(models=mod), IndR_ssp585_EAU_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+    m = axs[0].scatter(IndR_ssp585_p3_EAU_TMTG_regress[2].sel(models=mod), IndR_ssp585_p3_EAU_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
 # fig.legend(loc="bottom", labels=models)
-m = axs[0].scatter(IndR_ssp585_EAU_TMTG_rvalue_ens, IndR_ssp585_EAU_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+m = axs[0].scatter(IndR_ssp585_EAU_TMTG_rvalue_ens, IndR_ssp585_p3_EAU_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_TMTG", ylabel="EAU", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 1979-2014
+models=IndR_his_EAU_TMTG_regress[2].coords["models"].data
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_EAU_TMTG_regress[2], IndR_CRU_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(IndR_GPCP_EAU_TMTG_regress[2], IndR_GPCP_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models):
+    m = axs[0].scatter(IndR_his_EAU_TMTG_regress[2].sel(models=mod), IndR_his_NCR_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(IndR_his_EAU_TMTG_rvalue_ens, IndR_his_NCR_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_TMTG", ylabel="NCR", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 2064-2099
+models=IndR_his_EAU_TMTG_regress[2].coords["models"].data
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_EAU_TMTG_regress[2], IndR_CRU_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+# m = axs[0].scatter(IndR_GPCP_EAU_TMTG_regress[2], IndR_GPCP_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models):
+    m = axs[0].scatter(IndR_ssp585_p3_EAU_TMTG_regress[2].sel(models=mod), IndR_ssp585_p3_EAU_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+m = axs[0].scatter(IndR_ssp585_EAU_TMTG_rvalue_ens, IndR_ssp585_p3_EAU_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
 axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
