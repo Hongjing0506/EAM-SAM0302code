@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-29 01:42:10
+LastEditTime: 2022-04-29 10:03:31
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -5539,4 +5539,28 @@ for num_mod,mod in enumerate(models):
 #================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="T&U reg IndR")
+# %%
+#   read the his_dpg and ssp585_dpg
+his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_dsdpg500-200.nc")
+ssp585_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg500-200.nc")
+#   calculate the utt in historical and ssp585
+utthis_JJA = (this_ver_JJA.loc[:,:,500.0:200.0,:,:]*his_dsdpg.data).sum(dim="level",skipna=True)
+uttssp585_JJA = (tssp585_ver_JJA.loc[:,:,500.0:200.0,:,:]*ssp585_dsdpg.data).sum(dim="level",skipna=True)
+utthis_JJA.name="utt"
+uttssp585_JJA.name="utt"
+
+lat = utthis_JJA.coords["lat"]
+lon = utthis_JJA.coords["lon"]
+
+lat_area1_range = lat[(lat >= 15.0) & (lat <= 30.0)]
+lon_area1_range = lon[(lon >= 100.0) & (lon <= 125.0)]
+
+lat_area2_range = lat[(lat >= 33.75) & (lat <= 45.0)]
+lon_area2_range = lon[(lon >= 100.0) & (lon <= 125.0)]
+
+EAU_TMTGhis_JJA = ca.cal_lat_weighted_mean(utthis_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(utthis_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
+EAU_TMTGssp585_JJA = ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
+
+EAU_TMTGhis_JJA = ca.detrend_dim(EAU_TMTGhis_JJA, "time", deg=1, demean=False)
+EAU_TMTGssp585_JJA = ca.detrend_dim(EAU_TMTGssp585_JJA, "time", deg=1, demean=False)
 # %%
