@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-30 00:23:20
+LastEditTime: 2022-04-30 00:30:37
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -249,11 +249,45 @@ lon_area1_range = lon[(lon >= 100.0) & (lon <= 125.0)]
 lat_area2_range = lat[(lat >= 33.75) & (lat <= 45.0)]
 lon_area2_range = lon[(lon >= 100.0) & (lon <= 125.0)]
 
+EAU_MTGERA5_JJA = ca.cal_lat_weighted_mean(uttERA5_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(uttERA5_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
 EAU_MTGhis_JJA = ca.cal_lat_weighted_mean(utthis_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(utthis_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
 EAU_MTGssp585_JJA = ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
 # %%
 #   calculate the detrend-data for the picked-up area data
+preCRU_India_JJA = ca.detrend_dim(preCRU_India_JJA, "time", deg=1, demean=False)
+preGPCP_India_JJA = ca.detrend_dim(preGPCP_India_JJA, "time", deg=1, demean=False)
+prehis_India_JJA = ca.detrend_dim(prehis_India_JJA, "time", deg=1, demean=False)
+pressp585_India_JJA = ca.detrend_dim(pressp585_India_JJA, "time", deg=1, demean=False)
 
+preCRU_NC_JJA = ca.detrend_dim(preCRU_NC_JJA, "time", deg=1, demean=False)
+preGPCP_NC_JJA = ca.detrend_dim(preGPCP_NC_JJA, "time", deg=1, demean=False)
+prehis_NC_JJA = ca.detrend_dim(prehis_NC_JJA, "time", deg=1, demean=False)
+pressp585_NC_JJA = ca.detrend_dim(pressp585_NC_JJA, "time", deg=1, demean=False)
+
+preCRU_SC_JJA = ca.detrend_dim(preCRU_SC_JJA, "time", deg=1, demean=False)
+preGPCP_SC_JJA = ca.detrend_dim(preGPCP_SC_JJA, "time", deg=1, demean=False)
+prehis_SC_JJA = ca.detrend_dim(prehis_SC_JJA, "time", deg=1, demean=False)
+pressp585_SC_JJA = ca.detrend_dim(pressp585_SC_JJA, "time", deg=1, demean=False)
+
+uERA5_EA_JJA = ca.detrend_dim(uERA5_EA_JJA, "time", deg=1, demean=False)
+uhis_EA_JJA = ca.detrend_dim(uhis_EA_JJA, "time", deg=1, demean=False)
+ussp585_EA_JJA = ca.detrend_dim(ussp585_EA_JJA, "time", deg=1, demean=False)
+
+vorERA5_EAhigh_JJA = ca.detrend_dim(vorERA5_EAhigh_JJA, "time", deg=1, demean=False)
+vorhis_EAhigh_JJA = ca.detrend_dim(vorhis_EAhigh_JJA, "time", deg=1, demean=False)
+vorssp585_EAhigh_JJA = ca.detrend_dim(vorssp585_EAhigh_JJA, "time", deg=1, demean=False)
+
+uERA5_EA_lm_JJA = ca.detrend_dim(uERA5_EA_lm_JJA, "time", deg=1, demean=False)
+uhis_EA_lm_JJA = ca.detrend_dim(uhis_EA_lm_JJA, "time", deg=1, demean=False)
+ussp585_EA_lm_JJA = ca.detrend_dim(ussp585_EA_lm_JJA, "time", deg=1, demean=False)
+
+tERA5_EA_lm_JJA = ca.detrend_dim(tERA5_EA_lm_JJA, "time", deg=1, demean=False)
+this_EA_lm_JJA = ca.detrend_dim(this_EA_lm_JJA, "time", deg=1, demean=False)
+tssp585_EA_lm_JJA = ca.detrend_dim(tssp585_EA_lm_JJA, "time", deg=1, demean=False)
+
+EAU_MTGhis_JJA = ca.detrend_dim(EAU_MTGhis_JJA, "time", deg=1, demean=False)
+EAU_MTGssp585_JJA = ca.detrend_dim(EAU_MTGssp585_JJA, "time", deg=1, demean=False)
+EAU_MTGERA5_JJA = ca.detrend_dim(EAU_MTGERA5_JJA, "time", deg=1, demean=False)
 # %%
 (
     pre_CRU_India_pre_slope,
@@ -5560,21 +5594,7 @@ for num_mod,mod in enumerate(models):
 #================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="T&U reg IndR")
-# %%
 
-
-
-lat = utthis_JJA.coords["lat"]
-lon = utthis_JJA.coords["lon"]
-
-
-
-EAU_TMTGhis_JJA = ca.detrend_dim(EAU_TMTGhis_JJA, "time", deg=1, demean=False)
-EAU_TMTGssp585_JJA = ca.detrend_dim(EAU_TMTGssp585_JJA, "time", deg=1, demean=False)
-
-
-EAU_TMTGERA5_JJA = ca.cal_lat_weighted_mean(uttERA5_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(uttERA5_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
-EAU_TMTGERA5_JJA = ca.detrend_dim(EAU_TMTGERA5_JJA, "time", deg=1, demean=False)
 
 # %%
 #   calculate the linregress
