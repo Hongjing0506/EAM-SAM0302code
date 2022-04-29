@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-29 10:19:52
+LastEditTime: 2022-04-29 10:31:03
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -4962,6 +4962,7 @@ lon = prehis_JJA.coords["lon"]
 lat_EA_range = lat[(lat>=27.5) & (lat<=37.5)]
 lon_EA_range = lon[(lon>=100.0) & (lon<=125.0)]
 
+uERA5_EA_JJA = ca.cal_lat_weighted_mean(uERA5_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
 uhis_EA_JJA = ca.cal_lat_weighted_mean(uhis_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
 ussp585_EA_JJA = ca.cal_lat_weighted_mean(ussp585_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
 # %%
@@ -5133,7 +5134,7 @@ axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=F
 #   calculate the 200hPa anomalos high over the EA area
 lat = prehis_JJA.coords["lat"]
 lon = prehis_JJA.coords["lon"]
-lat_EAU_TMTG_range = lat[(lat>=25.0) & (lat<=50.0)]
+lat_EAhigh_range = lat[(lat>=25.0) & (lat<=50.0)]
 lon_EAhigh_range = lon[(lon>=105.0) & (lon<=135.0)]
 # lat_EAhigh_range = lat[(lat>=20.0) & (lat<=27.5)]
 # lon_EAhigh_range = lon[(lon>=105.0) & (lon<=125.0)]
@@ -5564,7 +5565,25 @@ EAU_TMTGssp585_JJA = ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area2_ra
 EAU_TMTGhis_JJA = ca.detrend_dim(EAU_TMTGhis_JJA, "time", deg=1, demean=False)
 EAU_TMTGssp585_JJA = ca.detrend_dim(EAU_TMTGssp585_JJA, "time", deg=1, demean=False)
 # %%
+ptop = 1 * 200
+g = 9.8
+ERA5_dslevel = uERA5_ver_JJA.coords["level"].loc[200.0:500.0] * 100.0
+ERA5_dslevel.attrs["units"] = "Pa"
+ERA5_dsdp = geocat.comp.dpres_plevel(ERA5_dslevel, spERA5_JJA, ptop)
+ERA5_dsdpg = ERA5_dsdp / g
+ERA5_dsdpg.attrs["units"] = "kg/m2"
+ERA5_dsdpg.name = "dsdpg"
+
+uttERA5_JJA = (tERA5_ver_JJA.loc[:,200.0:500.0,:,:] * ERA5_dsdpg.data).sum(dim="level", skipna=True)
+uttERA5_JJA.name = "utt"
+
+EAU_TMTGERA5_JJA = ca.cal_lat_weighted_mean(uttERA5_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(uttERA5_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
+EAU_TMTGERA5_JJA = ca.detrend_dim(EAU_TMTGERA5_JJA, "time", deg=1, demean=False)
+
+# %%
 #   calculate the linregress
+IndR_GPCP_EAU_TMTG_regress = stats.linregress(preGPCP_India_JJA, EAU_TMTGERA5_JJA.sel(time=EAU_TMTGERA5_JJA.time.dt.year>=1979))
+IndR_GPCP_EAU_regress = stats.linregress(preGPCP_India_JJA, uERA5_EA_JJA.sel(time=uERA5_EA_JJA.time.dt.year>=1979))
 IndR_his_EAU_TMTG_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), EAU_TMTGhis_JJA.sel(time=EAU_TMTGhis_JJA.time.dt.year>=1979))
 IndR_ssp585_EAU_TMTG_regress = ca.dim_linregress(pressp585_India_JJA, EAU_TMTGssp585_JJA)
 IndR_ssp585_p3_EAU_TMTG_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), EAU_TMTGssp585_JJA.sel(time=EAU_TMTGssp585_JJA.time.dt.year>=2064))
@@ -5672,4 +5691,54 @@ axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Cor. Coeff. IndR and EAU_TMTG")
+# %%
+#   plot the x-y scatter plots for 1979-2014
+models=IndR_his_EAU_TMTG_regress[2].coords["models"].data
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_EAU_TMTG_regress[2], IndR_CRU_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(IndR_GPCP_EAU_TMTG_regress[2], IndR_GPCP_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models):
+    m = axs[0].scatter(IndR_his_EAU_TMTG_regress[2].sel(models=mod), IndR_his_EAU_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(IndR_his_EAU_TMTG_rvalue_ens, IndR_his_EAU_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_TMTG", ylabel="EAU", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 2064-2099
+models=IndR_his_EAU_TMTG_regress[2].coords["models"].data
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_EAU_TMTG_regress[2], IndR_CRU_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+# m = axs[0].scatter(IndR_GPCP_EAU_TMTG_regress[2], IndR_GPCP_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models):
+    m = axs[0].scatter(IndR_ssp585_EAU_TMTG_regress[2].sel(models=mod), IndR_ssp585_EAU_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+m = axs[0].scatter(IndR_ssp585_EAU_TMTG_rvalue_ens, IndR_ssp585_EAU_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_TMTG", ylabel="EAU", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
 # %%
