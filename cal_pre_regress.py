@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-30 00:16:50
+LastEditTime: 2022-04-30 00:18:10
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -177,6 +177,7 @@ ERA5_dsdpg.attrs["units"] = "kg/m2"
 ERA5_dsdpg.name = "dsdpg"
 
 uttERA5_JJA = (tERA5_ver_JJA.loc[:,200.0:500.0,:,:] * ERA5_dsdpg.data).sum(dim="level", skipna=True)
+uttERA5_JJA = ca.detrend_dim(uttERA5_JJA, "time", deg=1, demean=False)
 uttERA5_JJA.name = "utt"
 # %%
 #   pick up the area data
