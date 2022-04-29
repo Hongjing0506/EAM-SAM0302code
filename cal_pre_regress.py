@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-30 00:18:10
+LastEditTime: 2022-04-30 00:23:20
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -230,6 +230,30 @@ vssp585_EAhigh_JJA = vssp585_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_ra
 vorERA5_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uERA5_EAhigh_JJA, vERA5_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
 vorhis_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uhis_EAhigh_JJA, vhis_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
 vorssp585_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_EAhigh_JJA, vssp585_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
+
+#   calculate the longitude mean over 100.0° to 125°E
+lon_EA_range = lon[(lon>=100.0)&(lon<=125.0)]
+
+uERA5_EA_lm_JJA = uERA5_ver_JJA.loc[:,10.0:,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+uhis_EA_lm_JJA = uhis_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+ussp585_EA_lm_JJA = ussp585_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+
+tERA5_EA_lm_JJA = tERA5_ver_JJA.loc[:,10.0:,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+this_EA_lm_JJA = this_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+tssp585_EA_lm_JJA = tssp585_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
+
+#   calculate the MTG related to the 200hPa u wind over East Asia
+lat_area1_range = lat[(lat >= 15.0) & (lat <= 30.0)]
+lon_area1_range = lon[(lon >= 100.0) & (lon <= 125.0)]
+
+lat_area2_range = lat[(lat >= 33.75) & (lat <= 45.0)]
+lon_area2_range = lon[(lon >= 100.0) & (lon <= 125.0)]
+
+EAU_MTGhis_JJA = ca.cal_lat_weighted_mean(utthis_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(utthis_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
+EAU_MTGssp585_JJA = ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
+# %%
+#   calculate the detrend-data for the picked-up area data
+
 # %%
 (
     pre_CRU_India_pre_slope,
@@ -5308,17 +5332,7 @@ fig.legend(handles=[m1,m2], loc="bottom", labels=["IndR", "EAU"])
 fig.format(abc="(a)", abcloc="l", suptitle="IndR and EAU")
 
 # %%
-#calculate the longitude mean over 100.0° to 125°E
-lon = tERA5_ver_JJA.coords["lon"]
-lon_EA_range = lon[(lon>=100.0)&(lon<=125.0)]
 
-uERA5_EA_lm_JJA = uERA5_ver_JJA.loc[:,10.0:,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
-uhis_EA_lm_JJA = uhis_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
-ussp585_EA_lm_JJA = ussp585_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
-
-tERA5_EA_lm_JJA = tERA5_ver_JJA.loc[:,10.0:,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
-this_EA_lm_JJA = this_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
-tssp585_EA_lm_JJA = tssp585_ver_JJA.loc[:,:,:10.0,0.:,:].sel(lon=lon_EA_range).mean(dim="lon",skipna=True)
 # %%
 #   calculate the regression of IndR
 preCRU_India_JJA.coords["time"] = uERA5_EA_lm_JJA.coords["time"]
@@ -5553,14 +5567,7 @@ fig.format(abc="(a)", abcloc="l", suptitle="T&U reg IndR")
 lat = utthis_JJA.coords["lat"]
 lon = utthis_JJA.coords["lon"]
 
-lat_area1_range = lat[(lat >= 15.0) & (lat <= 30.0)]
-lon_area1_range = lon[(lon >= 100.0) & (lon <= 125.0)]
 
-lat_area2_range = lat[(lat >= 33.75) & (lat <= 45.0)]
-lon_area2_range = lon[(lon >= 100.0) & (lon <= 125.0)]
-
-EAU_TMTGhis_JJA = ca.cal_lat_weighted_mean(utthis_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(utthis_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
-EAU_TMTGssp585_JJA = ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
 
 EAU_TMTGhis_JJA = ca.detrend_dim(EAU_TMTGhis_JJA, "time", deg=1, demean=False)
 EAU_TMTGssp585_JJA = ca.detrend_dim(EAU_TMTGssp585_JJA, "time", deg=1, demean=False)
