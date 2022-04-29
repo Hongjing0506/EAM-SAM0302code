@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-30 00:30:37
+LastEditTime: 2022-04-30 00:40:35
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -166,6 +166,9 @@ uttssp585_JJA.name="utt"
 preCRU_JJA.coords["time"] = prehis_JJA.coords["time"]
 preGPCP_JJA.coords["time"] = prehis_JJA.sel(time=prehis_JJA.time.dt.year>=1979).coords["time"]
 # %%
+models = uhis_ver_JJA.coords["models"]
+models_array = models.data
+# %%
 #   calculate the ERA5 upper level troposphere temperature between 500hPa to 200hPa
 ptop = 1 * 200
 g = 9.8
@@ -289,6 +292,7 @@ EAU_MTGhis_JJA = ca.detrend_dim(EAU_MTGhis_JJA, "time", deg=1, demean=False)
 EAU_MTGssp585_JJA = ca.detrend_dim(EAU_MTGssp585_JJA, "time", deg=1, demean=False)
 EAU_MTGERA5_JJA = ca.detrend_dim(EAU_MTGERA5_JJA, "time", deg=1, demean=False)
 # %%
+#   calculate the precipitation fields regression onto IndR
 (
     pre_CRU_India_pre_slope,
     pre_CRU_India_pre_intercept,
@@ -320,18 +324,40 @@ EAU_MTGERA5_JJA = ca.detrend_dim(EAU_MTGERA5_JJA, "time", deg=1, demean=False)
     pre_ssp585_India_pre_hypothesis,
 ) = ca.dim_linregress(pressp585_India_JJA, pressp585_JJA)
 
+#   calculate the 2064-2099 ssp585 p3 precipitation regression onto IndR
+(
+    pre_ssp585_p3_India_pre_slope,
+    pre_ssp585_p3_India_pre_intercept,
+    pre_ssp585_p3_India_pre_rvalue,
+    pre_ssp585_p3_India_pre_pvalue,
+    pre_ssp585_p3_India_pre_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_JJA.sel(time=pressp585_JJA.time.dt.year>=2064))
 # %%
+#   calculate the MME and MME mask for slope and rvalue
 
 pre_his_India_pre_slope_ens = pre_his_India_pre_slope.mean(dim="models", skipna=True)
 pre_ssp585_India_pre_slope_ens = pre_ssp585_India_pre_slope.mean(dim="models", skipna=True)
+pre_ssp585_p3_India_pre_slope_ens = pre_ssp585_p3_India_pre_slope.mean(dim="models", skipna=True)
+
 pre_his_India_pre_slope_ens_mask = ca.MME_reg_mask(pre_his_India_pre_slope_ens, pre_his_India_pre_slope.std(dim="models", skipna=True), len(pre_his_India_pre_slope.coords["models"]), True)
 pre_ssp585_India_pre_slope_ens_mask = ca.MME_reg_mask(pre_ssp585_India_pre_slope_ens, pre_ssp585_India_pre_slope.std(dim="models", skipna=True), len(pre_ssp585_India_pre_slope.coords["models"]), True)
+pre_ssp585_p3_India_pre_slope_ens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_slope_ens, pre_ssp585_p3_India_pre_slope.std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_slope.coords["models"]), True)
 
-pre_his_India_pre_rvalue_ens = pre_his_India_pre_rvalue.mean(dim="models", skipna=True)
-pre_ssp585_India_pre_rvalue_ens = pre_ssp585_India_pre_rvalue.mean(dim="models", skipna=True)
+pre_his_India_pre_rvalue_ens = ca.cal_rMME(pre_his_India_pre_rvalue,"models")
+pre_ssp585_India_pre_rvalue_ens = ca.cal_rMME(pre_ssp585_India_pre_rvalue,"models")
+pre_ssp585_p3_India_pre_rvalue_ens = ca.cal_rMME(pre_ssp585_p3_India_pre_rvalue,"models")
+
 pre_his_India_pre_rvalue_ens_mask = ca.MME_reg_mask(pre_his_India_pre_rvalue_ens, pre_his_India_pre_rvalue.std(dim="models", skipna=True), len(pre_his_India_pre_rvalue.coords["models"]), True)
 pre_ssp585_India_pre_rvalue_ens_mask = ca.MME_reg_mask(pre_ssp585_India_pre_rvalue_ens, pre_ssp585_India_pre_rvalue.std(dim="models", skipna=True), len(pre_ssp585_India_pre_rvalue.coords["models"]), True)
+pre_ssp585_p3_India_pre_rvalue_ens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_ens, pre_ssp585_p3_India_pre_rvalue.std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_rvalue.coords["models"]), True)
 
+pre_diff_India_pre_slope = pre_ssp585_p3_India_pre_slope-pre_his_India_pre_slope
+pre_diff_India_pre_slope_ens = pre_diff_India_pre_slope.mean(dim="models", skipna=True)
+pre_diff_India_pre_slope_ens_mask = ca.MME_reg_mask(pre_diff_India_pre_slope_ens, pre_diff_India_pre_slope.std(dim="models", skipna=True), len(models), True)
+
+pre_diff_India_pre_rvalue = ca.cal_rdiff(pre_ssp585_p3_India_pre_rvalue,pre_his_India_pre_rvalue)
+pre_diff_India_pre_rvalue_ens = ca.cal_rMME(pre_diff_India_pre_rvalue,"models")
+pre_diff_India_pre_rvalue_ens_mask = ca.MME_reg_mask(pre_diff_India_pre_rvalue_ens, pre_diff_India_pre_rvalue.std(dim="models", skipna=True), len(models), True)
 # %%
 #   plot the regression coefficients in CRU, GPCP, historical run
 pplt.rc.grid = False
@@ -660,30 +686,7 @@ for num_models,mod in enumerate(pre_ssp585_India_pre_rvalue.coords["models"].dat
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
-# %%
-#   calculate the 2064-2099 ssp585 p3 precipitation regression onto IndR
-(
-    pre_ssp585_p3_India_pre_slope,
-    pre_ssp585_p3_India_pre_intercept,
-    pre_ssp585_p3_India_pre_rvalue,
-    pre_ssp585_p3_India_pre_pvalue,
-    pre_ssp585_p3_India_pre_hypothesis,
-) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_JJA.sel(time=pressp585_JJA.time.dt.year>=2064))
 
-# %%
-models = pre_ssp585_p3_India_pre_slope.coords["models"]
-pre_ssp585_p3_India_pre_slope_ens = pre_ssp585_p3_India_pre_slope.mean(dim="models", skipna=True)
-pre_ssp585_p3_India_pre_slope_ens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_slope_ens, pre_ssp585_p3_India_pre_slope.std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_slope.coords["models"]), True)
-pre_ssp585_p3_India_pre_rvalue_ens = pre_ssp585_p3_India_pre_rvalue.mean(dim="models", skipna=True)
-pre_ssp585_p3_India_pre_rvalue_ens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_ens, pre_ssp585_p3_India_pre_rvalue.std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_rvalue.coords["models"]), True)
-
-pre_diff_India_pre_slope = pre_ssp585_p3_India_pre_slope-pre_his_India_pre_slope
-pre_diff_India_pre_slope_ens = pre_diff_India_pre_slope.mean(dim="models", skipna=True)
-pre_diff_India_pre_slope_ens_mask = ca.MME_reg_mask(pre_diff_India_pre_slope_ens, pre_diff_India_pre_slope.std(dim="models", skipna=True), len(models), True)
-
-pre_diff_India_pre_rvalue = pre_ssp585_p3_India_pre_rvalue-pre_his_India_pre_rvalue
-pre_diff_India_pre_rvalue_ens = pre_diff_India_pre_rvalue.mean(dim="models", skipna=True)
-pre_diff_India_pre_rvalue_ens_mask = ca.MME_reg_mask(pre_diff_India_pre_rvalue_ens, pre_diff_India_pre_rvalue.std(dim="models", skipna=True), len(models), True)
 # %%
 #   calculate the significance area change
 gmodels = ['MPI-ESM1-2-HR', 'EC-Earth3-Veg', 'UKESM1-0-LL', 'EC-Earth3', 'CMCC-ESM2', 'MRI-ESM2-0', 'HadGEM3-GC31-LL', 'TaiESM1', 'NorESM2-LM', 'MIROC-ES2L']
