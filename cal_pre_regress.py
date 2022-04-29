@@ -5530,7 +5530,7 @@ for num_mod,mod in enumerate(models):
         extend="both",
         )
     axs[num_mod+1].contour(
-        IndR_ssp585_p3_u_slope.sel(models=mod)[::-1,:]-IndR_his_t_slope.sel(models=mod)[::-1,:],
+        IndR_ssp585_p3_u_slope.sel(models=mod)[::-1,:]-IndR_his_u_slope.sel(models=mod)[::-1,:],
         levels=np.arange(-4,4.1,0.4),
         extend="both",
         color="black"
