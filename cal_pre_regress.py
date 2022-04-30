@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-04-30 00:40:35
+LastEditTime: 2022-04-30 01:15:45
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -1078,8 +1078,6 @@ for num_models,mod in enumerate(pre_diff_India_pre_rvalue.coords["models"].data)
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
-# %%
-
 
 # %%
 #   calculate the hgt/u/v regression onto IndR in ERA5, historical, ssp585, ssp585_p3
@@ -4196,115 +4194,6 @@ fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg BOBR")
 
 # %%
-#   calculate the linregress
-IndR_his_NCR_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979))
-IndR_ssp585_NCR_regress = ca.dim_linregress(pressp585_India_JJA, pressp585_NC_JJA)
-IndR_ssp585_p3_NCR_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_NC_JJA.sel(time=pressp585_NC_JJA.time.dt.year>=2064))
-
-IndR_diff_NCR_slope = IndR_ssp585_p3_NCR_regress[0]-IndR_his_NCR_regress[0]
-IndR_diff_NCR_rvalue = ca.cal_rdiff(IndR_ssp585_p3_NCR_regress[2],IndR_his_NCR_regress[2])
-
-IndR_diff_NCR_rvalue_mask = ca.Fisher_Z_test(IndR_his_NCR_regress[2], IndR_ssp585_p3_NCR_regress[2], 36, 36, **{"return_mask":True})
-
-prehis_India_JJA_copy = prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979).copy()
-prehis_NC_JJA_copy = prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979).copy()
-pressp585_p3_India_JJA_copy = pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064).copy()
-pressp585_p3_NC_JJA_copy = pressp585_NC_JJA.sel(time=pressp585_NC_JJA.time.dt.year>=2064).copy()
-
-prehis_India_JJA_copy.coords["time"] = np.arange(len(prehis_India_JJA_copy.coords["time"]))
-prehis_NC_JJA_copy.coords["time"] = np.arange(len(prehis_NC_JJA_copy.coords["time"]))
-
-pressp585_p3_India_JJA_copy.coords["time"] = np.arange(len(pressp585_p3_India_JJA_copy.coords["time"]))
-pressp585_p3_NC_JJA_copy.coords["time"] = np.arange(len(pressp585_p3_NC_JJA_copy.coords["time"]))
-
-IndR_diff_NCR_slope_mask = xr.apply_ufunc(
-    ca.Fisher_permutation_test,
-    prehis_India_JJA_copy,
-    prehis_NC_JJA_copy,
-    pressp585_p3_India_JJA_copy,
-    pressp585_p3_NC_JJA_copy,
-    input_core_dims=[["time"],["time"],["time"],["time"]],
-    output_core_dims=[[]],
-    vectorize=True,
-    dask="parallelized",
-    kwargs={"return_mask":True}
-)
-
-IndR_diff_NCR_slope_ens = IndR_diff_NCR_slope.mean(dim="models",skipna=True)
-IndR_diff_NCR_rvalue_ens = ca.cal_rMME(IndR_diff_NCR_rvalue,"models")
-
-IndR_his_NCR_slope_ens = IndR_his_NCR_regress[0].mean(dim="models",skipna=True)
-IndR_ssp585_NCR_slope_ens = IndR_ssp585_NCR_regress[0].mean(dim="models",skipna=True)
-IndR_ssp585_p3_NCR_slope_ens = IndR_ssp585_p3_NCR_regress[0].mean(dim="models",skipna=True)
-
-IndR_his_NCR_slope_lowlim,IndR_his_NCR_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_his_NCR_regress[0], 1000, 0.95)
-IndR_ssp585_p3_NCR_slope_lowlim,IndR_ssp585_p3_NCR_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_ssp585_p3_NCR_regress[0], 1000, 0.95)
-
-IndR_his_NCR_rvalue_ens = ca.cal_rMME(IndR_his_NCR_regress[2],"models")
-IndR_ssp585_NCR_rvalue_ens = ca.cal_rMME(IndR_ssp585_NCR_regress[2],"models")
-IndR_ssp585_p3_NCR_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_NCR_regress[2],"models")
-# %%
-#   plot the bar-plot for regression coefficients
-plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_NCR_regress[0].data
-plot_data[:-1,1] = IndR_ssp585_p3_NCR_regress[0].data
-plot_data[:-1,2] = IndR_diff_NCR_slope.data
-plot_data[-1,0] = IndR_his_NCR_slope_ens.data
-plot_data[-1,1] = IndR_ssp585_p3_NCR_slope_ens.data
-plot_data[-1,2] = IndR_diff_NCR_slope_ens.data
-
-bar_data = np.zeros((2,27))
-# bar_data[0,:-1,:] = plot_data[:-1,:]
-# bar_data[1,:-1,:] = plot_data[:-1,:]
-# bar_data[0,-1,0] = IndR_his_NCR_slope_lowlim
-# bar_data[1,-1,0] = IndR_his_NCR_slope_highlim
-bar_data[0,-1] = IndR_ssp585_p3_NCR_slope_lowlim
-bar_data[1,-1] = IndR_ssp585_p3_NCR_slope_highlim
-
-models = list(IndR_his_NCR_regress[0].coords["models"].data)
-models.append("MME")
-
-fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
-axs = fig.subplots(ncols=1, nrows=1)
-m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
-axs[0].axhline(0,lw=1.5,color="grey7")
-for num,i in enumerate(IndR_diff_NCR_slope_mask.data):
-    if i > 0:
-        axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
-
-axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[0].format(ylim=(-0.5,0.5),ylocator=np.arange(-0.5,0.6,0.1),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
-# ax.outline_patch.set_linewidth(1.0)
-fig.format(suptitle="Reg. Coeff. IndR and NCR")
-
-# %%
-#   plot the bar-plot for correlation coefficients
-plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_NCR_regress[2].data
-plot_data[:-1,1] = IndR_ssp585_p3_NCR_regress[2].data
-plot_data[:-1,2] = IndR_diff_NCR_rvalue.data
-plot_data[-1,0] = IndR_his_NCR_rvalue_ens.data
-plot_data[-1,1] = IndR_ssp585_p3_NCR_rvalue_ens.data
-plot_data[-1,2] = IndR_diff_NCR_rvalue_ens.data
-
-models = list(IndR_his_NCR_regress[0].coords["models"].data)
-models.append("MME")
-
-fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
-axs = fig.subplots(ncols=1, nrows=1)
-m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
-axs[0].axhline(0,lw=1.5,color="grey7")
-axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
-axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
-for num,i in enumerate(IndR_diff_NCR_rvalue_mask.data):
-    if i > 0:
-        axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
-
-axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
-# ax.outline_patch.set_linewidth(1.0)
-fig.format(suptitle="Cor. Coeff. IndR and NCR")
-# %%
 # # pick_up the good models
 # gmodels = ["CNRM-CM6-1", "MIROC-ES2L", "NorESM2-LM", "HadGEM3-GC31-LL", "MRI-ESM2-0", "ACCESS-CM2", "MIROC6", "EC-Earth3", "CESM2-WACCM", "CAMS-CSM1-0"]
 # prehis_JJA_gmodels = prehis_JJA.sel(models=gmodels)
@@ -4948,15 +4837,124 @@ cb = fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 cb.set_ticks(np.arange(-0.5, 0.55, 0.1))
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg YZRR")
 # %%
+#   calculate the linregress for NC area
+IndR_his_NC_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979))
+IndR_ssp585_NC_regress = ca.dim_linregress(pressp585_India_JJA, pressp585_NC_JJA)
+IndR_ssp585_p3_NC_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_NC_JJA.sel(time=pressp585_NC_JJA.time.dt.year>=2064))
+
+IndR_diff_NC_slope = IndR_ssp585_p3_NC_regress[0]-IndR_his_NC_regress[0]
+IndR_diff_NC_rvalue = ca.cal_rdiff(IndR_ssp585_p3_NC_regress[2],IndR_his_NC_regress[2])
+
+IndR_diff_NC_rvalue_mask = ca.Fisher_Z_test(IndR_his_NC_regress[2], IndR_ssp585_p3_NC_regress[2], 36, 36, **{"return_mask":True})
+
+prehis_India_JJA_copy = prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979).copy()
+prehis_NC_JJA_copy = prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979).copy()
+pressp585_p3_India_JJA_copy = pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064).copy()
+pressp585_p3_NC_JJA_copy = pressp585_NC_JJA.sel(time=pressp585_NC_JJA.time.dt.year>=2064).copy()
+
+prehis_India_JJA_copy.coords["time"] = np.arange(len(prehis_India_JJA_copy.coords["time"]))
+prehis_NC_JJA_copy.coords["time"] = np.arange(len(prehis_NC_JJA_copy.coords["time"]))
+
+pressp585_p3_India_JJA_copy.coords["time"] = np.arange(len(pressp585_p3_India_JJA_copy.coords["time"]))
+pressp585_p3_NC_JJA_copy.coords["time"] = np.arange(len(pressp585_p3_NC_JJA_copy.coords["time"]))
+
+IndR_diff_NC_slope_mask = xr.apply_ufunc(
+    ca.Fisher_permutation_test,
+    prehis_India_JJA_copy,
+    prehis_NC_JJA_copy,
+    pressp585_p3_India_JJA_copy,
+    pressp585_p3_NC_JJA_copy,
+    input_core_dims=[["time"],["time"],["time"],["time"]],
+    output_core_dims=[[]],
+    vectorize=True,
+    dask="parallelized",
+    kwargs={"return_mask":True}
+)
+
+IndR_diff_NC_slope_ens = IndR_diff_NC_slope.mean(dim="models",skipna=True)
+IndR_diff_NC_rvalue_ens = ca.cal_rMME(IndR_diff_NC_rvalue,"models")
+
+IndR_his_NC_slope_ens = IndR_his_NC_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_NC_slope_ens = IndR_ssp585_NC_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_p3_NC_slope_ens = IndR_ssp585_p3_NC_regress[0].mean(dim="models",skipna=True)
+
+IndR_his_NC_slope_lowlim,IndR_his_NC_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_his_NC_regress[0], 1000, 0.95)
+IndR_ssp585_p3_NC_slope_lowlim,IndR_ssp585_p3_NC_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_ssp585_p3_NC_regress[0], 1000, 0.95)
+
+IndR_his_NC_rvalue_ens = ca.cal_rMME(IndR_his_NC_regress[2],"models")
+IndR_ssp585_NC_rvalue_ens = ca.cal_rMME(IndR_ssp585_NC_regress[2],"models")
+IndR_ssp585_p3_NC_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_NC_regress[2],"models")
+# %%
+#   plot the bar-plot for regression coefficients
+plot_data = np.zeros((27,3))
+plot_data[:-1,0] = IndR_his_NC_regress[0].data
+plot_data[:-1,1] = IndR_ssp585_p3_NC_regress[0].data
+plot_data[:-1,2] = IndR_diff_NC_slope.data
+plot_data[-1,0] = IndR_his_NC_slope_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_NC_slope_ens.data
+plot_data[-1,2] = IndR_diff_NC_slope_ens.data
+
+bar_data = np.zeros((2,27))
+# bar_data[0,:-1,:] = plot_data[:-1,:]
+# bar_data[1,:-1,:] = plot_data[:-1,:]
+# bar_data[0,-1,0] = IndR_his_NC_slope_lowlim
+# bar_data[1,-1,0] = IndR_his_NC_slope_highlim
+bar_data[0,-1] = IndR_ssp585_p3_NC_slope_lowlim
+bar_data[1,-1] = IndR_ssp585_p3_NC_slope_highlim
+
+models = list(IndR_his_NC_regress[0].coords["models"].data)
+models.append("MME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+for num,i in enumerate(IndR_diff_NC_slope_mask.data):
+    if i > 0:
+        axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-0.5,0.5),ylocator=np.arange(-0.5,0.6,0.1),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and NCR")
+
+# %%
+#   plot the bar-plot for correlation coefficients
+plot_data = np.zeros((27,3))
+plot_data[:-1,0] = IndR_his_NC_regress[2].data
+plot_data[:-1,1] = IndR_ssp585_p3_NC_regress[2].data
+plot_data[:-1,2] = IndR_diff_NC_rvalue.data
+plot_data[-1,0] = IndR_his_NC_rvalue_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_NC_rvalue_ens.data
+plot_data[-1,2] = IndR_diff_NC_rvalue_ens.data
+
+models = list(IndR_his_NC_regress[0].coords["models"].data)
+models.append("MME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+for num,i in enumerate(IndR_diff_NC_rvalue_mask.data):
+    if i > 0:
+        axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Cor. Coeff. IndR and NCR")
+# %%
 #   calculate the linregress
-IndR_his_SCR_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_SC_JJA.sel(time=prehis_SC_JJA.time.dt.year>=1979))
-IndR_ssp585_SCR_regress = ca.dim_linregress(pressp585_India_JJA, pressp585_SC_JJA)
-IndR_ssp585_p3_SCR_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_SC_JJA.sel(time=pressp585_SC_JJA.time.dt.year>=2064))
+IndR_his_SC_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_SC_JJA.sel(time=prehis_SC_JJA.time.dt.year>=1979))
+IndR_ssp585_SC_regress = ca.dim_linregress(pressp585_India_JJA, pressp585_SC_JJA)
+IndR_ssp585_p3_SC_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_SC_JJA.sel(time=pressp585_SC_JJA.time.dt.year>=2064))
 
-IndR_diff_SCR_slope = IndR_ssp585_p3_SCR_regress[0]-IndR_his_SCR_regress[0]
-IndR_diff_SCR_rvalue = ca.cal_rdiff(IndR_ssp585_p3_SCR_regress[2],IndR_his_SCR_regress[2])
+IndR_diff_SC_slope = IndR_ssp585_p3_SC_regress[0]-IndR_his_SC_regress[0]
+IndR_diff_SC_rvalue = ca.cal_rdiff(IndR_ssp585_p3_SC_regress[2],IndR_his_SC_regress[2])
 
-IndR_diff_SCR_rvalue_mask = ca.Fisher_Z_test(IndR_his_SCR_regress[2], IndR_ssp585_p3_SCR_regress[2], 36, 36, **{"return_mask":True})
+IndR_diff_SC_rvalue_mask = ca.Fisher_Z_test(IndR_his_SC_regress[2], IndR_ssp585_p3_SC_regress[2], 36, 36, **{"return_mask":True})
 
 prehis_India_JJA_copy = prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979).copy()
 prehis_SC_JJA_copy = prehis_SC_JJA.sel(time=prehis_SC_JJA.time.dt.year>=1979).copy()
@@ -4969,7 +4967,7 @@ prehis_SC_JJA_copy.coords["time"] = np.arange(len(prehis_SC_JJA_copy.coords["tim
 pressp585_p3_India_JJA_copy.coords["time"] = np.arange(len(pressp585_p3_India_JJA_copy.coords["time"]))
 pressp585_p3_SC_JJA_copy.coords["time"] = np.arange(len(pressp585_p3_SC_JJA_copy.coords["time"]))
 
-IndR_diff_SCR_slope_mask = xr.apply_ufunc(
+IndR_diff_SC_slope_mask = xr.apply_ufunc(
     ca.Fisher_permutation_test,
     prehis_India_JJA_copy,
     prehis_SC_JJA_copy,
@@ -4982,64 +4980,64 @@ IndR_diff_SCR_slope_mask = xr.apply_ufunc(
     kwargs={"return_mask":True}
 )
 
-IndR_diff_SCR_slope_ens = IndR_diff_SCR_slope.mean(dim="models",skipna=True)
-IndR_diff_SCR_rvalue_ens = ca.cal_rMME(IndR_diff_SCR_rvalue,"models")
+IndR_diff_SC_slope_ens = IndR_diff_SC_slope.mean(dim="models",skipna=True)
+IndR_diff_SC_rvalue_ens = ca.cal_rMME(IndR_diff_SC_rvalue,"models")
 
-IndR_his_SCR_slope_ens = IndR_his_SCR_regress[0].mean(dim="models",skipna=True)
-IndR_ssp585_SCR_slope_ens = IndR_ssp585_SCR_regress[0].mean(dim="models",skipna=True)
-IndR_ssp585_p3_SCR_slope_ens = IndR_ssp585_p3_SCR_regress[0].mean(dim="models",skipna=True)
+IndR_his_SC_slope_ens = IndR_his_SC_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_SC_slope_ens = IndR_ssp585_SC_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_p3_SC_slope_ens = IndR_ssp585_p3_SC_regress[0].mean(dim="models",skipna=True)
 
-IndR_his_SCR_slope_lowlim,IndR_his_SCR_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_his_SCR_regress[0], 1000, 0.95)
-IndR_ssp585_p3_SCR_slope_lowlim,IndR_ssp585_p3_SCR_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_ssp585_p3_SCR_regress[0], 1000, 0.95)
+IndR_his_SC_slope_lowlim,IndR_his_SC_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_his_SC_regress[0], 1000, 0.95)
+IndR_ssp585_p3_SC_slope_lowlim,IndR_ssp585_p3_SC_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_ssp585_p3_SC_regress[0], 1000, 0.95)
 
-IndR_his_SCR_rvalue_ens = ca.cal_rMME(IndR_his_SCR_regress[2],"models")
-IndR_ssp585_SCR_rvalue_ens = ca.cal_rMME(IndR_ssp585_SCR_regress[2],"models")
-IndR_ssp585_p3_SCR_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_SCR_regress[2],"models")
+IndR_his_SC_rvalue_ens = ca.cal_rMME(IndR_his_SC_regress[2],"models")
+IndR_ssp585_SC_rvalue_ens = ca.cal_rMME(IndR_ssp585_SC_regress[2],"models")
+IndR_ssp585_p3_SC_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_SC_regress[2],"models")
 # %%
 #   plot the bar-plot for regression coefficients
 plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_SCR_regress[0].data
-plot_data[:-1,1] = IndR_ssp585_p3_SCR_regress[0].data
-plot_data[:-1,2] = IndR_diff_SCR_slope.data
-plot_data[-1,0] = IndR_his_SCR_slope_ens.data
-plot_data[-1,1] = IndR_ssp585_p3_SCR_slope_ens.data
-plot_data[-1,2] = IndR_diff_SCR_slope_ens.data
+plot_data[:-1,0] = IndR_his_SC_regress[0].data
+plot_data[:-1,1] = IndR_ssp585_p3_SC_regress[0].data
+plot_data[:-1,2] = IndR_diff_SC_slope.data
+plot_data[-1,0] = IndR_his_SC_slope_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_SC_slope_ens.data
+plot_data[-1,2] = IndR_diff_SC_slope_ens.data
 
 bar_data = np.zeros((2,27))
 # bar_data[0,:-1,:] = plot_data[:-1,:]
 # bar_data[1,:-1,:] = plot_data[:-1,:]
-# bar_data[0,-1,0] = IndR_his_SCR_slope_lowlim
-# bar_data[1,-1,0] = IndR_his_SCR_slope_highlim
-bar_data[0,-1] = IndR_ssp585_p3_SCR_slope_lowlim
-bar_data[1,-1] = IndR_ssp585_p3_SCR_slope_highlim
+# bar_data[0,-1,0] = IndR_his_SC_slope_lowlim
+# bar_data[1,-1,0] = IndR_his_SC_slope_highlim
+bar_data[0,-1] = IndR_ssp585_p3_SC_slope_lowlim
+bar_data[1,-1] = IndR_ssp585_p3_SC_slope_highlim
 
-models = list(IndR_his_SCR_regress[0].coords["models"].data)
+models = list(IndR_his_SC_regress[0].coords["models"].data)
 models.append("MME")
 
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
 m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
 axs[0].axhline(0,lw=1.5,color="grey7")
-for num,i in enumerate(IndR_diff_SCR_slope_mask.data):
+for num,i in enumerate(IndR_diff_SC_slope_mask.data):
     if i > 0:
         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[0].format(ylim=(-0.5,0.5),ylocator=np.arange(-0.5,0.6,0.1),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+axs[0].format(ylim=(-0.8,0.8),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Reg. Coeff. IndR and SCR")
 
 # %%
 #   plot the bar-plot for correlation coefficients
 plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_SCR_regress[2].data
-plot_data[:-1,1] = IndR_ssp585_p3_SCR_regress[2].data
-plot_data[:-1,2] = IndR_diff_SCR_rvalue.data
-plot_data[-1,0] = IndR_his_SCR_rvalue_ens.data
-plot_data[-1,1] = IndR_ssp585_p3_SCR_rvalue_ens.data
-plot_data[-1,2] = IndR_diff_SCR_rvalue_ens.data
+plot_data[:-1,0] = IndR_his_SC_regress[2].data
+plot_data[:-1,1] = IndR_ssp585_p3_SC_regress[2].data
+plot_data[:-1,2] = IndR_diff_SC_rvalue.data
+plot_data[-1,0] = IndR_his_SC_rvalue_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_SC_rvalue_ens.data
+plot_data[-1,2] = IndR_diff_SC_rvalue_ens.data
 
-models = list(IndR_his_SCR_regress[0].coords["models"].data)
+models = list(IndR_his_SC_regress[0].coords["models"].data)
 models.append("MME")
 
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
@@ -5048,7 +5046,7 @@ m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
 axs[0].axhline(0,lw=1.5,color="grey7")
 axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
 axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
-for num,i in enumerate(IndR_diff_SCR_rvalue_mask.data):
+for num,i in enumerate(IndR_diff_SC_rvalue_mask.data):
     if i > 0:
         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
@@ -5059,6 +5057,7 @@ fig.format(suptitle="Cor. Coeff. IndR and SCR")
 
 # %%
 #   calculate the linregress
+IndR_GPCP_EAU_regress = stats.linregress(preGPCP_India_JJA, uERA5_EA_JJA.sel(time=uERA5_EA_JJA.time.dt.year>=1979))
 IndR_his_EAU_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979))
 IndR_ssp585_EAU_regress = ca.dim_linregress(pressp585_India_JJA, ussp585_EA_JJA)
 IndR_ssp585_p3_EAU_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064))
@@ -5167,29 +5166,27 @@ axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickm
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Cor. Coeff. IndR and EAU")
 # %%
-preCRU_India_JJA.coords["time"] = preCRU_SC_JJA.coords["time"]
-IndR_CRU_SCR_regress = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), preCRU_SC_JJA.sel(time=preCRU_SC_JJA.time.dt.year>=1979))
-IndR_CRU_NCR_regress = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), preCRU_NC_JJA.sel(time=preCRU_NC_JJA.time.dt.year>=1979))
+IndR_CRU_SC_regress = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), preCRU_SC_JJA.sel(time=preCRU_SC_JJA.time.dt.year>=1979))
+IndR_CRU_NC_regress = ca.dim_linregress(preCRU_India_JJA.sel(time=preCRU_India_JJA.time.dt.year>=1979), preCRU_NC_JJA.sel(time=preCRU_NC_JJA.time.dt.year>=1979))
 
-IndR_GPCP_SCR_regress = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), preGPCP_SC_JJA.sel(time=preGPCP_SC_JJA.time.dt.year>=1979))
-IndR_GPCP_NCR_regress = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), preGPCP_NC_JJA.sel(time=preGPCP_NC_JJA.time.dt.year>=1979))
+IndR_GPCP_SC_regress = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), preGPCP_SC_JJA.sel(time=preGPCP_SC_JJA.time.dt.year>=1979))
+IndR_GPCP_NC_regress = ca.dim_linregress(preGPCP_India_JJA.sel(time=preGPCP_India_JJA.time.dt.year>=1979), preGPCP_NC_JJA.sel(time=preGPCP_NC_JJA.time.dt.year>=1979))
 # %%
 #   plot the x-y scatter plots for 1979-2014
-models=IndR_his_SCR_regress[2].coords["models"].data
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
 cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
 # cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
-# m = axs[0].scatter(IndR_CRU_SCR_regress[2], IndR_CRU_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
-m = axs[0].scatter(IndR_GPCP_SCR_regress[2], IndR_GPCP_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
-for num_models, mod in enumerate(models):
-    m = axs[0].scatter(IndR_his_SCR_regress[2].sel(models=mod), IndR_his_NCR_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(IndR_GPCP_SC_regress[2], IndR_GPCP_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_his_SC_regress[2].sel(models=mod), IndR_his_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
 # fig.legend(loc="bottom", labels=models)
 # axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
-m = axs[0].scatter(IndR_his_SCR_rvalue_ens, IndR_his_NCR_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+m = axs[0].scatter(IndR_his_SC_rvalue_ens, IndR_his_NC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
 axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -5202,17 +5199,16 @@ axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95
 axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="SCR", ylabel="NCR", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
 # %%
 #   plot the x-y scatter plots for 2064-2099
-models=IndR_his_SCR_regress[2].coords["models"].data
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
 cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
 # cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
-# m = axs[0].scatter(IndR_CRU_SCR_regress[2], IndR_CRU_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
-# m = axs[0].scatter(IndR_GPCP_SCR_regress[2], IndR_GPCP_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
-for num_models, mod in enumerate(models):
-    m = axs[0].scatter(IndR_ssp585_p3_SCR_regress[2].sel(models=mod), IndR_ssp585_p3_NCR_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+# m = axs[0].scatter(IndR_GPCP_SC_regress[2], IndR_GPCP_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_ssp585_p3_SC_regress[2].sel(models=mod), IndR_ssp585_p3_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
 # fig.legend(loc="bottom", labels=models)
-m = axs[0].scatter(IndR_ssp585_SCR_rvalue_ens, IndR_ssp585_p3_NCR_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+m = axs[0].scatter(IndR_ssp585_p3_SC_rvalue_ens, IndR_ssp585_p3_NC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
 axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -5367,8 +5363,6 @@ for num_mod,mod in enumerate(models):
     axs[num_mod+1].format(ltitle=mod.data)
 fig.legend(handles=[m1,m2], loc="bottom", labels=["IndR", "EAU"])
 fig.format(abc="(a)", abcloc="l", suptitle="IndR and EAU")
-
-# %%
 
 # %%
 #   calculate the regression of IndR
@@ -5597,38 +5591,35 @@ for num_mod,mod in enumerate(models):
 #================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="T&U reg IndR")
-
-
 # %%
 #   calculate the linregress
-IndR_GPCP_EAU_TMTG_regress = stats.linregress(preGPCP_India_JJA, EAU_TMTGERA5_JJA.sel(time=EAU_TMTGERA5_JJA.time.dt.year>=1979))
-IndR_GPCP_EAU_regress = stats.linregress(preGPCP_India_JJA, uERA5_EA_JJA.sel(time=uERA5_EA_JJA.time.dt.year>=1979))
-IndR_his_EAU_TMTG_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), EAU_TMTGhis_JJA.sel(time=EAU_TMTGhis_JJA.time.dt.year>=1979))
-IndR_ssp585_EAU_TMTG_regress = ca.dim_linregress(pressp585_India_JJA, EAU_TMTGssp585_JJA)
-IndR_ssp585_p3_EAU_TMTG_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), EAU_TMTGssp585_JJA.sel(time=EAU_TMTGssp585_JJA.time.dt.year>=2064))
+IndR_GPCP_EAU_MTG_regress = stats.linregress(preGPCP_India_JJA, EAU_MTGERA5_JJA.sel(time=EAU_MTGERA5_JJA.time.dt.year>=1979))
+IndR_his_EAU_MTG_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), EAU_MTGhis_JJA.sel(time=EAU_MTGhis_JJA.time.dt.year>=1979))
+IndR_ssp585_EAU_MTG_regress = ca.dim_linregress(pressp585_India_JJA, EAU_MTGssp585_JJA)
+IndR_ssp585_p3_EAU_MTG_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), EAU_MTGssp585_JJA.sel(time=EAU_MTGssp585_JJA.time.dt.year>=2064))
 
-IndR_diff_EAU_TMTG_slope = IndR_ssp585_p3_EAU_TMTG_regress[0]-IndR_his_EAU_TMTG_regress[0]
-IndR_diff_EAU_TMTG_rvalue = ca.cal_rdiff(IndR_ssp585_p3_EAU_TMTG_regress[2],IndR_his_EAU_TMTG_regress[2])
+IndR_diff_EAU_MTG_slope = IndR_ssp585_p3_EAU_MTG_regress[0]-IndR_his_EAU_MTG_regress[0]
+IndR_diff_EAU_MTG_rvalue = ca.cal_rdiff(IndR_ssp585_p3_EAU_MTG_regress[2],IndR_his_EAU_MTG_regress[2])
 
-IndR_diff_EAU_TMTG_rvalue_mask = ca.Fisher_Z_test(IndR_his_EAU_TMTG_regress[2], IndR_ssp585_p3_EAU_TMTG_regress[2], 36, 36, **{"return_mask":True})
+IndR_diff_EAU_MTG_rvalue_mask = ca.Fisher_Z_test(IndR_his_EAU_MTG_regress[2], IndR_ssp585_p3_EAU_MTG_regress[2], 36, 36, **{"return_mask":True})
 
 prehis_India_JJA_copy = prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979).copy()
-EAU_TMTGhis_JJA_copy = EAU_TMTGhis_JJA.sel(time=EAU_TMTGhis_JJA.time.dt.year>=1979).copy()
+EAU_MTGhis_JJA_copy = EAU_MTGhis_JJA.sel(time=EAU_MTGhis_JJA.time.dt.year>=1979).copy()
 pressp585_p3_India_JJA_copy = pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064).copy()
-EAU_TMTGssp585_p3_JJA_copy = EAU_TMTGssp585_JJA.sel(time=EAU_TMTGssp585_JJA.time.dt.year>=2064).copy()
+EAU_MTGssp585_p3_JJA_copy = EAU_MTGssp585_JJA.sel(time=EAU_MTGssp585_JJA.time.dt.year>=2064).copy()
 
 prehis_India_JJA_copy.coords["time"] = np.arange(len(prehis_India_JJA_copy.coords["time"]))
-EAU_TMTGhis_JJA_copy.coords["time"] = np.arange(len(EAU_TMTGhis_JJA_copy.coords["time"]))
+EAU_MTGhis_JJA_copy.coords["time"] = np.arange(len(EAU_MTGhis_JJA_copy.coords["time"]))
 
 pressp585_p3_India_JJA_copy.coords["time"] = np.arange(len(pressp585_p3_India_JJA_copy.coords["time"]))
-EAU_TMTGssp585_p3_JJA_copy.coords["time"] = np.arange(len(EAU_TMTGssp585_p3_JJA_copy.coords["time"]))
+EAU_MTGssp585_p3_JJA_copy.coords["time"] = np.arange(len(EAU_MTGssp585_p3_JJA_copy.coords["time"]))
 
-IndR_diff_EAU_TMTG_slope_mask = xr.apply_ufunc(
+IndR_diff_EAU_MTG_slope_mask = xr.apply_ufunc(
     ca.Fisher_permutation_test,
     prehis_India_JJA_copy,
-    EAU_TMTGhis_JJA_copy,
+    EAU_MTGhis_JJA_copy,
     pressp585_p3_India_JJA_copy,
-    EAU_TMTGssp585_p3_JJA_copy,
+    EAU_MTGssp585_p3_JJA_copy,
     input_core_dims=[["time"],["time"],["time"],["time"]],
     output_core_dims=[[]],
     vectorize=True,
@@ -5636,64 +5627,64 @@ IndR_diff_EAU_TMTG_slope_mask = xr.apply_ufunc(
     kwargs={"return_mask":True}
 )
 
-IndR_diff_EAU_TMTG_slope_ens = IndR_diff_EAU_TMTG_slope.mean(dim="models",skipna=True)
-IndR_diff_EAU_TMTG_rvalue_ens = ca.cal_rMME(IndR_diff_EAU_TMTG_rvalue,"models")
+IndR_diff_EAU_MTG_slope_ens = IndR_diff_EAU_MTG_slope.mean(dim="models",skipna=True)
+IndR_diff_EAU_MTG_rvalue_ens = ca.cal_rMME(IndR_diff_EAU_MTG_rvalue,"models")
 
-IndR_his_EAU_TMTG_slope_ens = IndR_his_EAU_TMTG_regress[0].mean(dim="models",skipna=True)
-IndR_ssp585_EAU_TMTG_slope_ens = IndR_ssp585_EAU_TMTG_regress[0].mean(dim="models",skipna=True)
-IndR_ssp585_p3_EAU_TMTG_slope_ens = IndR_ssp585_p3_EAU_TMTG_regress[0].mean(dim="models",skipna=True)
+IndR_his_EAU_MTG_slope_ens = IndR_his_EAU_MTG_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_EAU_MTG_slope_ens = IndR_ssp585_EAU_MTG_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_p3_EAU_MTG_slope_ens = IndR_ssp585_p3_EAU_MTG_regress[0].mean(dim="models",skipna=True)
 
-IndR_his_EAU_TMTG_slope_lowlim,IndR_his_EAU_TMTG_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_his_EAU_TMTG_regress[0], 1000, 0.95)
-IndR_ssp585_p3_EAU_TMTG_slope_lowlim,IndR_ssp585_p3_EAU_TMTG_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_ssp585_p3_EAU_TMTG_regress[0], 1000, 0.95)
+IndR_his_EAU_MTG_slope_lowlim,IndR_his_EAU_MTG_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_his_EAU_MTG_regress[0], 1000, 0.95)
+IndR_ssp585_p3_EAU_MTG_slope_lowlim,IndR_ssp585_p3_EAU_MTG_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_ssp585_p3_EAU_MTG_regress[0], 1000, 0.95)
 
-IndR_his_EAU_TMTG_rvalue_ens = ca.cal_rMME(IndR_his_EAU_TMTG_regress[2],"models")
-IndR_ssp585_EAU_TMTG_rvalue_ens = ca.cal_rMME(IndR_ssp585_EAU_TMTG_regress[2],"models")
-IndR_ssp585_p3_EAU_TMTG_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_EAU_TMTG_regress[2],"models")
+IndR_his_EAU_MTG_rvalue_ens = ca.cal_rMME(IndR_his_EAU_MTG_regress[2],"models")
+IndR_ssp585_EAU_MTG_rvalue_ens = ca.cal_rMME(IndR_ssp585_EAU_MTG_regress[2],"models")
+IndR_ssp585_p3_EAU_MTG_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_EAU_MTG_regress[2],"models")
 # %%
 #   plot the bar-plot for regression coefficients
 plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_EAU_TMTG_regress[0].data
-plot_data[:-1,1] = IndR_ssp585_p3_EAU_TMTG_regress[0].data
-plot_data[:-1,2] = IndR_diff_EAU_TMTG_slope.data
-plot_data[-1,0] = IndR_his_EAU_TMTG_slope_ens.data
-plot_data[-1,1] = IndR_ssp585_p3_EAU_TMTG_slope_ens.data
-plot_data[-1,2] = IndR_diff_EAU_TMTG_slope_ens.data
+plot_data[:-1,0] = IndR_his_EAU_MTG_regress[0].data
+plot_data[:-1,1] = IndR_ssp585_p3_EAU_MTG_regress[0].data
+plot_data[:-1,2] = IndR_diff_EAU_MTG_slope.data
+plot_data[-1,0] = IndR_his_EAU_MTG_slope_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_EAU_MTG_slope_ens.data
+plot_data[-1,2] = IndR_diff_EAU_MTG_slope_ens.data
 
 bar_data = np.zeros((2,27))
 # bar_data[0,:-1,:] = plot_data[:-1,:]
 # bar_data[1,:-1,:] = plot_data[:-1,:]
-# bar_data[0,-1,0] = IndR_his_EAU_TMTG_slope_lowlim
-# bar_data[1,-1,0] = IndR_his_EAU_TMTG_slope_highlim
-bar_data[0,-1] = IndR_ssp585_p3_EAU_TMTG_slope_lowlim
-bar_data[1,-1] = IndR_ssp585_p3_EAU_TMTG_slope_highlim
+# bar_data[0,-1,0] = IndR_his_EAU_MTG_slope_lowlim
+# bar_data[1,-1,0] = IndR_his_EAU_MTG_slope_highlim
+bar_data[0,-1] = IndR_ssp585_p3_EAU_MTG_slope_lowlim
+bar_data[1,-1] = IndR_ssp585_p3_EAU_MTG_slope_highlim
 
-models = list(IndR_his_EAU_TMTG_regress[0].coords["models"].data)
+models = list(IndR_his_EAU_MTG_regress[0].coords["models"].data)
 models.append("MME")
 
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
 m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
 axs[0].axhline(0,lw=1.5,color="grey7")
-for num,i in enumerate(IndR_diff_EAU_TMTG_slope_mask.data):
+for num,i in enumerate(IndR_diff_EAU_MTG_slope_mask.data):
     if i > 0:
         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-5.5e3,5.5e3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
-fig.format(suptitle="Reg. Coeff. IndR and EAU_TMTG")
+fig.format(suptitle="Reg. Coeff. IndR and EAU_MTG")
 
 # %%
 #   plot the bar-plot for correlation coefficients
 plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_EAU_TMTG_regress[2].data
-plot_data[:-1,1] = IndR_ssp585_p3_EAU_TMTG_regress[2].data
-plot_data[:-1,2] = IndR_diff_EAU_TMTG_rvalue.data
-plot_data[-1,0] = IndR_his_EAU_TMTG_rvalue_ens.data
-plot_data[-1,1] = IndR_ssp585_p3_EAU_TMTG_rvalue_ens.data
-plot_data[-1,2] = IndR_diff_EAU_TMTG_rvalue_ens.data
+plot_data[:-1,0] = IndR_his_EAU_MTG_regress[2].data
+plot_data[:-1,1] = IndR_ssp585_p3_EAU_MTG_regress[2].data
+plot_data[:-1,2] = IndR_diff_EAU_MTG_rvalue.data
+plot_data[-1,0] = IndR_his_EAU_MTG_rvalue_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_EAU_MTG_rvalue_ens.data
+plot_data[-1,2] = IndR_diff_EAU_MTG_rvalue_ens.data
 
-models = list(IndR_his_EAU_TMTG_regress[0].coords["models"].data)
+models = list(IndR_his_EAU_MTG_regress[0].coords["models"].data)
 models.append("MME")
 
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
@@ -5702,31 +5693,30 @@ m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
 axs[0].axhline(0,lw=1.5,color="grey7")
 axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
 axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
-for num,i in enumerate(IndR_diff_EAU_TMTG_rvalue_mask.data):
+for num,i in enumerate(IndR_diff_EAU_MTG_rvalue_mask.data):
     if i > 0:
         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
-fig.format(suptitle="Cor. Coeff. IndR and EAU_TMTG")
+fig.format(suptitle="Cor. Coeff. IndR and EAU_MTG")
 # %%
 #   plot the x-y scatter plots for 1979-2014
-models=IndR_his_EAU_TMTG_regress[2].coords["models"].data
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
 cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
 # cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
-# m = axs[0].scatter(IndR_CRU_EAU_TMTG_regress[2], IndR_CRU_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
-m = axs[0].scatter(IndR_GPCP_EAU_TMTG_regress[2], IndR_GPCP_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
-for num_models, mod in enumerate(models):
-    m = axs[0].scatter(IndR_his_EAU_TMTG_regress[2].sel(models=mod), IndR_his_EAU_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# m = axs[0].scatter(IndR_CRU_EAU_MTG_regress[2], IndR_CRU_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(IndR_GPCP_EAU_MTG_regress[2], IndR_GPCP_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_his_EAU_MTG_regress[2].sel(models=mod), IndR_his_EAU_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
 # fig.legend(loc="bottom", labels=models)
 # axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
-m = axs[0].scatter(IndR_his_EAU_TMTG_rvalue_ens, IndR_his_EAU_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+m = axs[0].scatter(IndR_his_EAU_MTG_rvalue_ens, IndR_his_EAU_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
 axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -5736,20 +5726,19 @@ axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95,
 axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
-axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_TMTG", ylabel="EAU", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_MTG", ylabel="EAU", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
 # %%
 #   plot the x-y scatter plots for 2064-2099
-models=IndR_his_EAU_TMTG_regress[2].coords["models"].data
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
 cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
 # cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
-# m = axs[0].scatter(IndR_CRU_EAU_TMTG_regress[2], IndR_CRU_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
-# m = axs[0].scatter(IndR_GPCP_EAU_TMTG_regress[2], IndR_GPCP_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
-for num_models, mod in enumerate(models):
-    m = axs[0].scatter(IndR_ssp585_p3_EAU_TMTG_regress[2].sel(models=mod), IndR_ssp585_p3_EAU_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# m = axs[0].scatter(IndR_CRU_EAU_MTG_regress[2], IndR_CRU_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+# m = axs[0].scatter(IndR_GPCP_EAU_MTG_regress[2], IndR_GPCP_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_ssp585_p3_EAU_MTG_regress[2].sel(models=mod), IndR_ssp585_p3_EAU_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
 # fig.legend(loc="bottom", labels=models)
-m = axs[0].scatter(IndR_ssp585_EAU_TMTG_rvalue_ens, IndR_ssp585_p3_EAU_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+m = axs[0].scatter(IndR_ssp585_p3_EAU_MTG_rvalue_ens, IndR_ssp585_p3_EAU_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
 axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -5759,24 +5748,23 @@ axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95,
 axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
-axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_TMTG", ylabel="EAU", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_MTG", ylabel="EAU", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
 # %%
 #   plot the x-y scatter plots for 1979-2014
-models=IndR_his_EAU_TMTG_regress[2].coords["models"].data
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
 cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
 # cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
-# m = axs[0].scatter(IndR_CRU_EAU_TMTG_regress[2], IndR_CRU_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
-m = axs[0].scatter(IndR_GPCP_EAU_TMTG_regress[2], IndR_GPCP_NCR_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
-for num_models, mod in enumerate(models):
-    m = axs[0].scatter(IndR_his_EAU_TMTG_regress[2].sel(models=mod), IndR_his_NCR_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# m = axs[0].scatter(IndR_CRU_EAU_MTG_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(IndR_GPCP_EAU_MTG_regress[2], IndR_GPCP_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_his_EAU_MTG_regress[2].sel(models=mod), IndR_his_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
 # fig.legend(loc="bottom", labels=models)
 # axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
-m = axs[0].scatter(IndR_his_EAU_TMTG_rvalue_ens, IndR_his_NCR_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+m = axs[0].scatter(IndR_his_EAU_MTG_rvalue_ens, IndR_his_NC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
 axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -5786,20 +5774,19 @@ axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95,
 axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
-axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_TMTG", ylabel="NCR", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_MTG", ylabel="NCR", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
 # %%
 #   plot the x-y scatter plots for 2064-2099
-models=IndR_his_EAU_TMTG_regress[2].coords["models"].data
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
 cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
 # cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
-# m = axs[0].scatter(IndR_CRU_EAU_TMTG_regress[2], IndR_CRU_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
-# m = axs[0].scatter(IndR_GPCP_EAU_TMTG_regress[2], IndR_GPCP_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
-for num_models, mod in enumerate(models):
-    m = axs[0].scatter(IndR_ssp585_p3_EAU_TMTG_regress[2].sel(models=mod), IndR_ssp585_p3_EAU_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# m = axs[0].scatter(IndR_CRU_EAU_MTG_regress[2], IndR_CRU_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+# m = axs[0].scatter(IndR_GPCP_EAU_MTG_regress[2], IndR_GPCP_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_ssp585_p3_EAU_MTG_regress[2].sel(models=mod), IndR_ssp585_p3_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
 # fig.legend(loc="bottom", labels=models)
-m = axs[0].scatter(IndR_ssp585_EAU_TMTG_rvalue_ens, IndR_ssp585_p3_EAU_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+m = axs[0].scatter(IndR_ssp585_p3_EAU_MTG_rvalue_ens, IndR_ssp585_p3_NC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
 axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -5809,5 +5796,53 @@ axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95,
 axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
-axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_TMTG", ylabel="EAU", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_MTG", ylabel="NCR", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 1979-2014
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_EAU_MTG_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(IndR_GPCP_EAU_MTG_regress[2], IndR_GPCP_SC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_his_EAU_MTG_regress[2].sel(models=mod), IndR_his_SC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(IndR_his_EAU_MTG_rvalue_ens, IndR_his_SC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_MTG", ylabel="SCR", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 2064-2099
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_EAU_MTG_regress[2], IndR_CRU_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+# m = axs[0].scatter(IndR_GPCP_EAU_MTG_regress[2], IndR_GPCP_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_ssp585_p3_EAU_MTG_regress[2].sel(models=mod), IndR_ssp585_p3_SC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+m = axs[0].scatter(IndR_ssp585_p3_EAU_MTG_rvalue_ens, IndR_ssp585_p3_SC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_MTG", ylabel="SCR", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
 # %%
