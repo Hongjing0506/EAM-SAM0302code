@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-05-05 17:40:04
+LastEditTime: 2022-05-05 21:32:59
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -5314,6 +5314,8 @@ IndR_ssp585_p3_EAhigh_slope_lowlim,IndR_ssp585_p3_EAhigh_slope_highlim = ca.cal_
 IndR_his_EAhigh_rvalue_ens = ca.cal_rMME(IndR_his_EAhigh_regress[2],"models")
 IndR_ssp585_EAhigh_rvalue_ens = ca.cal_rMME(IndR_ssp585_EAhigh_regress[2],"models")
 IndR_ssp585_p3_EAhigh_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_EAhigh_regress[2],"models")
+
+IndR_GPCP_EAhigh_regress = stats.linregress(preGPCP_India_JJA, vorERA5_EAhigh_JJA.sel(time=vorERA5_EAhigh_JJA.time.dt.year>=1979))
 # %%
 #   plot the bar-plot for regression coefficients
 plot_data = np.zeros((27,3))
@@ -6168,4 +6170,454 @@ axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95,
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].format(xlim=(-0.8,0.8), ylim=(-0.8,0.8), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
 # %%
-#   calculate the 
+#   calculate the linregress
+IndR_his_WAhigh_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), vorhis_WAhigh_JJA.sel(time=vorhis_WAhigh_JJA.time.dt.year>=1979))
+IndR_ssp585_WAhigh_regress = ca.dim_linregress(pressp585_India_JJA, vorssp585_WAhigh_JJA)
+IndR_ssp585_p3_WAhigh_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), vorssp585_WAhigh_JJA.sel(time=vorssp585_WAhigh_JJA.time.dt.year>=2064))
+
+IndR_diff_WAhigh_slope = IndR_ssp585_p3_WAhigh_regress[0]-IndR_his_WAhigh_regress[0]
+IndR_diff_WAhigh_rvalue = ca.cal_rdiff(IndR_ssp585_p3_WAhigh_regress[2],IndR_his_WAhigh_regress[2])
+
+IndR_diff_WAhigh_rvalue_mask = ca.Fisher_Z_test(IndR_his_WAhigh_regress[2], IndR_ssp585_p3_WAhigh_regress[2], 36, 36, **{"return_mask":True})
+
+prehis_India_JJA_copy = prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979).copy()
+vorhis_WAhigh_JJA_copy = vorhis_WAhigh_JJA.sel(time=vorhis_WAhigh_JJA.time.dt.year>=1979).copy()
+pressp585_p3_India_JJA_copy = pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064).copy()
+vorssp585_p3_WAhigh_JJA_copy = vorssp585_WAhigh_JJA.sel(time=vorssp585_WAhigh_JJA.time.dt.year>=2064).copy()
+
+prehis_India_JJA_copy.coords["time"] = np.arange(len(prehis_India_JJA_copy.coords["time"]))
+vorhis_WAhigh_JJA_copy.coords["time"] = np.arange(len(vorhis_WAhigh_JJA_copy.coords["time"]))
+
+pressp585_p3_India_JJA_copy.coords["time"] = np.arange(len(pressp585_p3_India_JJA_copy.coords["time"]))
+vorssp585_p3_WAhigh_JJA_copy.coords["time"] = np.arange(len(vorssp585_p3_WAhigh_JJA_copy.coords["time"]))
+
+IndR_diff_WAhigh_slope_mask = xr.apply_ufunc(
+    ca.Fisher_permutation_test,
+    prehis_India_JJA_copy,
+    vorhis_WAhigh_JJA_copy,
+    pressp585_p3_India_JJA_copy,
+    vorssp585_p3_WAhigh_JJA_copy,
+    input_core_dims=[["time"],["time"],["time"],["time"]],
+    output_core_dims=[[]],
+    vectorize=True,
+    dask="parallelized",
+    kwargs={"return_mask":True}
+)
+
+IndR_diff_WAhigh_slope_ens = IndR_diff_WAhigh_slope.mean(dim="models",skipna=True)
+IndR_diff_WAhigh_rvalue_ens = ca.cal_rMME(IndR_diff_WAhigh_rvalue,"models")
+
+IndR_his_WAhigh_slope_ens = IndR_his_WAhigh_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_WAhigh_slope_ens = IndR_ssp585_WAhigh_regress[0].mean(dim="models",skipna=True)
+IndR_ssp585_p3_WAhigh_slope_ens = IndR_ssp585_p3_WAhigh_regress[0].mean(dim="models",skipna=True)
+
+IndR_his_WAhigh_slope_lowlim,IndR_his_WAhigh_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_his_WAhigh_regress[0], 1000, 0.95)
+IndR_ssp585_p3_WAhigh_slope_lowlim,IndR_ssp585_p3_WAhigh_slope_highlim = ca.cal_mean_bootstrap_confidence_intervals(IndR_ssp585_p3_WAhigh_regress[0], 1000, 0.95)
+
+IndR_his_WAhigh_rvalue_ens = ca.cal_rMME(IndR_his_WAhigh_regress[2],"models")
+IndR_ssp585_WAhigh_rvalue_ens = ca.cal_rMME(IndR_ssp585_WAhigh_regress[2],"models")
+IndR_ssp585_p3_WAhigh_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_WAhigh_regress[2],"models")
+
+IndR_GPCP_WAhigh_regress = stats.linregress(preGPCP_India_JJA, vorERA5_WAhigh_JJA.sel(time=vorERA5_WAhigh_JJA.time.dt.year>=1979))
+
+# %%
+#   plot the bar-plot of the anticyclone over west Asia
+plot_data = np.zeros((27,3))
+plot_data[:-1,0] = IndR_his_WAhigh_regress[0].data
+plot_data[:-1,1] = IndR_ssp585_p3_WAhigh_regress[0].data
+plot_data[:-1,2] = IndR_diff_WAhigh_slope.data
+plot_data[-1,0] = IndR_his_WAhigh_slope_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_WAhigh_slope_ens.data
+plot_data[-1,2] = IndR_diff_WAhigh_slope_ens.data
+
+bar_data = np.zeros((2,27))
+# bar_data[0,:-1,:] = plot_data[:-1,:]
+# bar_data[1,:-1,:] = plot_data[:-1,:]
+# bar_data[0,-1,0] = IndR_his_WAhigh_slope_lowlim
+# bar_data[1,-1,0] = IndR_his_WAhigh_slope_highlim
+bar_data[0,-1] = IndR_ssp585_p3_WAhigh_slope_lowlim
+bar_data[1,-1] = IndR_ssp585_p3_WAhigh_slope_highlim
+
+models = list(IndR_his_WAhigh_regress[0].coords["models"].data)
+models.append("MME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+for num,i in enumerate(IndR_diff_WAhigh_slope_mask.data):
+    if i > 0:
+        axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-3.0e-6,3.0e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and WAhigh")
+
+# %%
+#   plot the bar-plot for correlation coefficients
+plot_data = np.zeros((27,3))
+plot_data[:-1,0] = IndR_his_WAhigh_regress[2].data
+plot_data[:-1,1] = IndR_ssp585_p3_WAhigh_regress[2].data
+plot_data[:-1,2] = IndR_diff_WAhigh_rvalue.data
+plot_data[-1,0] = IndR_his_WAhigh_rvalue_ens.data
+plot_data[-1,1] = IndR_ssp585_p3_WAhigh_rvalue_ens.data
+plot_data[-1,2] = IndR_diff_WAhigh_rvalue_ens.data
+
+models = list(IndR_his_WAhigh_regress[0].coords["models"].data)
+models.append("MME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=12.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(models,plot_data,width=0.6,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+for num,i in enumerate(IndR_diff_WAhigh_rvalue_mask.data):
+    if i > 0:
+        axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Cor. Coeff. IndR and WAhigh")
+# %%
+#   plot the x-y scatter plots for 1979-2014
+#   x: WAhigh  y:NCR
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_EAU_MTG_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(IndR_GPCP_WAhigh_regress[2], IndR_GPCP_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_his_WAhigh_regress[2].sel(models=mod), IndR_his_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(IndR_his_WAhigh_rvalue_ens, IndR_his_NC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+#   第一象限
+axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_WAhigh_regress[2]>0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_WAhigh_regress[2]>0)).count().data/26*100))
+#   第二象限
+axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_WAhigh_regress[2]<0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_WAhigh_regress[2]<0)).count().data/26*100))
+#   第三象限
+axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_WAhigh_regress[2]<0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_WAhigh_regress[2]<0)).count().data/26*100))
+#   第四象限
+axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_WAhigh_regress[2]>0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_WAhigh_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='WAhigh')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='NCR')
+
+# xyregress = stats.linregress(IndR_his_WAhigh_regress[2],IndR_his_NC_regress[2])
+# axs[0].line(np.linspace(-0.50,0.50), xyregress[0]*np.linspace(-0.50,0.50)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.8,0.8), ylim=(-0.8,0.8), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 2064-2099
+#   x: WAhigh  y:NCR
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_WAhigh_regress[2], IndR_CRU_WAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+# m = axs[0].scatter(IndR_GPCP_WAhigh_regress[2], IndR_GPCP_WAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_ssp585_p3_WAhigh_regress[2].sel(models=mod), IndR_ssp585_p3_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+m = axs[0].scatter(IndR_ssp585_p3_WAhigh_rvalue_ens, IndR_ssp585_p3_NC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+
+#   第一象限
+axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_NC_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_NC_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data/26*100))
+#   第二象限
+axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_NC_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_NC_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data/26*100))
+#   第三象限
+axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_NC_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_NC_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data/26*100))
+#   第四象限
+axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_NC_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_NC_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='WAhigh')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='NCR')
+
+# xyregress = stats.linregress(IndR_ssp585_p3_WAhigh_regress[2],IndR_ssp585_p3_NC_regress[2])
+# axs[0].line(np.linspace(-0.50,0.50), xyregress[0]*np.linspace(-0.50,0.50)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.8,0.8), ylim=(-0.8,0.8), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 1979-2014
+#   x: WAhigh  y:SCR
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_EAU_MTG_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(IndR_GPCP_WAhigh_regress[2], IndR_GPCP_SC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_his_WAhigh_regress[2].sel(models=mod), IndR_his_SC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(IndR_his_WAhigh_rvalue_ens, IndR_his_SC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+#   第一象限
+axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_SC_regress[2]>0) & (IndR_his_WAhigh_regress[2]>0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_SC_regress[2]>0) & (IndR_his_WAhigh_regress[2]>0)).count().data/26*100))
+#   第二象限
+axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_SC_regress[2]>0) & (IndR_his_WAhigh_regress[2]<0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_SC_regress[2]>0) & (IndR_his_WAhigh_regress[2]<0)).count().data/26*100))
+#   第三象限
+axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_SC_regress[2]<0) & (IndR_his_WAhigh_regress[2]<0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_SC_regress[2]<0) & (IndR_his_WAhigh_regress[2]<0)).count().data/26*100))
+#   第四象限
+axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_SC_regress[2]<0) & (IndR_his_WAhigh_regress[2]>0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_SC_regress[2]<0) & (IndR_his_WAhigh_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='WAhigh')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='SCR')
+
+# xyregress = stats.linregress(IndR_his_WAhigh_regress[2],IndR_his_SC_regress[2])
+# axs[0].line(np.linspace(-0.50,0.50), xyregress[0]*np.linspace(-0.50,0.50)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.8,0.8), ylim=(-0.8,0.8), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 2064-2099
+#   x: WAhigh  y:SCR
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_WAhigh_regress[2], IndR_CRU_WAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+# m = axs[0].scatter(IndR_GPCP_WAhigh_regress[2], IndR_GPCP_WAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_ssp585_p3_WAhigh_regress[2].sel(models=mod), IndR_ssp585_p3_SC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+m = axs[0].scatter(IndR_ssp585_p3_WAhigh_rvalue_ens, IndR_ssp585_p3_SC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+
+#   第一象限
+axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_SC_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_SC_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data/26*100))
+#   第二象限
+axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_SC_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_SC_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data/26*100))
+#   第三象限
+axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_SC_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_SC_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data/26*100))
+#   第四象限
+axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_SC_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_SC_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='WAhigh')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='SCR')
+
+xyregress = stats.linregress(IndR_ssp585_p3_WAhigh_regress[2],IndR_ssp585_p3_SC_regress[2])
+axs[0].line(np.linspace(-0.50,0.50), xyregress[0]*np.linspace(-0.50,0.50)+xyregress[1],zorder=0.8,color="sky blue")
+axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.8,0.8), ylim=(-0.8,0.8), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 1979-2014
+#   x: WAhigh  y:EAU
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_EAU_MTG_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(IndR_GPCP_WAhigh_regress[2], IndR_GPCP_EAU_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_his_WAhigh_regress[2].sel(models=mod), IndR_his_EAU_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(IndR_his_WAhigh_rvalue_ens, IndR_his_EAU_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+#   第一象限
+axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_EAU_regress[2]>0) & (IndR_his_WAhigh_regress[2]>0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_EAU_regress[2]>0) & (IndR_his_WAhigh_regress[2]>0)).count().data/26*100))
+#   第二象限
+axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_EAU_regress[2]>0) & (IndR_his_WAhigh_regress[2]<0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_EAU_regress[2]>0) & (IndR_his_WAhigh_regress[2]<0)).count().data/26*100))
+#   第三象限
+axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_EAU_regress[2]<0) & (IndR_his_WAhigh_regress[2]<0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_EAU_regress[2]<0) & (IndR_his_WAhigh_regress[2]<0)).count().data/26*100))
+#   第四象限
+axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_EAU_regress[2]<0) & (IndR_his_WAhigh_regress[2]>0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_EAU_regress[2]<0) & (IndR_his_WAhigh_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='WAhigh')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='EAU')
+
+# xyregress = stats.linregress(IndR_his_WAhigh_regress[2],IndR_his_EAU_regress[2])
+# axs[0].line(np.linspace(-0.50,0.50), xyregress[0]*np.linspace(-0.50,0.50)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.8,0.8), ylim=(-0.8,0.8), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 2064-2099
+#   x: WAhigh  y:SCR
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_WAhigh_regress[2], IndR_CRU_WAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+# m = axs[0].scatter(IndR_GPCP_WAhigh_regress[2], IndR_GPCP_WAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_ssp585_p3_WAhigh_regress[2].sel(models=mod), IndR_ssp585_p3_EAU_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+m = axs[0].scatter(IndR_ssp585_p3_WAhigh_rvalue_ens, IndR_ssp585_p3_EAU_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+
+#   第一象限
+axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAU_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAU_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data/26*100))
+#   第二象限
+axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAU_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAU_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data/26*100))
+#   第三象限
+axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAU_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAU_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data/26*100))
+#   第四象限
+axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAU_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAU_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='WAhigh')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='EAU')
+
+# xyregress = stats.linregress(IndR_ssp585_p3_WAhigh_regress[2],IndR_ssp585_p3_EAU_regress[2])
+# axs[0].line(np.linspace(-0.50,0.50), xyregress[0]*np.linspace(-0.50,0.50)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.8,0.8), ylim=(-0.8,0.8), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 1979-2014
+#   x: WAhigh  y:EAhigh
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_EAU_MTG_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(IndR_GPCP_WAhigh_regress[2], IndR_GPCP_EAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_his_WAhigh_regress[2].sel(models=mod), IndR_his_EAhigh_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(IndR_his_WAhigh_rvalue_ens, IndR_his_EAhigh_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+#   第一象限
+axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_EAhigh_regress[2]>0) & (IndR_his_WAhigh_regress[2]>0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_EAhigh_regress[2]>0) & (IndR_his_WAhigh_regress[2]>0)).count().data/26*100))
+#   第二象限
+axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_EAhigh_regress[2]>0) & (IndR_his_WAhigh_regress[2]<0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_EAhigh_regress[2]>0) & (IndR_his_WAhigh_regress[2]<0)).count().data/26*100))
+#   第三象限
+axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_EAhigh_regress[2]<0) & (IndR_his_WAhigh_regress[2]<0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_EAhigh_regress[2]<0) & (IndR_his_WAhigh_regress[2]<0)).count().data/26*100))
+#   第四象限
+axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_his_WAhigh_regress[2].where((IndR_his_EAhigh_regress[2]<0) & (IndR_his_WAhigh_regress[2]>0)).count().data, IndR_his_WAhigh_regress[2].where((IndR_his_EAhigh_regress[2]<0) & (IndR_his_WAhigh_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='WAhigh')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='EAhigh')
+
+xyregress = stats.linregress(IndR_his_WAhigh_regress[2],IndR_his_EAhigh_regress[2])
+axs[0].line(np.linspace(-0.50,0.50), xyregress[0]*np.linspace(-0.50,0.50)+xyregress[1],zorder=0.8,color="sky blue")
+axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.8,0.8), ylim=(-0.8,0.8), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the x-y scatter plots for 2064-2099
+#   x: WAhigh  y:EAhigh
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_WAhigh_regress[2], IndR_CRU_WAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+# m = axs[0].scatter(IndR_GPCP_WAhigh_regress[2], IndR_GPCP_WAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(IndR_ssp585_p3_WAhigh_regress[2].sel(models=mod), IndR_ssp585_p3_EAhigh_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+m = axs[0].scatter(IndR_ssp585_p3_WAhigh_rvalue_ens, IndR_ssp585_p3_EAhigh_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+
+#   第一象限
+axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAhigh_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAhigh_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data/26*100))
+#   第二象限
+axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAhigh_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAhigh_regress[2]>0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data/26*100))
+#   第三象限
+axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAhigh_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAhigh_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]<0)).count().data/26*100))
+#   第四象限
+axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAhigh_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data, IndR_ssp585_p3_WAhigh_regress[2].where((IndR_ssp585_p3_EAhigh_regress[2]<0) & (IndR_ssp585_p3_WAhigh_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='WAhigh')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='EAhigh')
+
+xyregress = stats.linregress(IndR_ssp585_p3_WAhigh_regress[2],IndR_ssp585_p3_EAhigh_regress[2])
+axs[0].line(np.linspace(-0.50,0.50), xyregress[0]*np.linspace(-0.50,0.50)+xyregress[1],zorder=0.8,color="sky blue")
+axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.8,0.8), ylim=(-0.8,0.8), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
