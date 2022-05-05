@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-05-05 13:15:48
+LastEditTime: 2022-05-05 13:32:50
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -5827,6 +5827,23 @@ for num_models, mod in enumerate(models_array):
 # axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 m = axs[0].scatter(IndR_his_EAU_MTG_rvalue_ens, IndR_his_NC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+#   第一象限
+axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_his_EAU_MTG_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_EAU_MTG_regress[2]>0)).count().data, IndR_his_EAU_MTG_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_EAU_MTG_regress[2]>0)).count().data/26*100))
+#   第二象限
+axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_his_EAU_MTG_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_EAU_MTG_regress[2]<0)).count().data, IndR_his_EAU_MTG_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_EAU_MTG_regress[2]<0)).count().data/26*100))
+#   第三象限
+axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_his_EAU_MTG_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_EAU_MTG_regress[2]<0)).count().data, IndR_his_EAU_MTG_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_EAU_MTG_regress[2]<0)).count().data/26*100))
+#   第四象限
+axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_his_EAU_MTG_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_EAU_MTG_regress[2]>0)).count().data, IndR_his_EAU_MTG_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_EAU_MTG_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='EAU_MTG')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='NCR')
+
+# xyregress = stats.linregress(IndR_his_EAU_MTG_regress[2],IndR_his_NC_regress[2])
+# axs[0].line(np.linspace(-0.50,0.50), xyregress[0]*np.linspace(-0.50,0.50)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+
 axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -5836,7 +5853,7 @@ axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95,
 axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
-axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_MTG", ylabel="NCR", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
 # %%
 #   plot the x-y scatter plots for 2064-2099
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
@@ -5849,6 +5866,24 @@ for num_models, mod in enumerate(models_array):
     m = axs[0].scatter(IndR_ssp585_p3_EAU_MTG_regress[2].sel(models=mod), IndR_ssp585_p3_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
 # fig.legend(loc="bottom", labels=models)
 m = axs[0].scatter(IndR_ssp585_p3_EAU_MTG_rvalue_ens, IndR_ssp585_p3_NC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+
+#   第一象限
+axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_NC_regress[2]>0) & (IndR_ssp585_p3_EAU_MTG_regress[2]>0)).count().data, IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_NC_regress[2]>0) & (IndR_ssp585_p3_EAU_MTG_regress[2]>0)).count().data/26*100))
+#   第二象限
+axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_NC_regress[2]>0) & (IndR_ssp585_p3_EAU_MTG_regress[2]<0)).count().data, IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_NC_regress[2]>0) & (IndR_ssp585_p3_EAU_MTG_regress[2]<0)).count().data/26*100))
+#   第三象限
+axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_NC_regress[2]<0) & (IndR_ssp585_p3_EAU_MTG_regress[2]<0)).count().data, IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_NC_regress[2]<0) & (IndR_ssp585_p3_EAU_MTG_regress[2]<0)).count().data/26*100))
+#   第四象限
+axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_NC_regress[2]<0) & (IndR_ssp585_p3_EAU_MTG_regress[2]>0)).count().data, IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_NC_regress[2]<0) & (IndR_ssp585_p3_EAU_MTG_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='EAU_MTG')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='NCR')
+
+xyregress = stats.linregress(IndR_ssp585_p3_EAU_MTG_regress[2],IndR_ssp585_p3_NC_regress[2])
+axs[0].line(np.linspace(-0.50,0.50), xyregress[0]*np.linspace(-0.50,0.50)+xyregress[1],zorder=0.8,color="sky blue")
+axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+
 axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -5858,7 +5893,7 @@ axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95,
 axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
-axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_MTG", ylabel="NCR", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
 # %%
 #   plot the x-y scatter plots for 1979-2014
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
@@ -5875,6 +5910,24 @@ for num_models, mod in enumerate(models_array):
 # axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 m = axs[0].scatter(IndR_his_EAU_MTG_rvalue_ens, IndR_his_SC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+
+#   第一象限
+axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_his_EAU_MTG_regress[2].where((IndR_his_SC_regress[2]>0) & (IndR_his_EAU_MTG_regress[2]>0)).count().data, IndR_his_EAU_MTG_regress[2].where((IndR_his_SC_regress[2]>0) & (IndR_his_EAU_MTG_regress[2]>0)).count().data/26*100))
+#   第二象限
+axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_his_EAU_MTG_regress[2].where((IndR_his_SC_regress[2]>0) & (IndR_his_EAU_MTG_regress[2]<0)).count().data, IndR_his_EAU_MTG_regress[2].where((IndR_his_SC_regress[2]>0) & (IndR_his_EAU_MTG_regress[2]<0)).count().data/26*100))
+#   第三象限
+axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_his_EAU_MTG_regress[2].where((IndR_his_SC_regress[2]<0) & (IndR_his_EAU_MTG_regress[2]<0)).count().data, IndR_his_EAU_MTG_regress[2].where((IndR_his_SC_regress[2]<0) & (IndR_his_EAU_MTG_regress[2]<0)).count().data/26*100))
+#   第四象限
+axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_his_EAU_MTG_regress[2].where((IndR_his_SC_regress[2]<0) & (IndR_his_EAU_MTG_regress[2]>0)).count().data, IndR_his_EAU_MTG_regress[2].where((IndR_his_SC_regress[2]<0) & (IndR_his_EAU_MTG_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='EAU_MTG')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='SCR')
+
+# xyregress = stats.linregress(IndR_his_EAU_MTG_regress[2],IndR_his_SC_regress[2])
+# axs[0].line(np.linspace(-0.50,0.50), xyregress[0]*np.linspace(-0.50,0.50)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+
 axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -5884,7 +5937,7 @@ axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95,
 axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
-axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_MTG", ylabel="SCR", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
 # %%
 #   plot the x-y scatter plots for 2064-2099
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
@@ -5897,6 +5950,24 @@ for num_models, mod in enumerate(models_array):
     m = axs[0].scatter(IndR_ssp585_p3_EAU_MTG_regress[2].sel(models=mod), IndR_ssp585_p3_SC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
 # fig.legend(loc="bottom", labels=models)
 m = axs[0].scatter(IndR_ssp585_p3_EAU_MTG_rvalue_ens, IndR_ssp585_p3_SC_rvalue_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="*")
+
+#   第一象限
+axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_SC_regress[2]>0) & (IndR_ssp585_p3_EAU_MTG_regress[2]>0)).count().data, IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_SC_regress[2]>0) & (IndR_ssp585_p3_EAU_MTG_regress[2]>0)).count().data/26*100))
+#   第二象限
+axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_SC_regress[2]>0) & (IndR_ssp585_p3_EAU_MTG_regress[2]<0)).count().data, IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_SC_regress[2]>0) & (IndR_ssp585_p3_EAU_MTG_regress[2]<0)).count().data/26*100))
+#   第三象限
+axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_SC_regress[2]<0) & (IndR_ssp585_p3_EAU_MTG_regress[2]<0)).count().data, IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_SC_regress[2]<0) & (IndR_ssp585_p3_EAU_MTG_regress[2]<0)).count().data/26*100))
+#   第四象限
+axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_SC_regress[2]<0) & (IndR_ssp585_p3_EAU_MTG_regress[2]>0)).count().data, IndR_ssp585_p3_EAU_MTG_regress[2].where((IndR_ssp585_p3_SC_regress[2]<0) & (IndR_ssp585_p3_EAU_MTG_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='EAU_MTG')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='SCR')
+
+# xyregress = stats.linregress(IndR_ssp585_p3_EAU_MTG_regress[2],IndR_ssp585_p3_SC_regress[2])
+# axs[0].line(np.linspace(-0.50,0.50), xyregress[0]*np.linspace(-0.50,0.50)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+
 axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -5906,5 +5977,5 @@ axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95,
 axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
-axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="EAU_MTG", ylabel="SCR", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
 # %%
