@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-05-05 21:32:59
+LastEditTime: 2022-05-06 15:58:32
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -187,8 +187,8 @@ uttERA5_JJA.name = "utt"
 #   calculate the precipitation in India
 lat = preCRU_JJA.coords["lat"]
 lon = preCRU_JJA.coords["lon"]
-lat_India_range = lat[(lat >= 8.0) & (lat <= 28.0)]
-lon_India_range = lon[(lon >= 70.0) & (lon <= 86.0)]
+lat_India_range = lat[(lat >= 8.0) & (lat <= 32.5)]
+lon_India_range = lon[(lon >= 70.0) & (lon <= 100.0)]
 
 preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
@@ -1285,16 +1285,16 @@ IndR_ssp585_v_slope_ens_mask = ca.MME_reg_mask(IndR_ssp585_v_slope_ens, IndR_ssp
 IndR_ssp585_p3_v_slope_ens = IndR_ssp585_p3_v_slope.mean(dim="models", skipna=True)
 IndR_ssp585_p3_v_slope_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_v_slope_ens, IndR_ssp585_p3_v_slope.std(dim="models", skipna=True), len(models), True)
 
-IndR_his_hgt_rvalue_ens = IndR_his_hgt_rvalue.mean(dim="models", skipna=True)
+IndR_his_hgt_rvalue_ens = ca.cal_rMME(IndR_his_hgt_rvalue, "models")
 IndR_his_hgt_rvalue_ens_mask = ca.MME_reg_mask(IndR_his_hgt_rvalue_ens, IndR_his_hgt_rvalue.std(dim="models", skipna=True), len(models), True)
 
-IndR_ssp585_hgt_rvalue_ens = IndR_ssp585_hgt_rvalue.mean(dim="models", skipna=True)
+IndR_ssp585_hgt_rvalue_ens = ca.cal_rMME(IndR_ssp585_hgt_rvalue, "models")
 IndR_ssp585_hgt_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_hgt_rvalue_ens, IndR_ssp585_hgt_rvalue.std(dim="models", skipna=True), len(models), True)
 
-IndR_ssp585_p3_hgt_rvalue_ens = IndR_ssp585_p3_hgt_rvalue.mean(dim="models", skipna=True)
+IndR_ssp585_p3_hgt_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_hgt_rvalue, "models")
 IndR_ssp585_p3_hgt_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_hgt_rvalue_ens, IndR_ssp585_p3_hgt_rvalue.std(dim="models", skipna=True), len(models), True)
 
-IndR_his_u_rvalue_ens = IndR_his_u_rvalue.mean(dim="models", skipna=True)
+IndR_his_u_rvalue_ens = ca.cal_rMME(IndR_his_u_rvalue, "models")
 IndR_his_u_rvalue_ens_mask = ca.MME_reg_mask(IndR_his_u_rvalue_ens, IndR_his_u_rvalue.std(dim="models", skipna=True), len(models), True)
 
 IndR_ssp585_u_rvalue_ens = IndR_ssp585_u_rvalue.mean(dim="models", skipna=True)
@@ -1303,13 +1303,13 @@ IndR_ssp585_u_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_u_rvalue_ens, IndR_s
 IndR_ssp585_p3_u_rvalue_ens = IndR_ssp585_p3_u_rvalue.mean(dim="models", skipna=True)
 IndR_ssp585_p3_u_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_u_rvalue_ens, IndR_ssp585_p3_u_rvalue.std(dim="models", skipna=True), len(models), True)
 
-IndR_his_v_rvalue_ens = IndR_his_v_rvalue.mean(dim="models", skipna=True)
+IndR_his_v_rvalue_ens = ca.cal_rMME(IndR_his_v_rvalue, "models")
 IndR_his_v_rvalue_ens_mask = ca.MME_reg_mask(IndR_his_v_rvalue_ens, IndR_his_v_rvalue.std(dim="models", skipna=True), len(models), True)
 
-IndR_ssp585_v_rvalue_ens = IndR_ssp585_v_rvalue.mean(dim="models", skipna=True)
+IndR_ssp585_v_rvalue_ens = ca.cal_rMME(IndR_ssp585_v_rvalue, "models")
 IndR_ssp585_v_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_v_rvalue_ens, IndR_ssp585_v_rvalue.std(dim="models", skipna=True), len(models), True)
 
-IndR_ssp585_p3_v_rvalue_ens = IndR_ssp585_p3_v_rvalue.mean(dim="models", skipna=True)
+IndR_ssp585_p3_v_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_v_rvalue, "models")
 IndR_ssp585_p3_v_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_v_rvalue_ens, IndR_ssp585_p3_v_rvalue.std(dim="models", skipna=True), len(models), True)
 
 IndR_his_wind_ens_mask = ca.wind_check(
