@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-06 21:48:28
+LastEditTime: 2022-05-06 21:51:57
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -878,8 +878,25 @@ IndR_v_RMSE.append(np.sqrt(np.power((IndR_his_v_slope_ens.sel(lat=lat_ranking_ra
 IndR_hgt_std.append(float((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
 IndR_u_std.append(float((IndR_his_u_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
 IndR_v_std.append(float((IndR_his_v_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
-# IndR_ranking_RMSE.append(np.sqrt(np.power((pre_his_India_pre_rvalue_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range)-pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0]),2).mean(dim=["lat","lon"],skipna=True).data))
-# IndR_ranking_std.append(float((pre_his_India_pre_rvalue_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range).std(dim=["lat","lon"],skipna=True)/pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0].std(dim=["lat","lon"],skipna=True)).data))
+
+gmodels = ["CESM2-WACCM", "CMCC-ESM2", "INM-CM4-8", "UKESM1-0-LL", "MIROC-ES2L", "MRI-ESM2-0", "NESM3", "CAMS-CSM1-0"]
+IndR_his_hgt_slope_gens = IndR_his_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+IndR_his_u_slope_gens = IndR_his_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+IndR_his_v_slope_gens = IndR_his_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+#   for good models MME
+
+IndR_hgt_pcc.append(ca.cal_pcc(IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
+IndR_u_pcc.append(ca.cal_pcc(IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_u_slope_gens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
+IndR_v_pcc.append(ca.cal_pcc(IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_v_slope_gens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
+
+IndR_hgt_RMSE.append(np.sqrt(np.power((IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+IndR_u_RMSE.append(np.sqrt(np.power((IndR_his_u_slope_gens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+IndR_v_RMSE.append(np.sqrt(np.power((IndR_his_v_slope_gens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+
+IndR_hgt_std.append(float((IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
+IndR_u_std.append(float((IndR_his_u_slope_gens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
+IndR_v_std.append(float((IndR_his_v_slope_gens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
 
 print(sorted(IndR_ranking_list, key=lambda x : x["pcc"]))
 # %%
