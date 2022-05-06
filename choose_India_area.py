@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-06 20:39:40
+LastEditTime: 2022-05-06 21:40:53
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -204,7 +204,7 @@ pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_India_r
 #   calculate the precipitation in Northern China
 NC_N = 40.0
 NC_S = 32.5
-NC_W = 110.0
+NC_W = 100.0
 NC_E = 120.0
 lat_NC_range = lat[(lat >= NC_S) & (lat <= NC_N)]
 lon_NC_range = lon[(lon >= NC_W) & (lon <= NC_E)]
@@ -214,6 +214,20 @@ preCRU_NC_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_NC_range, lon=lo
 preGPCP_NC_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
 prehis_NC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
 pressp585_NC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
+
+#   calculate the precipitation in Southern Japan
+SJ_N = 36.0
+SJ_S = 31.0
+SJ_W = 120.0
+SJ_E = 130.0
+lat_SJ_range = lat[(lat >= SJ_S) & (lat <= SJ_N)]
+lon_SJ_range = lon[(lon >= SJ_W) & (lon <= SJ_E)]
+# lat_SJ_range = lat[(lat>=27.5) & (lat<=37.5)]
+# lon_SJ_range = lon[(lon>=105.0) & (lon<=125.0)]
+preCRU_SJ_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_SJ_range, lon=lon_SJ_range)).mean(dim="lon", skipna=True)
+preGPCP_SJ_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_SJ_range, lon=lon_SJ_range)).mean(dim="lon", skipna=True)
+prehis_SJ_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_SJ_range, lon=lon_SJ_range)).mean(dim="lon", skipna=True)
+pressp585_SJ_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_SJ_range, lon=lon_SJ_range)).mean(dim="lon", skipna=True)
 
 #   calculate the precipitation in Southern China
 lat_SC_range = lat[(lat>=20.0) & (lat<=27.5)]
@@ -293,6 +307,11 @@ preCRU_NC_JJA = ca.detrend_dim(preCRU_NC_JJA, "time", deg=1, demean=False)
 preGPCP_NC_JJA = ca.detrend_dim(preGPCP_NC_JJA, "time", deg=1, demean=False)
 prehis_NC_JJA = ca.detrend_dim(prehis_NC_JJA, "time", deg=1, demean=False)
 pressp585_NC_JJA = ca.detrend_dim(pressp585_NC_JJA, "time", deg=1, demean=False)
+
+preCRU_SJ_JJA = ca.detrend_dim(preCRU_SJ_JJA, "time", deg=1, demean=False)
+preGPCP_SJ_JJA = ca.detrend_dim(preGPCP_SJ_JJA, "time", deg=1, demean=False)
+prehis_SJ_JJA = ca.detrend_dim(prehis_SJ_JJA, "time", deg=1, demean=False)
+pressp585_SJ_JJA = ca.detrend_dim(pressp585_SJ_JJA, "time", deg=1, demean=False)
 
 preCRU_SC_JJA = ca.detrend_dim(preCRU_SC_JJA, "time", deg=1, demean=False)
 preGPCP_SC_JJA = ca.detrend_dim(preGPCP_SC_JJA, "time", deg=1, demean=False)
@@ -810,3 +829,47 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
 # %%
+#   calculate the ranking of different models
+lat = prehis_JJA.coords["lat"]
+lon = prehis_JJA.coords["lon"]
+lat_ranking_range = lat[(lat>=15) & (lat<=47.5)]
+lon_ranking_range = lon[(lon>=50) & (lon<=140.0)]
+
+IndR_ranking_list = []
+IndR_hgt_pcc = []
+IndR_u_pcc = []
+IndR_v_pcc = []
+
+IndR_hgt_RMSE = []
+IndR_hgt_std = []
+IndR_u_RMSE = []
+IndR_u_std = []
+IndR_v_RMSE = []
+IndR_v_std = []
+
+for num_mod, mod in enumerate(models):
+    hgt_pcc = ca.cal_pcc(IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_hgt_slope.sel(models=mod, lat=lat_ranking_range, lon=lon_ranking_range, level=200.0))
+    u_pcc = ca.cal_pcc(IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_u_slope.sel(models=mod, lat=lat_ranking_range, lon=lon_ranking_range, level=200.0))
+    v_pcc = ca.cal_pcc(IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_v_slope.sel(models=mod, lat=lat_ranking_range, lon=lon_ranking_range, level=200.0))
+    
+    IndR_ranking_list.append({"models": mod.data, "pcc": hgt_pcc+u_pcc+v_pcc})
+    
+    IndR_hgt_pcc.append(hgt_pcc)
+    IndR_u_pcc.append(u_pcc)
+    IndR_v_pcc.append(v_pcc)
+    
+    IndR_hgt_RMSE.append(np.sqrt(np.power((IndR_his_hgt_slope.sel(models=mod,lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+    IndR_u_RMSE.append(np.sqrt(np.power((IndR_his_u_slope.sel(models=mod,lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+    IndR_v_RMSE.append(np.sqrt(np.power((IndR_his_v_slope.sel(models=mod,lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+    
+    IndR_hgt_std.append(float((IndR_his_hgt_slope.sel(models=mod,lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
+    IndR_u_std.append(float((IndR_his_u_slope.sel(models=mod,lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
+    IndR_v_std.append(float((IndR_his_v_slope.sel(models=mod,lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
+# #   for MME
+# IndR_ranking_pcc.append(ca.cal_pcc(pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0], pre_his_India_pre_rvalue_ens.sel(lat=lat_ranking_range, lon=lon_ranking_range)))
+# IndR_ranking_RMSE.append(np.sqrt(np.power((pre_his_India_pre_rvalue_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range)-pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0]),2).mean(dim=["lat","lon"],skipna=True).data))
+# IndR_ranking_std.append(float((pre_his_India_pre_rvalue_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range).std(dim=["lat","lon"],skipna=True)/pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0].std(dim=["lat","lon"],skipna=True)).data))
+
+print(sorted(IndR_ranking_list, key=lambda x : x["pcc"]))
+# %%
+#   plot the taylor-diagram
