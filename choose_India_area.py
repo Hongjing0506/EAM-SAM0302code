@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-06 21:40:53
+LastEditTime: 2022-05-06 21:48:28
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -865,11 +865,42 @@ for num_mod, mod in enumerate(models):
     IndR_hgt_std.append(float((IndR_his_hgt_slope.sel(models=mod,lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
     IndR_u_std.append(float((IndR_his_u_slope.sel(models=mod,lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
     IndR_v_std.append(float((IndR_his_v_slope.sel(models=mod,lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
-# #   for MME
-# IndR_ranking_pcc.append(ca.cal_pcc(pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0], pre_his_India_pre_rvalue_ens.sel(lat=lat_ranking_range, lon=lon_ranking_range)))
+#   for MME
+
+IndR_hgt_pcc.append(ca.cal_pcc(IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
+IndR_u_pcc.append(ca.cal_pcc(IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_u_slope_ens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
+IndR_v_pcc.append(ca.cal_pcc(IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_v_slope_ens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
+
+IndR_hgt_RMSE.append(np.sqrt(np.power((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+IndR_u_RMSE.append(np.sqrt(np.power((IndR_his_u_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+IndR_v_RMSE.append(np.sqrt(np.power((IndR_his_v_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+
+IndR_hgt_std.append(float((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
+IndR_u_std.append(float((IndR_his_u_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
+IndR_v_std.append(float((IndR_his_v_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
 # IndR_ranking_RMSE.append(np.sqrt(np.power((pre_his_India_pre_rvalue_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range)-pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0]),2).mean(dim=["lat","lon"],skipna=True).data))
 # IndR_ranking_std.append(float((pre_his_India_pre_rvalue_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range).std(dim=["lat","lon"],skipna=True)/pre_GPCP_India_pre_rvalue.loc[22.5:40.0, 90.0:135.0].std(dim=["lat","lon"],skipna=True)).data))
 
 print(sorted(IndR_ranking_list, key=lambda x : x["pcc"]))
 # %%
 #   plot the taylor-diagram
+labels = list(models.data)
+labels.append("MME")
+# labels.append("gMME")
+plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文
+plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
+
+#绘图
+fig=plt.figure(figsize=(12,8),dpi=300)
+plt.rc('font',family='Arial',size=13)
+
+#调用函数
+ax1=fig.add_subplot(111,projection='polar')
+box = ax1.get_position()
+ax1.set_position([0, box.y0, box.width*1.2, box.height])
+# ax1.text(0.6,0.1,'(a)',fontsize=15)
+# tar(ax1,np.array(IndR_EAM_pcc),np.array(IndR_EAM_std),labels)
+sepl.taylor_diagram(ax1,np.array(IndR_hgt_pcc),np.array(IndR_hgt_std),labels)
+
+plt.legend(loc="center left", bbox_to_anchor=(1.1,0.5), ncol=2, frameon=True, numpoints=1, handlelength=0)
+# %%
