@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-07 15:58:55
+LastEditTime: 2022-05-07 16:14:37
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -1229,8 +1229,13 @@ IndR_v_std.append(float((IndR_his_v_slope_ens.sel(lat=lat_ranking_range,lon=lon_
 
 #   pick up the good models and calculate the gMME for hgt, u, v, precip
 gmodels = ["CESM2-WACCM", "CMCC-ESM2", "INM-CM4-8", "UKESM1-0-LL", "MIROC-ES2L", "MRI-ESM2-0", "NESM3", "CAMS-CSM1-0"]
+
 pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels)
-pre_ssp585_p3_
+pre_ssp585_p3_India_pre_slope_gens = pre_ssp585_p3_India_pre_slope.sel(models=gmodels)
+
+pre_his_India_pre_slope_gens_mask = ca.MME_reg_mask(pre_his_India_pre_slope_gens, pre_his_India_pre_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
+pre_ssp585_p3_India_pre_slope_gens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_slope_gens, pre_ssp585_p3_India_pre_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
+
 
 IndR_his_hgt_slope_gens = IndR_his_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_his_u_slope_gens = IndR_his_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -1239,6 +1244,10 @@ IndR_his_v_slope_gens = IndR_his_v_slope.sel(models=gmodels).mean(dim="models", 
 IndR_ssp585_p3_hgt_slope_gens = IndR_ssp585_p3_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_ssp585_p3_u_slope_gens = IndR_ssp585_p3_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_ssp585_p3_v_slope_gens = IndR_ssp585_p3_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+
+pre_his_India_pre_rvalue_gens = ca.cal_rMME(pre_his_India_pre_rvalue.sel(models=gmodels), "models")
+pre_ssp585_p3_India_pre_rvalue_gens = ca.cal_rMME(pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels), "models")
 
 IndR_his_hgt_rvalue_gens = ca.cal_rMME(IndR_his_hgt_rvalue.sel(models=gmodels), "models")
 IndR_his_u_rvalue_gens = ca.cal_rMME(IndR_his_u_rvalue.sel(models=gmodels), "models")
@@ -1255,6 +1264,9 @@ IndR_his_v_slope_gens_mask = ca.MME_reg_mask(IndR_his_v_slope_gens, IndR_his_v_s
 IndR_ssp585_p3_hgt_slope_gens_mask = ca.MME_reg_mask(IndR_ssp585_p3_hgt_slope_gens, IndR_ssp585_p3_hgt_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
 IndR_ssp585_p3_u_slope_gens_mask = ca.MME_reg_mask(IndR_ssp585_p3_u_slope_gens, IndR_ssp585_p3_u_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
 IndR_ssp585_p3_v_slope_gens_mask = ca.MME_reg_mask(IndR_ssp585_p3_v_slope_gens, IndR_ssp585_p3_v_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
+
+pre_his_India_pre_rvalue_gens_mask = ca.MME_reg_mask(pre_his_India_pre_rvalue_gens, pre_his_India_pre_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
+pre_ssp585_p3_India_pre_rvalue_gens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_gens, pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
 
 IndR_his_hgt_rvalue_gens_mask = ca.MME_reg_mask(IndR_his_hgt_rvalue_gens, IndR_his_hgt_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
 IndR_his_u_rvalue_gens_mask = ca.MME_reg_mask(IndR_his_u_rvalue_gens, IndR_his_u_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
@@ -1492,7 +1504,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     axs[2].format(
-        rtitle="1979-2014", ltitle="MME",
+        rtitle="1979-2014", ltitle="gMME",
     )
     # ======================================
     for num_mod, mod in enumerate(gmodels):
@@ -1721,7 +1733,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     axs[2].format(
-        rtitle="1979-2014", ltitle="MME",
+        rtitle="1979-2014", ltitle="gMME",
     )
     # ======================================
     for num_mod, mod in enumerate(gmodels):
@@ -1773,3 +1785,103 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
 # %%
 #   plot the precipitation fields of good-models for reg coeff.
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 13), (3, 4))
+plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    # India area
+    x0 = India_W
+    y0 = India_S
+    width = India_E-India_W
+    height = India_N-India_S
+    patches(ax, x0 - cl, y0, width, height, proj)
+    # NC area
+    x0 = NC_W
+    y0 = NC_S
+    width = NC_E-NC_W
+    height = NC_N-NC_S
+    patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0].contourf(
+    pre_CRU_India_pre_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    )
+sepl.plt_sig(
+    pre_CRU_India_pre_rvalue, axs[0], n, np.where(pre_CRU_India_pre_pvalue[::n, ::n] <= 0.10), "bright purple", 4.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="CRU",
+)
+# ===================================================
+con = axs[1].contourf(
+    pre_GPCP_India_pre_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    )
+sepl.plt_sig(
+    pre_GPCP_India_pre_rvalue, axs[1], n, np.where(pre_GPCP_India_pre_pvalue[::n, ::n] <= 0.10), "bright purple", 4.0,
+)
+
+axs[1].format(
+    rtitle="1979-2014", ltitle="GPCP",
+)
+# # ===================================================
+con = axs[2].contourf(
+    pre_his_India_pre_rvalue_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    
+    )
+sepl.plt_sig(
+    pre_his_India_pre_rvalue_gens, axs[2], n, np.where(pre_his_India_pre_rvalue_gens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
+)
+
+axs[2].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ===================================================
+for num_models,mod in enumerate(pre_his_India_pre_slope.coords["models"].data):
+    con = axs[num_models+3].contourf(
+    pre_his_India_pre_rvalue.sel(models=mod),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    )
+    sepl.plt_sig(
+        pre_his_India_pre_rvalue.sel(models=mod), axs[num_models+3], n, np.where(pre_his_India_pre_pvalue.sel(models=mod)[::n, ::n] <= 0.10), "bright purple", 4.0,
+    )
+
+    axs[num_models+3].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
