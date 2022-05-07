@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-07 14:33:18
+LastEditTime: 2022-05-07 15:34:22
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -366,7 +366,16 @@ vorssp585_WAhigh_JJA = ca.detrend_dim(vorssp585_WAhigh_JJA, "time", deg=1, demea
     pre_his_India_pre_pvalue,
     pre_his_India_pre_hypothesis,
 ) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_JJA.sel(time=prehis_JJA.time.dt.year>=1979))
+
+(
+    pre_ssp585_p3_India_pre_slope,
+    pre_ssp585_p3_India_pre_intercept,
+    pre_ssp585_p3_India_pre_rvalue,
+    pre_ssp585_p3_India_pre_pvalue,
+    pre_ssp585_p3_India_pre_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_JJA.sel(time=pressp585_JJA.time.dt.year>=2064))
 # %%
+#   calculate the MME for historical and ssp585_p3
 pre_his_India_pre_slope_ens = pre_his_India_pre_slope.mean(dim="models", skipna=True)
 
 pre_his_India_pre_slope_ens_mask = ca.MME_reg_mask(pre_his_India_pre_slope_ens, pre_his_India_pre_slope.std(dim="models", skipna=True), len(pre_his_India_pre_slope.coords["models"]), True)
@@ -374,6 +383,14 @@ pre_his_India_pre_slope_ens_mask = ca.MME_reg_mask(pre_his_India_pre_slope_ens, 
 pre_his_India_pre_rvalue_ens = ca.cal_rMME(pre_his_India_pre_rvalue,"models")
 
 pre_his_India_pre_rvalue_ens_mask = ca.MME_reg_mask(pre_his_India_pre_rvalue_ens, pre_his_India_pre_rvalue.std(dim="models", skipna=True), len(pre_his_India_pre_rvalue.coords["models"]), True)
+
+pre_ssp585_p3_India_pre_slope_ens = pre_ssp585_p3_India_pre_slope.mean(dim="models", skipna=True)
+
+pre_ssp585_p3_India_pre_slope_ens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_slope_ens, pre_ssp585_p3_India_pre_slope.std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_slope.coords["models"]), True)
+
+pre_ssp585_p3_India_pre_rvalue_ens = ca.cal_rMME(pre_ssp585_p3_India_pre_rvalue,"models")
+
+pre_ssp585_p3_India_pre_rvalue_ens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_ens, pre_ssp585_p3_India_pre_rvalue.std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_rvalue.coords["models"]), True)
 # %%
 #   plot the correlation coefficients rvalue in CRU, GPCP, historical run
 pplt.rc.grid = False
@@ -935,7 +952,11 @@ IndR_hgt_std.append(float((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range,lon=
 IndR_u_std.append(float((IndR_his_u_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
 IndR_v_std.append(float((IndR_his_v_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
 
+#   pick up the good models and calculate the gMME for hgt, u, v, precip
 gmodels = ["CESM2-WACCM", "CMCC-ESM2", "INM-CM4-8", "UKESM1-0-LL", "MIROC-ES2L", "MRI-ESM2-0", "NESM3", "CAMS-CSM1-0"]
+pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels)
+pre_ssp585_p3_
+
 IndR_his_hgt_slope_gens = IndR_his_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_his_u_slope_gens = IndR_his_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_his_v_slope_gens = IndR_his_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -1476,3 +1497,4 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
 # %%
+#   plot the precipitation fields of good-models for reg coeff.
