@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-06 21:51:57
+LastEditTime: 2022-05-07 13:52:40
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -552,6 +552,30 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndR_his_v_hypothesis,
 ) = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), vhis_ver_JJA.sel(time=vhis_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 # %%
+(
+    IndR_ssp585_p3_hgt_slope,
+    IndR_ssp585_p3_hgt_intercept,
+    IndR_ssp585_p3_hgt_rvalue,
+    IndR_ssp585_p3_hgt_pvalue,
+    IndR_ssp585_p3_hgt_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), hgtssp585_ver_JJA.sel(time=hgtssp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+
+(
+    IndR_ssp585_p3_u_slope,
+    IndR_ssp585_p3_u_intercept,
+    IndR_ssp585_p3_u_rvalue,
+    IndR_ssp585_p3_u_pvalue,
+    IndR_ssp585_p3_u_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), ussp585_ver_JJA.sel(time=ussp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+
+(
+    IndR_ssp585_p3_v_slope,
+    IndR_ssp585_p3_v_intercept,
+    IndR_ssp585_p3_v_rvalue,
+    IndR_ssp585_p3_v_pvalue,
+    IndR_ssp585_p3_v_hypothesis,
+) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+# %%
 #   calculate the windcheck and ensmean
 IndRCRU_ERA5_wind_mask = ca.wind_check(
     xr.where(IndRCRU_ERA5_u_pvalue <= 0.05, 1.0, 0.0),
@@ -573,29 +597,61 @@ IndR_his_wind_mask = ca.wind_check(
     xr.where(IndR_his_u_pvalue <= 0.05, 1.0, 0.0),
     xr.where(IndR_his_v_pvalue <= 0.05, 1.0, 0.0),
 )
+
+IndR_ssp585_p3_wind_mask = ca.wind_check(
+    xr.where(IndR_ssp585_p3_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_v_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_u_pvalue <= 0.05, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_v_pvalue <= 0.05, 1.0, 0.0),
+)
+
 IndR_his_hgt_slope_ens = IndR_his_hgt_slope.mean(dim="models", skipna=True)
 IndR_his_hgt_slope_ens_mask = ca.MME_reg_mask(IndR_his_hgt_slope_ens, IndR_his_hgt_slope.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_p3_hgt_slope_ens = IndR_ssp585_p3_hgt_slope.mean(dim="models", skipna=True)
+IndR_ssp585_p3_hgt_slope_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_hgt_slope_ens, IndR_ssp585_p3_hgt_slope.std(dim="models", skipna=True), len(models), True)
 
 IndR_his_u_slope_ens = IndR_his_u_slope.mean(dim="models", skipna=True)
 IndR_his_u_slope_ens_mask = ca.MME_reg_mask(IndR_his_u_slope_ens, IndR_his_u_slope.std(dim="models", skipna=True), len(models), True)
 
+IndR_ssp585_p3_u_slope_ens = IndR_ssp585_p3_u_slope.mean(dim="models", skipna=True)
+IndR_ssp585_p3_u_slope_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_u_slope_ens, IndR_ssp585_p3_u_slope.std(dim="models", skipna=True), len(models), True)
+
 IndR_his_v_slope_ens = IndR_his_v_slope.mean(dim="models", skipna=True)
 IndR_his_v_slope_ens_mask = ca.MME_reg_mask(IndR_his_v_slope_ens, IndR_his_v_slope.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_p3_v_slope_ens = IndR_ssp585_p3_v_slope.mean(dim="models", skipna=True)
+IndR_ssp585_p3_v_slope_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_v_slope_ens, IndR_ssp585_p3_v_slope.std(dim="models", skipna=True), len(models), True)
 
 IndR_his_hgt_rvalue_ens = ca.cal_rMME(IndR_his_hgt_rvalue, "models")
 IndR_his_hgt_rvalue_ens_mask = ca.MME_reg_mask(IndR_his_hgt_rvalue_ens, IndR_his_hgt_rvalue.std(dim="models", skipna=True), len(models), True)
 
+IndR_ssp585_p3_hgt_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_hgt_rvalue, "models")
+IndR_ssp585_p3_hgt_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_hgt_rvalue_ens, IndR_ssp585_p3_hgt_rvalue.std(dim="models", skipna=True), len(models), True)
+
 IndR_his_u_rvalue_ens = ca.cal_rMME(IndR_his_u_rvalue, "models")
 IndR_his_u_rvalue_ens_mask = ca.MME_reg_mask(IndR_his_u_rvalue_ens, IndR_his_u_rvalue.std(dim="models", skipna=True), len(models), True)
 
+IndR_ssp585_p3_u_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_u_rvalue, "models")
+IndR_ssp585_p3_u_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_u_rvalue_ens, IndR_ssp585_p3_u_rvalue.std(dim="models", skipna=True), len(models), True)
+
 IndR_his_v_rvalue_ens = ca.cal_rMME(IndR_his_v_rvalue, "models")
 IndR_his_v_rvalue_ens_mask = ca.MME_reg_mask(IndR_his_v_rvalue_ens, IndR_his_v_rvalue.std(dim="models", skipna=True), len(models), True)
+
+IndR_ssp585_p3_v_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_v_rvalue, "models")
+IndR_ssp585_p3_v_rvalue_ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_v_rvalue_ens, IndR_ssp585_p3_v_rvalue.std(dim="models", skipna=True), len(models), True)
 
 IndR_his_wind_ens_mask = ca.wind_check(
     xr.where(IndR_his_u_slope_ens_mask > 0.0, 1.0, 0.0),
     xr.where(IndR_his_v_slope_ens_mask > 0.0, 1.0, 0.0),
     xr.where(IndR_his_u_slope_ens_mask > 0.0, 1.0, 0.0),
     xr.where(IndR_his_v_slope_ens_mask > 0.0, 1.0, 0.0),
+)
+IndR_ssp585_p3_wind_ens_mask = ca.wind_check(
+    xr.where(IndR_ssp585_p3_u_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_v_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_u_slope_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_v_slope_ens_mask > 0.0, 1.0, 0.0),
 )
 # %%
 #   plot the avalue of hgt&u&v regress onto IndR in ERA5 and historical
@@ -884,6 +940,10 @@ IndR_his_hgt_slope_gens = IndR_his_hgt_slope.sel(models=gmodels).mean(dim="model
 IndR_his_u_slope_gens = IndR_his_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_his_v_slope_gens = IndR_his_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 
+IndR_ssp585_p3_hgt_slope_gens = IndR_ssp585_p3_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+IndR_ssp585_p3_u_slope_gens = IndR_ssp585_p3_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+IndR_ssp585_p3_v_slope_gens = IndR_ssp585_p3_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
 #   for good models MME
 
 IndR_hgt_pcc.append(ca.cal_pcc(IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
@@ -903,7 +963,7 @@ print(sorted(IndR_ranking_list, key=lambda x : x["pcc"]))
 #   plot the taylor-diagram
 labels = list(models.data)
 labels.append("MME")
-# labels.append("gMME")
+labels.append("gMME")
 plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文
 plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
 
@@ -917,7 +977,10 @@ box = ax1.get_position()
 ax1.set_position([0, box.y0, box.width*1.2, box.height])
 # ax1.text(0.6,0.1,'(a)',fontsize=15)
 # tar(ax1,np.array(IndR_EAM_pcc),np.array(IndR_EAM_std),labels)
-sepl.taylor_diagram(ax1,np.array(IndR_hgt_pcc),np.array(IndR_hgt_std),labels)
-
+sepl.taylor_diagram(ax1,np.array(IndR_hgt_pcc),np.array(IndR_hgt_std), dotlables=labels, lables=True, color="r")
+sepl.taylor_diagram(ax1,np.array(IndR_u_pcc),np.array(IndR_u_std), color="b")
+sepl.taylor_diagram(ax1,np.array(IndR_v_pcc),np.array(IndR_v_std), color="g")
 plt.legend(loc="center left", bbox_to_anchor=(1.1,0.5), ncol=2, frameon=True, numpoints=1, handlelength=0)
+
 # %%
+#   plot the good-models MME of 200hPa circulation, precipitation in historical and ssp585_p3
