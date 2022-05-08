@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-07 20:52:59
+LastEditTime: 2022-05-08 12:00:23
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -215,19 +215,19 @@ preGPCP_NC_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_NC_range, lon=
 prehis_NC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
 pressp585_NC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
 
-#   calculate the precipitation in Southern Japan
-SJ_N = 36.0
-SJ_S = 31.0
-SJ_W = 120.0
-SJ_E = 130.0
-lat_SJ_range = lat[(lat >= SJ_S) & (lat <= SJ_N)]
-lon_SJ_range = lon[(lon >= SJ_W) & (lon <= SJ_E)]
-# lat_SJ_range = lat[(lat>=27.5) & (lat<=37.5)]
-# lon_SJ_range = lon[(lon>=105.0) & (lon<=125.0)]
-preCRU_SJ_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_SJ_range, lon=lon_SJ_range)).mean(dim="lon", skipna=True)
-preGPCP_SJ_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_SJ_range, lon=lon_SJ_range)).mean(dim="lon", skipna=True)
-prehis_SJ_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_SJ_range, lon=lon_SJ_range)).mean(dim="lon", skipna=True)
-pressp585_SJ_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_SJ_range, lon=lon_SJ_range)).mean(dim="lon", skipna=True)
+#   calculate the precipitation in Southern China Sea
+SCS_N = 20.0
+SCS_S = 7.5
+SCS_W = 108.0
+SCS_E = 120.0
+lat_SCS_range = lat[(lat >= SCS_S) & (lat <= SCS_N)]
+lon_SCS_range = lon[(lon >= SCS_W) & (lon <= SCS_E)]
+# lat_SCS_range = lat[(lat>=27.5) & (lat<=37.5)]
+# lon_SCS_range = lon[(lon>=105.0) & (lon<=125.0)]
+preCRU_SCS_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_SCS_range, lon=lon_SCS_range)).mean(dim="lon", skipna=True)
+preGPCP_SCS_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_SCS_range, lon=lon_SCS_range)).mean(dim="lon", skipna=True)
+prehis_SCS_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_SCS_range, lon=lon_SCS_range)).mean(dim="lon", skipna=True)
+pressp585_SCS_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_SCS_range, lon=lon_SCS_range)).mean(dim="lon", skipna=True)
 
 #   calculate the precipitation in Southern China
 lat_SC_range = lat[(lat>=20.0) & (lat<=27.5)]
@@ -238,8 +238,8 @@ prehis_SC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_SC_range, lon=lo
 pressp585_SC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_SC_range, lon=lon_SC_range)).mean(dim="lon", skipna=True)
 
 #   calculate the 200hPa u-wind over the East Asia
-lat_EA_range = lat[(lat>=27.5) & (lat<=37.5)]
-lon_EA_range = lon[(lon>=100.0) & (lon<=125.0)]
+lat_EA_range = lat[(lat>=30.0) & (lat<=40.0)]
+lon_EA_range = lon[(lon>=100.0) & (lon<=120.0)]
 
 uERA5_EA_JJA = ca.cal_lat_weighted_mean(uERA5_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
 uhis_EA_JJA = ca.cal_lat_weighted_mean(uhis_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
@@ -308,10 +308,10 @@ preGPCP_NC_JJA = ca.detrend_dim(preGPCP_NC_JJA, "time", deg=1, demean=False)
 prehis_NC_JJA = ca.detrend_dim(prehis_NC_JJA, "time", deg=1, demean=False)
 pressp585_NC_JJA = ca.detrend_dim(pressp585_NC_JJA, "time", deg=1, demean=False)
 
-preCRU_SJ_JJA = ca.detrend_dim(preCRU_SJ_JJA, "time", deg=1, demean=False)
-preGPCP_SJ_JJA = ca.detrend_dim(preGPCP_SJ_JJA, "time", deg=1, demean=False)
-prehis_SJ_JJA = ca.detrend_dim(prehis_SJ_JJA, "time", deg=1, demean=False)
-pressp585_SJ_JJA = ca.detrend_dim(pressp585_SJ_JJA, "time", deg=1, demean=False)
+preCRU_SCS_JJA = ca.detrend_dim(preCRU_SCS_JJA, "time", deg=1, demean=False)
+preGPCP_SCS_JJA = ca.detrend_dim(preGPCP_SCS_JJA, "time", deg=1, demean=False)
+prehis_SCS_JJA = ca.detrend_dim(prehis_SCS_JJA, "time", deg=1, demean=False)
+pressp585_SCS_JJA = ca.detrend_dim(pressp585_SCS_JJA, "time", deg=1, demean=False)
 
 preCRU_SC_JJA = ca.detrend_dim(preCRU_SC_JJA, "time", deg=1, demean=False)
 preGPCP_SC_JJA = ca.detrend_dim(preGPCP_SC_JJA, "time", deg=1, demean=False)
@@ -2798,4 +2798,16 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
+# %%
+#   calculate the corr analysis between India and different variables
+#   NCR
+IndR_GPCP_NC_regress = stats.linregress(preGPCP_India_JJA, preGPCP_NC_JJA)
+
+IndR_his_NC_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979))
+
+IndR_ssp585_p3_NC_regress = ca.dim_linregress(pressp585_p3_India_JJA.sel(time=pressp585_p3_India_JJA.time.dt.year>=1979), pressp585_p3_NC_JJA.sel(time=pressp585_p3_NC_JJA.time.dt.year>=1979))
+
+#   EAU
+
+
 # %%
