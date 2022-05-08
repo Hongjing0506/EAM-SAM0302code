@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-08 12:00:23
+LastEditTime: 2022-05-08 16:35:26
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -2805,9 +2805,34 @@ IndR_GPCP_NC_regress = stats.linregress(preGPCP_India_JJA, preGPCP_NC_JJA)
 
 IndR_his_NC_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979))
 
-IndR_ssp585_p3_NC_regress = ca.dim_linregress(pressp585_p3_India_JJA.sel(time=pressp585_p3_India_JJA.time.dt.year>=1979), pressp585_p3_NC_JJA.sel(time=pressp585_p3_NC_JJA.time.dt.year>=1979))
+IndR_ssp585_p3_NC_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_NC_JJA.sel(time=pressp585_NC_JJA.time.dt.year>=2064))
 
 #   EAU
 
 
+# %%
+#   plot the singular scatter-plot for good models for reg coeff.
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+# cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 8, left=0.5)
+cycle = pplt.Cycle("Qual1", 7)
+
+#   hist-GPCP
+axs[0].scatter(0.75, IndR_GPCP_NC_regress[0],marker="s", labels="GPCP", legend_kw={"ncols":4}, color="blue5", legend="b")
+#   hist-gMME
+axs[0].scatter(0.75, IndR_his_NC_regress[0].sel(models=gmodels).mean(dim="models", skipna=True), marker="*", labels="gMME", legend_kw={"ncols":4}, cycle=cycle, legend="b", markersize=100)
+#   hist-gmodels
+for num_models, mod in enumerate(gmodels):
+    axs[0].scatter(0.75, IndR_his_NC_regress[0].sel(models=mod), cycle=cycle, legend="b", legend_kw={"ncols":4}, labels=mod, marker=".", markersize=100)
+    
+#   ssp585_p3-gMME
+axs[0].scatter(1.50, IndR_ssp585_p3_NC_regress[0].sel(models=gmodels).mean(dim="models", skipna=True), marker="*", cycle=cycle, markersize=100)
+
+#   ssp585_p3-gmodels
+for num_models, mod in enumerate(gmodels):
+    axs[0].scatter(1.50, IndR_ssp585_p3_NC_regress[0].sel(models=mod), cycle=cycle, marker=".", markersize=100)
+
+# axs[0].set_xticks([0, 0.75, 1.5, 2.25])
+# axs[0].set_xticklabels(["", "1979-2014", "2064-2099", ""])
+axs[0].format(xlocator=[0.75, 1.5], ylim=(-0.2,0.5), xlim=(0,2.25), xformatter=["1979-2014", "2064-2099"], tickminor=False)
 # %%
