@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-09 11:06:18
+LastEditTime: 2022-05-09 14:48:39
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -2914,4 +2914,524 @@ axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Corr. Coeff. IndR and NC")
+# %%
+#   calculate the three models that have decrease IndR-NC trend in ssp585_p3
+gmodels1 = ["CAMS-CSM1-0", "MIROC-ES2L", "UKESM1-0-LL"]
+
+pre_his_India_pre_slope_g1ens = pre_his_India_pre_slope.sel(models=gmodels1).mean(dim="models", skipna=True)
+pre_ssp585_p3_India_pre_slope_g1ens = pre_ssp585_p3_India_pre_slope.sel(models=gmodels1).mean(dim="models", skipna=True)
+
+pre_his_India_pre_slope_g1ens_mask = ca.MME_reg_mask(pre_his_India_pre_slope_g1ens, pre_his_India_pre_slope.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+pre_ssp585_p3_India_pre_slope_g1ens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_slope_g1ens, pre_ssp585_p3_India_pre_slope.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+
+
+IndR_his_hgt_slope_g1ens = IndR_his_hgt_slope.sel(models=gmodels1).mean(dim="models", skipna=True)
+IndR_his_u_slope_g1ens = IndR_his_u_slope.sel(models=gmodels1).mean(dim="models", skipna=True)
+IndR_his_v_slope_g1ens = IndR_his_v_slope.sel(models=gmodels1).mean(dim="models", skipna=True)
+
+IndR_ssp585_p3_hgt_slope_g1ens = IndR_ssp585_p3_hgt_slope.sel(models=gmodels1).mean(dim="models", skipna=True)
+IndR_ssp585_p3_u_slope_g1ens = IndR_ssp585_p3_u_slope.sel(models=gmodels1).mean(dim="models", skipna=True)
+IndR_ssp585_p3_v_slope_g1ens = IndR_ssp585_p3_v_slope.sel(models=gmodels1).mean(dim="models", skipna=True)
+
+
+pre_his_India_pre_rvalue_g1ens = ca.cal_rMME(pre_his_India_pre_rvalue.sel(models=gmodels1), "models")
+pre_ssp585_p3_India_pre_rvalue_g1ens = ca.cal_rMME(pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels1), "models")
+
+IndR_his_hgt_rvalue_g1ens = ca.cal_rMME(IndR_his_hgt_rvalue.sel(models=gmodels1), "models")
+IndR_his_u_rvalue_g1ens = ca.cal_rMME(IndR_his_u_rvalue.sel(models=gmodels1), "models")
+IndR_his_v_rvalue_g1ens = ca.cal_rMME(IndR_his_v_rvalue.sel(models=gmodels1), "models")
+
+IndR_ssp585_p3_hgt_rvalue_g1ens = ca.cal_rMME(IndR_ssp585_p3_hgt_rvalue.sel(models=gmodels1), "models")
+IndR_ssp585_p3_u_rvalue_g1ens = ca.cal_rMME(IndR_ssp585_p3_u_rvalue.sel(models=gmodels1), "models")
+IndR_ssp585_p3_v_rvalue_g1ens = ca.cal_rMME(IndR_ssp585_p3_v_rvalue.sel(models=gmodels1), "models")
+
+IndR_his_hgt_slope_g1ens_mask = ca.MME_reg_mask(IndR_his_hgt_slope_g1ens, IndR_his_hgt_slope.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+IndR_his_u_slope_g1ens_mask = ca.MME_reg_mask(IndR_his_u_slope_g1ens, IndR_his_u_slope.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+IndR_his_v_slope_g1ens_mask = ca.MME_reg_mask(IndR_his_v_slope_g1ens, IndR_his_v_slope.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+
+IndR_ssp585_p3_hgt_slope_g1ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_hgt_slope_g1ens, IndR_ssp585_p3_hgt_slope.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+IndR_ssp585_p3_u_slope_g1ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_u_slope_g1ens, IndR_ssp585_p3_u_slope.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+IndR_ssp585_p3_v_slope_g1ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_v_slope_g1ens, IndR_ssp585_p3_v_slope.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+
+pre_his_India_pre_rvalue_g1ens_mask = ca.MME_reg_mask(pre_his_India_pre_rvalue_g1ens, pre_his_India_pre_rvalue.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+pre_ssp585_p3_India_pre_rvalue_g1ens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_g1ens, pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+
+IndR_his_hgt_rvalue_g1ens_mask = ca.MME_reg_mask(IndR_his_hgt_rvalue_g1ens, IndR_his_hgt_rvalue.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+IndR_his_u_rvalue_g1ens_mask = ca.MME_reg_mask(IndR_his_u_rvalue_g1ens, IndR_his_u_rvalue.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+IndR_his_v_rvalue_g1ens_mask = ca.MME_reg_mask(IndR_his_v_rvalue_g1ens, IndR_his_v_rvalue.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+
+IndR_ssp585_p3_hgt_rvalue_g1ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_hgt_rvalue_g1ens, IndR_ssp585_p3_hgt_rvalue.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+IndR_ssp585_p3_u_rvalue_g1ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_u_rvalue_g1ens, IndR_ssp585_p3_u_rvalue.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+IndR_ssp585_p3_v_rvalue_g1ens_mask = ca.MME_reg_mask(IndR_ssp585_p3_v_rvalue_g1ens, IndR_ssp585_p3_v_rvalue.sel(models=gmodels1).std(dim="models", skipna=True), len(gmodels1), True)
+
+IndR_his_wind_g1ens_mask = ca.wind_check(
+    xr.where(IndR_his_u_slope_g1ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_his_v_slope_g1ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_his_u_slope_g1ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_his_v_slope_g1ens_mask > 0.0, 1.0, 0.0),
+)
+
+IndR_ssp585_p3_wind_g1ens_mask = ca.wind_check(
+    xr.where(IndR_ssp585_p3_u_slope_g1ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_v_slope_g1ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_u_slope_g1ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_ssp585_p3_v_slope_g1ens_mask > 0.0, 1.0, 0.0),
+)
+
+# %%
+#   plot the 200hPa good-models1 for corr coeff.
+startlevel=[-1.0, -1.0, -1.0]
+spacinglevel=[0.1, 0.1, 0.1]
+scalelevel=[0.17, 0.17, 0.17]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 7), (3, 2))
+    # plot_array[-1,-3:] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    # xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 1
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        # India area
+        x0 = India_W
+        y0 = India_S
+        width = India_E-India_W
+        height = India_N-India_S
+        patches(ax, x0 - cl, y0, width, height, proj)
+        # NC area
+        x0 = NC_W
+        y0 = NC_S
+        width = NC_E-NC_W
+        height = NC_N-NC_S
+        patches(ax, x0 - cl, y0, width, height, proj)
+        # #   IWF area
+        # x0 = 90
+        # y0 = 5.0
+        # width = 50.0
+        # height = 27.5
+        # patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        IndRCRU_ERA5_hgt_rvalue.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        IndRCRU_ERA5_hgt_rvalue.sel(level=lev), axs[0], n, np.where(IndRCRU_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[0].quiver(
+        IndRCRU_ERA5_u_rvalue.sel(level=lev)[::ski, ::ski],
+        IndRCRU_ERA5_v_rvalue.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[0].quiver(
+        IndRCRU_ERA5_u_rvalue.sel(level=lev).where(IndRCRU_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndRCRU_ERA5_v_rvalue.sel(level=lev).where(IndRCRU_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[0].format(
+        rtitle="1979-2014", ltitle="CRU & ERA5",
+    )
+    # ======================================
+    con = axs[1].contourf(
+        IndRGPCP_ERA5_hgt_rvalue.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        IndRGPCP_ERA5_hgt_rvalue.sel(level=lev), axs[1], n, np.where(IndRGPCP_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[1].quiver(
+        IndRGPCP_ERA5_u_rvalue.sel(level=lev)[::ski, ::ski],
+        IndRGPCP_ERA5_v_rvalue.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[1].quiver(
+        IndRGPCP_ERA5_u_rvalue.sel(level=lev).where(IndRGPCP_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndRGPCP_ERA5_v_rvalue.sel(level=lev).where(IndRGPCP_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[1].format(
+        rtitle="1979-2014", ltitle="GPCP & ERA5",
+    )
+    # ======================================
+    con = axs[2].contourf(
+        IndR_his_hgt_rvalue_g1ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        IndR_his_hgt_rvalue_g1ens.sel(level=lev), axs[2], n, np.where(IndR_his_hgt_rvalue_g1ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[2].quiver(
+        IndR_his_u_rvalue_g1ens.sel(level=lev)[::ski, ::ski],
+        IndR_his_v_rvalue_g1ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[2].quiver(
+        IndR_his_u_rvalue_g1ens.sel(level=lev).where(IndR_his_wind_g1ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_his_v_rvalue_g1ens.sel(level=lev).where(IndR_his_wind_g1ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[2].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[2].format(
+        rtitle="1979-2014", ltitle="gMME",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(gmodels1):
+        con = axs[num_mod+3].contourf(
+            IndR_his_hgt_rvalue.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+            zorder=0.8,
+        )
+        sepl.plt_sig(
+            IndR_his_hgt_rvalue.sel(models=mod,level=lev), axs[num_mod+3], n, np.where(IndR_his_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        )
+        axs[num_mod+3].quiver(
+            IndR_his_u_rvalue.sel(models=mod,level=lev)[::ski, ::ski],
+            IndR_his_v_rvalue.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="grey6",
+        )
+
+        m = axs[num_mod+3].quiver(
+            IndR_his_u_rvalue.sel(models=mod,level=lev).where(IndR_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            IndR_his_v_rvalue.sel(models=mod,level=lev).where(IndR_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod+3].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        axs[num_mod+3].format(
+            rtitle="1979-2014", ltitle="{}".format(mod),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
+# %%
+#   plot the 200hPa good-models for reg coeff.
+startlevel=[-15, -8, -6]
+spacinglevel=[0.75, 0.4, 0.3]
+scalelevel=[0.23, 0.17, 0.14]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 7), (3, 2))
+    # plot_array[-1,-3:] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    # xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 1
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        # India area
+        x0 = India_W
+        y0 = India_S
+        width = India_E-India_W
+        height = India_N-India_S
+        patches(ax, x0 - cl, y0, width, height, proj)
+        # NC area
+        x0 = NC_W
+        y0 = NC_S
+        width = NC_E-NC_W
+        height = NC_N-NC_S
+        patches(ax, x0 - cl, y0, width, height, proj)
+        # #   IWF area
+        # x0 = 90
+        # y0 = 5.0
+        # width = 50.0
+        # height = 27.5
+        # patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        IndRCRU_ERA5_hgt_slope.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndRCRU_ERA5_hgt_slope.sel(level=lev), axs[0], n, np.where(IndRCRU_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[0].quiver(
+        IndRCRU_ERA5_u_slope.sel(level=lev)[::ski, ::ski],
+        IndRCRU_ERA5_v_slope.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[0].quiver(
+        IndRCRU_ERA5_u_slope.sel(level=lev).where(IndRCRU_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndRCRU_ERA5_v_slope.sel(level=lev).where(IndRCRU_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[0].format(
+        rtitle="1979-2014", ltitle="CRU & ERA5",
+    )
+    # ======================================
+    con = axs[1].contourf(
+        IndRGPCP_ERA5_hgt_slope.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndRGPCP_ERA5_hgt_slope.sel(level=lev), axs[1], n, np.where(IndRGPCP_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[1].quiver(
+        IndRGPCP_ERA5_u_slope.sel(level=lev)[::ski, ::ski],
+        IndRGPCP_ERA5_v_slope.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[1].quiver(
+        IndRGPCP_ERA5_u_slope.sel(level=lev).where(IndRGPCP_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndRGPCP_ERA5_v_slope.sel(level=lev).where(IndRGPCP_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[1].format(
+        rtitle="1979-2014", ltitle="GPCP & ERA5",
+    )
+    # ======================================
+    con = axs[2].contourf(
+        IndR_his_hgt_slope_g1ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_hgt_slope_g1ens.sel(level=lev), axs[2], n, np.where(IndR_his_hgt_slope_g1ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[2].quiver(
+        IndR_his_u_slope_g1ens.sel(level=lev)[::ski, ::ski],
+        IndR_his_v_slope_g1ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[2].quiver(
+        IndR_his_u_slope_g1ens.sel(level=lev).where(IndR_his_wind_g1ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_his_v_slope_g1ens.sel(level=lev).where(IndR_his_wind_g1ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[2].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[2].format(
+        rtitle="1979-2014", ltitle="gMME",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(gmodels1):
+        con = axs[num_mod+3].contourf(
+            IndR_his_hgt_slope.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+            zorder=0.8,
+            extend="both"
+        )
+        sepl.plt_sig(
+            IndR_his_hgt_slope.sel(models=mod,level=lev), axs[num_mod+3], n, np.where(IndR_his_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        )
+        axs[num_mod+3].quiver(
+            IndR_his_u_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            IndR_his_v_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="grey6",
+        )
+
+        m = axs[num_mod+3].quiver(
+            IndR_his_u_slope.sel(models=mod,level=lev).where(IndR_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            IndR_his_v_slope.sel(models=mod,level=lev).where(IndR_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod+3].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        axs[num_mod+3].format(
+            rtitle="1979-2014", ltitle="{}".format(mod),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
 # %%
