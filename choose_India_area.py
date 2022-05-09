@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-09 19:19:56
+LastEditTime: 2022-05-09 20:10:14
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -366,6 +366,14 @@ vorssp585_WAhigh_JJA = ca.detrend_dim(vorssp585_WAhigh_JJA, "time", deg=1, demea
 ) = ca.dim_linregress(preGPCP_India_JJA, preGPCP_JJA)
 
 (
+    pre_AIR_India_pre_slope,
+    pre_AIR_India_pre_intercept,
+    pre_AIR_India_pre_rvalue,
+    pre_AIR_India_pre_pvalue,
+    pre_AIR_India_pre_hypothesis,
+) = ca.dim_linregress(preAIR_JJA.sel(time=preAIR_JJA.time.dt.year>=1979), preAIR_JJA.sel(time=preAIR_JJA.time.dt.year>=1979))
+
+(
     pre_his_India_pre_slope,
     pre_his_India_pre_intercept,
     pre_his_India_pre_rvalue,
@@ -503,6 +511,7 @@ fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 #   calculate the hgt/u/v regression onto IndR in ERA5, historical, ssp585, ssp585_p3
 preCRU_India_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
 preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979).coords["time"]
+preAIR_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
 (
     IndRCRU_ERA5_hgt_slope,
     IndRCRU_ERA5_hgt_intercept,
@@ -598,6 +607,30 @@ preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time
     IndR_ssp585_p3_v_pvalue,
     IndR_ssp585_p3_v_hypothesis,
 ) = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+
+(
+    IndRAIR_ERA5_hgt_slope,
+    IndRAIR_ERA5_hgt_intercept,
+    IndRAIR_ERA5_hgt_rvalue,
+    IndRAIR_ERA5_hgt_pvalue,
+    IndRAIR_ERA5_hgt_hypothesis,
+) = ca.dim_linregress(preAIR_JJA.sel(time=preAIR_JJA.time.dt.year>=1979), hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+
+(
+    IndRAIR_ERA5_u_slope,
+    IndRAIR_ERA5_u_intercept,
+    IndRAIR_ERA5_u_rvalue,
+    IndRAIR_ERA5_u_pvalue,
+    IndRAIR_ERA5_u_hypothesis,
+) = ca.dim_linregress(preAIR_JJA.sel(time=preAIR_JJA.time.dt.year>=1979), uERA5_ver_JJA.sel(time=uERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+
+(
+    IndRAIR_ERA5_v_slope,
+    IndRAIR_ERA5_v_intercept,
+    IndRAIR_ERA5_v_rvalue,
+    IndRAIR_ERA5_v_pvalue,
+    IndRAIR_ERA5_v_hypothesis,
+) = ca.dim_linregress(preAIR_JJA.sel(time=preAIR_JJA.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
 # %%
 #   save the regression results
 level=IndR_his_hgt_slope.coords["level"]
@@ -650,6 +683,54 @@ IndRCRU_ERA5_v_regress = xr.Dataset(
         lon=lon.data,
     ),
     attrs=dict(description="v fields of ERA5 regress onto 1979-2014 CRU IndR"),
+)
+
+IndRAIR_ERA5_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], IndRAIR_ERA5_hgt_slope.data),
+        intercept=(["level", "lat", "lon"], IndRAIR_ERA5_hgt_intercept.data),
+        rvalue=(["level", "lat", "lon"], IndRAIR_ERA5_hgt_rvalue.data),
+        pvalue=(["level", "lat", "lon"], IndRAIR_ERA5_hgt_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], IndRAIR_ERA5_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of ERA5 regress onto 1979-2014 AIR"),
+)
+
+IndRAIR_ERA5_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], IndRAIR_ERA5_u_slope.data),
+        intercept=(["level", "lat", "lon"], IndRAIR_ERA5_u_intercept.data),
+        rvalue=(["level", "lat", "lon"], IndRAIR_ERA5_u_rvalue.data),
+        pvalue=(["level", "lat", "lon"], IndRAIR_ERA5_u_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], IndRAIR_ERA5_u_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of ERA5 regress onto 1979-2014 AIR"),
+)
+
+IndRAIR_ERA5_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], IndRAIR_ERA5_v_slope.data),
+        intercept=(["level", "lat", "lon"], IndRAIR_ERA5_v_intercept.data),
+        rvalue=(["level", "lat", "lon"], IndRAIR_ERA5_v_rvalue.data),
+        pvalue=(["level", "lat", "lon"], IndRAIR_ERA5_v_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], IndRAIR_ERA5_v_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of ERA5 regress onto 1979-2014 AIR"),
 )
 
 IndRGPCP_ERA5_hgt_regress = xr.Dataset(
@@ -806,6 +887,10 @@ IndRCRU_ERA5_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj
 IndRCRU_ERA5_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRCRU_ERA5_u_regress.nc")
 IndRCRU_ERA5_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRCRU_ERA5_v_regress.nc")
 
+IndRAIR_ERA5_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRAIR_ERA5_hgt_regress.nc")
+IndRAIR_ERA5_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRAIR_ERA5_u_regress.nc")
+IndRAIR_ERA5_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRAIR_ERA5_v_regress.nc")
+
 IndRGPCP_ERA5_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRGPCP_ERA5_hgt_regress.nc")
 IndRGPCP_ERA5_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRGPCP_ERA5_u_regress.nc")
 IndRGPCP_ERA5_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRGPCP_ERA5_v_regress.nc")
@@ -822,6 +907,10 @@ IndR_ssp585_p3_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj
 IndRCRU_ERA5_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRCRU_ERA5_hgt_regress.nc")
 IndRCRU_ERA5_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRCRU_ERA5_u_regress.nc")
 IndRCRU_ERA5_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRCRU_ERA5_v_regress.nc")
+
+IndRAIR_ERA5_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRAIR_ERA5_hgt_regress.nc")
+IndRAIR_ERA5_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRAIR_ERA5_u_regress.nc")
+IndRAIR_ERA5_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRAIR_ERA5_v_regress.nc")
 
 IndRGPCP_ERA5_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRGPCP_ERA5_hgt_regress.nc")
 IndRGPCP_ERA5_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndRGPCP_ERA5_u_regress.nc")
@@ -844,6 +933,16 @@ IndRCRU_ERA5_v_rvalue = IndRCRU_ERA5_v_regress["rvalue"]
 IndRCRU_ERA5_hgt_pvalue = IndRCRU_ERA5_hgt_regress["pvalue"]
 IndRCRU_ERA5_u_pvalue = IndRCRU_ERA5_u_regress["pvalue"]
 IndRCRU_ERA5_v_pvalue = IndRCRU_ERA5_v_regress["pvalue"]
+
+IndRAIR_ERA5_hgt_slope = IndRAIR_ERA5_hgt_regress["slope"]
+IndRAIR_ERA5_u_slope = IndRAIR_ERA5_u_regress["slope"]
+IndRAIR_ERA5_v_slope = IndRAIR_ERA5_v_regress["slope"]
+IndRAIR_ERA5_hgt_rvalue = IndRAIR_ERA5_hgt_regress["rvalue"]
+IndRAIR_ERA5_u_rvalue = IndRAIR_ERA5_u_regress["rvalue"]
+IndRAIR_ERA5_v_rvalue = IndRAIR_ERA5_v_regress["rvalue"]
+IndRAIR_ERA5_hgt_pvalue = IndRAIR_ERA5_hgt_regress["pvalue"]
+IndRAIR_ERA5_u_pvalue = IndRAIR_ERA5_u_regress["pvalue"]
+IndRAIR_ERA5_v_pvalue = IndRAIR_ERA5_v_regress["pvalue"]
 
 IndRGPCP_ERA5_hgt_slope = IndRGPCP_ERA5_hgt_regress["slope"]
 IndRGPCP_ERA5_u_slope = IndRGPCP_ERA5_u_regress["slope"]
