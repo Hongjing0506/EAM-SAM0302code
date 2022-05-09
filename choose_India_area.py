@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-09 14:48:39
+LastEditTime: 2022-05-09 15:01:15
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -2978,6 +2978,23 @@ IndR_ssp585_p3_wind_g1ens_mask = ca.wind_check(
     xr.where(IndR_ssp585_p3_v_slope_g1ens_mask > 0.0, 1.0, 0.0),
 )
 
+pre_diff_India_pre_slope_g1ens = pre_diff_India_pre_slope.sel(models=gmodels1).mean(dim="models", skipna=True)
+
+pre_diff_India_pre_rvalue_g1ens = ca.cal_rMME(pre_diff_India_pre_rvalue.sel(models=gmodels1), "models")
+
+IndR_diff_hgt_slope_g1ens = IndR_diff_hgt_slope.sel(models=gmodels1).mean(dim="models", skipna=True)
+
+IndR_diff_u_slope_g1ens = IndR_diff_u_slope.sel(models=gmodels1).mean(dim="models", skipna=True)
+
+IndR_diff_v_slope_g1ens = IndR_diff_v_slope.sel(models=gmodels1).mean(dim="models", skipna=True)
+
+IndR_diff_hgt_rvalue_g1ens = ca.cal_rMME(IndR_diff_hgt_rvalue.sel(models=gmodels1), "models")
+
+IndR_diff_u_rvalue_g1ens = ca.cal_rMME(IndR_diff_u_rvalue.sel(models=gmodels1), "models")
+
+IndR_diff_v_rvalue_g1ens = ca.cal_rMME(IndR_diff_v_rvalue.sel(models=gmodels1), "models")
+
+
 # %%
 #   plot the 200hPa good-models1 for corr coeff.
 startlevel=[-1.0, -1.0, -1.0]
@@ -3155,7 +3172,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     axs[2].format(
-        rtitle="1979-2014", ltitle="gMME",
+        rtitle="1979-2014", ltitle="gMME1",
     )
     # ======================================
     for num_mod, mod in enumerate(gmodels1):
@@ -3384,7 +3401,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     axs[2].format(
-        rtitle="1979-2014", ltitle="gMME",
+        rtitle="1979-2014", ltitle="gMME1",
     )
     # ======================================
     for num_mod, mod in enumerate(gmodels1):
@@ -3430,6 +3447,288 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         )
         axs[num_mod+3].format(
             rtitle="1979-2014", ltitle="{}".format(mod),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
+# %%
+#   plot the 200hPa circulation in good-models for corr coeff. in ssp585_p3
+startlevel=[-1.0, -1.0, -1.0]
+spacinglevel=[0.1, 0.1, 0.1]
+scalelevel=[0.17, 0.17, 0.17]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 5), (2, 2))
+    # plot_array[-1,-2:] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    # xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 1
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        # India area
+        x0 = India_W
+        y0 = India_S
+        width = India_E-India_W
+        height = India_N-India_S
+        patches(ax, x0 - cl, y0, width, height, proj)
+        # NC area
+        x0 = NC_W
+        y0 = NC_S
+        width = NC_E-NC_W
+        height = NC_N-NC_S
+        patches(ax, x0 - cl, y0, width, height, proj)
+        # #   IWF area
+        # x0 = 90
+        # y0 = 5.0
+        # width = 50.0
+        # height = 27.5
+        # patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        IndR_ssp585_p3_hgt_rvalue_g1ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        IndR_ssp585_p3_hgt_rvalue_g1ens.sel(level=lev), axs[0], n, np.where(IndR_ssp585_p3_hgt_rvalue_g1ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[0].quiver(
+        IndR_ssp585_p3_u_rvalue_g1ens.sel(level=lev)[::ski, ::ski],
+        IndR_ssp585_p3_v_rvalue_g1ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[0].quiver(
+        IndR_ssp585_p3_u_rvalue_g1ens.sel(level=lev).where(IndR_ssp585_p3_wind_g1ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_ssp585_p3_v_rvalue_g1ens.sel(level=lev).where(IndR_ssp585_p3_wind_g1ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[0].format(
+        rtitle="2064-2099", ltitle="gMME1",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(gmodels1):
+        con = axs[num_mod+1].contourf(
+            IndR_ssp585_p3_hgt_rvalue.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+            zorder=0.8,
+        )
+        sepl.plt_sig(
+            IndR_ssp585_p3_hgt_rvalue.sel(models=mod,level=lev), axs[num_mod+1], n, np.where(IndR_ssp585_p3_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        )
+        axs[num_mod+1].quiver(
+            IndR_ssp585_p3_u_rvalue.sel(models=mod,level=lev)[::ski, ::ski],
+            IndR_ssp585_p3_v_rvalue.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="grey6",
+        )
+
+        m = axs[num_mod+1].quiver(
+            IndR_ssp585_p3_u_rvalue.sel(models=mod,level=lev).where(IndR_ssp585_p3_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            IndR_ssp585_p3_v_rvalue.sel(models=mod,level=lev).where(IndR_ssp585_p3_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod+1].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        axs[num_mod+1].format(
+            rtitle="2064-2099", ltitle="{}".format(mod),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
+# %%
+#   plot the 200hPa circulation in good-models for reg coeff. in ssp585_p3
+startlevel=[-15, -8, -6]
+spacinglevel=[0.75, 0.4, 0.3]
+scalelevel=[0.23, 0.17, 0.14]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 5), (2, 2))
+    # plot_array[-1,-2:] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    # xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 1
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        # India area
+        x0 = India_W
+        y0 = India_S
+        width = India_E-India_W
+        height = India_N-India_S
+        patches(ax, x0 - cl, y0, width, height, proj)
+        # NC area
+        x0 = NC_W
+        y0 = NC_S
+        width = NC_E-NC_W
+        height = NC_N-NC_S
+        patches(ax, x0 - cl, y0, width, height, proj)
+        # #   IWF area
+        # x0 = 90
+        # y0 = 5.0
+        # width = 50.0
+        # height = 27.5
+        # patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        IndR_ssp585_p3_hgt_slope_g1ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_ssp585_p3_hgt_slope_g1ens.sel(level=lev), axs[0], n, np.where(IndR_ssp585_p3_hgt_slope_g1ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[0].quiver(
+        IndR_ssp585_p3_u_slope_g1ens.sel(level=lev)[::ski, ::ski],
+        IndR_ssp585_p3_v_slope_g1ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[0].quiver(
+        IndR_ssp585_p3_u_slope_g1ens.sel(level=lev).where(IndR_ssp585_p3_wind_g1ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_ssp585_p3_v_slope_g1ens.sel(level=lev).where(IndR_ssp585_p3_wind_g1ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[0].format(
+        rtitle="2064-2099", ltitle="gMME1",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(gmodels1):
+        con = axs[num_mod+1].contourf(
+            IndR_ssp585_p3_hgt_slope.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+            zorder=0.8,
+            extend="both"
+        )
+        sepl.plt_sig(
+            IndR_ssp585_p3_hgt_slope.sel(models=mod,level=lev), axs[num_mod+1], n, np.where(IndR_ssp585_p3_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        )
+        axs[num_mod+1].quiver(
+            IndR_ssp585_p3_u_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            IndR_ssp585_p3_v_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="grey6",
+        )
+
+        m = axs[num_mod+1].quiver(
+            IndR_ssp585_p3_u_slope.sel(models=mod,level=lev).where(IndR_ssp585_p3_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            IndR_ssp585_p3_v_slope.sel(models=mod,level=lev).where(IndR_ssp585_p3_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod+1].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        axs[num_mod+1].format(
+            rtitle="2064-2099", ltitle="{}".format(mod),
         )
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
