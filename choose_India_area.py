@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-09 15:08:26
+LastEditTime: 2022-05-09 16:56:30
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -1201,6 +1201,7 @@ for num_mod, mod in enumerate(models):
     v_pcc = ca.cal_pcc(IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_v_slope.sel(models=mod, lat=lat_ranking_range, lon=lon_ranking_range, level=200.0))
     
     IndR_ranking_list.append({"models": mod.data, "pcc": hgt_pcc+u_pcc+v_pcc})
+    # IndR_ranking_list.append({"models":mod.data, "pcc":hgt_pcc})
     
     IndR_hgt_pcc.append(hgt_pcc)
     IndR_u_pcc.append(u_pcc)
@@ -3955,4 +3956,84 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
+# %%
+#   plot the correlation scatter-plot, x:pcc, y:corr(IndR, NCR)
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(1.0, IndR_GPCP_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s", color="blue5")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter((IndR_hgt_pcc+IndR_u_pcc+IndR_v_pcc)[num_models]/3.0, IndR_his_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter((IndR_hgt_pcc+IndR_u_pcc+IndR_v_pcc)[26]/3.0, ca.cal_rMME(IndR_his_NC_regress[2],"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^")
+m = axs[0].scatter((IndR_hgt_pcc+IndR_u_pcc+IndR_v_pcc)[27]/3.0, ca.cal_rMME(IndR_his_NC_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*")
+# #   第一象限
+# axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_SC_regress[2]>0)).count().data, IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_SC_regress[2]>0)).count().data/26*100))
+# #   第二象限
+# axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_SC_regress[2]<0)).count().data, IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_SC_regress[2]<0)).count().data/26*100))
+# #   第三象限
+# axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_SC_regress[2]<0)).count().data, IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_SC_regress[2]<0)).count().data/26*100))
+# #   第四象限
+# axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_SC_regress[2]>0)).count().data, IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_SC_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='pcc_mean')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='corr(IndR, NCR)')
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the correlation scatter-plot, x:pcc, y:corr(IndR, NCR)
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 8, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(1.0, IndR_GPCP_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s", color="blue5")
+for (num_models, mod), num_pcc in zip(enumerate(gmodels), [list(models_array).index(gmod) for gmod in gmodels]):
+    m = axs[0].scatter((IndR_hgt_pcc+IndR_u_pcc+IndR_v_pcc)[num_pcc]/3.0, IndR_his_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# m = axs[0].scatter((IndR_hgt_pcc+IndR_u_pcc+IndR_v_pcc)[26]/3.0, ca.cal_rMME(IndR_his_NC_regress[2],"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^")
+m = axs[0].scatter((IndR_hgt_pcc+IndR_u_pcc+IndR_v_pcc)[27]/3.0, ca.cal_rMME(IndR_his_NC_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*")
+# #   第一象限
+# axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_SC_regress[2]>0)).count().data, IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_SC_regress[2]>0)).count().data/26*100))
+# #   第二象限
+# axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_SC_regress[2]<0)).count().data, IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_SC_regress[2]<0)).count().data/26*100))
+# #   第三象限
+# axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_SC_regress[2]<0)).count().data, IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_SC_regress[2]<0)).count().data/26*100))
+# #   第四象限
+# axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_SC_regress[2]>0)).count().data, IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_SC_regress[2]>0)).count().data/26*100))
+#   x-axis title
+axs[0].text(-0.55,0.03,s='pcc_mean')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='corr(IndR, NCR)')
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-0.6,0.6), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
 # %%
