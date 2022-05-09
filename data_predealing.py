@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-02 16:45:05
 LastEditors: ChenHJ
-LastEditTime: 2022-03-31 21:37:51
+LastEditTime: 2022-05-09 18:54:32
 FilePath: /chenhj/0302code/data_predealing.py
 Aim: 
 Mission: 
@@ -196,4 +196,59 @@ for var in variable:
         for filename in file_list:
             print(filename)
             ca.uniform_timestamp(os.path.join(path, filename), os.path.join("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/", var + "2", filename), var, "19500101", "20141201", "MS")
+# %%
+#   Dealing the AIR index
+f = open("/home/ys17-23/Extension/All_India_Rainfall_index/iitm-regionrf.txt")
+time = pd.date_range(str(18710101), str(20161201), freq="MS")
+data = np.zeros(np.size(time), dtype=np.float32)
+for i in np.arange(1, 153):
+    if i <= 6:
+        f.readline()
+    else:
+        a = f.readline()
+        for m in np.arange(1,13,1):
+            # print(a[5+6*(m-1):11+6*(m-1)])
+            # data[(i-一开始跳过的行数)*12个月+（m-1）个月] = float(a[每行一开始跳过的字符长度+每个月数据所占用的字符长度*（m-1）个月：每行一开始跳过的字符长度+每个月数据所占用的字符长度*m个月])
+            data[(i-7)*12+m-1] = float(a[5+6*(m-1):5+6*m])/10.0
+f.close()
+print(data[-12:])
+foo = xr.DataArray(data, coords=[time], dims=["time"])
+foo.name = "precip"
+foo.attrs["Name of the region"] = "ALL-INDIA RAINFALL"
+foo.attrs["Data Period"] = "1871-2016"
+foo.attrs["Area of the region in sq. km"] = "30 SUBDIVISIONS AREA 2880324 SQ.KM."
+foo.attrs["units"] = "mm/month"
+foo.to_netcdf("/home/ys17-23/Extension/All_India_Rainfall_index/AIR.nc")
+
+# %%
+#   calculate the mm/day
+f = open("/home/ys17-23/Extension/All_India_Rainfall_index/iitm-regionrf.txt")
+time = pd.date_range(str(18710101), str(20161201), freq="MS")
+data = np.zeros(np.size(time), dtype=np.float32)
+monthday1 = [31., 28., 31., 30., 31., 30., 31., 31., 30., 31., 30., 31.]
+monthday2 = [31., 29., 31., 30., 31., 30., 31., 31., 30., 31., 30., 31.]
+for i in np.arange(1, 153):
+    if i <= 6:
+        f.readline()
+    else:
+        a = f.readline()
+        for m in np.arange(1,13,1):
+            # print(a[5+6*(m-1):11+6*(m-1)])
+            # data[(i-一开始跳过的行数)*12个月+（m-1）个月] = float(a[每行一开始跳过的字符长度+每个月数据所占用的字符长度*（m-1）个月：每行一开始跳过的字符长度+每个月数据所占用的字符长度*m个月])
+            if (i-7+1871)%4==0 and (i-7+1871)%100!=0:
+                data[(i-7)*12+m-1] = float(a[5+6*(m-1):5+6*m])/10.0/monthday2[m-1]
+            elif (i-7+1871)%400==0:
+                data[(i-7)*12+m-1] = float(a[5+6*(m-1):5+6*m])/10.0/monthday2[m-1]
+            else:
+                data[(i-7)*12+m-1] = float(a[5+6*(m-1):5+6*m])/10.0/monthday1[m-1]
+f.close()
+print(data[-12:])
+foo = xr.DataArray(data, coords=[time], dims=["time"])
+foo.name = "precip"
+foo.attrs["Name of the region"] = "ALL-INDIA RAINFALL"
+foo.attrs["Data Period"] = "1871-2016"
+foo.attrs["Area of the region in sq. km"] = "30 SUBDIVISIONS AREA 2880324 SQ.KM."
+foo.attrs["units"] = "mm/day"
+foo.to_netcdf("/home/ys17-23/Extension/All_India_Rainfall_index/AIR_mmperday.nc")
+
 # %%
