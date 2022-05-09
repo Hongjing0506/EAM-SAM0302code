@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-09 21:02:47
+LastEditTime: 2022-05-09 21:45:15
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -190,6 +190,16 @@ uttERA5_JJA = ca.detrend_dim(uttERA5_JJA, "time", deg=1, demean=False)
 uttERA5_JJA.name = "utt"
 # %%
 #   pick up the area data
+#   calculate the vorticity in ERA5, historical and ssp585
+vorERA5_ver_JJA = mpcalc.vorticity(uERA5_ver_JJA.sel(level=200.0), vERA5_ver_JJA.sel(level=200.0))
+vorERA5_ver_JJA = vorERA5_ver_JJA.metpy.dequantify()
+
+vorhis_ver_JJA = mpcalc.vorticity(uhis_ver_JJA.sel(level=200.0), vhis_ver_JJA.sel(level=200.0))
+vorhis_ver_JJA = vorhis_ver_JJA.metpy.dequantify()
+
+vorssp585_ver_JJA = mpcalc.vorticity(ussp585_ver_JJA.sel(level=200.0), vssp585_ver_JJA.sel(level=200.0))
+vorssp585_ver_JJA = vorssp585_ver_JJA.metpy.dequantify()
+
 #   calculate the precipitation in India
 lat = preCRU_JJA.coords["lat"]
 lon = preCRU_JJA.coords["lon"]
@@ -304,6 +314,10 @@ vorhis_WAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uhis_WAhigh_JJA, v
 vorssp585_WAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_WAhigh_JJA, vssp585_WAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
 # %%
 #   calculate the detrend-data for the picked-up area data
+vorERA5_ver_JJA = ca.detrend_dim(vorERA5_ver_JJA, "time", deg=1, demean=False)
+vorhis_ver_JJA = ca.detrend_dim(vorhis_ver_JJA, "time", deg=1, demean=False)
+vorssp585_ver_JJA = ca.detrend_dim(vorssp585_ver_JJA, "time", deg=1, demean=False)
+
 preCRU_India_JJA = ca.detrend_dim(preCRU_India_JJA, "time", deg=1, demean=False)
 preGPCP_India_JJA = ca.detrend_dim(preGPCP_India_JJA, "time", deg=1, demean=False)
 prehis_India_JJA = ca.detrend_dim(prehis_India_JJA, "time", deg=1, demean=False)
@@ -632,6 +646,14 @@ preAIR_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
     IndRAIR_ERA5_v_pvalue,
     IndRAIR_ERA5_v_hypothesis,
 ) = ca.dim_linregress(preAIR_JJA.sel(time=preAIR_JJA.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+
+(
+    IndRAIR_ERA5_vor_slope,
+    IndRAIR_ERA5_vor_intercept,
+    IndRAIR_ERA5_vor_rvalue,
+    IndRAIR_ERA5_vor_pvalue,
+    IndRAIR_ERA5_vor_hypothesis,
+) = ca.dim_linregress(preAIR_JJA.sel(time=preAIR_JJA.time.dt.year>=1979), vorERA5_ver_JJA.sel(time=vorERA5_ver_JJA.time.dt.year>=1979))
 # %%
 #   save the regression results
 level=IndR_his_hgt_slope.coords["level"]
@@ -4483,7 +4505,7 @@ fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 lat = prehis_JJA.coords["lat"]
 lon = prehis_JJA.coords["lon"]
 lat_ranking_range = lat[(lat>=15) & (lat<=47.5)]
-lon_ranking_range = lon[(lon>=50) & (lon<=140.0)]
+lon_ranking_range = lon[(lon>=50) & (lon<=120.0)]
 
 IndR_ranking_list = []
 IndR_hgt_pcc = []
@@ -4608,3 +4630,4 @@ IndR_v_std.append(float((IndR_his_v_slope_gens.sel(lat=lat_ranking_range,lon=lon
 
 print(sorted(IndR_ranking_list, key=lambda x : x["pcc"]))
 # %%
+#   
