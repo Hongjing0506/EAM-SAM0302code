@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-09 17:19:12
+LastEditTime: 2022-05-09 19:19:56
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -75,6 +75,11 @@ fpreGPCP = xr.open_dataset(
 preGPCP = fpreGPCP["precip"]
 preGPCP_JJA = ca.p_time(preGPCP, 6, 8, True)
 preGPCP_JJA = ca.detrend_dim(preGPCP_JJA, "time", deg=1, demean=False)
+
+preAIR = xr.open_dataarray("/home/ys17-23/Extension/All_India_Rainfall_index/AIR_mmperday.nc")
+preAIR_JJA = ca.p_time(preAIR, 6, 8, True)
+preAIR_JJA = preAIR_JJA.sel(time=(preAIR_JJA.time.dt.year>=1950) & (preAIR_JJA.time.dt.year <=2014))
+preAIR_JJA = ca.detrend_dim(preAIR_JJA, "time", deg=1, demean=False)
 
 fprehis = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pr_historical_r144x72_195001-201412.nc")
 prehis_JJA = fprehis["pr"]
@@ -165,6 +170,7 @@ uttssp585_JJA.name="utt"
 #   deal with the time index for CRU and GPCP data
 preCRU_JJA.coords["time"] = prehis_JJA.coords["time"]
 preGPCP_JJA.coords["time"] = prehis_JJA.sel(time=prehis_JJA.time.dt.year>=1979).coords["time"]
+preAIR_JJA.coords["time"] = prehis_JJA.coords["time"]
 # %%
 models = uhis_ver_JJA.coords["models"]
 models_array = models.data
