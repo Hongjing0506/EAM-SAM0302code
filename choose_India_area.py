@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-10 11:05:04
+LastEditTime: 2022-05-10 19:26:13
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -112,18 +112,23 @@ spERA5 = fspERA5["sp"]
 fqERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc")
 qERA5 = fqERA5["q"]
 
+fwERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/omega_mon_r144x72_195001-201412.nc")
+wERA5 = fwERA5["w"]
+
 hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True)
 hgtERA5_ver_JJA = hgtERA5_ver_JJA-hgtERA5_ver_JJA.mean(dim="lon", skipna=True)
 uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True)
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True)
 qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True)
 spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
+wERA5_JJA = ca.p_time(wERA5, 6, 8, True)
 
 hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
 uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
 vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
 qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
 spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
+wERA5_JJA = ca.detrend_dim(wERA5_JJA, "time", deg=1, demean=False)
 
 fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc")
 hgthis_ver_JJA = fhgthis_ver_JJA["zg"]
@@ -135,6 +140,9 @@ uhis_ver_JJA = fuhis_ver_JJA["ua"]
 fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc")
 vhis_ver_JJA = fvhis_ver_JJA["va"]
 
+fwhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/wap_historical_r144x72_195001-201412.nc") 
+whis_ver_JJA = fwhis_ver_JJA["wap"]
+
 fhgtssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
 hgtssp585_ver_JJA = fhgtssp585_ver_JJA["zg"]
 hgtssp585_ver_JJA = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lon", skipna=True)
@@ -145,6 +153,8 @@ ussp585_ver_JJA = fussp585_ver_JJA["ua"]
 fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
 vssp585_ver_JJA = fvssp585_ver_JJA["va"]
 
+fwssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/wap_ssp585_r144x72_206401-209912.nc")
+wssp585_ver_JJA = fwssp585_ver_JJA["wap"]
 #read the temperature data in ERA5/historical/ssp585
 ftERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/temp_mon_r144x72_195001-201412.nc")
 tERA5 = ftERA5["t"]
@@ -2584,7 +2594,11 @@ fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 #   calculate the good models difference between historical run and ssp585_p3 run
 pre_diff_India_pre_slope = pre_ssp585_p3_India_pre_slope - pre_his_India_pre_slope
 
+pre_diff_India_pre_mask = ca.cal_mmemask(pre_diff_India_pre_slope)
+
 pre_diff_India_pre_slope_gens = pre_diff_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+pre_diff_India_pre_gens_mask = ca.cal_mmemask(pre_diff_India_pre_slope.sel(models=gmodels))
 
 pre_diff_India_pre_rvalue = ca.cal_rdiff(pre_ssp585_p3_India_pre_rvalue, pre_his_India_pre_rvalue)
 pre_diff_India_pre_rvalue_gens = ca.cal_rMME(pre_diff_India_pre_rvalue.sel(models=gmodels), "models")
@@ -2592,11 +2606,33 @@ pre_diff_India_pre_rvalue_gens = ca.cal_rMME(pre_diff_India_pre_rvalue.sel(model
 IndR_diff_hgt_slope = IndR_ssp585_p3_hgt_slope - IndR_his_hgt_slope
 IndR_diff_hgt_slope_gens = IndR_diff_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 
+IndR_diff_hgt_mask = ca.cal_mmemask(IndR_diff_hgt_slope)
+IndR_diff_hgt_gens_mask = ca.cal_mmemask(IndR_diff_hgt_slope.sel(models=gmodels))
+
 IndR_diff_u_slope = IndR_ssp585_p3_u_slope - IndR_his_u_slope
 IndR_diff_u_slope_gens = IndR_diff_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 
+IndR_diff_u_mask = ca.cal_mmemask(IndR_diff_u_slope)
+IndR_diff_u_gens_mask = ca.cal_mmemask(IndR_diff_u_slope.sel(models=gmodels))
+
 IndR_diff_v_slope = IndR_ssp585_p3_v_slope - IndR_his_v_slope
 IndR_diff_v_slope_gens = IndR_diff_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+IndR_diff_v_mask = ca.cal_mmemask(IndR_diff_v_slope)
+IndR_diff_v_gens_mask = ca.cal_mmemask(IndR_diff_v_slope.sel(models=gmodels))
+
+IndR_diff_wind_mask = ca.wind_check(
+    xr.where(IndR_diff_u_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_v_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_u_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_v_mask > 0.0, 1.0, 0.0),
+)
+IndR_diff_wind_gens_mask = ca.wind_check(
+    xr.where(IndR_diff_u_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_v_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_u_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_v_gens_mask > 0.0, 1.0, 0.0),
+)
 
 IndR_diff_hgt_rvalue = ca.cal_rdiff(IndR_ssp585_p3_hgt_rvalue, IndR_his_hgt_rvalue)
 IndR_diff_hgt_rvalue_gens = ca.cal_rMME(IndR_diff_hgt_rvalue.sel(models=gmodels), "models")
@@ -2797,8 +2833,11 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
         zorder=0.8,
     )
-
-    m = axs[0].quiver(
+    sepl.plt_sig(
+        IndR_diff_hgt_rvalue_gens.sel(level=lev), axs[0], n, np.where(IndR_diff_hgt_gens_mask.sel(level=lev)[::n, ::n] > 0), "bright purple", 4.0,
+    )
+    
+    axs[0].quiver(
         IndR_diff_u_rvalue_gens.sel(level=lev)[::ski, ::ski],
         IndR_diff_v_rvalue_gens.sel(level=lev)[::ski, ::ski],
         zorder=1.1,
@@ -2808,9 +2847,22 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         scale_units="xy",
         scale=scalelevel[num_lev],
         pivot="mid",
+        color="grey6",
+    )
+    
+    m = axs[0].quiver(
+        IndR_diff_u_rvalue_gens.sel(level=lev).where(IndR_diff_wind_gens_mask.sel(level=lev)>0)[::ski, ::ski],
+        IndR_diff_v_rvalue_gens.sel(level=lev).where(IndR_diff_wind_gens_mask.sel(level=lev)>0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
         color="black",
     )
-
+    
     qk = axs[0].quiverkey(
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
@@ -2903,15 +2955,31 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     con = axs[0].contourf(
         IndR_diff_hgt_slope_gens.sel(level=lev),
         cmap="ColdHot",
-        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": 0.0},
         levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
         zorder=0.8,
         extend="both"
     )
+    sepl.plt_sig(
+        IndR_diff_hgt_rvalue_gens.sel(level=lev), axs[0], n, np.where(IndR_diff_hgt_gens_mask.sel(level=lev)[::n, ::n] > 0), "bright purple", 4.0,
+    )
 
-    m = axs[0].quiver(
+    axs[0].quiver(
         IndR_diff_u_slope_gens.sel(level=lev)[::ski, ::ski],
         IndR_diff_v_slope_gens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+    
+    m = axs[0].quiver(
+        IndR_diff_u_slope_gens.sel(level=lev).where(IndR_diff_wind_gens_mask.sel(level=lev)>0)[::ski, ::ski],
+        IndR_diff_v_slope_gens.sel(level=lev).where(IndR_diff_wind_gens_mask.sel(level=lev)>0)[::ski, ::ski],
         zorder=1.1,
         headwidth=2.6,
         headlength=2.3,
@@ -2933,7 +3001,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         con = axs[num_mod+1].contourf(
             IndR_diff_hgt_slope.sel(models=mod,level=lev),
             cmap="ColdHot",
-            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": 0.0},
             levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
             zorder=0.8,
             extend="both"
@@ -4588,6 +4656,7 @@ IndR_u_std.append(float((IndR_his_u_slope_ens.sel(lat=lat_ranking_range,lon=lon_
 IndR_v_std.append(float((IndR_his_v_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRAIR_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
 
 #   pick up the good models and calculate the gMME for hgt, u, v, precip
+#   these gmodels are different from the ranking list calculated by the GPCP data
 gmodels = ["CESM2-WACCM", "CMCC-ESM2","CAMS-CSM1-0", "INM-CM4-8", "MIROC-ES2L", "MRI-ESM2-0"]
 
 pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
