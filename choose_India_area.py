@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-10 19:26:13
+LastEditTime: 2022-05-10 21:00:14
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -153,7 +153,7 @@ ussp585_ver_JJA = fussp585_ver_JJA["ua"]
 fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
 vssp585_ver_JJA = fvssp585_ver_JJA["va"]
 
-fwssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/wap_ssp585_r144x72_206401-209912.nc")
+fwssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/wap_ssp585_r144x72_201501-209912.nc")
 wssp585_ver_JJA = fwssp585_ver_JJA["wap"]
 #read the temperature data in ERA5/historical/ssp585
 ftERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/temp_mon_r144x72_195001-201412.nc")
@@ -4843,4 +4843,88 @@ axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95
 axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].format(xlim=(-1.0,1.2), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   calculate the climatology relative vorticity in the historical and ssp585_p3
+vorERA5_cli_ver_JJA = vorERA5_ver_JJA.sel(time=vorERA5_ver_JJA.time.dt.year>=1979).mean(dim="time", skipna=True)
+vorhis_cli_ver_JJA = vorhis_ver_JJA.sel(time=vorhis_ver_JJA.time.dt.year>=1979).mean(dim="time", skipna=True)
+vorssp585_p3_cli_ver_JJA = vorssp585_ver_JJA.sel(time=vorssp585_ver_JJA.time.dt.year>=2064).mean(dim="time", skipna=True)
+# %%
+#   plot the climatology relative vorticity in ERA5 and historical
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (6, 5))
+plot_array[-1,-2:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    # India area
+    x0 = India_W
+    y0 = India_S
+    width = India_E-India_W
+    height = India_N-India_S
+    patches(ax, x0 - cl, y0, width, height, proj)
+    # NC area
+    x0 = NC_W
+    y0 = NC_S
+    width = NC_E-NC_W
+    height = NC_N-NC_S
+    patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0].contourf(
+    vorERA5_cli_ver_JJA,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-3.5e-5, 3.5e-5+3.5e-6, 3.5e-6),
+    zorder=0.8,
+    extend="both"
+    )
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="ERA5",
+)
+# ===================================================
+con = axs[1].contourf(
+    vorhis_cli_ver_JJA.mean(dim="models", skipna=True),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-3.5e-5, 3.5e-5+3.5e-6, 3.5e-6),
+    zorder=0.8,
+    extend="both"
+    )
+
+axs[1].format(
+    rtitle="1979-2014", ltitle="MME",
+)
+# ===================================================
+for num_mod, mod in enumerate(models):
+    con = axs[num_mod+2].contourf(
+        vorhis_cli_ver_JJA.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(-3.5e-5, 3.5e-5+3.5e-6, 3.5e-6),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod.data),
+    )
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="200hPa vor reg IndR")
 # %%
