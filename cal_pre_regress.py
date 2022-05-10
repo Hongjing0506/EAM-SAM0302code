@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-14 16:32:41
 LastEditors: ChenHJ
-LastEditTime: 2022-05-06 15:58:32
+LastEditTime: 2022-05-10 19:24:21
 FilePath: /chenhj/0302code/cal_pre_regress.py
 Aim: 
 Mission: 
@@ -107,18 +107,23 @@ spERA5 = fspERA5["sp"]
 fqERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/q_mon_r144x72_195001-201412.nc")
 qERA5 = fqERA5["q"]
 
+fwERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/omega_mon_r144x72_195001-201412.nc")
+wERA5 = fwERA5["w"]
+
 hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True)
 hgtERA5_ver_JJA = hgtERA5_ver_JJA-hgtERA5_ver_JJA.mean(dim="lon", skipna=True)
 uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True)
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True)
 qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True)
 spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
+wERA5_JJA = ca.p_time(wERA5, 6, 8, True)
 
 hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
 uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
 vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
 qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
 spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
+wERA5_JJA = ca.detrend_dim(wERA5_JJA, "time", deg=1, demean=False)
 
 fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc")
 hgthis_ver_JJA = fhgthis_ver_JJA["zg"]
@@ -130,6 +135,9 @@ uhis_ver_JJA = fuhis_ver_JJA["ua"]
 fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc")
 vhis_ver_JJA = fvhis_ver_JJA["va"]
 
+fwhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/wap_historical_r144x72_195001-201412.nc") 
+whis_ver_JJA = fwhis_ver_JJA["wap"]
+
 fhgtssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
 hgtssp585_ver_JJA = fhgtssp585_ver_JJA["zg"]
 hgtssp585_ver_JJA = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lon", skipna=True)
@@ -140,6 +148,8 @@ ussp585_ver_JJA = fussp585_ver_JJA["ua"]
 fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
 vssp585_ver_JJA = fvssp585_ver_JJA["va"]
 
+fwssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/wap_ssp585_r144x72_206401-209912.nc")
+wssp585_ver_JJA = fwssp585_ver_JJA["wap"]
 #read the temperature data in ERA5/historical/ssp585
 ftERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/temp_mon_r144x72_195001-201412.nc")
 tERA5 = ftERA5["t"]
