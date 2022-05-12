@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-12 22:48:06
+LastEditTime: 2022-05-12 22:55:43
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -3032,7 +3032,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
 # %%
 #   calculate the corr analysis between India and different variables
 #   NCR
-IndR_GPCP_NC_regress = stats.linregress(preGPCP_India_JJA, preGPCP_NC_JJA)
+IndR_GPCP_NC_regress = stats.linregress(preAIR_JJA.sel(time=preAIR_JJA.time.dt.year>=1979), preGPCP_NC_JJA)
 
 IndR_his_NC_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979))
 
@@ -3040,8 +3040,9 @@ IndR_ssp585_p3_NC_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=press
 
 IndR_diff_NC_slope = IndR_ssp585_p3_NC_regress[0] - IndR_his_NC_regress[0]
 IndR_diff_NC_rvalue = ca.cal_rdiff(IndR_ssp585_p3_NC_regress[2], IndR_his_NC_regress[2])
+
 #   KP
-IndR_GPCP_KP_regress = stats.linregress(preGPCP_India_JJA, preGPCP_KP_JJA)
+IndR_GPCP_KP_regress = stats.linregress(preAIR_JJA.sel(time=preAIR_JJA.time.dt.year>=1979), preGPCP_KP_JJA)
 
 IndR_his_KP_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_KP_JJA.sel(time=prehis_KP_JJA.time.dt.year>=1979))
 
@@ -3049,6 +3050,16 @@ IndR_ssp585_p3_KP_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=press
 
 IndR_diff_KP_slope = IndR_ssp585_p3_KP_regress[0] - IndR_his_KP_regress[0]
 IndR_diff_KP_rvalue = ca.cal_rdiff(IndR_ssp585_p3_KP_regress[2], IndR_his_KP_regress[2])
+
+#   SJ (actually Southern Japan and Korean peninsula)
+IndR_GPCP_SJ_regress = stats.linregress(preAIR_JJA.sel(time=preAIR_JJA.time.dt.year>=1979), preGPCP_SJ_JJA)
+
+IndR_his_SJ_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), prehis_SJ_JJA.sel(time=prehis_SJ_JJA.time.dt.year>=1979))
+
+IndR_ssp585_p3_SJ_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_SJ_JJA.sel(time=pressp585_SJ_JJA.time.dt.year>=2064))
+
+IndR_diff_SJ_slope = IndR_ssp585_p3_SJ_regress[0] - IndR_his_SJ_regress[0]
+IndR_diff_SJ_rvalue = ca.cal_rdiff(IndR_ssp585_p3_SJ_regress[2], IndR_his_KP_regress[2])
 
 
 # %%
