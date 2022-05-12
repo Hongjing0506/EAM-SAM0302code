@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-10 21:02:32
+LastEditTime: 2022-05-12 22:48:06
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -241,20 +241,6 @@ preGPCP_NC_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_NC_range, lon=
 prehis_NC_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
 pressp585_NC_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_NC_range, lon=lon_NC_range)).mean(dim="lon", skipna=True)
 
-#   calculate the precipitation in Southern China Sea
-SCS_N = 20.0
-SCS_S = 7.5
-SCS_W = 108.0
-SCS_E = 120.0
-lat_SCS_range = lat[(lat >= SCS_S) & (lat <= SCS_N)]
-lon_SCS_range = lon[(lon >= SCS_W) & (lon <= SCS_E)]
-# lat_SCS_range = lat[(lat>=27.5) & (lat<=37.5)]
-# lon_SCS_range = lon[(lon>=105.0) & (lon<=125.0)]
-preCRU_SCS_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_SCS_range, lon=lon_SCS_range)).mean(dim="lon", skipna=True)
-preGPCP_SCS_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_SCS_range, lon=lon_SCS_range)).mean(dim="lon", skipna=True)
-prehis_SCS_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_SCS_range, lon=lon_SCS_range)).mean(dim="lon", skipna=True)
-pressp585_SCS_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_SCS_range, lon=lon_SCS_range)).mean(dim="lon", skipna=True)
-
 #   calculate the precipitation in Southern China
 lat_SC_range = lat[(lat>=20.0) & (lat<=27.5)]
 lon_SC_range = lon[(lon>=105.0) & (lon<=125.0)]
@@ -276,6 +262,20 @@ preCRU_KP_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_KP_range, lon=lo
 preGPCP_KP_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_KP_range, lon=lon_KP_range)).mean(dim="lon", skipna=True)
 prehis_KP_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_KP_range, lon=lon_KP_range)).mean(dim="lon", skipna=True)
 pressp585_KP_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_KP_range, lon=lon_KP_range)).mean(dim="lon", skipna=True)
+
+#   calculate the precipitation in Korean Peninsula-Southern Japan
+SJ_N = 36.0
+SJ_S = 31.0
+SJ_W = 124.0
+SJ_E = 136.0
+lat_SJ_range = lat[(lat >= SJ_S) & (lat <= SJ_N)]
+lon_SJ_range = lon[(lon >= SJ_W) & (lon <= SJ_E)]
+# lat_SJ_range = lat[(lat>=27.5) & (lat<=37.5)]
+# lon_SJ_range = lon[(lon>=105.0) & (lon<=125.0)]
+preCRU_SJ_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_SJ_range, lon=lon_SJ_range)).mean(dim="lon", skipna=True)
+preGPCP_SJ_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_SJ_range, lon=lon_SJ_range)).mean(dim="lon", skipna=True)
+prehis_SJ_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_SJ_range, lon=lon_SJ_range)).mean(dim="lon", skipna=True)
+pressp585_SJ_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_SJ_range, lon=lon_SJ_range)).mean(dim="lon", skipna=True)
 
 #   calculate the 200hPa u-wind over the East Asia
 lat_EA_range = lat[(lat>=30.0) & (lat<=40.0)]
@@ -352,15 +352,15 @@ preGPCP_NC_JJA = ca.detrend_dim(preGPCP_NC_JJA, "time", deg=1, demean=False)
 prehis_NC_JJA = ca.detrend_dim(prehis_NC_JJA, "time", deg=1, demean=False)
 pressp585_NC_JJA = ca.detrend_dim(pressp585_NC_JJA, "time", deg=1, demean=False)
 
-preCRU_SCS_JJA = ca.detrend_dim(preCRU_SCS_JJA, "time", deg=1, demean=False)
-preGPCP_SCS_JJA = ca.detrend_dim(preGPCP_SCS_JJA, "time", deg=1, demean=False)
-prehis_SCS_JJA = ca.detrend_dim(prehis_SCS_JJA, "time", deg=1, demean=False)
-pressp585_SCS_JJA = ca.detrend_dim(pressp585_SCS_JJA, "time", deg=1, demean=False)
-
 preCRU_KP_JJA = ca.detrend_dim(preCRU_KP_JJA, "time", deg=1, demean=False)
 preGPCP_KP_JJA = ca.detrend_dim(preGPCP_KP_JJA, "time", deg=1, demean=False)
 prehis_KP_JJA = ca.detrend_dim(prehis_KP_JJA, "time", deg=1, demean=False)
 pressp585_KP_JJA = ca.detrend_dim(pressp585_KP_JJA, "time", deg=1, demean=False)
+
+preCRU_SJ_JJA = ca.detrend_dim(preCRU_SJ_JJA, "time", deg=1, demean=False)
+preGPCP_SJ_JJA = ca.detrend_dim(preGPCP_SJ_JJA, "time", deg=1, demean=False)
+prehis_SJ_JJA = ca.detrend_dim(prehis_SJ_JJA, "time", deg=1, demean=False)
+pressp585_SJ_JJA = ca.detrend_dim(pressp585_SJ_JJA, "time", deg=1, demean=False)
 
 preCRU_SC_JJA = ca.detrend_dim(preCRU_SC_JJA, "time", deg=1, demean=False)
 preGPCP_SC_JJA = ca.detrend_dim(preGPCP_SC_JJA, "time", deg=1, demean=False)
@@ -4993,4 +4993,82 @@ for num_mod, mod in enumerate(models):
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="200hPa vor reg IndR")
+# %%
+#   only plot the precipitation regress onto AIR and IndR in MME
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+# plot_array = np.reshape(range(1, 31), (6, 5))
+# plot_array[5,-1] = 0
+axs = fig.subplots(ncols=1, nrows=2, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    # India area
+    x0 = India_W
+    y0 = India_S
+    width = India_E-India_W
+    height = India_N-India_S
+    patches(ax, x0 - cl, y0, width, height, proj)
+    # NC area
+    x0 = NC_W
+    y0 = NC_S
+    width = NC_E-NC_W
+    height = NC_N-NC_S
+    patches(ax, x0 - cl, y0, width, height, proj)
+    # SJ-KP area
+    x0 = SJ_W
+    y0 = SJ_S
+    width = SJ_E-SJ_W
+    height = SJ_N-SJ_S
+    patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0].contourf(
+    pre_AIR_India_pre_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    )
+sepl.plt_sig(
+    pre_AIR_India_pre_rvalue, axs[0], n, np.where(pre_AIR_India_pre_pvalue[::n, ::n] <= 0.10), "bright purple", 4.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="AIR and GPCP",
+)
+# ===================================================
+con = axs[1].contourf(
+    pre_his_India_pre_rvalue_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    
+    )
+sepl.plt_sig(
+    pre_his_India_pre_rvalue_ens, axs[1], n, np.where(pre_his_India_pre_rvalue_ens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
+)
+
+axs[1].format(
+    rtitle="1979-2014", ltitle="MME",
+)
+# ===================================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 # %%
