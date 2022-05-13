@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-13 14:29:35
+LastEditTime: 2022-05-13 14:39:51
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -5671,7 +5671,7 @@ cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
 fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
-plot_array = np.reshape(range(1, 7), (3, 2))
+plot_array = np.reshape(range(1, 13), (3, 4))
 # plot_array[-1,-1] = 0
 axs = fig.subplots(plot_array, proj=proj)
 
@@ -5811,6 +5811,94 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     )
     axs[num_lev, 1].format(
         rtitle="1979-2014 {:.0f}hPa".format(lev), ltitle="gMME",
+    )
+# ======================================
+    con = axs[num_lev, 2].contourf(
+        IndR_ssp585_p3_hgt_slope_gens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_ssp585_p3_hgt_slope_gens.sel(level=lev), axs[num_lev, 2], n, np.where(IndR_ssp585_p3_hgt_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[num_lev, 2].quiver(
+        IndR_ssp585_p3_u_slope_gens.sel(level=lev)[::ski, ::ski],
+        IndR_ssp585_p3_v_slope_gens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 2].quiver(
+        IndR_ssp585_p3_u_slope_gens.sel(level=lev).where(IndR_ssp585_p3_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_ssp585_p3_v_slope_gens.sel(level=lev).where(IndR_ssp585_p3_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 2].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[num_lev, 2].format(
+        rtitle="2064-2099 {:.0f}hPa".format(lev), ltitle="gMME",
+    )
+# ======================================
+    con = axs[num_lev, 3].contourf(
+        IndR_diff_hgt_slope_gens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_diff_hgt_slope_gens.sel(level=lev), axs[num_lev, 3], n, np.where(IndR_diff_hgt_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[num_lev, 3].quiver(
+        IndR_diff_u_slope_gens.sel(level=lev)[::ski, ::ski],
+        IndR_diff_v_slope_gens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 3].quiver(
+        IndR_diff_u_slope_gens.sel(level=lev).where(IndR_diff_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_diff_v_slope_gens.sel(level=lev).where(IndR_diff_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 3].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[num_lev, 3].format(
+        rtitle="diff {:.0f}hPa".format(lev), ltitle="gMME",
     )
 # ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
