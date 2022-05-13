@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-13 11:33:04
+LastEditTime: 2022-05-13 13:51:03
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -4675,6 +4675,7 @@ IndR_850hgt_std.append(float((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range2,
 #   pick up the good models and calculate the gMME for hgt, u, v, precip
 #   these gmodels are different from the ranking list calculated by the GPCP data
 gmodels = ["CAMS-CSM1-0", "CESM2-WACCM", "CMCC-ESM2", "INM-CM4-8", "MRI-ESM2-0", "UKESM1-0-LL"]
+# gmodels = ["CESM2-WACCM", "CMCC-ESM2", "MRI-ESM2-0", "UKESM1-0-LL"]
 
 pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 pre_ssp585_p3_India_pre_slope_gens = pre_ssp585_p3_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -5213,6 +5214,20 @@ for ax in axs:
     patches(ax, x0 - cl, y0, width, height, proj)
 # ======================================
 for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    if lev == 200.0:
+        for ax in axs[num_lev, :]:
+            x0 = 50
+            y0 = 15
+            width = 90
+            height = 32.5
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+    elif lev == 850.0:
+        for ax in axs[num_lev, :]:
+            x0 = 110
+            y0 = 15
+            width = 27
+            height = 22.5
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
     con = axs[num_lev, 0].contourf(
         IndRAIR_ERA5_hgt_slope.sel(level=lev),
         cmap="ColdHot",
@@ -5549,15 +5564,8 @@ for num_models, mod in enumerate(models_array):
 # axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 m = axs[0].scatter((np.array(IndR_200hgt_pcc)+np.array(IndR_850hgt_pcc))[26]/2.0, ca.cal_rMME(IndR_his_NC_regress[2],"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^")
-# m = axs[0].scatter((np.array(IndR_hgt_pcc)+np.array(IndR_u_pcc)+np.array(IndR_v_pcc))[27]/3.0, ca.cal_rMME(IndR_his_NC_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*")
-# #   第一象限
-# axs[0].text(0.4,0.5,s='{} ({:.1f}%)'.format(IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_SC_regress[2]>0)).count().data, IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_SC_regress[2]>0)).count().data/26*100))
-# #   第二象限
-# axs[0].text(-0.55,0.5,s='{} ({:.1f}%)'.format(IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_SC_regress[2]<0)).count().data, IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]>0) & (IndR_his_SC_regress[2]<0)).count().data/26*100))
-# #   第三象限
-# axs[0].text(-0.55,-0.5,s='{} ({:.1f}%)'.format(IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_SC_regress[2]<0)).count().data, IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_SC_regress[2]<0)).count().data/26*100))
-# #   第四象限
-# axs[0].text(0.4,-0.5,s='{} ({:.1f}%)'.format(IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_SC_regress[2]>0)).count().data, IndR_his_NC_regress[2].where((IndR_his_NC_regress[2]<0) & (IndR_his_SC_regress[2]>0)).count().data/26*100))
+m = axs[0].scatter((np.array(IndR_200hgt_pcc)+np.array(IndR_850hgt_pcc))[27]/2.0, ca.cal_rMME(IndR_his_NC_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*")
+
 #   x-axis title
 axs[0].text(-0.90,0.03,s='pcc_mean')
 #   y-axis title
