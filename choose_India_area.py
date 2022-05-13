@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-13 11:21:54
+LastEditTime: 2022-05-13 11:33:04
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -4750,6 +4750,58 @@ IndR_850hgt_std.append(float((IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range2
 
 
 print(sorted(IndR_ranking_list, key=lambda x : x["pcc"]))
+# %%
+#   calculate the good models difference between historical run and ssp585_p3 run
+pre_diff_India_pre_slope = pre_ssp585_p3_India_pre_slope - pre_his_India_pre_slope
+
+pre_diff_India_pre_mask = ca.cal_mmemask(pre_diff_India_pre_slope)
+
+pre_diff_India_pre_slope_gens = pre_diff_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+pre_diff_India_pre_gens_mask = ca.cal_mmemask(pre_diff_India_pre_slope.sel(models=gmodels))
+
+pre_diff_India_pre_rvalue = ca.cal_rdiff(pre_ssp585_p3_India_pre_rvalue, pre_his_India_pre_rvalue)
+pre_diff_India_pre_rvalue_gens = ca.cal_rMME(pre_diff_India_pre_rvalue.sel(models=gmodels), "models")
+
+IndR_diff_hgt_slope = IndR_ssp585_p3_hgt_slope - IndR_his_hgt_slope
+IndR_diff_hgt_slope_gens = IndR_diff_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+IndR_diff_hgt_mask = ca.cal_mmemask(IndR_diff_hgt_slope)
+IndR_diff_hgt_gens_mask = ca.cal_mmemask(IndR_diff_hgt_slope.sel(models=gmodels))
+
+IndR_diff_u_slope = IndR_ssp585_p3_u_slope - IndR_his_u_slope
+IndR_diff_u_slope_gens = IndR_diff_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+IndR_diff_u_mask = ca.cal_mmemask(IndR_diff_u_slope)
+IndR_diff_u_gens_mask = ca.cal_mmemask(IndR_diff_u_slope.sel(models=gmodels))
+
+IndR_diff_v_slope = IndR_ssp585_p3_v_slope - IndR_his_v_slope
+IndR_diff_v_slope_gens = IndR_diff_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+IndR_diff_v_mask = ca.cal_mmemask(IndR_diff_v_slope)
+IndR_diff_v_gens_mask = ca.cal_mmemask(IndR_diff_v_slope.sel(models=gmodels))
+
+IndR_diff_wind_mask = ca.wind_check(
+    xr.where(IndR_diff_u_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_v_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_u_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_v_mask > 0.0, 1.0, 0.0),
+)
+IndR_diff_wind_gens_mask = ca.wind_check(
+    xr.where(IndR_diff_u_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_v_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_u_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_v_gens_mask > 0.0, 1.0, 0.0),
+)
+
+IndR_diff_hgt_rvalue = ca.cal_rdiff(IndR_ssp585_p3_hgt_rvalue, IndR_his_hgt_rvalue)
+IndR_diff_hgt_rvalue_gens = ca.cal_rMME(IndR_diff_hgt_rvalue.sel(models=gmodels), "models")
+
+IndR_diff_u_rvalue = ca.cal_rdiff(IndR_ssp585_p3_u_rvalue, IndR_his_u_rvalue)
+IndR_diff_u_rvalue_gens = ca.cal_rMME(IndR_diff_u_rvalue.sel(models=gmodels), "models")
+
+IndR_diff_v_rvalue = ca.cal_rdiff(IndR_ssp585_p3_v_rvalue, IndR_his_v_rvalue)
+IndR_diff_v_rvalue_gens = ca.cal_rMME(IndR_diff_v_rvalue.sel(models=gmodels), "models")
 # %%
 #   plot the taylor-diagram
 labels = list(models.data)
