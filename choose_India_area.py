@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-13 14:58:21
+LastEditTime: 2022-05-13 20:46:33
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -264,8 +264,8 @@ prehis_KP_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_KP_range, lon=lo
 pressp585_KP_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_KP_range, lon=lon_KP_range)).mean(dim="lon", skipna=True)
 
 #   calculate the precipitation in Korean Peninsula-Southern Japan
-SJ_N = 36.0
-SJ_S = 31.0
+SJ_N = 31.0
+SJ_S = 24.0
 SJ_W = 124.0
 SJ_E = 136.0
 lat_SJ_range = lat[(lat >= SJ_S) & (lat <= SJ_N)]
@@ -286,8 +286,8 @@ uhis_EA_JJA = ca.cal_lat_weighted_mean(uhis_ver_JJA.sel(lat=lat_EA_range, lon=lo
 ussp585_EA_JJA = ca.cal_lat_weighted_mean(ussp585_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
 
 #   calculate the 200hPa vorticity over the East Asia
-lat_EAhigh_range = lat[(lat>=25.0) & (lat<=50.0)]
-lon_EAhigh_range = lon[(lon>=105.0) & (lon<=135.0)]
+lat_EAhigh_range = lat[(lat>=22.5) & (lat<=50.0)]
+lon_EAhigh_range = lon[(lon>=115.0) & (lon<=140.0)]
 uERA5_EAhigh_JJA = uERA5_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
 uhis_EAhigh_JJA = uhis_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
 ussp585_EAhigh_JJA = ussp585_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
@@ -3059,9 +3059,15 @@ IndR_his_SJ_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_J
 IndR_ssp585_p3_SJ_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), pressp585_SJ_JJA.sel(time=pressp585_SJ_JJA.time.dt.year>=2064))
 
 IndR_diff_SJ_slope = IndR_ssp585_p3_SJ_regress[0] - IndR_his_SJ_regress[0]
-IndR_diff_SJ_rvalue = ca.cal_rdiff(IndR_ssp585_p3_SJ_regress[2], IndR_his_KP_regress[2])
+IndR_diff_SJ_rvalue = ca.cal_rdiff(IndR_ssp585_p3_SJ_regress[2], IndR_his_SJ_regress[2])
 
+#   EAhigh
+IndR_GPCP_EAhigh_regress = stats.linregress(preAIR_JJA.sel(time=preAIR_JJA.time.dt.year>=1979), vorERA5_EAhigh_JJA.sel(time=vorERA5_EAhigh_JJA.time.dt.year>=1979))
+IndR_his_EAhigh_regress = ca.dim_linregress(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979), vorhis_EAhigh_JJA.sel(time=vorhis_EAhigh_JJA.time.dt.year>=1979))
+IndR_ssp585_p3_EAhigh_regress = ca.dim_linregress(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064), vorssp585_EAhigh_JJA.sel(time=vorssp585_EAhigh_JJA.time.dt.year>=2064))
 
+IndR_diff_EAhigh_slope = IndR_ssp585_p3_EAhigh_regress[0] - IndR_his_EAhigh_regress[0]
+IndR_diff_EAhigh_rvalue = ca.cal_rdiff(IndR_ssp585_p3_EAhigh_regress[2], IndR_his_EAhigh_regress[2])
 # %%
 #   plot the singular scatter-plot for good models for reg coeff.
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
@@ -3109,7 +3115,7 @@ for num_models, mod in enumerate(gmodels):
     axs[0].scatter(1.50, IndR_ssp585_p3_NC_regress[2].sel(models=mod), cycle=cycle, marker=".", markersize=100)
 
 axs[0].format(xlocator=[0.75, 1.5], ylim=(-0.2,0.6), xlim=(0,2.25), xformatter=["historical", "ssp585_p3"], tickminor=False)
-fig.format(suptitle="NC reg IndR")
+fig.format(suptitle="corr(IndR, NCR)")
 # %%
 #   plot the bar-plot of the IndR related NC precipitation for historical and ssp585_p3 (reg coeff.)
 plot_data = np.zeros((7,3))
@@ -3136,7 +3142,7 @@ axs[0].axhline(0,lw=1.5,color="grey7")
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
-fig.format(suptitle="Reg. Coeff. IndR and NC")
+fig.format(suptitle="Reg. Coeff. IndR and NCR")
 # %%
 #   plot the bar-plot of the IndR related NC precipitation for historical and ssp585_p3 (corr coeff.)
 plot_data = np.zeros((7,3))
@@ -3163,7 +3169,7 @@ axs[0].axhline(-ca.cal_rlim1(0.90, 36),lw=1.5,color="grey7",ls='--')
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
-fig.format(suptitle="Corr. Coeff. IndR and NC")
+fig.format(suptitle="Corr. Coeff. IndR and NCR")
 # %%
 #   calculate the three models that have decrease IndR-NC trend in ssp585_p3
 gmodels1 = ["CAMS-CSM1-0", "MIROC-ES2L", "UKESM1-0-LL"]
@@ -5214,20 +5220,20 @@ for ax in axs:
     patches(ax, x0 - cl, y0, width, height, proj)
 # ======================================
 for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
-    # if lev == 200.0:
-    #     for ax in axs[num_lev, :]:
-    #         x0 = 50
-    #         y0 = 15
-    #         width = 90
-    #         height = 32.5
-    #         sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
-    # elif lev == 850.0:
-    #     for ax in axs[num_lev, :]:
-    #         x0 = 110
-    #         y0 = 15
-    #         width = 27
-    #         height = 22.5
-    #         sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+    if lev == 200.0:
+        for ax in axs[num_lev, :]:
+            x0 = 50
+            y0 = 15
+            width = 90
+            height = 32.5
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+    elif lev == 850.0:
+        for ax in axs[num_lev, :]:
+            x0 = 110
+            y0 = 15
+            width = 27
+            height = 22.5
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
     con = axs[num_lev, 0].contourf(
         IndRAIR_ERA5_hgt_slope.sel(level=lev),
         cmap="ColdHot",
@@ -5930,4 +5936,44 @@ axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Reg. Coeff. IndR and NC")
+# %%
+#   plot the correlation scatter-plot, x:corr(IndR, EAhigh), y:corr(IndR, NCR)
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+pmodels=['ACCESS-CM2','BCC-CSM2-MR','CESM2','CNRM-CM6-1','CNRM-ESM2-1','CanESM5','EC-Earth3','EC-Earth3-Veg','FGOALS-g3','GFDL-CM4','HadGEM3-GC31-LL','INM-CM5-0','IPSL-CM6A-LR','KACE-1-0-G','MIROC-ES2L','MIROC6','MPI-ESM1-2-HR','NESM3','NorESM2-LM','TaiESM1']
+m = axs[0].scatter(IndR_GPCP_EAhigh_regress[2], IndR_GPCP_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s", color="blue5", ec="black")
+
+for num_models, mod in enumerate(pmodels):
+    m = axs[0].scatter(IndR_his_EAhigh_regress[2].sel(models=mod), IndR_his_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, ec="black")
+    
+for num_models, mod in enumerate(gmodels):
+    m = axs[0].scatter(IndR_his_EAhigh_regress[2].sel(models=mod), IndR_his_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, marker="h", ec="black")
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(ca.cal_rMME(IndR_his_EAhigh_regress[2], "models"), ca.cal_rMME(IndR_his_NC_regress[2],"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^", ec="black")
+m = axs[0].scatter(ca.cal_rMME(IndR_his_EAhigh_regress[2].sel(models=gmodels), "models"), ca.cal_rMME(IndR_his_NC_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*", ec="black")
+xyregress = stats.linregress(IndR_his_EAhigh_regress[2].sel(models=gmodels).data,IndR_his_NC_regress[2].sel(models=gmodels).data)
+axs[0].line(np.linspace(-0.70,0), xyregress[0]*np.linspace(-0.70,0)+xyregress[1],zorder=0.8,color="sky blue")
+axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+#   x-axis title
+axs[0].text(-0.90,0.03,s='corr(IndR, EAhigh)')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='corr(IndR, NCR)')
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-1.0,1.0), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
 # %%
