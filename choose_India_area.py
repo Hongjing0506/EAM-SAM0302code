@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-13 20:46:33
+LastEditTime: 2022-05-13 23:51:52
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -300,6 +300,21 @@ vorERA5_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uERA5_EAhigh_JJA,
 vorhis_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uhis_EAhigh_JJA, vhis_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
 vorssp585_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_EAhigh_JJA, vssp585_EAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
 
+#   calculate the 200hPa vorticity over the East Asia
+lat_WNPhigh_range = lat[(lat>=15.0) & (lat<=37.5)]
+lon_WNPhigh_range = lon[(lon>=110) & (lon<=137.0)]
+uERA5_WNPhigh_JJA = uERA5_ver_JJA.sel(lat=lat_WNPhigh_range, lon=lon_WNPhigh_range, level=200.0)
+uhis_WNPhigh_JJA = uhis_ver_JJA.sel(lat=lat_WNPhigh_range, lon=lon_WNPhigh_range, level=200.0)
+ussp585_WNPhigh_JJA = ussp585_ver_JJA.sel(lat=lat_WNPhigh_range, lon=lon_WNPhigh_range, level=200.0)
+
+vERA5_WNPhigh_JJA = vERA5_ver_JJA.sel(lat=lat_WNPhigh_range, lon=lon_WNPhigh_range, level=200.0)
+vhis_WNPhigh_JJA = vhis_ver_JJA.sel(lat=lat_WNPhigh_range, lon=lon_WNPhigh_range, level=200.0)
+vssp585_WNPhigh_JJA = vssp585_ver_JJA.sel(lat=lat_WNPhigh_range, lon=lon_WNPhigh_range, level=200.0)
+
+vorERA5_WNPhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uERA5_WNPhigh_JJA, vERA5_WNPhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
+vorhis_WNPhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uhis_WNPhigh_JJA, vhis_WNPhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
+vorssp585_WNPhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_WNPhigh_JJA, vssp585_WNPhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
+
 #   calculate the longitude mean over 100.0° to 125°E
 lon_EA_range = lon[(lon>=100.0)&(lon<=125.0)]
 
@@ -374,6 +389,10 @@ ussp585_EA_JJA = ca.detrend_dim(ussp585_EA_JJA, "time", deg=1, demean=False)
 vorERA5_EAhigh_JJA = ca.detrend_dim(vorERA5_EAhigh_JJA, "time", deg=1, demean=False)
 vorhis_EAhigh_JJA = ca.detrend_dim(vorhis_EAhigh_JJA, "time", deg=1, demean=False)
 vorssp585_EAhigh_JJA = ca.detrend_dim(vorssp585_EAhigh_JJA, "time", deg=1, demean=False)
+
+vorERA5_WNPhigh_JJA = ca.detrend_dim(vorERA5_WNPhigh_JJA, "time", deg=1, demean=False)
+vorhis_WNPhigh_JJA = ca.detrend_dim(vorhis_WNPhigh_JJA, "time", deg=1, demean=False)
+vorssp585_WNPhigh_JJA = ca.detrend_dim(vorssp585_WNPhigh_JJA, "time", deg=1, demean=False)
 
 uERA5_EA_lm_JJA = ca.detrend_dim(uERA5_EA_lm_JJA, "time", deg=1, demean=False)
 uhis_EA_lm_JJA = ca.detrend_dim(uhis_EA_lm_JJA, "time", deg=1, demean=False)
