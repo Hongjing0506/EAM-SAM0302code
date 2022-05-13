@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-13 00:38:48
+LastEditTime: 2022-05-13 11:21:54
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -4639,15 +4639,16 @@ IndR_850hgt_std = []
 
 
 for num_mod, mod in enumerate(models):
-    200hgt_pcc = ca.cal_pcc(IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0), IndR_his_hgt_slope.sel(models=mod, lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0))
     
-    850hgt_pcc = ca.cal_pcc(IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range2, lon=lon_ranking_range2, level=850.0), IndR_his_hgt_slope.sel(models=mod, lat=lat_ranking_range2, lon=lon_ranking_range2, level=850.0))
+    hgt200_pcc = ca.cal_pcc(IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0), IndR_his_hgt_slope.sel(models=mod, lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0))
+    
+    hgt850_pcc = ca.cal_pcc(IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range2, lon=lon_ranking_range2, level=850.0), IndR_his_hgt_slope.sel(models=mod, lat=lat_ranking_range2, lon=lon_ranking_range2, level=850.0))
     
     # IndR_ranking_list.append({"models": mod.data, "pcc": hgt_pcc+u_pcc+v_pcc})
-    IndR_ranking_list.append({"models":mod.data, "pcc":200hgt_pcc + 850hgt_pcc})
+    IndR_ranking_list.append({"models":mod.data, "pcc":hgt200_pcc + hgt850_pcc})
     
-    IndR_200hgt_pcc.append(hgt_pcc)
-    IndR_850hgt_pcc.append(u_pcc)
+    IndR_200hgt_pcc.append(hgt200_pcc)
+    IndR_850hgt_pcc.append(hgt850_pcc)
     
     IndR_200hgt_RMSE.append(np.sqrt(np.power((IndR_his_hgt_slope.sel(models=mod,lat=lat_ranking_range1,lon=lon_ranking_range1, level=200.0)-IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
     
@@ -4658,27 +4659,28 @@ for num_mod, mod in enumerate(models):
 
 
 #   for MME
-IndR_hgt_pcc.append(ca.cal_pcc(IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
-IndR_u_pcc.append(ca.cal_pcc(IndRAIR_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_u_slope_ens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
-IndR_v_pcc.append(ca.cal_pcc(IndRAIR_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_v_slope_ens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
+IndR_200hgt_pcc.append(ca.cal_pcc(IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0), IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0)))
+IndR_850hgt_pcc.append(ca.cal_pcc(IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range2, lon=lon_ranking_range2, level=850.0), IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range2, lon=lon_ranking_range2, level=850.0)))
 
-IndR_hgt_RMSE.append(np.sqrt(np.power((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
-IndR_u_RMSE.append(np.sqrt(np.power((IndR_his_u_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRAIR_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
-IndR_v_RMSE.append(np.sqrt(np.power((IndR_his_v_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRAIR_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
 
-IndR_hgt_std.append(float((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
-IndR_u_std.append(float((IndR_his_u_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRAIR_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
-IndR_v_std.append(float((IndR_his_v_slope_ens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRAIR_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
+IndR_200hgt_RMSE.append(np.sqrt(np.power((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range1,lon=lon_ranking_range1, level=200.0)-IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+IndR_850hgt_RMSE.append(np.sqrt(np.power((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range2,lon=lon_ranking_range2, level=850.0)-IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range2, lon=lon_ranking_range2, level=850.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+
+
+
+IndR_200hgt_std.append(float((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range1,lon=lon_ranking_range1, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
+IndR_850hgt_std.append(float((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range2,lon=lon_ranking_range2, level=850.0).std(dim=["lat","lon"],skipna=True)/IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range2, lon=lon_ranking_range2, level=850.0).std(dim=["lat","lon"],skipna=True)).data))
+
 
 #   pick up the good models and calculate the gMME for hgt, u, v, precip
 #   these gmodels are different from the ranking list calculated by the GPCP data
-gmodels = ["CESM2-WACCM", "CMCC-ESM2","CAMS-CSM1-0", "INM-CM4-8", "MIROC-ES2L", "MRI-ESM2-0"]
+gmodels = ["CAMS-CSM1-0", "CESM2-WACCM", "CMCC-ESM2", "INM-CM4-8", "MRI-ESM2-0", "UKESM1-0-LL"]
 
 pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 pre_ssp585_p3_India_pre_slope_gens = pre_ssp585_p3_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 
-pre_his_India_pre_slope_gens_mask = ca.MME_reg_mask(pre_his_India_pre_slope_gens, pre_his_India_pre_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
-pre_ssp585_p3_India_pre_slope_gens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_slope_gens, pre_ssp585_p3_India_pre_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
+pre_his_India_pre_slope_gens_mask = xr.where((ca.MME_reg_mask(pre_his_India_pre_slope_gens, pre_his_India_pre_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(pre_his_India_pre_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+pre_ssp585_p3_India_pre_slope_gens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_p3_India_pre_slope_gens, pre_ssp585_p3_India_pre_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(pre_ssp585_p3_India_pre_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
 
 IndR_his_hgt_slope_gens = IndR_his_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -4701,24 +4703,24 @@ IndR_ssp585_p3_hgt_rvalue_gens = ca.cal_rMME(IndR_ssp585_p3_hgt_rvalue.sel(model
 IndR_ssp585_p3_u_rvalue_gens = ca.cal_rMME(IndR_ssp585_p3_u_rvalue.sel(models=gmodels), "models")
 IndR_ssp585_p3_v_rvalue_gens = ca.cal_rMME(IndR_ssp585_p3_v_rvalue.sel(models=gmodels), "models")
 
-IndR_his_hgt_slope_gens_mask = ca.MME_reg_mask(IndR_his_hgt_slope_gens, IndR_his_hgt_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
-IndR_his_u_slope_gens_mask = ca.MME_reg_mask(IndR_his_u_slope_gens, IndR_his_u_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
-IndR_his_v_slope_gens_mask = ca.MME_reg_mask(IndR_his_v_slope_gens, IndR_his_v_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
+IndR_his_hgt_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_hgt_slope_gens, IndR_his_hgt_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_hgt_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_his_u_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_u_slope_gens, IndR_his_u_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_u_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_his_v_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_v_slope_gens, IndR_his_v_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_v_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
-IndR_ssp585_p3_hgt_slope_gens_mask = ca.MME_reg_mask(IndR_ssp585_p3_hgt_slope_gens, IndR_ssp585_p3_hgt_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
-IndR_ssp585_p3_u_slope_gens_mask = ca.MME_reg_mask(IndR_ssp585_p3_u_slope_gens, IndR_ssp585_p3_u_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
-IndR_ssp585_p3_v_slope_gens_mask = ca.MME_reg_mask(IndR_ssp585_p3_v_slope_gens, IndR_ssp585_p3_v_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
+IndR_ssp585_p3_hgt_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_hgt_slope_gens, IndR_ssp585_p3_hgt_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_hgt_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_ssp585_p3_u_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_u_slope_gens, IndR_ssp585_p3_u_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_u_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_ssp585_p3_v_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_v_slope_gens, IndR_ssp585_p3_v_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_v_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
-pre_his_India_pre_rvalue_gens_mask = ca.MME_reg_mask(pre_his_India_pre_rvalue_gens, pre_his_India_pre_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
-pre_ssp585_p3_India_pre_rvalue_gens_mask = ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_gens, pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
+pre_his_India_pre_rvalue_gens_mask = xr.where((ca.MME_reg_mask(pre_his_India_pre_rvalue_gens, pre_his_India_pre_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(pre_his_India_pre_rvalue.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+pre_ssp585_p3_India_pre_rvalue_gens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_gens, pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
-IndR_his_hgt_rvalue_gens_mask = ca.MME_reg_mask(IndR_his_hgt_rvalue_gens, IndR_his_hgt_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
-IndR_his_u_rvalue_gens_mask = ca.MME_reg_mask(IndR_his_u_rvalue_gens, IndR_his_u_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
-IndR_his_v_rvalue_gens_mask = ca.MME_reg_mask(IndR_his_v_rvalue_gens, IndR_his_v_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
+IndR_his_hgt_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_hgt_rvalue_gens, IndR_his_hgt_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_hgt_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_his_u_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_u_rvalue_gens, IndR_his_u_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_u_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_his_v_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_v_rvalue_gens, IndR_his_v_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_v_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
-IndR_ssp585_p3_hgt_rvalue_gens_mask = ca.MME_reg_mask(IndR_ssp585_p3_hgt_rvalue_gens, IndR_ssp585_p3_hgt_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
-IndR_ssp585_p3_u_rvalue_gens_mask = ca.MME_reg_mask(IndR_ssp585_p3_u_rvalue_gens, IndR_ssp585_p3_u_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
-IndR_ssp585_p3_v_rvalue_gens_mask = ca.MME_reg_mask(IndR_ssp585_p3_v_rvalue_gens, IndR_ssp585_p3_v_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
+IndR_ssp585_p3_hgt_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_hgt_rvalue_gens, IndR_ssp585_p3_hgt_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_hgt_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_ssp585_p3_u_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_u_rvalue_gens, IndR_ssp585_p3_u_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_u_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_ssp585_p3_v_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_v_rvalue_gens, IndR_ssp585_p3_v_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_v_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
 IndR_his_wind_gens_mask = ca.wind_check(
     xr.where(IndR_his_u_slope_gens_mask > 0.0, 1.0, 0.0),
@@ -4735,19 +4737,40 @@ IndR_ssp585_p3_wind_gens_mask = ca.wind_check(
 )
 #   for good models MME
 
-IndR_hgt_pcc.append(ca.cal_pcc(IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
-IndR_u_pcc.append(ca.cal_pcc(IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_u_slope_gens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
-IndR_v_pcc.append(ca.cal_pcc(IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0), IndR_his_v_slope_gens.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)))
+IndR_200hgt_pcc.append(ca.cal_pcc(IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0), IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0)))
+IndR_850hgt_pcc.append(ca.cal_pcc(IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range2, lon=lon_ranking_range2, level=850.0), IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range2, lon=lon_ranking_range2, level=850.0)))
 
-IndR_hgt_RMSE.append(np.sqrt(np.power((IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
-IndR_u_RMSE.append(np.sqrt(np.power((IndR_his_u_slope_gens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
-IndR_v_RMSE.append(np.sqrt(np.power((IndR_his_v_slope_gens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0)-IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
 
-IndR_hgt_std.append(float((IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_hgt_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
-IndR_u_std.append(float((IndR_his_u_slope_gens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_u_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
-IndR_v_std.append(float((IndR_his_v_slope_gens.sel(lat=lat_ranking_range,lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRGPCP_ERA5_v_slope.sel(lat=lat_ranking_range, lon=lon_ranking_range, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
+IndR_200hgt_RMSE.append(np.sqrt(np.power((IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range1,lon=lon_ranking_range1, level=200.0)-IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+IndR_850hgt_RMSE.append(np.sqrt(np.power((IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range2,lon=lon_ranking_range2, level=850.0)-IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range2, lon=lon_ranking_range2, level=850.0)),2).mean(dim=["lat","lon"],skipna=True).data))
+
+
+IndR_200hgt_std.append(float((IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range1,lon=lon_ranking_range1, level=200.0).std(dim=["lat","lon"],skipna=True)/IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range1, lon=lon_ranking_range1, level=200.0).std(dim=["lat","lon"],skipna=True)).data))
+IndR_850hgt_std.append(float((IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range2,lon=lon_ranking_range2, level=850.0).std(dim=["lat","lon"],skipna=True)/IndRAIR_ERA5_hgt_slope.sel(lat=lat_ranking_range2, lon=lon_ranking_range2, level=850.0).std(dim=["lat","lon"],skipna=True)).data))
+
 
 print(sorted(IndR_ranking_list, key=lambda x : x["pcc"]))
+# %%
+#   plot the taylor-diagram
+labels = list(models.data)
+labels.append("MME")
+labels.append("gMME")
+plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文
+plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
+
+#绘图
+fig=plt.figure(figsize=(12,8),dpi=300)
+plt.rc('font',family='Arial',size=13)
+
+#调用函数
+ax1=fig.add_subplot(111,projection='polar')
+box = ax1.get_position()
+ax1.set_position([0, box.y0, box.width*1.2, box.height])
+# ax1.text(0.6,0.1,'(a)',fontsize=15)
+# tar(ax1,np.array(IndR_EAM_pcc),np.array(IndR_EAM_std),labels)
+sepl.taylor_diagram(ax1,np.array(IndR_200hgt_pcc),np.array(IndR_200hgt_std), dotlables=labels, lables=True, color="r")
+sepl.taylor_diagram(ax1,np.array(IndR_850hgt_pcc),np.array(IndR_850hgt_std), color="b")
+plt.legend(loc="center left", bbox_to_anchor=(1.1,0.5), ncol=2, frameon=True, numpoints=1, handlelength=0)
 # %%
 #   plot the vorticity regress on the AIR
 pplt.rc.grid = False
