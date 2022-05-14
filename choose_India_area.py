@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-14 01:04:11
+LastEditTime: 2022-05-14 10:40:32
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -227,6 +227,34 @@ preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_India_range
 prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 pressp585_India_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 
+#   calculate the north India peninsula precipitation
+nIndia_N = 32.5
+# nIndia_N = 30.0
+nIndia_S = 17.5
+nIndia_W = 70.0
+nIndia_E = 86.0
+lat_nIndia_range = lat[(lat >= nIndia_S) & (lat <= nIndia_N)]
+lon_nIndia_range = lon[(lon >= nIndia_W) & (lon <= nIndia_E)]
+
+preCRU_nIndia_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_nIndia_range, lon=lon_nIndia_range)).mean(dim="lon", skipna=True)
+preGPCP_nIndia_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_nIndia_range, lon=lon_nIndia_range)).mean(dim="lon", skipna=True)
+prehis_nIndia_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_nIndia_range, lon=lon_nIndia_range)).mean(dim="lon", skipna=True)
+pressp585_nIndia_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_nIndia_range, lon=lon_nIndia_range)).mean(dim="lon", skipna=True)
+
+#   calculate the west India peninsula precipitation
+wIndia_N = 32.5
+# wIndia_N = 30.0
+wIndia_S = 8.0
+wIndia_W = 70.0
+wIndia_E = 77.0
+lat_wIndia_range = lat[(lat >= wIndia_S) & (lat <= wIndia_N)]
+lon_wIndia_range = lon[(lon >= wIndia_W) & (lon <= wIndia_E)]
+
+preCRU_wIndia_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_wIndia_range, lon=lon_wIndia_range)).mean(dim="lon", skipna=True)
+preGPCP_wIndia_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_wIndia_range, lon=lon_wIndia_range)).mean(dim="lon", skipna=True)
+prehis_wIndia_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_wIndia_range, lon=lon_wIndia_range)).mean(dim="lon", skipna=True)
+pressp585_wIndia_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_wIndia_range, lon=lon_wIndia_range)).mean(dim="lon", skipna=True)
+
 #   calculate the precipitation in Northern China
 NC_N = 40.0
 NC_S = 32.5
@@ -361,6 +389,16 @@ preCRU_India_JJA = ca.detrend_dim(preCRU_India_JJA, "time", deg=1, demean=False)
 preGPCP_India_JJA = ca.detrend_dim(preGPCP_India_JJA, "time", deg=1, demean=False)
 prehis_India_JJA = ca.detrend_dim(prehis_India_JJA, "time", deg=1, demean=False)
 pressp585_India_JJA = ca.detrend_dim(pressp585_India_JJA, "time", deg=1, demean=False)
+
+preCRU_nIndia_JJA = ca.detrend_dim(preCRU_nIndia_JJA, "time", deg=1, demean=False)
+preGPCP_nIndia_JJA = ca.detrend_dim(preGPCP_nIndia_JJA, "time", deg=1, demean=False)
+prehis_nIndia_JJA = ca.detrend_dim(prehis_nIndia_JJA, "time", deg=1, demean=False)
+pressp585_nIndia_JJA = ca.detrend_dim(pressp585_nIndia_JJA, "time", deg=1, demean=False)
+
+preCRU_wIndia_JJA = ca.detrend_dim(preCRU_wIndia_JJA, "time", deg=1, demean=False)
+preGPCP_wIndia_JJA = ca.detrend_dim(preGPCP_wIndia_JJA, "time", deg=1, demean=False)
+prehis_wIndia_JJA = ca.detrend_dim(prehis_wIndia_JJA, "time", deg=1, demean=False)
+pressp585_wIndia_JJA = ca.detrend_dim(pressp585_wIndia_JJA, "time", deg=1, demean=False)
 
 preCRU_NC_JJA = ca.detrend_dim(preCRU_NC_JJA, "time", deg=1, demean=False)
 preGPCP_NC_JJA = ca.detrend_dim(preGPCP_NC_JJA, "time", deg=1, demean=False)
@@ -6151,4 +6189,45 @@ for num_models,mod in enumerate(gmodels):
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
+# %%
+#   plot the India rainfall succession
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=7.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+# plot_array = np.reshape(range(1, 4), (1, 3))
+# plot_array[-1,-3:] = 0
+axs = fig.subplots(ncols=1, nrows=3)
+# for gMME
+scale = pplt.CutoffScale(2016,np.inf,2062)
+axs.format(xlim=(1979,2099),xscale=scale,xlocator=np.append(np.arange(1979,2015,5),np.arange(2064, 2100,5)),ylim=(-3.0,3.0))
+# axs = pplt.GridSpec(6,5)
+# ax = fig.subplot(axs[0])
+# bax = brokenaxes(xlims=((1979, 2014), (2064, 2099)), despine=False, subplot_spec=ax)
+
+m1 = axs[0].plot(np.arange(1979,2015,1), ca.standardize(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+axs[0].plot(np.arange(2064,2100,1), ca.standardize(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+# m2 = axs[0].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).mean(dim="models")), color="blue", lw=1.2)
+# axs[0].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).mean(dim="models")), color="blue", lw=1.2)
+axs[0].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.2,color="grey7")
+axs[0].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.2,color="grey7")
+axs[0].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
+axs[0].format(ltitle="gMME", rtitle="Total India")
+# ====================================
+m1 = axs[1].plot(np.arange(1979,2015,1), ca.standardize(prehis_nIndia_JJA.sel(time=prehis_nIndia_JJA.time.dt.year>=1979, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+axs[1].plot(np.arange(2064,2100,1), ca.standardize(pressp585_nIndia_JJA.sel(time=pressp585_nIndia_JJA.time.dt.year>=2064, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+# m2 = axs[1].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).mean(dim="models")), color="blue", lw=1.2)
+# axs[1].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).mean(dim="models")), color="blue", lw=1.2)
+axs[1].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.2,color="grey7")
+axs[1].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.2,color="grey7")
+axs[1].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
+axs[1].format(ltitle="gMME", rtitle="North India")
+# =================================
+m1 = axs[2].plot(np.arange(1979,2015,1), ca.standardize(prehis_wIndia_JJA.sel(time=prehis_wIndia_JJA.time.dt.year>=1979, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+axs[2].plot(np.arange(2064,2100,1), ca.standardize(pressp585_wIndia_JJA.sel(time=pressp585_wIndia_JJA.time.dt.year>=2064, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+# m2 = axs[2].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).mean(dim="models")), color="blue", lw=1.2)
+# axs[2].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).mean(dim="models")), color="blue", lw=1.2)
+axs[2].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.0,color="grey7")
+axs[2].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.0,color="grey7")
+axs[2].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
+axs[2].format(ltitle="gMME", rtitle="West India")
+
+fig.format(abc="(a)", abcloc="l", suptitle="IndR")
 # %%
