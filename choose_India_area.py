@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-14 11:12:59
+LastEditTime: 2022-05-14 12:04:27
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -367,7 +367,7 @@ EAU_MTGssp585_JJA = ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area2_ran
 
 #   calculate the vorticity over the West Asia in 200hPa
 lat_WAhigh_range = lat[(lat>=25.0) & (lat<=45.0)]
-lon_WAhigh_range = lon[(lon>=55.0) & (lon<=75.0)]
+lon_WAhigh_range = lon[(lon>=50.0) & (lon<=80.0)]
 uERA5_WAhigh_JJA = uERA5_ver_JJA.sel(lat=lat_WAhigh_range, lon=lon_WAhigh_range, level=200.0)
 uhis_WAhigh_JJA = uhis_ver_JJA.sel(lat=lat_WAhigh_range, lon=lon_WAhigh_range, level=200.0)
 ussp585_WAhigh_JJA = ussp585_ver_JJA.sel(lat=lat_WAhigh_range, lon=lon_WAhigh_range, level=200.0)
@@ -6418,4 +6418,31 @@ for num_lev,lev in enumerate([200.0]):
     )
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
+# %%
+#   plot the bar-plot of the EA high
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_EAhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_EAhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_EAhigh_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_EAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-2.0e-6,2.0e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and EAhigh")
 # %%
