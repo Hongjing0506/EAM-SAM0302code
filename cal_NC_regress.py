@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-13 22:29:49
 LastEditors: ChenHJ
-LastEditTime: 2022-05-15 21:38:49
+LastEditTime: 2022-05-15 21:49:18
 FilePath: /chenhj/0302code/cal_NC_regress.py
 Aim: 
 Mission: 
@@ -449,7 +449,7 @@ preGPCP_NC_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt
     NCRGPCP_ERA5_hgt_rvalue,
     NCRGPCP_ERA5_hgt_pvalue,
     NCRGPCP_ERA5_hgt_hypothesis,
-) = ca.dim_linregress(preGPCP_NC_JJA.sel(time=preGPCP_NC_JJA.time.dt.year>=1979), hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(preGPCP_NC_JJA, hgtERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
 
 (
     NCRGPCP_ERA5_u_slope,
@@ -457,7 +457,7 @@ preGPCP_NC_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt
     NCRGPCP_ERA5_u_rvalue,
     NCRGPCP_ERA5_u_pvalue,
     NCRGPCP_ERA5_u_hypothesis,
-) = ca.dim_linregress(preGPCP_NC_JJA.sel(time=preGPCP_NC_JJA.time.dt.year>=1979), uERA5_ver_JJA.sel(time=uERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(preGPCP_NC_JJA, uERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
 
 (
     NCRGPCP_ERA5_v_slope,
@@ -465,7 +465,7 @@ preGPCP_NC_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt
     NCRGPCP_ERA5_v_rvalue,
     NCRGPCP_ERA5_v_pvalue,
     NCRGPCP_ERA5_v_hypothesis,
-) = ca.dim_linregress(preGPCP_NC_JJA.sel(time=preGPCP_NC_JJA.time.dt.year>=1979), vERA5_ver_JJA.sel(time=vERA5_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(preGPCP_NC_JJA, vERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
 
 (
     NCR_his_hgt_slope,
@@ -473,7 +473,7 @@ preGPCP_NC_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt
     NCR_his_hgt_rvalue,
     NCR_his_hgt_pvalue,
     NCR_his_hgt_hypothesis,
-) = ca.dim_linregress(prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979), hgthis_ver_JJA.sel(time=hgthis_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(prehis_NC_JJA, hgthis_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
 
 (
     NCR_his_u_slope,
@@ -481,7 +481,7 @@ preGPCP_NC_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt
     NCR_his_u_rvalue,
     NCR_his_u_pvalue,
     NCR_his_u_hypothesis,
-) = ca.dim_linregress(prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979), uhis_ver_JJA.sel(time=uhis_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(prehis_NC_JJA, uhis_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
 
 (
     NCR_his_v_slope,
@@ -489,7 +489,7 @@ preGPCP_NC_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt
     NCR_his_v_rvalue,
     NCR_his_v_pvalue,
     NCR_his_v_hypothesis,
-) = ca.dim_linregress(prehis_NC_JJA.sel(time=prehis_NC_JJA.time.dt.year>=1979), vhis_ver_JJA.sel(time=vhis_ver_JJA.time.dt.year>=1979, level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(prehis_NC_JJA, vhis_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
 
 (
     NCR_ssp585_p3_hgt_slope,
@@ -497,7 +497,7 @@ preGPCP_NC_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt
     NCR_ssp585_p3_hgt_rvalue,
     NCR_ssp585_p3_hgt_pvalue,
     NCR_ssp585_p3_hgt_hypothesis,
-) = ca.dim_linregress(pressp585_NC_JJA.sel(time=pressp585_NC_JJA.time.dt.year>=2064), hgtssp585_ver_JJA.sel(time=hgtssp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(pressp585_p3_NC_JJA, hgtssp585_p3_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
 
 (
     NCR_ssp585_p3_u_slope,
@@ -505,7 +505,7 @@ preGPCP_NC_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt
     NCR_ssp585_p3_u_rvalue,
     NCR_ssp585_p3_u_pvalue,
     NCR_ssp585_p3_u_hypothesis,
-) = ca.dim_linregress(pressp585_NC_JJA.sel(time=pressp585_NC_JJA.time.dt.year>=2064), ussp585_ver_JJA.sel(time=ussp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(pressp585_p3_NC_JJA, ussp585_p3_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
 
 (
     NCR_ssp585_p3_v_slope,
@@ -513,9 +513,220 @@ preGPCP_NC_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt
     NCR_ssp585_p3_v_rvalue,
     NCR_ssp585_p3_v_pvalue,
     NCR_ssp585_p3_v_hypothesis,
-) = ca.dim_linregress(pressp585_NC_JJA.sel(time=pressp585_NC_JJA.time.dt.year>=2064), vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year>=2064, level=[200.0, 500.0, 850.0]))
+) = ca.dim_linregress(pressp585_p3_NC_JJA, vssp585_p3_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
 
 
+# %%
+#   save the regression result
+level=NCR_his_hgt_slope.coords["level"]
+lat=NCR_his_hgt_slope.coords["lat"]
+lon=NCR_his_hgt_slope.coords["lon"]
+
+NCRGPCP_ERA5_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], NCRGPCP_ERA5_hgt_slope.data),
+        intercept=(["level", "lat", "lon"], NCRGPCP_ERA5_hgt_intercept.data),
+        rvalue=(["level", "lat", "lon"], NCRGPCP_ERA5_hgt_rvalue.data),
+        pvalue=(["level", "lat", "lon"], NCRGPCP_ERA5_hgt_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], NCRGPCP_ERA5_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of ERA5 regress onto 1979-2014 GPCP NCR"),
+)
+
+NCRGPCP_ERA5_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], NCRGPCP_ERA5_u_slope.data),
+        intercept=(["level", "lat", "lon"], NCRGPCP_ERA5_u_intercept.data),
+        rvalue=(["level", "lat", "lon"], NCRGPCP_ERA5_u_rvalue.data),
+        pvalue=(["level", "lat", "lon"], NCRGPCP_ERA5_u_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], NCRGPCP_ERA5_u_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of ERA5 regress onto 1979-2014 GPCP NCR"),
+)
+
+NCRGPCP_ERA5_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], NCRGPCP_ERA5_v_slope.data),
+        intercept=(["level", "lat", "lon"], NCRGPCP_ERA5_v_intercept.data),
+        rvalue=(["level", "lat", "lon"], NCRGPCP_ERA5_v_rvalue.data),
+        pvalue=(["level", "lat", "lon"], NCRGPCP_ERA5_v_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], NCRGPCP_ERA5_v_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of ERA5 regress onto 1979-2014 GPCP NCR"),
+)
+
+NCR_his_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], NCR_his_hgt_slope.data),
+        intercept=(["models", "level", "lat", "lon"], NCR_his_hgt_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], NCR_his_hgt_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], NCR_his_hgt_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], NCR_his_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of historical regress onto 1979-2014 NCR"),
+)
+
+NCR_his_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], NCR_his_u_slope.data),
+        intercept=(["models", "level", "lat", "lon"], NCR_his_u_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], NCR_his_u_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], NCR_his_u_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], NCR_his_u_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of historical regress onto 1979-2014 NCR"),
+)
+
+NCR_his_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], NCR_his_v_slope.data),
+        intercept=(["models", "level", "lat", "lon"], NCR_his_v_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], NCR_his_v_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], NCR_his_v_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], NCR_his_v_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of historical regress onto 1979-2014 NCR"),
+)
+
+NCR_ssp585_p3_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], NCR_ssp585_p3_hgt_slope.data),
+        intercept=(["models", "level", "lat", "lon"], NCR_ssp585_p3_hgt_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], NCR_ssp585_p3_hgt_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], NCR_ssp585_p3_hgt_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], NCR_ssp585_p3_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of ssp585_p3 regress onto 2064-2099 NCR"),
+)
+
+NCR_ssp585_p3_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], NCR_ssp585_p3_u_slope.data),
+        intercept=(["models", "level", "lat", "lon"], NCR_ssp585_p3_u_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], NCR_ssp585_p3_u_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], NCR_ssp585_p3_u_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], NCR_ssp585_p3_u_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of ssp585_p3 regress onto 2064-2099 NCR"),
+)
+
+NCR_ssp585_p3_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], NCR_ssp585_p3_v_slope.data),
+        intercept=(["models", "level", "lat", "lon"], NCR_ssp585_p3_v_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], NCR_ssp585_p3_v_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], NCR_ssp585_p3_v_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], NCR_ssp585_p3_v_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of ssp585_p3 regress onto 2064-2099 NCR"),
+)
+
+NCRGPCP_ERA5_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCRGPCP_ERA5_hgt_regress.nc")
+NCRGPCP_ERA5_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCRGPCP_ERA5_u_regress.nc")
+NCRGPCP_ERA5_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCRGPCP_ERA5_v_regress.nc")
+
+NCR_his_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCR_his_hgt_regress.nc")
+NCR_his_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCR_his_u_regress.nc")
+NCR_his_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCR_his_v_regress.nc")
+
+NCR_ssp585_p3_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/NCR_ssp585_p3_hgt_regress.nc")
+NCR_ssp585_p3_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/NCR_ssp585_p3_u_regress.nc")
+NCR_ssp585_p3_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/NCR_ssp585_p3_v_regress.nc")
+
+# %%
+#   read the data
+NCRGPCP_ERA5_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCRGPCP_ERA5_hgt_regress.nc")
+NCRGPCP_ERA5_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCRGPCP_ERA5_u_regress.nc")
+NCRGPCP_ERA5_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCRGPCP_ERA5_v_regress.nc")
+
+NCR_his_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCR_his_hgt_regress.nc")
+NCR_his_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCR_his_u_regress.nc")
+NCR_his_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCR_his_v_regress.nc")
+
+NCR_ssp585_p3_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/NCR_ssp585_p3_hgt_regress.nc")
+NCR_ssp585_p3_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/NCR_ssp585_p3_u_regress.nc")
+NCR_ssp585_p3_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/NCR_ssp585_p3_v_regress.nc")
+
+NCRGPCP_ERA5_hgt_slope = NCRGPCP_ERA5_hgt_regress["slope"]
+NCRGPCP_ERA5_u_slope = NCRGPCP_ERA5_u_regress["slope"]
+NCRGPCP_ERA5_v_slope = NCRGPCP_ERA5_v_regress["slope"]
+NCRGPCP_ERA5_hgt_rvalue = NCRGPCP_ERA5_hgt_regress["rvalue"]
+NCRGPCP_ERA5_u_rvalue = NCRGPCP_ERA5_u_regress["rvalue"]
+NCRGPCP_ERA5_v_rvalue = NCRGPCP_ERA5_v_regress["rvalue"]
+NCRGPCP_ERA5_hgt_pvalue = NCRGPCP_ERA5_hgt_regress["pvalue"]
+NCRGPCP_ERA5_u_pvalue = NCRGPCP_ERA5_u_regress["pvalue"]
+NCRGPCP_ERA5_v_pvalue = NCRGPCP_ERA5_v_regress["pvalue"]
+
+NCR_his_hgt_slope = NCR_his_hgt_regress["slope"]
+NCR_his_u_slope = NCR_his_u_regress["slope"]
+NCR_his_v_slope = NCR_his_v_regress["slope"]
+NCR_his_hgt_rvalue = NCR_his_hgt_regress["rvalue"]
+NCR_his_u_rvalue = NCR_his_u_regress["rvalue"]
+NCR_his_v_rvalue = NCR_his_v_regress["rvalue"]
+NCR_his_hgt_pvalue = NCR_his_hgt_regress["pvalue"]
+NCR_his_u_pvalue = NCR_his_u_regress["pvalue"]
+NCR_his_v_pvalue = NCR_his_v_regress["pvalue"]
+
+NCR_ssp585_p3_hgt_slope = NCR_ssp585_p3_hgt_regress["slope"]
+NCR_ssp585_p3_u_slope = NCR_ssp585_p3_u_regress["slope"]
+NCR_ssp585_p3_v_slope = NCR_ssp585_p3_v_regress["slope"]
+NCR_ssp585_p3_hgt_rvalue = NCR_ssp585_p3_hgt_regress["rvalue"]
+NCR_ssp585_p3_u_rvalue = NCR_ssp585_p3_u_regress["rvalue"]
+NCR_ssp585_p3_v_rvalue = NCR_ssp585_p3_v_regress["rvalue"]
+NCR_ssp585_p3_hgt_pvalue = NCR_ssp585_p3_hgt_regress["pvalue"]
+NCR_ssp585_p3_u_pvalue = NCR_ssp585_p3_u_regress["pvalue"]
+NCR_ssp585_p3_v_pvalue = NCR_ssp585_p3_v_regress["pvalue"]
 # %%
 #   calculate the windcheck and ensmean
 
