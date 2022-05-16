@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-16 17:38:24
+LastEditTime: 2022-05-16 20:05:02
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -189,6 +189,32 @@ ftssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj
 tssp585_ver_JJA = ftssp585_ver_JJA["ta"]
 tssp585_p3_ver_JJA = tssp585_ver_JJA.sel(time=tssp585_ver_JJA.time.dt.year>=2064)
 tssp585_p3_ver_JJA = ca.detrend_dim(tssp585_p3_ver_JJA, "time", deg=1, demean=False)
+
+ERA5_EAM = ca.EAM(uERA5_ver_JJA)
+ERA5_EAM = ca.detrend_dim(ERA5_EAM, "time", deg=1, demean=False)
+
+ERA5_IWF = ca.IWF(uERA5_ver_JJA, vERA5_ver_JJA)
+ERA5_IWF = ca.detrend_dim(ERA5_IWF, "time", deg=1, demean=False)
+
+fhis_EAM = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_EAM_index_1950-2014.nc")
+his_EAM = fhis_EAM["EAM"].sel(time=fhis_EAM["time"].dt.year>=1979)
+his_EAM = ca.detrend_dim(his_EAM, "time", deg=1, demean=False)
+
+fssp585_EAM = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_EAM_index_2015-2099.nc")
+ssp585_EAM = fssp585_EAM["EAM"]
+ssp585_p3_EAM = fssp585_EAM["EAM"].sel(time=fssp585_EAM["time"].dt.year>=2064)
+ssp585_EAM = ca.detrend_dim(ssp585_EAM, "time", deg=1, demean=False)
+ssp585_p3_EAM = ca.detrend_dim(ssp585_p3_EAM, "time", deg=1, demean=False)
+
+fhis_IWF = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_IWF_index_1950-2014.nc")
+his_IWF = fhis_IWF["IWF"].sel(time=fhis_IWF["time"].dt.year>=1979)
+his_IWF = ca.detrend_dim(his_IWF, "time", deg=1, demean=False)
+
+fssp585_IWF = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_IWF_index_2015-2099.nc")
+ssp585_IWF = fssp585_IWF["IWF"]
+ssp585_p3_IWF = fssp585_IWF["IWF"].sel(time=fssp585_IWF["time"].dt.year>=2064)
+ssp585_IWF = ca.detrend_dim(ssp585_IWF, "time", deg=1, demean=False)
+ssp585_p3_IWF = ca.detrend_dim(ssp585_p3_IWF, "time", deg=1, demean=False)
 
 #   read the his_dpg and ssp585_dpg
 # his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_dsdpg500-200.nc")
@@ -2587,6 +2613,20 @@ IndR_ssp585_p3_WAhigh_regress = ca.dim_linregress(pressp585_p3_India_JJA, vorssp
 
 IndR_diff_WAhigh_slope = IndR_ssp585_p3_WAhigh_regress[0] - IndR_his_WAhigh_regress[0]
 IndR_diff_WAhigh_rvalue = ca.cal_rdiff(IndR_ssp585_p3_WAhigh_regress[2], IndR_his_WAhigh_regress[2])
+
+#   EAM index
+IndR_GPCP_EAM_regress = stats.linregress(preAIR_JJA, ERA5_EAM)
+IndR_his_EAM_regress = ca.dim_linregress(prehis_India_JJA, his_EAM)
+IndR_ssp585_p3_EAM_regress = ca.dim_linregress(pressp585_p3_India_JJA, ssp585_p3_EAM)
+IndR_diff_EAM_slope = IndR_ssp585_p3_EAM_regress[0] - IndR_his_EAM_regress[0]
+IndR_diff_EAM_rvalue = ca.cal_rdiff(IndR_ssp585_p3_EAM_regress[2], IndR_his_EAM_regress[2])
+
+#   IWF index
+IndR_GPCP_IWF_regress = stats.linregress(preAIR_JJA, ERA5_IWF)
+IndR_his_IWF_regress = ca.dim_linregress(prehis_India_JJA, his_IWF)
+IndR_ssp585_p3_IWF_regress = ca.dim_linregress(pressp585_p3_India_JJA, ssp585_p3_IWF)
+IndR_diff_IWF_slope = IndR_ssp585_p3_IWF_regress[0] - IndR_his_IWF_regress[0]
+IndR_diff_IWF_rvalue = ca.cal_rdiff(IndR_ssp585_p3_IWF_regress[2], IndR_his_IWF_regress[2])
 # %%
 #   plot the singular scatter-plot for good models for reg coeff.
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
@@ -4632,4 +4672,58 @@ axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95
 axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
 axs[0].format(xlim=(-1.0,1.0), ylim=(-1.0,1.0), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
+# %%
+#   plot the bar-plot of the IndR related EAM index for historical and ssp585_p3 (reg coeff.)
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_EAM_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_EAM_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_EAM_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_EAM_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_EAM_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_EAM_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-3.0,3.0),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and EAM")
+# %%
+#   plot the bar-plot of the IndR related IWF index for historical and ssp585_p3 (reg coeff.)
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_IWF_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_IWF_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_IWF_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_IWF_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_IWF_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_IWF_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-1.0e-6,1.0e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and IWF")
 # %%
