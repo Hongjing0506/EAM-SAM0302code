@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-17 21:00:38
 LastEditors: ChenHJ
-LastEditTime: 2022-05-17 21:38:35
+LastEditTime: 2022-05-17 21:52:53
 FilePath: /chenhj/0302code/cal_EAM_regress.py
 Aim: 
 Mission: 
@@ -580,8 +580,8 @@ cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
 fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
-plot_array = np.reshape(range(1, 9), (2, 4))
-# plot_array[-1,-3:] = 0
+plot_array = np.reshape(range(1, 31), (6, 5))
+plot_array[-1,-2:] = 0
 axs = fig.subplots(plot_array, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
@@ -626,7 +626,7 @@ con = axs[0].contourf(
     zorder=0.8,
 )
 sepl.plt_sig(
-    pre_GPCP_EAM_pre_rvalue, axs[0], n, np.where(pre_GPCP_EAM_pre_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
+    pre_GPCP_EAM_pre_rvalue, axs[0], n, np.where(pre_GPCP_EAM_pre_pvalue[::n, ::n] <= 0.10), "bright purple", 3.0,
 )
 
 axs[0].format(
@@ -657,7 +657,7 @@ for num_mod, mod in enumerate(models_array):
         zorder=0.8,
     )
     sepl.plt_sig(
-        pre_his_EAM_pre_rvalue.sel(models=mod), axs[num_mod+2], n, np.where(pre_his_EAM_pre_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        pre_his_EAM_pre_rvalue.sel(models=mod), axs[num_mod+2], n, np.where(pre_his_EAM_pre_pvalue.sel(models=mod)[::n, ::n] <= 0.10), "bright purple", 3.0,
     )
     
     axs[num_mod+2].format(
