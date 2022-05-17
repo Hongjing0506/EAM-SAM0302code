@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-16 20:05:02
+LastEditTime: 2022-05-17 20:00:45
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -216,6 +216,12 @@ ssp585_p3_IWF = fssp585_IWF["IWF"].sel(time=fssp585_IWF["time"].dt.year>=2064)
 ssp585_IWF = ca.detrend_dim(ssp585_IWF, "time", deg=1, demean=False)
 ssp585_p3_IWF = ca.detrend_dim(ssp585_p3_IWF, "time", deg=1, demean=False)
 
+#   read the pcc data from the files
+fNCR_200hgt_pcc = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCR_200hgt_pcc.nc")
+NCR_200hgt_pcc = fNCR_200hgt_pcc["pcc"]
+
+fNCR_850hgt_pcc = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCR_850hgt_pcc.nc")
+NCR_850hgt_pcc = fNCR_850hgt_pcc["pcc"]
 #   read the his_dpg and ssp585_dpg
 # his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_dsdpg500-200.nc")
 # ssp585_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg500-200.nc")
@@ -4726,4 +4732,21 @@ axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-1.0e-6,1.0e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Reg. Coeff. IndR and IWF")
+# %%
+#   plot the IndR pcc, NCR pcc and corr(IndR, NCR) in different models
+#   first the IndR pcc is divided into two terms: 200hgt pcc and 850hgt pcc
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycles = pplt.Cycle("tab10", 2)
+axs[0].line(models_array, NCR_200hgt_pcc[:-2], zorder=1, cycle=cycles, label="NCR_200", marker="o")
+axs[0].line(models_array, IndR_200hgt_pcc[:-2], zorder=1, cycle=cycles, label="IndR_200", marker="o")
+axs[0].line(models_array, NCR_850hgt_pcc[:-2], zorder=1, cycle=cycles, label="NCR_850", marker="o", ls="--")
+axs[0].line(models_array, IndR_850hgt_pcc[:-2], zorder=1, cycle=cycles, label="IndR_850", marker="o", ls="--")
+
+axs[0].line(models_array, IndR_his_NC_regress[2], zorder=1, color="grey8", marker="*", )
+
+axs.format(xrotation=45, ylim=(-1, 1), ylabel="")
+fig.format(suptitle="pcc & corr(IndR, NCR)")
+
 # %%
