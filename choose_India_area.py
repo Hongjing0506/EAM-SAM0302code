@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-17 20:00:45
+LastEditTime: 2022-05-17 20:38:27
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -4733,6 +4733,14 @@ axs[0].format(ylim=(-1.0e-6,1.0e-6),xlocator=np.arange(0,27), xtickminor=False, 
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Reg. Coeff. IndR and IWF")
 # %%
+#   calculate the pcc between precipitation
+lat_range = lat[(lat>=15) & (lat<=40.0)]
+lon_range = lon[(lon>=90) & (lon<=130.0)]
+precip_pcc_list = []
+for num_mod, mod in enumerate(models):
+    precip_pcc = ca.cal_pcc(pre_AIR_India_pre_slope.sel(lat=lat_range, lon=lon_range), pre_his_India_pre_slope.sel(models=mod, lat=lat_range, lon=lon_range))
+    precip_pcc_list.append(precip_pcc)
+# %%
 #   plot the IndR pcc, NCR pcc and corr(IndR, NCR) in different models
 #   first the IndR pcc is divided into two terms: 200hgt pcc and 850hgt pcc
 
@@ -4744,9 +4752,11 @@ axs[0].line(models_array, IndR_200hgt_pcc[:-2], zorder=1, cycle=cycles, label="I
 axs[0].line(models_array, NCR_850hgt_pcc[:-2], zorder=1, cycle=cycles, label="NCR_850", marker="o", ls="--")
 axs[0].line(models_array, IndR_850hgt_pcc[:-2], zorder=1, cycle=cycles, label="IndR_850", marker="o", ls="--")
 
-axs[0].line(models_array, IndR_his_NC_regress[2], zorder=1, color="grey8", marker="*", )
+# axs[0].line(models_array, ca.cal_rdiff(IndR_his_NC_regress[2], IndR_GPCP_NC_regress[2]), zorder=1, color="jade", marker="*", label="corr_his-corr_GPCP")
+
+axs[0].line(models_array, precip_pcc_list, zorder=1, color="jade", marker="*", label="precip_pcc")
 
 axs.format(xrotation=45, ylim=(-1, 1), ylabel="")
+axs[0].legend(loc="ll", ncols=2)
 fig.format(suptitle="pcc & corr(IndR, NCR)")
-
 # %%
