@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-15 19:34:29
 LastEditors: ChenHJ
-LastEditTime: 2022-04-19 00:43:14
+LastEditTime: 2022-04-25 14:59:46
 FilePath: /chenhj/0302code/cal_IWF_regress.py
 Aim: 
 Mission: 
@@ -63,7 +63,7 @@ def patches(ax, x0, y0, width, height, proj):
 # %%
 #   read the ERA5 reanalysis data and calculate the SAM and IWF index
 fhgtERA5 = xr.open_dataset(
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc", chunks={'lat':10,'lon':10}
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc"
 )
 hgtERA5 = fhgtERA5["z"]
 

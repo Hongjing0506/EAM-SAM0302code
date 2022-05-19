@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-17 20:38:27
+LastEditTime: 2022-05-18 15:33:16
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -297,6 +297,7 @@ nIndia_E = 86.0
 lat_nIndia_range = lat[(lat >= nIndia_S) & (lat <= nIndia_N)]
 lon_nIndia_range = lon[(lon >= nIndia_W) & (lon <= nIndia_E)]
 
+preGPCP_nIndia_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_nIndia_range, lon=lon_nIndia_range)).mean(dim="lon", skipna=True)
 prehis_nIndia_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_nIndia_range, lon=lon_nIndia_range)).mean(dim="lon", skipna=True)
 pressp585_nIndia_JJA = ca.cal_lat_weighted_mean(pressp585_JJA.sel(lat=lat_nIndia_range, lon=lon_nIndia_range)).mean(dim="lon", skipna=True)
 pressp585_p3_nIndia_JJA = ca.cal_lat_weighted_mean(pressp585_p3_JJA.sel(lat=lat_nIndia_range, lon=lon_nIndia_range)).mean(dim="lon", skipna=True)
@@ -377,8 +378,12 @@ ussp585_EA_JJA = ca.cal_lat_weighted_mean(ussp585_ver_JJA.sel(lat=lat_EA_range, 
 ussp585_p3_EA_JJA = ca.cal_lat_weighted_mean(ussp585_p3_ver_JJA.sel(lat=lat_EA_range, lon=lon_EA_range, level=200.0)).mean(dim="lon", skipna=True)
 
 #   calculate the 200hPa vorticity over the East Asia
-lat_EAhigh_range = lat[(lat>=22.5) & (lat<=50.0)]
-lon_EAhigh_range = lon[(lon>=115.0) & (lon<=140.0)]
+EAhigh_N = 50.0
+EAhigh_S = 27.5
+EAhigh_W = 105.0
+EAhigh_E = 140.0
+lat_EAhigh_range = lat[(lat>=EAhigh_S) & (lat<=EAhigh_N)]
+lon_EAhigh_range = lon[(lon>=EAhigh_W) & (lon<=EAhigh_E)]
 uERA5_EAhigh_JJA = uERA5_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
 uhis_EAhigh_JJA = uhis_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
 ussp585_EAhigh_JJA = ussp585_ver_JJA.sel(lat=lat_EAhigh_range, lon=lon_EAhigh_range, level=200.0)
@@ -417,8 +422,12 @@ vorssp585_p3_EAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_p3_E
 # EAU_MTGssp585_JJA = ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area2_range,lon=lon_area2_range)).mean(dim="lon",skipna=True)-ca.cal_lat_weighted_mean(uttssp585_JJA.sel(lat=lat_area1_range,lon=lon_area1_range)).mean(dim="lon",skipna=True)
 
 #   calculate the vorticity over the West Asia in 200hPa
-lat_WAhigh_range = lat[(lat>=25.0) & (lat<=45.0)]
-lon_WAhigh_range = lon[(lon>=55.0) & (lon<=75.0)]
+WAhigh_N = 50.0
+WAhigh_S = 25.0
+WAhigh_W = 50.0
+WAhigh_E = 80.0
+lat_WAhigh_range = lat[(lat>=WAhigh_S) & (lat<=WAhigh_N)]
+lon_WAhigh_range = lon[(lon>=WAhigh_W) & (lon<=WAhigh_E)]
 uERA5_WAhigh_JJA = uERA5_ver_JJA.sel(lat=lat_WAhigh_range, lon=lon_WAhigh_range, level=200.0)
 uhis_WAhigh_JJA = uhis_ver_JJA.sel(lat=lat_WAhigh_range, lon=lon_WAhigh_range, level=200.0)
 ussp585_WAhigh_JJA = ussp585_ver_JJA.sel(lat=lat_WAhigh_range, lon=lon_WAhigh_range, level=200.0)
@@ -435,8 +444,12 @@ vorssp585_WAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_WAhigh_
 vorssp585_p3_WAhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_p3_WAhigh_JJA, vssp585_p3_WAhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
 
 #   calculate the vorticity over the West Asia in 200hPa
-lat_WNPhigh_range = lat[(lat>=15.0) & (lat<=37.5)]
-lon_WNPhigh_range = lon[(lon>=110.0) & (lon<=137.0)]
+WNPhigh_N = 37.5
+WNPhigh_S = 15.0
+WNPhigh_W = 110.0
+WNPhigh_E = 140.0
+lat_WNPhigh_range = lat[(lat>=WNPhigh_S) & (lat<=WNPhigh_N)]
+lon_WNPhigh_range = lon[(lon>=WNPhigh_W) & (lon<=WNPhigh_E)]
 uERA5_WNPhigh_JJA = uERA5_ver_JJA.sel(lat=lat_WNPhigh_range, lon=lon_WNPhigh_range, level=850.0)
 uhis_WNPhigh_JJA = uhis_ver_JJA.sel(lat=lat_WNPhigh_range, lon=lon_WNPhigh_range, level=850.0)
 ussp585_WNPhigh_JJA = ussp585_ver_JJA.sel(lat=lat_WNPhigh_range, lon=lon_WNPhigh_range, level=850.0)
@@ -3349,6 +3362,17 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             width = 90
             height = 32.5
             sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+            #   EAM index
+            x0 = 110.0
+            y0 = 40.0
+            width = 40.0
+            height = 10.0
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="green8", linestyle="-")
+            x0 = 110.0
+            y0 = 25.0
+            width = 40.0
+            height = 10.0
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="green8", linestyle="-")
     elif lev == 850.0:
         for ax in axs[num_lev, :]:
             x0 = 110
@@ -4535,22 +4559,22 @@ for ax in axs:
 for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
         for ax in axs[num_lev, :]:
-            x0 = 115
-            y0 = 22.5
-            width = 25
-            height = 27.5
+            x0 = EAhigh_W
+            y0 = EAhigh_S
+            width = EAhigh_E-EAhigh_W
+            height = EAhigh_N-EAhigh_S
             sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
-            x0 = 50
-            y0 = 25
-            width = 30
-            height = 20
+            x0 = WAhigh_W
+            y0 = WAhigh_S
+            width = WAhigh_E-WAhigh_W
+            height = WAhigh_N-WAhigh_S
             sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
     elif lev == 850.0:
         for ax in axs[num_lev, :]:
-            x0 = 110
-            y0 = 15
-            width = 27
-            height = 22.5
+            x0 = WNPhigh_W
+            y0 = WNPhigh_S
+            width = WNPhigh_E-WNPhigh_W
+            height = WNPhigh_N-WNPhigh_S
             sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
     # ======================================
     con = axs[num_lev, 0].contourf(

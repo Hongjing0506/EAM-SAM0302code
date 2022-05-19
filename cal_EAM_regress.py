@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-17 21:00:38
 LastEditors: ChenHJ
-LastEditTime: 2022-05-17 21:52:53
+LastEditTime: 2022-05-17 22:07:23
 FilePath: /chenhj/0302code/cal_EAM_regress.py
 Aim: 
 Mission: 
@@ -666,4 +666,9 @@ for num_mod, mod in enumerate(models_array):
 # ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="precip reg EAM")
+# %%
+ERA5_SAM = ca.SAM(vERA5_ver_JJA)
+his_SAM = ca.SAM(vhis_ver_JJA)
+ERA5_SAM = ca.detrend_dim(ERA5_SAM, "time", deg=1, demean=False)
+his_SAM = ca.detrend_dim(his_SAM, "time", deg=1, demean=False)
 # %%
