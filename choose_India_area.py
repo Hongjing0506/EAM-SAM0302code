@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-19 21:36:47
+LastEditTime: 2022-05-19 22:09:48
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -273,6 +273,9 @@ vorssp585_ver_JJA = vorssp585_ver_JJA.metpy.dequantify()
 vorssp585_p3_ver_JJA = mpcalc.vorticity(ussp585_p3_ver_JJA.sel(level=200.0), vssp585_p3_ver_JJA.sel(level=200.0))
 vorssp585_p3_ver_JJA = vorssp585_p3_ver_JJA.metpy.dequantify()
 
+his_LKY = ca.LKY(uhis_ver_JJA, vhis_ver_JJA)
+ssp585_p3_LKY = ca.LKY(ussp585_p3_ver_JJA, vssp585_p3_ver_JJA)
+
 #   calculate the precipitation in India
 lat = preGPCP_JJA.coords["lat"]
 lon = preGPCP_JJA.coords["lon"]
@@ -473,6 +476,9 @@ vorERA5_ver_JJA = ca.detrend_dim(vorERA5_ver_JJA, "time", deg=1, demean=False)
 vorhis_ver_JJA = ca.detrend_dim(vorhis_ver_JJA, "time", deg=1, demean=False)
 vorssp585_ver_JJA = ca.detrend_dim(vorssp585_ver_JJA, "time", deg=1, demean=False)
 vorssp585_p3_ver_JJA = ca.detrend_dim(vorssp585_p3_ver_JJA, "time", deg=1, demean=False)
+
+his_LKY = ca.detrend_dim(his_LKY, "time", deg=1, demean=False)
+ssp585_p3_LKY = ca.detrend_dim(ssp585_p3_LKY, "time", deg=1, demean=False)
 
 # preCRU_India_JJA = ca.detrend_dim(preCRU_India_JJA, "time", deg=1, demean=False)
 preGPCP_India_JJA = ca.detrend_dim(preGPCP_India_JJA, "time", deg=1, demean=False)
@@ -2649,6 +2655,13 @@ IndR_his_IWF_regress = ca.dim_linregress(prehis_India_JJA, his_IWF)
 IndR_ssp585_p3_IWF_regress = ca.dim_linregress(pressp585_p3_India_JJA, ssp585_p3_IWF)
 IndR_diff_IWF_slope = IndR_ssp585_p3_IWF_regress[0] - IndR_his_IWF_regress[0]
 IndR_diff_IWF_rvalue = ca.cal_rdiff(IndR_ssp585_p3_IWF_regress[2], IndR_his_IWF_regress[2])
+
+#   LKY index
+IndR_GPCP_LKY_regress = stats.linregress(preAIR_JJA, ERA5_LKY)
+IndR_his_LKY_regress = ca.dim_linregress(prehis_India_JJA, his_LKY)
+IndR_ssp585_p3_LKY_regress = ca.dim_linregress(pressp585_p3_India_JJA, ssp585_p3_LKY)
+IndR_diff_LKY_slope = IndR_ssp585_p3_LKY_regress[0] - IndR_his_LKY_regress[0]
+IndR_diff_LKY_rvalue = ca.cal_rdiff(IndR_ssp585_p3_LKY_regress[2], IndR_his_LKY_regress[2])
 # %%
 #   plot the singular scatter-plot for good models for reg coeff.
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
@@ -5136,4 +5149,58 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     # ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="(hgt&U reg IndR) reg corr(IndR,NCR)")
+# %%
+# plot the bar plot about the corr(IndR, LKY)
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_LKY_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_LKY_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_LKY_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_LKY_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_LKY_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_LKY_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-1e-6,1e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and LKY")
+
+# plot the bar plot about the corr(IndR, LKY)
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_LKY_regress[2].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_LKY_regress[2].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_LKY_rvalue.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_LKY_regress[2].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_LKY_regress[2].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_LKY_rvalue.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-1,1),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Corr. Coeff. IndR and LKY")
 # %%
