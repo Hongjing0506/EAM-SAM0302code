@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-19 17:23:21
+LastEditTime: 2022-05-19 21:36:47
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -195,6 +195,9 @@ ERA5_EAM = ca.detrend_dim(ERA5_EAM, "time", deg=1, demean=False)
 
 ERA5_IWF = ca.IWF(uERA5_ver_JJA, vERA5_ver_JJA)
 ERA5_IWF = ca.detrend_dim(ERA5_IWF, "time", deg=1, demean=False)
+
+ERA5_LKY = ca.LKY(uERA5_ver_JJA, vERA5_ver_JJA)
+ERA5_LKY = ca.detrend_dim(ERA5_LKY, "time", deg=1, demean=False)
 
 fhis_EAM = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_EAM_index_1950-2014.nc")
 his_EAM = fhis_EAM["EAM"].sel(time=fhis_EAM["time"].dt.year>=1979)
