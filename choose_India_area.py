@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-19 22:09:48
+LastEditTime: 2022-05-19 22:17:50
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -5188,6 +5188,60 @@ plot_data[-1,2] = IndR_diff_LKY_rvalue.sel(models=gmodels).mean(dim="models", sk
 
 label_models = list(gmodels)
 label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-1,1),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Corr. Coeff. IndR and LKY")
+# %%
+#   plot the all-models bar-plots for corr(IndR, LKY)
+plot_data = np.zeros((27,3))
+plot_data[:-1,0] = IndR_his_LKY_regress[0].data
+plot_data[:-1,1] = IndR_ssp585_p3_LKY_regress[0].data
+plot_data[:-1,2] = IndR_diff_LKY_slope.data
+plot_data[-1,0] = IndR_his_LKY_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_LKY_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_LKY_slope.mean(dim="models", skipna=True).data
+
+label_models = list(models.data)
+label_models.append("MME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-1e-6,1e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and LKY")
+
+# plot the bar plot about the corr(IndR, LKY)
+plot_data = np.zeros((27,3))
+plot_data[:-1,0] = IndR_his_LKY_regress[2].data
+plot_data[:-1,1] = IndR_ssp585_p3_LKY_regress[2].data
+plot_data[:-1,2] = IndR_diff_LKY_rvalue.data
+plot_data[-1,0] = IndR_his_LKY_regress[2].mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_LKY_regress[2].mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_LKY_rvalue.mean(dim="models", skipna=True).data
+
+label_models = list(models.data)
+label_models.append("MME")
 
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
