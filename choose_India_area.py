@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-19 15:09:30
+LastEditTime: 2022-05-19 15:52:29
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -5003,4 +5003,30 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
+# %%
+#   calculate the circulation result regress onto corr and slope between models
+
+(
+    IndR_NC_intermodels_slope_his_hgt_slope,
+    IndR_NC_intermodels_slope_his_hgt_intercept,
+    IndR_NC_intermodels_slope_his_hgt_rvalue,
+    IndR_NC_intermodels_slope_his_hgt_pvalue,
+    IndR_NC_intermodels_slope_his_hgt_hypothesis,
+) = ca.dim_linregress(IndR_his_NC_regress[2].sel(models=pcorr_models), IndR_his_hgt_slope.sel(models=pcorr_models), input_core_dims="models")
+
+(
+    IndR_NC_intermodels_slope_his_u_slope,
+    IndR_NC_intermodels_slope_his_u_intercept,
+    IndR_NC_intermodels_slope_his_u_rvalue,
+    IndR_NC_intermodels_slope_his_u_pvalue,
+    IndR_NC_intermodels_slope_his_u_hypothesis,
+) = ca.dim_linregress(IndR_his_NC_regress[2].sel(models=pcorr_models), IndR_his_u_slope.sel(models=pcorr_models), input_core_dims="models")
+
+(
+    IndR_NC_intermodels_slope_his_v_slope,
+    IndR_NC_intermodels_slope_his_v_intercept,
+    IndR_NC_intermodels_slope_his_v_rvalue,
+    IndR_NC_intermodels_slope_his_v_pvalue,
+    IndR_NC_intermodels_slope_his_v_hypothesis,
+) = ca.dim_linregress(IndR_his_NC_regress[2].sel(models=pcorr_models), IndR_his_v_slope.sel(models=pcorr_models), input_core_dims="models")
 # %%
