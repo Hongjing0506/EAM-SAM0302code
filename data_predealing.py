@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-02 16:45:05
 LastEditors: ChenHJ
-LastEditTime: 2022-05-09 18:54:32
+LastEditTime: 2022-05-21 00:01:10
 FilePath: /chenhj/0302code/data_predealing.py
 Aim: 
 Mission: 
@@ -44,18 +44,18 @@ modelname = ["ACCESS-CM2", "BCC-CSM2-MR", "CAMS-CSM1-0", "CanESM5", "CESM2", "CE
 rlzn = ["r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r11i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f2", "r1i1p1f2", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f3", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f2", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r3i1p1f2"]
 for model,rl in zip(modelname, rlzn):
     print(model)
-    srcPath = "/home/ys17-23/Extension/CMIP6/CMIP6/"+ model +"/ssp585/" + rl + "/Amon"
-    tmpPath = "/home/ys17-23/chenhj/CMIP6/tmpPath"
-    dstPath = "/home/ys17-23/chenhj/CMIP6/ssp585"
-    variable = ["zg", "ta", "wap", "ua", "va", "pr", "hus"]
+    srcPath = "/home/ys17-23/Extension/CMIP6/CMIP6/"+ model +"/historical/" + rl + "/Amon"
+    tmpPath = "/home/ys17-23/Extension/CMIP6/CMIP6/tmpPath"
+    dstPath = "/home/ys17-23/Extension/personal-data/chenhj/CMIP6/historical"
+    variable = ["ts"]
     freq = "Amon"
     ca.CMIP6_predealing_1(srcPath, tmpPath, dstPath, variable, freq, rl)
 # %%
 modelname = ["ACCESS-CM2", "BCC-CSM2-MR", "CAMS-CSM1-0", "CanESM5", "CESM2", "CESM2-WACCM", "CMCC-ESM2", "CNRM-CM6-1", "CNRM-ESM2-1", "EC-Earth3-Veg", "EC-Earth3", "FGOALS-g3", "GFDL-CM4", "HadGEM3-GC31-LL", "IITM-ESM", "INM-CM4-8", "INM-CM5-0", "IPSL-CM6A-LR", "KACE-1-0-G", "MIROC-ES2L", "MIROC6", "MPI-ESM1-2-HR", "MRI-ESM2-0", "NESM3", "NorESM2-LM", "TaiESM1", "UKESM1-0-LL"]
 yearstart = "185001"
 yearend = ["201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201612", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412"]
-dstPath = "/home/ys17-23/chenhj/CMIP6/historical"
-variable = ["ua", "va", "ta", "wap", "hus", "zg", "pr"]
+dstPath = "/home/ys17-23/Extension/personal-data/chenhj/CMIP6/historical"
+variable = ["ts", "tos"]
 
 for var in variable:
     dstpath = os.path.join(dstPath, var)
@@ -65,8 +65,8 @@ for var in variable:
 modelname = ["ACCESS-CM2", "BCC-CSM2-MR", "CAMS-CSM1-0", "CanESM5", "CESM2", "CESM2-WACCM", "CMCC-ESM2", "CNRM-CM6-1", "CNRM-ESM2-1", "EC-Earth3-Veg", "EC-Earth3", "FGOALS-g3", "GFDL-CM4", "HadGEM3-GC31-LL", "IITM-ESM", "INM-CM4-8", "INM-CM5-0", "IPSL-CM6A-LR", "KACE-1-0-G", "MIROC-ES2L", "MIROC6", "MPI-ESM1-2-HR", "MRI-ESM2-0", "NESM3", "NorESM2-LM", "TaiESM1", "UKESM1-0-LL"]
 yearstart = "201501"
 yearend = ["230012", "210012", "209912", "230012", "210012", "229912", "210012", "210012", "210012", "210012", "210012", "210012", "210012", "210012", "209912", "210012", "210012", "230012", "210012", "210012", "210012", "210012", "230012", "210012", "210012", "210012", "210012"]
-dstPath = "/home/ys17-23/chenhj/CMIP6/ssp585"
-variable = ["ua", "va", "ta", "wap", "hus", "zg", "pr"]
+dstPath = "/home/ys17-23/Extension/personal-data/chenhj/CMIP6/ssp585"
+variable = ["ts", "tos"]
 
 for var in variable:
     dstpath = os.path.join(dstPath, var)
