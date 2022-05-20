@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-03-02 16:45:05
 LastEditors: ChenHJ
-LastEditTime: 2022-05-21 00:01:10
+LastEditTime: 2022-05-21 00:12:57
 FilePath: /chenhj/0302code/data_predealing.py
 Aim: 
 Mission: 
@@ -177,25 +177,25 @@ for model,rl in zip(modelname, rlzn):
     ca.CMIP6_predealing_1(srcPath, tmpPath, dstPath, variable, freq, rl)
 # %%
 #   select time
-variable = ["ps"]
+variable = ["ts", "tos"]
 for var in variable:
-    srcPath = "/home/ys17-23/chenhj/CMIP6/ssp585/" + var
-    dstPath = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/ssp585/" + var
-    start = 2015
-    end = 2099
+    srcPath = "/home/ys17-23/Extension/personal-data/chenhj/CMIP6/historical/" + var
+    dstPath = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/" + var
+    start = 1950
+    end = 2014
     ca.p_year(srcPath, dstPath, start, end)
 # %%
 #   uniform the time of different models
 reload(ca)
-path1 = "/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical"
-variable = ["ps"]
+path1 = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/"
+variable = ["ts", "tos"]
 for var in variable:
     varpath = os.path.join(path1, var)
     g = os.walk(varpath)
     for path, dir_list, file_list in g:
         for filename in file_list:
             print(filename)
-            ca.uniform_timestamp(os.path.join(path, filename), os.path.join("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/historical/", var + "2", filename), var, "19500101", "20141201", "MS")
+            ca.uniform_timestamp(os.path.join(path, filename), os.path.join("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/", var + "2", filename), var, "20150101", "20991201", "MS")
 # %%
 #   Dealing the AIR index
 f = open("/home/ys17-23/Extension/All_India_Rainfall_index/iitm-regionrf.txt")
