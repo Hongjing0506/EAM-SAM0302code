@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-19 22:17:50
+LastEditTime: 2022-05-21 20:52:47
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -118,6 +118,9 @@ qERA5 = fqERA5["q"].sel(time=fqERA5["time"].dt.year>=1979)
 fwERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/omega_mon_r144x72_195001-201412.nc")
 wERA5 = fwERA5["w"].sel(time=fwERA5["time"].dt.year>=1979)
 
+fsstHad = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/HadISST_r144x72_1870-2020.nc")
+sstHad = fsstHad["sst"].sel(time=(fsstHad["time"].dt.year>=1979) & (fsstHad["time"].dt.year<=2014))
+
 hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True)
 hgtERA5_ver_JJA = hgtERA5_ver_JJA-hgtERA5_ver_JJA.mean(dim="lon", skipna=True)
 uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True)
@@ -125,6 +128,7 @@ vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True)
 qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True)
 spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
 wERA5_JJA = ca.p_time(wERA5, 6, 8, True)
+sstHad_JJA = ca.p_time(sstHad, 6, 8, True)
 
 hgtERA5_ver_JJA = ca.detrend_dim(hgtERA5_ver_JJA, "time", deg=1, demean=False)
 uERA5_ver_JJA = ca.detrend_dim(uERA5_ver_JJA, "time", deg=1, demean=False)
@@ -132,6 +136,7 @@ vERA5_ver_JJA = ca.detrend_dim(vERA5_ver_JJA, "time", deg=1, demean=False)
 qERA5_ver_JJA = ca.detrend_dim(qERA5_ver_JJA, "time", deg=1, demean=False)
 spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
 wERA5_JJA = ca.detrend_dim(wERA5_JJA, "time", deg=1, demean=False)
+sstHad_JJA = ca.detrend_dim(sstHad_JJA, "time", deg=1, demean=False)
 
 fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc")
 hgthis_ver_JJA = fhgthis_ver_JJA["zg"].sel(time=fhgthis_ver_JJA["time"].dt.year>=1979)
@@ -149,6 +154,12 @@ vhis_ver_JJA = ca.detrend_dim(vhis_ver_JJA, "time", deg=1, demean=False)
 fwhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/wap_historical_r144x72_195001-201412.nc") 
 whis_ver_JJA = fwhis_ver_JJA["wap"].sel(time=fwhis_ver_JJA["time"].dt.year>=1979)
 whis_ver_JJA = ca.detrend_dim(whis_ver_JJA, "time", deg=1, demean=False)
+
+#   read the SST data in observation and CMIP6
+fssthis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/tos_historical_r144x72_195001-201412.nc")
+ssthis_JJA = fssthis_JJA["sst"].sel(time=fssthis_JJA["time"].dt.year>=1979)
+ssthis_JJA = ca.detrend_dim(ssthis_JJA, "time", deg=1, demean=False)
+
 
 fhgtssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
 hgtssp585_ver_JJA = fhgtssp585_ver_JJA["zg"]
@@ -174,6 +185,12 @@ fwssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj
 wssp585_ver_JJA = fwssp585_ver_JJA["wap"]
 wssp585_p3_ver_JJA = wssp585_ver_JJA.sel(time=wssp585_ver_JJA.time.dt.year>=2064)
 wssp585_p3_ver_JJA = ca.detrend_dim(wssp585_p3_ver_JJA, "time", deg=1, demean=False)
+
+fsstssp585_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/tos_ssp585_r144x72_201501-209912.nc")
+sstssp585_JJA = fsstssp585_JJA["sst"]
+sstssp585_p3_JJA = sstssp585_JJA.sel(time=sstssp585_JJA.time.dt.year>=2064)
+sstssp585_JJA = ca.detrend_dim(sstssp585_JJA, "time", deg=1, demean=False)
+sstssp585_p3_JJA = ca.detrend_dim(sstssp585_p3_JJA, "time", deg=1, demean=False)
 
 #read the temperature data in ERA5/historical/ssp585
 ftERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/temp_mon_r144x72_195001-201412.nc")
@@ -983,6 +1000,85 @@ IndR_ssp585_p3_wind_ens_mask = ca.wind_check(
     xr.where(IndR_ssp585_p3_u_slope_ens_mask > 0.0, 1.0, 0.0),
     xr.where(IndR_ssp585_p3_v_slope_ens_mask > 0.0, 1.0, 0.0),
 )
+# %%
+#   calculate the sst regress onto IndR in ERA5, historical and ssp585
+sstHad_JJA.coords["time"] = preAIR_JJA.coords["time"]
+(
+    IndR_Had_sst_slope,
+    IndR_Had_sst_intercept,
+    IndR_Had_sst_rvalue,
+    IndR_Had_sst_pvalue,
+    IndR_Had_sst_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, sstHad_JJA)
+
+(
+    IndR_his_sst_slope,
+    IndR_his_sst_intercept,
+    IndR_his_sst_rvalue,
+    IndR_his_sst_pvalue,
+    IndR_his_sst_hypothesis,
+) = ca.dim_linregress(prehis_JJA, ssthis_JJA)
+
+(
+    IndR_ssp585_p3_sst_slope,
+    IndR_ssp585_p3_sst_intercept,
+    IndR_ssp585_p3_sst_rvalue,
+    IndR_ssp585_p3_sst_pvalue,
+    IndR_ssp585_p3_sst_hypothesis,
+) = ca.dim_linregress(pressp585_p3_JJA, sstssp585_p3_JJA)
+
+#   save the result of the sst regression
+lat=IndR_Had_sst_slope.coords["lat"]
+lon=IndR_Had_sst_slope.coords["lon"]
+
+IndR_Had_sst_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["lat", "lon"], IndR_Had_sst_slope.data),
+        intercept=(["lat", "lon"], IndR_Had_sst_intercept.data),
+        rvalue=(["lat", "lon"], IndR_Had_sst_rvalue.data),
+        pvalue=(["lat", "lon"], IndR_Had_sst_pvalue.data),
+        hypothesis=(["lat", "lon"], IndR_Had_sst_hypothesis.data),
+    ),
+    coords=dict(
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="sst fields of HadISST regress onto 1979-2014 AIR"),
+)
+
+IndR_his_sst_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["lat", "lon"], IndR_his_sst_slope.data),
+        intercept=(["lat", "lon"], IndR_his_sst_intercept.data),
+        rvalue=(["lat", "lon"], IndR_his_sst_rvalue.data),
+        pvalue=(["lat", "lon"], IndR_his_sst_pvalue.data),
+        hypothesis=(["lat", "lon"], IndR_his_sst_hypothesis.data),
+    ),
+    coords=dict(
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="sst fields of historical regress onto 1979-2014 IndR"),
+)
+
+IndR_ssp585_p3_sst_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["lat", "lon"], IndR_ssp585_p3_sst_slope.data),
+        intercept=(["lat", "lon"], IndR_ssp585_p3_sst_intercept.data),
+        rvalue=(["lat", "lon"], IndR_ssp585_p3_sst_rvalue.data),
+        pvalue=(["lat", "lon"], IndR_ssp585_p3_sst_pvalue.data),
+        hypothesis=(["lat", "lon"], IndR_ssp585_p3_sst_hypothesis.data),
+    ),
+    coords=dict(
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="sst fields of ssp585_p3 regress onto 2064-2099 IndR"),
+)
+
+IndR_Had_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_Had_sst_regress.nc")
+IndR_his_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_his_sst_regress.nc")
+IndR_ssp585_p3_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/nIndR_ssp585_p3_sst_regress.nc")
 # %%
 #   calculate the ranking of different models but use the AIR data as observation
 lat = prehis_JJA.coords["lat"]
@@ -5258,3 +5354,4 @@ axs[0].format(ylim=(-1,1),xlocator=np.arange(0,27), xtickminor=False, ytickminor
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Corr. Coeff. IndR and LKY")
 # %%
+#   plot the SST regress onto the IndR
