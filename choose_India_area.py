@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-21 21:03:33
+LastEditTime: 2022-05-21 21:21:27
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -1116,6 +1116,10 @@ IndR_his_sst_rvalue_ens_mask = xr.where((ca.MME_reg_mask(IndR_his_sst_rvalue_ens
 
 IndR_ssp585_p3_sst_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_sst_rvalue, "models")
 IndR_ssp585_p3_sst_rvalue_ens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_sst_rvalue_ens, IndR_ssp585_p3_sst_rvalue.std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(IndR_ssp585_p3_sst_slope)) >= 2.0, 1.0, 0.0)
+
+IndR_diff_sst_slope = IndR_ssp585_p3_sst_slope - IndR_his_sst_slope
+IndR_diff_sst_slope_ens = IndR_diff_sst_slope.mean(dim="models", skipna=True)
+IndR_diff_sst_ens_mask = ca.cal_mmemask(IndR_diff_sst_slope)
 # %%
 #   calculate the ranking of different models but use the AIR data as observation
 lat = prehis_JJA.coords["lat"]
@@ -1267,28 +1271,31 @@ pre_diff_India_pre_rvalue = ca.cal_rdiff(pre_ssp585_p3_India_pre_rvalue, pre_his
 pre_diff_India_pre_rvalue_gens = ca.cal_rMME(pre_diff_India_pre_rvalue.sel(models=gmodels), "models")
 
 IndR_diff_hgt_slope = IndR_ssp585_p3_hgt_slope - IndR_his_hgt_slope
+IndR_diff_hgt_slope_ens = IndR_diff_hgt_slope.mean(dim="models", skipna=True)
 IndR_diff_hgt_slope_gens = IndR_diff_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 
-IndR_diff_hgt_mask = ca.cal_mmemask(IndR_diff_hgt_slope)
+IndR_diff_hgt_ens_mask = ca.cal_mmemask(IndR_diff_hgt_slope)
 IndR_diff_hgt_gens_mask = ca.cal_mmemask(IndR_diff_hgt_slope.sel(models=gmodels))
 
 IndR_diff_u_slope = IndR_ssp585_p3_u_slope - IndR_his_u_slope
+IndR_diff_u_slope_ens = IndR_diff_u_slope.mean(dim="models", skipna=True)
 IndR_diff_u_slope_gens = IndR_diff_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 
-IndR_diff_u_mask = ca.cal_mmemask(IndR_diff_u_slope)
+IndR_diff_u_ens_mask = ca.cal_mmemask(IndR_diff_u_slope)
 IndR_diff_u_gens_mask = ca.cal_mmemask(IndR_diff_u_slope.sel(models=gmodels))
 
 IndR_diff_v_slope = IndR_ssp585_p3_v_slope - IndR_his_v_slope
+IndR_diff_v_slope_ens = IndR_diff_v_slope.mean(dim="models", skipna=True)
 IndR_diff_v_slope_gens = IndR_diff_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 
-IndR_diff_v_mask = ca.cal_mmemask(IndR_diff_v_slope)
+IndR_diff_v_ens_mask = ca.cal_mmemask(IndR_diff_v_slope)
 IndR_diff_v_gens_mask = ca.cal_mmemask(IndR_diff_v_slope.sel(models=gmodels))
 
-IndR_diff_wind_mask = ca.wind_check(
-    xr.where(IndR_diff_u_mask > 0.0, 1.0, 0.0),
-    xr.where(IndR_diff_v_mask > 0.0, 1.0, 0.0),
-    xr.where(IndR_diff_u_mask > 0.0, 1.0, 0.0),
-    xr.where(IndR_diff_v_mask > 0.0, 1.0, 0.0),
+IndR_diff_wind_ens_mask = ca.wind_check(
+    xr.where(IndR_diff_u_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_v_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_u_ens_mask > 0.0, 1.0, 0.0),
+    xr.where(IndR_diff_v_ens_mask > 0.0, 1.0, 0.0),
 )
 IndR_diff_wind_gens_mask = ca.wind_check(
     xr.where(IndR_diff_u_gens_mask > 0.0, 1.0, 0.0),
@@ -2276,62 +2283,6 @@ for num_models,mod in enumerate(gmodels):
     )
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
-# %%
-#   calculate the good models difference between historical run and ssp585_p3 run
-pre_diff_India_pre_slope = pre_ssp585_p3_India_pre_slope - pre_his_India_pre_slope
-
-pre_diff_India_pre_mask = ca.cal_mmemask(pre_diff_India_pre_slope)
-
-pre_diff_India_pre_slope_gens = pre_diff_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
-
-pre_diff_India_pre_gens_mask = ca.cal_mmemask(pre_diff_India_pre_slope.sel(models=gmodels))
-
-pre_diff_India_pre_rvalue = ca.cal_rdiff(pre_ssp585_p3_India_pre_rvalue, pre_his_India_pre_rvalue)
-pre_diff_India_pre_rvalue_gens = ca.cal_rMME(pre_diff_India_pre_rvalue.sel(models=gmodels), "models")
-
-IndR_diff_hgt_slope = IndR_ssp585_p3_hgt_slope - IndR_his_hgt_slope
-IndR_diff_hgt_slope_ens = IndR_diff_hgt_slope.mean(dim="models", skipna=True)
-
-IndR_diff_hgt_slope_gens = IndR_diff_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
-
-IndR_diff_hgt_mask = ca.cal_mmemask(IndR_diff_hgt_slope)
-IndR_diff_hgt_gens_mask = ca.cal_mmemask(IndR_diff_hgt_slope.sel(models=gmodels))
-
-IndR_diff_u_slope = IndR_ssp585_p3_u_slope - IndR_his_u_slope
-IndR_diff_u_slope_ens = IndR_diff_u_slope.mean(dim="models", skipna=True)
-IndR_diff_u_slope_gens = IndR_diff_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
-
-IndR_diff_u_mask = ca.cal_mmemask(IndR_diff_u_slope)
-IndR_diff_u_gens_mask = ca.cal_mmemask(IndR_diff_u_slope.sel(models=gmodels))
-
-IndR_diff_v_slope = IndR_ssp585_p3_v_slope - IndR_his_v_slope
-IndR_diff_v_slope_ens = IndR_diff_v_slope.mean(dim="models", skipna=True)
-IndR_diff_v_slope_gens = IndR_diff_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
-
-IndR_diff_v_mask = ca.cal_mmemask(IndR_diff_v_slope)
-IndR_diff_v_gens_mask = ca.cal_mmemask(IndR_diff_v_slope.sel(models=gmodels))
-
-IndR_diff_wind_mask = ca.wind_check(
-    xr.where(IndR_diff_u_mask > 0.0, 1.0, 0.0),
-    xr.where(IndR_diff_v_mask > 0.0, 1.0, 0.0),
-    xr.where(IndR_diff_u_mask > 0.0, 1.0, 0.0),
-    xr.where(IndR_diff_v_mask > 0.0, 1.0, 0.0),
-)
-IndR_diff_wind_gens_mask = ca.wind_check(
-    xr.where(IndR_diff_u_gens_mask > 0.0, 1.0, 0.0),
-    xr.where(IndR_diff_v_gens_mask > 0.0, 1.0, 0.0),
-    xr.where(IndR_diff_u_gens_mask > 0.0, 1.0, 0.0),
-    xr.where(IndR_diff_v_gens_mask > 0.0, 1.0, 0.0),
-)
-
-IndR_diff_hgt_rvalue = ca.cal_rdiff(IndR_ssp585_p3_hgt_rvalue, IndR_his_hgt_rvalue)
-IndR_diff_hgt_rvalue_gens = ca.cal_rMME(IndR_diff_hgt_rvalue.sel(models=gmodels), "models")
-
-IndR_diff_u_rvalue = ca.cal_rdiff(IndR_ssp585_p3_u_rvalue, IndR_his_u_rvalue)
-IndR_diff_u_rvalue_gens = ca.cal_rMME(IndR_diff_u_rvalue.sel(models=gmodels), "models")
-
-IndR_diff_v_rvalue = ca.cal_rdiff(IndR_ssp585_p3_v_rvalue, IndR_his_v_rvalue)
-IndR_diff_v_rvalue_gens = ca.cal_rMME(IndR_diff_v_rvalue.sel(models=gmodels), "models")
 # %%
 #   plot the corr coeff. precipitation difference between historical and ssp585
 pplt.rc.grid = False
@@ -4456,7 +4407,7 @@ for num_lev,lev in enumerate([200.0]):
         extend="both"
     )
     sepl.plt_sig(
-        IndR_diff_hgt_slope_ens.sel(level=lev), axs[2], n, np.where(IndR_diff_hgt_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+        IndR_diff_hgt_slope_ens.sel(level=lev), axs[2], n, np.where(IndR_diff_hgt_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
     )
     axs[2].quiver(
         IndR_diff_u_slope_ens.sel(level=lev)[::ski, ::ski],
@@ -4472,8 +4423,8 @@ for num_lev,lev in enumerate([200.0]):
     )
 
     m = axs[2].quiver(
-        IndR_diff_u_slope_ens.sel(level=lev).where(IndR_diff_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
-        IndR_diff_v_slope_ens.sel(level=lev).where(IndR_diff_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_diff_u_slope_ens.sel(level=lev).where(IndR_diff_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_diff_v_slope_ens.sel(level=lev).where(IndR_diff_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
         zorder=1.1,
         headwidth=2.6,
         headlength=2.3,
