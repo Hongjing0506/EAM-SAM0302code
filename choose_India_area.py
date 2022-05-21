@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-21 21:21:27
+LastEditTime: 2022-05-21 22:26:20
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -192,7 +192,7 @@ sstssp585_p3_JJA = sstssp585_JJA.sel(time=sstssp585_JJA.time.dt.year>=2064)
 sstssp585_JJA = ca.detrend_dim(sstssp585_JJA, "time", deg=1, demean=False)
 sstssp585_p3_JJA = ca.detrend_dim(sstssp585_p3_JJA, "time", deg=1, demean=False)
 
-#read the temperature data in ERA5/historical/ssp585
+#   read the temperature data in ERA5/historical/ssp585
 ftERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/temp_mon_r144x72_195001-201412.nc")
 tERA5 = ftERA5["t"].sel(time=ftERA5["time"].dt.year>=1979)
 tERA5_ver_JJA = ca.p_time(tERA5, 6, 8, True)
@@ -1002,85 +1002,85 @@ IndR_ssp585_p3_wind_ens_mask = ca.wind_check(
 )
 # %%
 #   calculate the sst regress onto IndR in ERA5, historical and ssp585
-# sstHad_JJA.coords["time"] = preAIR_JJA.coords["time"]
-# (
-#     IndR_Had_sst_slope,
-#     IndR_Had_sst_intercept,
-#     IndR_Had_sst_rvalue,
-#     IndR_Had_sst_pvalue,
-#     IndR_Had_sst_hypothesis,
-# ) = ca.dim_linregress(preAIR_JJA, sstHad_JJA)
+sstHad_JJA.coords["time"] = preAIR_JJA.coords["time"]
+(
+    IndR_Had_sst_slope,
+    IndR_Had_sst_intercept,
+    IndR_Had_sst_rvalue,
+    IndR_Had_sst_pvalue,
+    IndR_Had_sst_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, sstHad_JJA)
 
-# (
-#     IndR_his_sst_slope,
-#     IndR_his_sst_intercept,
-#     IndR_his_sst_rvalue,
-#     IndR_his_sst_pvalue,
-#     IndR_his_sst_hypothesis,
-# ) = ca.dim_linregress(prehis_JJA, ssthis_JJA)
+(
+    IndR_his_sst_slope,
+    IndR_his_sst_intercept,
+    IndR_his_sst_rvalue,
+    IndR_his_sst_pvalue,
+    IndR_his_sst_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, ssthis_JJA)
 
-# (
-#     IndR_ssp585_p3_sst_slope,
-#     IndR_ssp585_p3_sst_intercept,
-#     IndR_ssp585_p3_sst_rvalue,
-#     IndR_ssp585_p3_sst_pvalue,
-#     IndR_ssp585_p3_sst_hypothesis,
-# ) = ca.dim_linregress(pressp585_p3_JJA, sstssp585_p3_JJA)
+(
+    IndR_ssp585_p3_sst_slope,
+    IndR_ssp585_p3_sst_intercept,
+    IndR_ssp585_p3_sst_rvalue,
+    IndR_ssp585_p3_sst_pvalue,
+    IndR_ssp585_p3_sst_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, sstssp585_p3_JJA)
 
-# #   save the result of the sst regression
-# lat=IndR_Had_sst_slope.coords["lat"]
-# lon=IndR_Had_sst_slope.coords["lon"]
+#   save the result of the sst regression
+lat=IndR_Had_sst_slope.coords["lat"]
+lon=IndR_Had_sst_slope.coords["lon"]
 
-# IndR_Had_sst_regress = xr.Dataset(
-#     data_vars=dict(
-#         slope=(["lat", "lon"], IndR_Had_sst_slope.data),
-#         intercept=(["lat", "lon"], IndR_Had_sst_intercept.data),
-#         rvalue=(["lat", "lon"], IndR_Had_sst_rvalue.data),
-#         pvalue=(["lat", "lon"], IndR_Had_sst_pvalue.data),
-#         hypothesis=(["lat", "lon"], IndR_Had_sst_hypothesis.data),
-#     ),
-#     coords=dict(
-#         lat=lat.data,
-#         lon=lon.data,
-#     ),
-#     attrs=dict(description="sst fields of HadISST regress onto 1979-2014 AIR"),
-# )
+IndR_Had_sst_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["lat", "lon"], IndR_Had_sst_slope.data),
+        intercept=(["lat", "lon"], IndR_Had_sst_intercept.data),
+        rvalue=(["lat", "lon"], IndR_Had_sst_rvalue.data),
+        pvalue=(["lat", "lon"], IndR_Had_sst_pvalue.data),
+        hypothesis=(["lat", "lon"], IndR_Had_sst_hypothesis.data),
+    ),
+    coords=dict(
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="sst fields of HadISST regress onto 1979-2014 AIR"),
+)
 
-# IndR_his_sst_regress = xr.Dataset(
-#     data_vars=dict(
-#         slope=(["models", "lat", "lon"], IndR_his_sst_slope.data),
-#         intercept=(["models", "lat", "lon"], IndR_his_sst_intercept.data),
-#         rvalue=(["models", "lat", "lon"], IndR_his_sst_rvalue.data),
-#         pvalue=(["models", "lat", "lon"], IndR_his_sst_pvalue.data),
-#         hypothesis=(["models", "lat", "lon"], IndR_his_sst_hypothesis.data),
-#     ),
-#     coords=dict(
-#         models=models_array,
-#         lat=lat.data,
-#         lon=lon.data,
-#     ),
-#     attrs=dict(description="sst fields of historical regress onto 1979-2014 IndR"),
-# )
+IndR_his_sst_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], IndR_his_sst_slope.data),
+        intercept=(["models", "lat", "lon"], IndR_his_sst_intercept.data),
+        rvalue=(["models", "lat", "lon"], IndR_his_sst_rvalue.data),
+        pvalue=(["models", "lat", "lon"], IndR_his_sst_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], IndR_his_sst_hypothesis.data),
+    ),
+    coords=dict(
+        models=models_array,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="sst fields of historical regress onto 1979-2014 IndR"),
+)
 
-# IndR_ssp585_p3_sst_regress = xr.Dataset(
-#     data_vars=dict(
-#         slope=(["models", "lat", "lon"], IndR_ssp585_p3_sst_slope.data),
-#         intercept=(["models", "lat", "lon"], IndR_ssp585_p3_sst_intercept.data),
-#         rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_rvalue.data),
-#         pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_pvalue.data),
-#         hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_sst_hypothesis.data),
-#     ),
-#     coords=dict(
-#         models=models_array,
-#         lat=lat.data,
-#         lon=lon.data,
-#     ),
-#     attrs=dict(description="sst fields of ssp585_p3 regress onto 2064-2099 IndR"),
-# )
+IndR_ssp585_p3_sst_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], IndR_ssp585_p3_sst_slope.data),
+        intercept=(["models", "lat", "lon"], IndR_ssp585_p3_sst_intercept.data),
+        rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_rvalue.data),
+        pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_sst_hypothesis.data),
+    ),
+    coords=dict(
+        models=models_array,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="sst fields of ssp585_p3 regress onto 2064-2099 IndR"),
+)
 
-# IndR_Had_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_Had_sst_regress.nc")
-# IndR_his_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_his_sst_regress.nc")
-# IndR_ssp585_p3_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/nIndR_ssp585_p3_sst_regress.nc")
+IndR_Had_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_Had_sst_regress.nc")
+IndR_his_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_his_sst_regress.nc")
+IndR_ssp585_p3_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/nIndR_ssp585_p3_sst_regress.nc")
 # %%
 #   read the sst regression data
 IndR_Had_sst_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_Had_sst_regress.nc")
@@ -5342,4 +5342,156 @@ axs[0].format(ylim=(-1,1),xlocator=np.arange(0,27), xtickminor=False, ytickminor
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Corr. Coeff. IndR and LKY")
 # %%
-#   plot the SST regress onto the IndR
+#   plot the SST regress onto the IndR in historical
+#   corr. coeffs.
+startlevel=-1.0
+spacinglevel=0.1
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-2:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-90, 91, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_Had_sst_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    IndR_Had_sst_rvalue, axs[0], n, np.where(IndR_Had_sst_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="HadISST & AIR",
+)
+# ======================================
+con = axs[1].contourf(
+    IndR_his_sst_rvalue_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    IndR_his_sst_rvalue_ens, axs[1], n, np.where(IndR_his_sst_rvalue_ens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[1].format(
+    rtitle="1979-2014", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+2].contourf(
+        IndR_his_sst_rvalue.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        IndR_his_sst_rvalue.sel(models=mod), axs[num_mod+2], n, np.where(IndR_his_sst_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+
+# ======================================
+#   reg. coeffs.
+startlevel=-1.0
+spacinglevel=0.1
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-2:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-90, 91, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_Had_sst_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_Had_sst_rvalue, axs[0], n, np.where(IndR_Had_sst_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="HadISST & AIR",
+)
+# ======================================
+con = axs[1].contourf(
+    IndR_his_sst_rvalue_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_his_sst_rvalue_ens, axs[1], n, np.where(IndR_his_sst_rvalue_ens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[1].format(
+    rtitle="1979-2014", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+2].contourf(
+        IndR_his_sst_rvalue.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_sst_rvalue.sel(models=mod), axs[num_mod+2], n, np.where(IndR_his_sst_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+# %%
