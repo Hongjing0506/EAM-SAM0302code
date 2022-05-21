@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-21 20:52:47
+LastEditTime: 2022-05-21 21:03:33
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -1002,83 +1002,120 @@ IndR_ssp585_p3_wind_ens_mask = ca.wind_check(
 )
 # %%
 #   calculate the sst regress onto IndR in ERA5, historical and ssp585
-sstHad_JJA.coords["time"] = preAIR_JJA.coords["time"]
-(
-    IndR_Had_sst_slope,
-    IndR_Had_sst_intercept,
-    IndR_Had_sst_rvalue,
-    IndR_Had_sst_pvalue,
-    IndR_Had_sst_hypothesis,
-) = ca.dim_linregress(preAIR_JJA, sstHad_JJA)
+# sstHad_JJA.coords["time"] = preAIR_JJA.coords["time"]
+# (
+#     IndR_Had_sst_slope,
+#     IndR_Had_sst_intercept,
+#     IndR_Had_sst_rvalue,
+#     IndR_Had_sst_pvalue,
+#     IndR_Had_sst_hypothesis,
+# ) = ca.dim_linregress(preAIR_JJA, sstHad_JJA)
 
-(
-    IndR_his_sst_slope,
-    IndR_his_sst_intercept,
-    IndR_his_sst_rvalue,
-    IndR_his_sst_pvalue,
-    IndR_his_sst_hypothesis,
-) = ca.dim_linregress(prehis_JJA, ssthis_JJA)
+# (
+#     IndR_his_sst_slope,
+#     IndR_his_sst_intercept,
+#     IndR_his_sst_rvalue,
+#     IndR_his_sst_pvalue,
+#     IndR_his_sst_hypothesis,
+# ) = ca.dim_linregress(prehis_JJA, ssthis_JJA)
 
-(
-    IndR_ssp585_p3_sst_slope,
-    IndR_ssp585_p3_sst_intercept,
-    IndR_ssp585_p3_sst_rvalue,
-    IndR_ssp585_p3_sst_pvalue,
-    IndR_ssp585_p3_sst_hypothesis,
-) = ca.dim_linregress(pressp585_p3_JJA, sstssp585_p3_JJA)
+# (
+#     IndR_ssp585_p3_sst_slope,
+#     IndR_ssp585_p3_sst_intercept,
+#     IndR_ssp585_p3_sst_rvalue,
+#     IndR_ssp585_p3_sst_pvalue,
+#     IndR_ssp585_p3_sst_hypothesis,
+# ) = ca.dim_linregress(pressp585_p3_JJA, sstssp585_p3_JJA)
 
-#   save the result of the sst regression
-lat=IndR_Had_sst_slope.coords["lat"]
-lon=IndR_Had_sst_slope.coords["lon"]
+# #   save the result of the sst regression
+# lat=IndR_Had_sst_slope.coords["lat"]
+# lon=IndR_Had_sst_slope.coords["lon"]
 
-IndR_Had_sst_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["lat", "lon"], IndR_Had_sst_slope.data),
-        intercept=(["lat", "lon"], IndR_Had_sst_intercept.data),
-        rvalue=(["lat", "lon"], IndR_Had_sst_rvalue.data),
-        pvalue=(["lat", "lon"], IndR_Had_sst_pvalue.data),
-        hypothesis=(["lat", "lon"], IndR_Had_sst_hypothesis.data),
-    ),
-    coords=dict(
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="sst fields of HadISST regress onto 1979-2014 AIR"),
-)
+# IndR_Had_sst_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["lat", "lon"], IndR_Had_sst_slope.data),
+#         intercept=(["lat", "lon"], IndR_Had_sst_intercept.data),
+#         rvalue=(["lat", "lon"], IndR_Had_sst_rvalue.data),
+#         pvalue=(["lat", "lon"], IndR_Had_sst_pvalue.data),
+#         hypothesis=(["lat", "lon"], IndR_Had_sst_hypothesis.data),
+#     ),
+#     coords=dict(
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="sst fields of HadISST regress onto 1979-2014 AIR"),
+# )
 
-IndR_his_sst_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["lat", "lon"], IndR_his_sst_slope.data),
-        intercept=(["lat", "lon"], IndR_his_sst_intercept.data),
-        rvalue=(["lat", "lon"], IndR_his_sst_rvalue.data),
-        pvalue=(["lat", "lon"], IndR_his_sst_pvalue.data),
-        hypothesis=(["lat", "lon"], IndR_his_sst_hypothesis.data),
-    ),
-    coords=dict(
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="sst fields of historical regress onto 1979-2014 IndR"),
-)
+# IndR_his_sst_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["models", "lat", "lon"], IndR_his_sst_slope.data),
+#         intercept=(["models", "lat", "lon"], IndR_his_sst_intercept.data),
+#         rvalue=(["models", "lat", "lon"], IndR_his_sst_rvalue.data),
+#         pvalue=(["models", "lat", "lon"], IndR_his_sst_pvalue.data),
+#         hypothesis=(["models", "lat", "lon"], IndR_his_sst_hypothesis.data),
+#     ),
+#     coords=dict(
+#         models=models_array,
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="sst fields of historical regress onto 1979-2014 IndR"),
+# )
 
-IndR_ssp585_p3_sst_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["lat", "lon"], IndR_ssp585_p3_sst_slope.data),
-        intercept=(["lat", "lon"], IndR_ssp585_p3_sst_intercept.data),
-        rvalue=(["lat", "lon"], IndR_ssp585_p3_sst_rvalue.data),
-        pvalue=(["lat", "lon"], IndR_ssp585_p3_sst_pvalue.data),
-        hypothesis=(["lat", "lon"], IndR_ssp585_p3_sst_hypothesis.data),
-    ),
-    coords=dict(
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="sst fields of ssp585_p3 regress onto 2064-2099 IndR"),
-)
+# IndR_ssp585_p3_sst_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["models", "lat", "lon"], IndR_ssp585_p3_sst_slope.data),
+#         intercept=(["models", "lat", "lon"], IndR_ssp585_p3_sst_intercept.data),
+#         rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_rvalue.data),
+#         pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_pvalue.data),
+#         hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_sst_hypothesis.data),
+#     ),
+#     coords=dict(
+#         models=models_array,
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="sst fields of ssp585_p3 regress onto 2064-2099 IndR"),
+# )
 
-IndR_Had_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_Had_sst_regress.nc")
-IndR_his_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_his_sst_regress.nc")
-IndR_ssp585_p3_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/nIndR_ssp585_p3_sst_regress.nc")
+# IndR_Had_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_Had_sst_regress.nc")
+# IndR_his_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_his_sst_regress.nc")
+# IndR_ssp585_p3_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/nIndR_ssp585_p3_sst_regress.nc")
+# %%
+#   read the sst regression data
+IndR_Had_sst_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_Had_sst_regress.nc")
+IndR_his_sst_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_his_sst_regress.nc")
+IndR_ssp585_p3_sst_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/nIndR_ssp585_p3_sst_regress.nc")
+
+IndR_Had_sst_slope = IndR_Had_sst_regress["slope"]
+
+IndR_Had_sst_rvalue = IndR_Had_sst_regress["rvalue"]
+
+IndR_Had_sst_pvalue = IndR_Had_sst_regress["pvalue"]
+
+IndR_his_sst_slope = IndR_his_sst_regress["slope"]
+
+IndR_his_sst_rvalue = IndR_his_sst_regress["rvalue"]
+
+IndR_his_sst_pvalue = IndR_his_sst_regress["pvalue"]
+
+IndR_ssp585_p3_sst_slope = IndR_ssp585_p3_sst_regress["slope"]
+
+IndR_ssp585_p3_sst_rvalue = IndR_ssp585_p3_sst_regress["rvalue"]
+
+IndR_ssp585_p3_sst_pvalue = IndR_ssp585_p3_sst_regress["pvalue"]
+
+IndR_his_sst_slope_ens = IndR_his_sst_slope.mean(dim="models", skipna=True)
+IndR_his_sst_slope_ens_mask = xr.where((ca.MME_reg_mask(IndR_his_sst_slope_ens, IndR_his_sst_slope.std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(IndR_his_sst_slope)) >= 2.0, 1.0, 0.0)
+
+IndR_ssp585_p3_sst_slope_ens = IndR_ssp585_p3_sst_slope.mean(dim="models", skipna=True)
+IndR_ssp585_p3_sst_slope_ens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_sst_slope_ens, IndR_ssp585_p3_sst_slope.std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(IndR_ssp585_p3_sst_slope)) >= 2.0, 1.0, 0.0)
+
+IndR_his_sst_rvalue_ens = ca.cal_rMME(IndR_his_sst_rvalue, "models")
+IndR_his_sst_rvalue_ens_mask = xr.where((ca.MME_reg_mask(IndR_his_sst_rvalue_ens, IndR_his_sst_rvalue.std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(IndR_his_sst_slope)) >= 2.0, 1.0, 0.0)
+
+IndR_ssp585_p3_sst_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_sst_rvalue, "models")
+IndR_ssp585_p3_sst_rvalue_ens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_sst_rvalue_ens, IndR_ssp585_p3_sst_rvalue.std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(IndR_ssp585_p3_sst_slope)) >= 2.0, 1.0, 0.0)
 # %%
 #   calculate the ranking of different models but use the AIR data as observation
 lat = prehis_JJA.coords["lat"]
