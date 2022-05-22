@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-22 21:15:48
+LastEditTime: 2022-05-22 21:40:48
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -1648,7 +1648,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     if lev == 200.0:
-        axs[0].line(ERA5_wj_axis[1], ERA5_wj_axis[0], lw=1.2, color="green7")
+        axs[0].line(ERA5_wj_axis[1], ERA5_wj_axis[0], lw=1.3, color="green6")
     axs[0].format(
         rtitle="1979-2014", ltitle="AIR & ERA5",
     )
@@ -1694,7 +1694,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     if lev == 200.0:
-        axs[1].line(his_wj_axis_lon_gens, his_wj_axis_lat_gens, lw=1.2, color="green7")
+        axs[1].line(his_wj_axis.coords["lon"], his_wj_axis_lat_gens, lw=1.3, color="green6")
     axs[1].format(
         rtitle="1979-2014", ltitle="gMME",
     )
@@ -1740,6 +1740,8 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         qk = axs[num_mod+2].quiverkey(
             m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
         )
+        if lev == 200.0:
+            axs[num_mod+2].line(his_wj_axis.coords["lon"], his_wj_axis.sel(models=mod), lw=1.3, color="green6")
         axs[num_mod+2].format(
             rtitle="1979-2014", ltitle="{}".format(mod),
         )
@@ -2152,6 +2154,8 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     qk = axs[0].quiverkey(
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
+    if lev == 200.0:
+        axs[0].line(ssp585_p3_wj_axis.coords["lon"], ssp585_p3_wj_axis_lat_gens, lw=1.3, color="green6")
     axs[0].format(
         rtitle="2064-2099", ltitle="gMME",
     )
@@ -2197,6 +2201,8 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         qk = axs[num_mod+1].quiverkey(
             m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
         )
+        if lev == 200.0:
+            axs[num_mod+1].line(ssp585_p3_wj_axis.coords["lon"], ssp585_p3_wj_axis.sel(models=mod), lw=1.3, color="green6")
         axs[num_mod+1].format(
             rtitle="2064-2099", ltitle="{}".format(mod),
         )
@@ -2699,6 +2705,9 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     qk = axs[0].quiverkey(
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
+    if lev == 200.0:
+        axs[0].line(his_wj_axis.coords["lon"], his_wj_axis_lat_gens, lw=1.3, color="grape6")
+        axs[0].line(ssp585_p3_wj_axis.coords["lon"], ssp585_p3_wj_axis_lat_gens, lw=1.3, color="green6")
     axs[0].format(
         rtitle="diff", ltitle="gMME",
     )
@@ -2729,6 +2738,9 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         qk = axs[num_mod+1].quiverkey(
             m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
         )
+        if lev == 200.0:
+            axs[num_mod+1].line(his_wj_axis.coords["lon"], his_wj_axis.sel(models=mod), lw=1.3, color="grape6")
+            axs[num_mod+1].line(ssp585_p3_wj_axis.coords["lon"], ssp585_p3_wj_axis.sel(models=mod), lw=1.3, color="green6")
         axs[num_mod+1].format(
             rtitle="diff", ltitle="{}".format(mod),
         )
