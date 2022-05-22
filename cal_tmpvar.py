@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-05-21 00:33:15
+LastEditTime: 2022-05-22 00:29:08
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -83,7 +83,7 @@ for path, dir_list, file_name in g:
 hgtds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 hgthis_ds = xr.DataArray(hgtds_his["zg"])
 hgthis_ds.coords["models"] = modelname_hgt
-# # %%
+# %%
 u_his_path = (
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/ua"
 )

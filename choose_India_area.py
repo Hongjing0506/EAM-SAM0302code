@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-21 22:48:46
+LastEditTime: 2022-05-22 17:41:31
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -1001,86 +1001,86 @@ IndR_ssp585_p3_wind_ens_mask = ca.wind_check(
     xr.where(IndR_ssp585_p3_v_slope_ens_mask > 0.0, 1.0, 0.0),
 )
 # %%
-#   calculate the sst regress onto IndR in ERA5, historical and ssp585
-sstHad_JJA.coords["time"] = preAIR_JJA.coords["time"]
-(
-    IndR_Had_sst_slope,
-    IndR_Had_sst_intercept,
-    IndR_Had_sst_rvalue,
-    IndR_Had_sst_pvalue,
-    IndR_Had_sst_hypothesis,
-) = ca.dim_linregress(preAIR_JJA, sstHad_JJA)
+# #   calculate the sst regress onto IndR in ERA5, historical and ssp585
+# sstHad_JJA.coords["time"] = preAIR_JJA.coords["time"]
+# (
+#     IndR_Had_sst_slope,
+#     IndR_Had_sst_intercept,
+#     IndR_Had_sst_rvalue,
+#     IndR_Had_sst_pvalue,
+#     IndR_Had_sst_hypothesis,
+# ) = ca.dim_linregress(preAIR_JJA, sstHad_JJA)
 
-(
-    IndR_his_sst_slope,
-    IndR_his_sst_intercept,
-    IndR_his_sst_rvalue,
-    IndR_his_sst_pvalue,
-    IndR_his_sst_hypothesis,
-) = ca.dim_linregress(prehis_India_JJA, ssthis_JJA)
+# (
+#     IndR_his_sst_slope,
+#     IndR_his_sst_intercept,
+#     IndR_his_sst_rvalue,
+#     IndR_his_sst_pvalue,
+#     IndR_his_sst_hypothesis,
+# ) = ca.dim_linregress(prehis_India_JJA, ssthis_JJA)
 
-(
-    IndR_ssp585_p3_sst_slope,
-    IndR_ssp585_p3_sst_intercept,
-    IndR_ssp585_p3_sst_rvalue,
-    IndR_ssp585_p3_sst_pvalue,
-    IndR_ssp585_p3_sst_hypothesis,
-) = ca.dim_linregress(pressp585_p3_India_JJA, sstssp585_p3_JJA)
+# (
+#     IndR_ssp585_p3_sst_slope,
+#     IndR_ssp585_p3_sst_intercept,
+#     IndR_ssp585_p3_sst_rvalue,
+#     IndR_ssp585_p3_sst_pvalue,
+#     IndR_ssp585_p3_sst_hypothesis,
+# ) = ca.dim_linregress(pressp585_p3_India_JJA, sstssp585_p3_JJA)
 
-#   save the result of the sst regression
-lat=IndR_Had_sst_slope.coords["lat"]
-lon=IndR_Had_sst_slope.coords["lon"]
+# #   save the result of the sst regression
+# lat=IndR_Had_sst_slope.coords["lat"]
+# lon=IndR_Had_sst_slope.coords["lon"]
 
-IndR_Had_sst_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["lat", "lon"], IndR_Had_sst_slope.data),
-        intercept=(["lat", "lon"], IndR_Had_sst_intercept.data),
-        rvalue=(["lat", "lon"], IndR_Had_sst_rvalue.data),
-        pvalue=(["lat", "lon"], IndR_Had_sst_pvalue.data),
-        hypothesis=(["lat", "lon"], IndR_Had_sst_hypothesis.data),
-    ),
-    coords=dict(
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="sst fields of HadISST regress onto 1979-2014 AIR"),
-)
+# IndR_Had_sst_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["lat", "lon"], IndR_Had_sst_slope.data),
+#         intercept=(["lat", "lon"], IndR_Had_sst_intercept.data),
+#         rvalue=(["lat", "lon"], IndR_Had_sst_rvalue.data),
+#         pvalue=(["lat", "lon"], IndR_Had_sst_pvalue.data),
+#         hypothesis=(["lat", "lon"], IndR_Had_sst_hypothesis.data),
+#     ),
+#     coords=dict(
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="sst fields of HadISST regress onto 1979-2014 AIR"),
+# )
 
-IndR_his_sst_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["models", "lat", "lon"], IndR_his_sst_slope.data),
-        intercept=(["models", "lat", "lon"], IndR_his_sst_intercept.data),
-        rvalue=(["models", "lat", "lon"], IndR_his_sst_rvalue.data),
-        pvalue=(["models", "lat", "lon"], IndR_his_sst_pvalue.data),
-        hypothesis=(["models", "lat", "lon"], IndR_his_sst_hypothesis.data),
-    ),
-    coords=dict(
-        models=models_array,
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="sst fields of historical regress onto 1979-2014 IndR"),
-)
+# IndR_his_sst_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["models", "lat", "lon"], IndR_his_sst_slope.data),
+#         intercept=(["models", "lat", "lon"], IndR_his_sst_intercept.data),
+#         rvalue=(["models", "lat", "lon"], IndR_his_sst_rvalue.data),
+#         pvalue=(["models", "lat", "lon"], IndR_his_sst_pvalue.data),
+#         hypothesis=(["models", "lat", "lon"], IndR_his_sst_hypothesis.data),
+#     ),
+#     coords=dict(
+#         models=models_array,
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="sst fields of historical regress onto 1979-2014 IndR"),
+# )
 
-IndR_ssp585_p3_sst_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["models", "lat", "lon"], IndR_ssp585_p3_sst_slope.data),
-        intercept=(["models", "lat", "lon"], IndR_ssp585_p3_sst_intercept.data),
-        rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_rvalue.data),
-        pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_pvalue.data),
-        hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_sst_hypothesis.data),
-    ),
-    coords=dict(
-        models=models_array,
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="sst fields of ssp585_p3 regress onto 2064-2099 IndR"),
-)
+# IndR_ssp585_p3_sst_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["models", "lat", "lon"], IndR_ssp585_p3_sst_slope.data),
+#         intercept=(["models", "lat", "lon"], IndR_ssp585_p3_sst_intercept.data),
+#         rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_rvalue.data),
+#         pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_pvalue.data),
+#         hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_sst_hypothesis.data),
+#     ),
+#     coords=dict(
+#         models=models_array,
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="sst fields of ssp585_p3 regress onto 2064-2099 IndR"),
+# )
 
-IndR_Had_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_Had_sst_regress.nc")
-IndR_his_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_his_sst_regress.nc")
-IndR_ssp585_p3_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/nIndR_ssp585_p3_sst_regress.nc")
+# IndR_Had_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_Had_sst_regress.nc")
+# IndR_his_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_his_sst_regress.nc")
+# IndR_ssp585_p3_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/nIndR_ssp585_p3_sst_regress.nc")
 # %%
 #   read the sst regression data
 IndR_Had_sst_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/nIndR_Had_sst_regress.nc")
@@ -1117,12 +1117,7 @@ IndR_his_sst_rvalue_ens_mask = xr.where((ca.MME_reg_mask(IndR_his_sst_rvalue_ens
 IndR_ssp585_p3_sst_rvalue_ens = ca.cal_rMME(IndR_ssp585_p3_sst_rvalue, "models")
 IndR_ssp585_p3_sst_rvalue_ens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_sst_rvalue_ens, IndR_ssp585_p3_sst_rvalue.std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(IndR_ssp585_p3_sst_slope)) >= 2.0, 1.0, 0.0)
 
-IndR_diff_sst_slope = IndR_ssp585_p3_sst_slope - IndR_his_sst_slope
-IndR_diff_sst_slope_ens = IndR_diff_sst_slope.mean(dim="models", skipna=True)
-IndR_diff_sst_ens_mask = ca.cal_mmemask(IndR_diff_sst_slope)
 
-IndR_diff_sst_rvalue = ca.cal_rdiff(IndR_ssp585_p3_sst_rvalue, IndR_his_sst_rvalue)
-IndR_diff_sst_rvalue_ens = ca.cal_rMME(IndR_diff_sst_rvalue, "models")
 
 # %%
 #   calculate the ranking of different models but use the AIR data as observation
@@ -1202,6 +1197,10 @@ IndR_ssp585_p3_hgt_slope_gens = IndR_ssp585_p3_hgt_slope.sel(models=gmodels).mea
 IndR_ssp585_p3_u_slope_gens = IndR_ssp585_p3_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_ssp585_p3_v_slope_gens = IndR_ssp585_p3_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 
+IndR_his_sst_slope_gens = IndR_his_sst_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+IndR_ssp585_p3_sst_slope_gens = IndR_ssp585_p3_sst_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
 
 pre_his_India_pre_rvalue_gens = ca.cal_rMME(pre_his_India_pre_rvalue.sel(models=gmodels), "models")
 pre_ssp585_p3_India_pre_rvalue_gens = ca.cal_rMME(pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels), "models")
@@ -1214,13 +1213,18 @@ IndR_ssp585_p3_hgt_rvalue_gens = ca.cal_rMME(IndR_ssp585_p3_hgt_rvalue.sel(model
 IndR_ssp585_p3_u_rvalue_gens = ca.cal_rMME(IndR_ssp585_p3_u_rvalue.sel(models=gmodels), "models")
 IndR_ssp585_p3_v_rvalue_gens = ca.cal_rMME(IndR_ssp585_p3_v_rvalue.sel(models=gmodels), "models")
 
+IndR_his_sst_rvalue_gens = ca.cal_rMME(IndR_his_sst_rvalue.sel(models=gmodels), "models")
+IndR_ssp585_p3_sst_rvalue_gens = ca.cal_rMME(IndR_ssp585_p3_sst_rvalue.sel(models=gmodels), "models")
+
 IndR_his_hgt_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_hgt_slope_gens, IndR_his_hgt_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_hgt_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 IndR_his_u_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_u_slope_gens, IndR_his_u_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_u_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 IndR_his_v_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_v_slope_gens, IndR_his_v_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_v_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_his_sst_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_sst_slope_gens, IndR_his_sst_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_sst_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
 IndR_ssp585_p3_hgt_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_hgt_slope_gens, IndR_ssp585_p3_hgt_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_hgt_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 IndR_ssp585_p3_u_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_u_slope_gens, IndR_ssp585_p3_u_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_u_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 IndR_ssp585_p3_v_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_v_slope_gens, IndR_ssp585_p3_v_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_v_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_ssp585_p3_sst_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_sst_slope_gens, IndR_ssp585_p3_sst_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_sst_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
 pre_his_India_pre_rvalue_gens_mask = xr.where((ca.MME_reg_mask(pre_his_India_pre_rvalue_gens, pre_his_India_pre_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(pre_his_India_pre_rvalue.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 pre_ssp585_p3_India_pre_rvalue_gens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_gens, pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(pre_ssp585_p3_India_pre_rvalue.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
@@ -1228,10 +1232,12 @@ pre_ssp585_p3_India_pre_rvalue_gens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_
 IndR_his_hgt_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_hgt_rvalue_gens, IndR_his_hgt_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_hgt_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 IndR_his_u_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_u_rvalue_gens, IndR_his_u_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_u_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 IndR_his_v_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_v_rvalue_gens, IndR_his_v_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_v_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_his_sst_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_sst_rvalue_gens, IndR_his_sst_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_sst_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
 IndR_ssp585_p3_hgt_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_hgt_rvalue_gens, IndR_ssp585_p3_hgt_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_hgt_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 IndR_ssp585_p3_u_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_u_rvalue_gens, IndR_ssp585_p3_u_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_u_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 IndR_ssp585_p3_v_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_v_rvalue_gens, IndR_ssp585_p3_v_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_v_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_ssp585_p3_sst_rvalue_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_sst_rvalue_gens, IndR_ssp585_p3_sst_rvalue.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_sst_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
 IndR_his_wind_gens_mask = ca.wind_check(
     xr.where(IndR_his_u_slope_gens_mask > 0.0, 1.0, 0.0),
@@ -1281,6 +1287,13 @@ IndR_diff_hgt_slope_gens = IndR_diff_hgt_slope.sel(models=gmodels).mean(dim="mod
 IndR_diff_hgt_ens_mask = ca.cal_mmemask(IndR_diff_hgt_slope)
 IndR_diff_hgt_gens_mask = ca.cal_mmemask(IndR_diff_hgt_slope.sel(models=gmodels))
 
+IndR_diff_sst_slope = IndR_ssp585_p3_sst_slope - IndR_his_sst_slope
+IndR_diff_sst_slope_ens = IndR_diff_sst_slope.mean(dim="models", skipna=True)
+IndR_diff_sst_slope_gens = IndR_diff_sst_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+
+IndR_diff_sst_ens_mask = ca.cal_mmemask(IndR_diff_sst_slope)
+IndR_diff_sst_gens_mask = ca.cal_mmemask(IndR_diff_sst_slope.sel(models=gmodels))
+
 IndR_diff_u_slope = IndR_ssp585_p3_u_slope - IndR_his_u_slope
 IndR_diff_u_slope_ens = IndR_diff_u_slope.mean(dim="models", skipna=True)
 IndR_diff_u_slope_gens = IndR_diff_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -1310,6 +1323,11 @@ IndR_diff_wind_gens_mask = ca.wind_check(
 
 IndR_diff_hgt_rvalue = ca.cal_rdiff(IndR_ssp585_p3_hgt_rvalue, IndR_his_hgt_rvalue)
 IndR_diff_hgt_rvalue_gens = ca.cal_rMME(IndR_diff_hgt_rvalue.sel(models=gmodels), "models")
+
+IndR_diff_sst_rvalue = ca.cal_rdiff(IndR_ssp585_p3_sst_rvalue, IndR_his_sst_rvalue)
+IndR_diff_sst_rvalue_gens = ca.cal_rMME(IndR_diff_sst_rvalue.sel(models=gmodels), "models")
+IndR_diff_sst_rvalue_ens = ca.cal_rMME(IndR_diff_sst_rvalue, "models")
+
 
 IndR_diff_u_rvalue = ca.cal_rdiff(IndR_ssp585_p3_u_rvalue, IndR_his_u_rvalue)
 IndR_diff_u_rvalue_gens = ca.cal_rMME(IndR_diff_u_rvalue.sel(models=gmodels), "models")
@@ -5738,4 +5756,159 @@ for num_mod, mod in enumerate(models_array):
 # ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+# %%
+#   plot the good models SST regression result
+#   plot the SST regress onto the IndR in historical
+#   corr. coeffs.
+startlevel=-1.0
+spacinglevel=0.1
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-2:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_Had_sst_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    IndR_Had_sst_rvalue, axs[0], n, np.where(IndR_Had_sst_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="HadISST & AIR",
+)
+# ======================================
+con = axs[1].contourf(
+    IndR_his_sst_rvalue_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    IndR_his_sst_rvalue_gens, axs[1], n, np.where(IndR_his_sst_rvalue_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[1].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+2].contourf(
+        IndR_his_sst_rvalue.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        IndR_his_sst_rvalue.sel(models=mod), axs[num_mod+2], n, np.where(IndR_his_sst_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+
+# ======================================
+#   reg. coeffs.
+startlevel=-6e-1
+spacinglevel=0.06
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-2:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_Had_sst_slope,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_Had_sst_slope, axs[0], n, np.where(IndR_Had_sst_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="HadISST & AIR",
+)
+# ======================================
+con = axs[1].contourf(
+    IndR_his_sst_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_his_sst_slope_gens, axs[1], n, np.where(IndR_his_sst_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[1].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+2].contourf(
+        IndR_his_sst_slope.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_sst_slope.sel(models=mod), axs[num_mod+2], n, np.where(IndR_his_sst_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+
 # %%
