@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-22 20:53:11
+LastEditTime: 2022-05-22 21:15:48
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -618,22 +618,6 @@ pre_ssp585_p3_India_pre_rvalue_ens = ca.cal_rMME(pre_ssp585_p3_India_pre_rvalue,
 
 pre_ssp585_p3_India_pre_rvalue_ens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_ens, pre_ssp585_p3_India_pre_rvalue.std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_rvalue.coords["models"]), True) + ca.cal_mmemask(pre_ssp585_p3_India_pre_slope)) >= 2.0, 1.0, 0.0)
 
-# %%
-#   calculate the East Asia westerly jet axis in ERA5, historical, ssp585_p3
-wj_area_N = 50.0
-wj_area_S = 20.0
-wj_area_E = 140.0
-wj_area_W = 40.0
-lat_wj_range = lat[(lat>=wj_area_S) & (lat<=wj_area_N)]
-lon_wj_range = lon[(lon>=wj_area_W) & (lon<=wj_area_E)]
-ERA5_wj_axis = ca.cal_ridge_line(uERA5_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range).mean(dim="time", skipna=True), ridge_trough="max")
-his_wj_axis_lat = np.zeros((26, 12, 41))
-his_wj_axis_lon = np.zeros((26, 12, 41))
-ssp585_p3_wj_axis_lat = np.zeros((26, 12, 41))
-ssp585_p3_wj_axis_lon = np.zeros((26, 12, 41))
-for num_mod, mod in enumerate(models_array):
-    his_wj_axis_lat[num_mod,:,:], his_wj_axis_lon[num_mod,:,:] = ca.cal_ridge_line(uhis_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range, models=mod).mean(dim="time", skipna=True), ridge_trough="max")
-    ssp585_p3_wj_axis_lat[num_mod,:,:], ssp585_p3_wj_axis_lon[num_mod,:,:] = ca.cal_ridge_line(ussp585_p3_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range, models=mod).mean(dim="time", skipna=True), ridge_trough="max")
 # %%
 # #   calculate the hgt/u/v regression onto IndR in ERA5, historical, ssp585, ssp585_p3
 # preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979).coords["time"]
@@ -1284,6 +1268,44 @@ IndR_850hgt_std.append(float((IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range2
 
 
 print(sorted(IndR_ranking_list, key=lambda x : x["pcc"]))
+
+# %%
+#   calculate the East Asia westerly jet axis in ERA5, historical, ssp585_p3
+wj_area_N = 50.0
+wj_area_S = 20.0
+wj_area_E = 140.0
+wj_area_W = 40.0
+lat_wj_range = lat[(lat>=wj_area_S) & (lat<=wj_area_N)]
+lon_wj_range = lon[(lon>=wj_area_W) & (lon<=wj_area_E)]
+ERA5_wj_axis = ca.cal_ridge_line(uERA5_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range).mean(dim="time", skipna=True), ridge_trough="max")
+his_wj_axis_lat = np.zeros((26, 41))
+his_wj_axis_lon = np.zeros((26, 41))
+ssp585_p3_wj_axis_lat = np.zeros((26, 41))
+ssp585_p3_wj_axis_lon = np.zeros((26, 41))
+for num_mod, mod in enumerate(models_array):
+    his_wj_axis_lat[num_mod,:], his_wj_axis_lon[num_mod,:] = ca.cal_ridge_line(uhis_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range, models=mod).mean(dim="time", skipna=True), ridge_trough="max")
+    ssp585_p3_wj_axis_lat[num_mod,:], ssp585_p3_wj_axis_lon[num_mod,:] = ca.cal_ridge_line(ussp585_p3_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range, models=mod).mean(dim="time", skipna=True), ridge_trough="max")
+his_wj_axis = xr.DataArray(
+    data=his_wj_axis_lat,
+    dims=["models", "lon"],
+    coords=dict(
+        models=(["models"], models_array),
+        lon=(["lon"], lon_wj_range.data)
+    )
+)
+ssp585_p3_wj_axis = xr.DataArray(
+    data=ssp585_p3_wj_axis_lat,
+    dims=["models", "lon"],
+    coords=dict(
+        models=(["models"], models_array),
+        lon=(["lon"], lon_wj_range.data)
+    )
+)
+his_wj_axis_ens = his_wj_axis.mean(dim="models", skipna=True)
+ssp585_p3_wj_axis_ens = ssp585_p3_wj_axis.mean(dim="models", skipna=True)
+
+his_wj_axis_lat_gens = his_wj_axis.sel(models=gmodels).mean(dim="models", skipna=True)
+ssp585_p3_wj_axis_lat_gens = ssp585_p3_wj_axis.sel(models=gmodels).mean(dim="models", skipna=True)
 # %%
 #   calculate the good models difference between historical run and ssp585_p3 run
 pre_diff_India_pre_slope = pre_ssp585_p3_India_pre_slope - pre_his_India_pre_slope
@@ -1625,6 +1647,8 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     qk = axs[0].quiverkey(
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
+    if lev == 200.0:
+        axs[0].line(ERA5_wj_axis[1], ERA5_wj_axis[0], lw=1.2, color="green7")
     axs[0].format(
         rtitle="1979-2014", ltitle="AIR & ERA5",
     )
@@ -1669,6 +1693,8 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     qk = axs[1].quiverkey(
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
+    if lev == 200.0:
+        axs[1].line(his_wj_axis_lon_gens, his_wj_axis_lat_gens, lw=1.2, color="green7")
     axs[1].format(
         rtitle="1979-2014", ltitle="gMME",
     )
