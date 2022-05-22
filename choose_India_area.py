@@ -2,12 +2,13 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-22 17:48:11
+LastEditTime: 2022-05-22 20:53:11
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
 '''
 # %%
+from mailbox import _PartialFile
 import numpy as np
 import xarray as xr
 import os
@@ -617,6 +618,22 @@ pre_ssp585_p3_India_pre_rvalue_ens = ca.cal_rMME(pre_ssp585_p3_India_pre_rvalue,
 
 pre_ssp585_p3_India_pre_rvalue_ens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_ens, pre_ssp585_p3_India_pre_rvalue.std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_rvalue.coords["models"]), True) + ca.cal_mmemask(pre_ssp585_p3_India_pre_slope)) >= 2.0, 1.0, 0.0)
 
+# %%
+#   calculate the East Asia westerly jet axis in ERA5, historical, ssp585_p3
+wj_area_N = 50.0
+wj_area_S = 20.0
+wj_area_E = 140.0
+wj_area_W = 40.0
+lat_wj_range = lat[(lat>=wj_area_S) & (lat<=wj_area_N)]
+lon_wj_range = lon[(lon>=wj_area_W) & (lon<=wj_area_E)]
+ERA5_wj_axis = ca.cal_ridge_line(uERA5_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range).mean(dim="time", skipna=True), ridge_trough="max")
+his_wj_axis_lat = np.zeros((26, 12, 41))
+his_wj_axis_lon = np.zeros((26, 12, 41))
+ssp585_p3_wj_axis_lat = np.zeros((26, 12, 41))
+ssp585_p3_wj_axis_lon = np.zeros((26, 12, 41))
+for num_mod, mod in enumerate(models_array):
+    his_wj_axis_lat[num_mod,:,:], his_wj_axis_lon[num_mod,:,:] = ca.cal_ridge_line(uhis_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range, models=mod).mean(dim="time", skipna=True), ridge_trough="max")
+    ssp585_p3_wj_axis_lat[num_mod,:,:], ssp585_p3_wj_axis_lon[num_mod,:,:] = ca.cal_ridge_line(ussp585_p3_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range, models=mod).mean(dim="time", skipna=True), ridge_trough="max")
 # %%
 # #   calculate the hgt/u/v regression onto IndR in ERA5, historical, ssp585, ssp585_p3
 # preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.sel(time=hgtERA5_ver_JJA.time.dt.year>=1979).coords["time"]
@@ -6152,3 +6169,4 @@ for num_mod, mod in enumerate(gmodels):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
 # %%
+#   calculate the westerly jet axis
