@@ -1092,3 +1092,40 @@ IndR_850hgt_std.append(float((IndR_his_hgt_slope_gens.sel(lat=lat_ranking_range2
 
 print(sorted(IndR_ranking_list, key=lambda x : x["pcc"]))
 # %%
+#   calculate the East Asia westerly jet axis in ERA5, historical, ssp585_p3
+wj_area_N = 50.0
+wj_area_S = 20.0
+wj_area_E = 140.0
+wj_area_W = 40.0
+lat_wj_range = lat[(lat>=wj_area_S) & (lat<=wj_area_N)]
+lon_wj_range = lon[(lon>=wj_area_W) & (lon<=wj_area_E)]
+ERA5_wj_axis = ca.cal_ridge_line(uERA5_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range).mean(dim="time", skipna=True), ridge_trough="max")
+his_wj_axis_lat = np.zeros((26, 41))
+his_wj_axis_lon = np.zeros((26, 41))
+ssp585_p3_wj_axis_lat = np.zeros((26, 41))
+ssp585_p3_wj_axis_lon = np.zeros((26, 41))
+for num_mod, mod in enumerate(models_array):
+    his_wj_axis_lat[num_mod,:], his_wj_axis_lon[num_mod,:] = ca.cal_ridge_line(uhis_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range, models=mod).mean(dim="time", skipna=True), ridge_trough="max")
+    ssp585_p3_wj_axis_lat[num_mod,:], ssp585_p3_wj_axis_lon[num_mod,:] = ca.cal_ridge_line(ussp585_p3_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range, models=mod).mean(dim="time", skipna=True), ridge_trough="max")
+his_wj_axis = xr.DataArray(
+    data=his_wj_axis_lat,
+    dims=["models", "lon"],
+    coords=dict(
+        models=(["models"], models_array),
+        lon=(["lon"], lon_wj_range.data)
+    )
+)
+ssp585_p3_wj_axis = xr.DataArray(
+    data=ssp585_p3_wj_axis_lat,
+    dims=["models", "lon"],
+    coords=dict(
+        models=(["models"], models_array),
+        lon=(["lon"], lon_wj_range.data)
+    )
+)
+his_wj_axis_ens = his_wj_axis.mean(dim="models", skipna=True)
+ssp585_p3_wj_axis_ens = ssp585_p3_wj_axis.mean(dim="models", skipna=True)
+
+his_wj_axis_lat_gens = his_wj_axis.sel(models=gmodels).mean(dim="models", skipna=True)
+ssp585_p3_wj_axis_lat_gens = ssp585_p3_wj_axis.sel(models=gmodels).mean(dim="models", skipna=True)
+# %%
