@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-05-25 18:09:59
+LastEditTime: 2022-05-25 19:08:57
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -828,4 +828,85 @@ IndR_ssp585_p3_wind_ens_mask = ca.wind_check(
     xr.where(IndR_ssp585_p3_u_slope_ens_mask > 0.0, 1.0, 0.0),
     xr.where(IndR_ssp585_p3_v_slope_ens_mask > 0.0, 1.0, 0.0),
 )
+# %%
+#   calculate the sst regress onto IndR in ERA5, historical and ssp585
+sstHad_JJA.coords["time"] = preAIR_JJA.coords["time"]
+(
+    IndR_Had_sst_slope,
+    IndR_Had_sst_intercept,
+    IndR_Had_sst_rvalue,
+    IndR_Had_sst_pvalue,
+    IndR_Had_sst_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, sstHad_JJA)
+
+(
+    IndR_his_sst_slope,
+    IndR_his_sst_intercept,
+    IndR_his_sst_rvalue,
+    IndR_his_sst_pvalue,
+    IndR_his_sst_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, ssthis_JJA)
+
+(
+    IndR_ssp585_p3_sst_slope,
+    IndR_ssp585_p3_sst_intercept,
+    IndR_ssp585_p3_sst_rvalue,
+    IndR_ssp585_p3_sst_pvalue,
+    IndR_ssp585_p3_sst_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, sstssp585_p3_JJA)
+
+#   save the result of the sst regression
+lat=IndR_Had_sst_slope.coords["lat"]
+lon=IndR_Had_sst_slope.coords["lon"]
+
+IndR_Had_sst_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["lat", "lon"], IndR_Had_sst_slope.data),
+        intercept=(["lat", "lon"], IndR_Had_sst_intercept.data),
+        rvalue=(["lat", "lon"], IndR_Had_sst_rvalue.data),
+        pvalue=(["lat", "lon"], IndR_Had_sst_pvalue.data),
+        hypothesis=(["lat", "lon"], IndR_Had_sst_hypothesis.data),
+    ),
+    coords=dict(
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="sst fields of HadISST regress onto 1979-2014 AIR"),
+)
+
+IndR_his_sst_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], IndR_his_sst_slope.data),
+        intercept=(["models", "lat", "lon"], IndR_his_sst_intercept.data),
+        rvalue=(["models", "lat", "lon"], IndR_his_sst_rvalue.data),
+        pvalue=(["models", "lat", "lon"], IndR_his_sst_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], IndR_his_sst_hypothesis.data),
+    ),
+    coords=dict(
+        models=models_array,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="sst fields of historical regress onto 1979-2014 IndR"),
+)
+
+IndR_ssp585_p3_sst_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "lat", "lon"], IndR_ssp585_p3_sst_slope.data),
+        intercept=(["models", "lat", "lon"], IndR_ssp585_p3_sst_intercept.data),
+        rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_rvalue.data),
+        pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_pvalue.data),
+        hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_sst_hypothesis.data),
+    ),
+    coords=dict(
+        models=models_array,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="sst fields of ssp585_p3 regress onto 2064-2099 IndR"),
+)
+
+IndR_Had_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_Had_sst_regress.nc")
+IndR_his_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_sst_regress.nc")
+IndR_ssp585_p3_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_sst_regress.nc")
 # %%
