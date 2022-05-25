@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-05-25 18:08:58
+LastEditTime: 2022-05-25 18:09:59
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -714,6 +714,49 @@ pre_ssp585_p3_India_pre_rvalue_ens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_p
 # IndR_ssp585_p3_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_hgt_regress.nc")
 # IndR_ssp585_p3_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_u_regress.nc")
 # IndR_ssp585_p3_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_v_regress.nc")
+# %%
+#   read the regression data
+IndRAIR_ERA5_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndRAIR_ERA5_hgt_regress.nc")
+IndRAIR_ERA5_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndRAIR_ERA5_u_regress.nc")
+IndRAIR_ERA5_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndRAIR_ERA5_v_regress.nc")
+
+IndR_his_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_hgt_regress.nc")
+IndR_his_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_u_regress.nc")
+IndR_his_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_v_regress.nc")
+
+IndR_ssp585_p3_hgt_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_hgt_regress.nc")
+IndR_ssp585_p3_u_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_u_regress.nc")
+IndR_ssp585_p3_v_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_v_regress.nc")
+
+IndRAIR_ERA5_hgt_slope = IndRAIR_ERA5_hgt_regress["slope"]
+IndRAIR_ERA5_u_slope = IndRAIR_ERA5_u_regress["slope"]
+IndRAIR_ERA5_v_slope = IndRAIR_ERA5_v_regress["slope"]
+IndRAIR_ERA5_hgt_rvalue = IndRAIR_ERA5_hgt_regress["rvalue"]
+IndRAIR_ERA5_u_rvalue = IndRAIR_ERA5_u_regress["rvalue"]
+IndRAIR_ERA5_v_rvalue = IndRAIR_ERA5_v_regress["rvalue"]
+IndRAIR_ERA5_hgt_pvalue = IndRAIR_ERA5_hgt_regress["pvalue"]
+IndRAIR_ERA5_u_pvalue = IndRAIR_ERA5_u_regress["pvalue"]
+IndRAIR_ERA5_v_pvalue = IndRAIR_ERA5_v_regress["pvalue"]
+
+IndR_his_hgt_slope = IndR_his_hgt_regress["slope"]
+IndR_his_u_slope = IndR_his_u_regress["slope"]
+IndR_his_v_slope = IndR_his_v_regress["slope"]
+IndR_his_hgt_rvalue = IndR_his_hgt_regress["rvalue"]
+IndR_his_u_rvalue = IndR_his_u_regress["rvalue"]
+IndR_his_v_rvalue = IndR_his_v_regress["rvalue"]
+IndR_his_hgt_pvalue = IndR_his_hgt_regress["pvalue"]
+IndR_his_u_pvalue = IndR_his_u_regress["pvalue"]
+IndR_his_v_pvalue = IndR_his_v_regress["pvalue"]
+
+IndR_ssp585_p3_hgt_slope = IndR_ssp585_p3_hgt_regress["slope"]
+IndR_ssp585_p3_u_slope = IndR_ssp585_p3_u_regress["slope"]
+IndR_ssp585_p3_v_slope = IndR_ssp585_p3_v_regress["slope"]
+IndR_ssp585_p3_hgt_rvalue = IndR_ssp585_p3_hgt_regress["rvalue"]
+IndR_ssp585_p3_u_rvalue = IndR_ssp585_p3_u_regress["rvalue"]
+IndR_ssp585_p3_v_rvalue = IndR_ssp585_p3_v_regress["rvalue"]
+IndR_ssp585_p3_hgt_pvalue = IndR_ssp585_p3_hgt_regress["pvalue"]
+IndR_ssp585_p3_u_pvalue = IndR_ssp585_p3_u_regress["pvalue"]
+IndR_ssp585_p3_v_pvalue = IndR_ssp585_p3_v_regress["pvalue"]
 # %%
 #   calculate the windcheck and ensmean
 IndRAIR_ERA5_wind_mask = ca.wind_check(
