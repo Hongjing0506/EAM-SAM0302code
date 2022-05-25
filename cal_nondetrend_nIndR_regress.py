@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-05-25 19:37:01
+LastEditTime: 2022-05-25 20:20:11
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -1470,7 +1470,15 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     if lev == 200.0:
-        axs[0].line(ERA5_wj_axis[1], ERA5_wj_axis[0], lw=1.3, color="green6")
+        axs[0].line(ERA5_wj_axis[1], ERA5_wj_axis[0], lw=1.3, color="green6", ls="--")
+        axs[0].contour(
+            uERA5_ver_JJA.sel(level=200.0).mean(dim="time").loc[0.0:,:],
+            color="green6",
+            values=[27.5, 32.5],
+            vmin=25.0,
+            vmax=30.0,
+            zorder=0.8
+        )
     axs[0].format(
         rtitle="1979-2014", ltitle="AIR & ERA5",
     )
@@ -1486,6 +1494,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     sepl.plt_sig(
         IndR_his_hgt_slope_gens.sel(level=lev), axs[1], n, np.where(IndR_his_hgt_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
     )
+    
     axs[1].quiver(
         IndR_his_u_slope_gens.sel(level=lev)[::ski, ::ski],
         IndR_his_v_slope_gens.sel(level=lev)[::ski, ::ski],
@@ -1516,7 +1525,15 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     if lev == 200.0:
-        axs[1].line(his_wj_axis.coords["lon"], his_wj_axis_lat_gens, lw=1.3, color="green6")
+        axs[1].line(his_wj_axis.coords["lon"], his_wj_axis_lat_gens, lw=1.3, color="green6", ls="--")
+        axs[1].contour(
+            uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"]).loc[0.0:,:],
+            color="green6",
+            values=[27.5, 32.5],
+            vmin=25.0,
+            vmax=30.0,
+            zorder=0.8,
+        )
     axs[1].format(
         rtitle="1979-2014", ltitle="gMME",
     )
@@ -1563,11 +1580,105 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
         )
         if lev == 200.0:
-            axs[num_mod+2].line(his_wj_axis.coords["lon"], his_wj_axis.sel(models=mod), lw=1.3, color="green6")
+            axs[num_mod+2].line(his_wj_axis.coords["lon"], his_wj_axis.sel(models=mod), lw=1.3, color="green6", ls="--")
+            axs[num_mod+2].contour(
+            uhis_ver_JJA.sel(level=200.0, models=mod).mean(dim="time").loc[0.0:,:],
+            color="green6",
+            values=[27.5, 32.5],
+            vmin=25.0,
+            vmax=30.0,
+            zorder=0.8,
+        )
         axs[num_mod+2].format(
             rtitle="1979-2014", ltitle="{}".format(mod),
         )
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
+# %%
+#   plot the precipitation fields of good-models for corr coeff.
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    # India area
+    x0 = India_W
+    y0 = India_S
+    width = India_E-India_W
+    height = India_N-India_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # NC area
+    x0 = NC_W
+    y0 = NC_S
+    width = NC_E-NC_W
+    height = NC_N-NC_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0].contourf(
+    pre_AIR_India_pre_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    )
+sepl.plt_sig(
+    pre_AIR_India_pre_rvalue, axs[0], n, np.where(pre_AIR_India_pre_pvalue[::n, ::n] <= 0.10), "bright purple", 4.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="AIR",
+)
+# ===================================================
+con = axs[1].contourf(
+    pre_his_India_pre_rvalue_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    
+    )
+sepl.plt_sig(
+    pre_his_India_pre_rvalue_gens, axs[1], n, np.where(pre_his_India_pre_rvalue_gens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
+)
+
+axs[1].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ===================================================
+for num_models,mod in enumerate(gmodels):
+    con = axs[num_models+2].contourf(
+    pre_his_India_pre_rvalue.sel(models=mod),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    )
+    sepl.plt_sig(
+        pre_his_India_pre_rvalue.sel(models=mod), axs[num_models+2], n, np.where(pre_his_India_pre_pvalue.sel(models=mod)[::n, ::n] <= 0.10), "bright purple", 4.0,
+    )
+
+    axs[num_models+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 # %%
