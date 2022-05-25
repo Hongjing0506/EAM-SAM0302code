@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-05-25 21:21:59
+LastEditTime: 2022-05-25 21:57:00
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -2616,7 +2616,7 @@ axs[0].axhline(0,lw=1.5,color="grey7")
 #         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=11, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Reg. Coeff. IndR and NCR")
 # %%
@@ -2643,7 +2643,7 @@ axs[0].axhline(-ca.cal_rlim1(0.90, 36),lw=1.5,color="grey7",ls='--')
 #         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=11, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Corr. Coeff. IndR and NCR")
 # %%
@@ -3399,3 +3399,2374 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
 # ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="hgt&U reg IndR".format(lev))
+# %%
+#   plot the avalue of hgt&u&v regress onto IndR in ERA5 and historical
+startlevel=[-15, -8, -6]
+spacinglevel=[0.75, 0.4, 0.3]
+scalelevel=[0.23, 0.17, 0.14]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 31), (6, 5))
+    plot_array[-1,-2:] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    # xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 1
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        # India area
+        x0 = India_W
+        y0 = India_S
+        width = India_E-India_W
+        height = India_N-India_S
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
+        # NC area
+        x0 = NC_W
+        y0 = NC_S
+        width = NC_E-NC_W
+        height = NC_N-NC_S
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
+        # SJ-KP area
+        x0 = SJ_W
+        y0 = SJ_S
+        width = SJ_E-SJ_W
+        height = SJ_N-SJ_S
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        IndRAIR_ERA5_hgt_slope.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndRAIR_ERA5_hgt_slope.sel(level=lev), axs[0], n, np.where(IndRAIR_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[0].quiver(
+        IndRAIR_ERA5_u_slope.sel(level=lev)[::ski, ::ski],
+        IndRAIR_ERA5_v_slope.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[0].quiver(
+        IndRAIR_ERA5_u_slope.sel(level=lev).where(IndRAIR_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndRAIR_ERA5_v_slope.sel(level=lev).where(IndRAIR_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[0].format(
+        rtitle="1979-2014", ltitle="AIR & ERA5",
+    )
+    # ======================================
+    con = axs[1].contourf(
+        IndR_his_hgt_slope_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_hgt_slope_ens.sel(level=lev), axs[1], n, np.where(IndR_his_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[1].quiver(
+        IndR_his_u_slope_ens.sel(level=lev)[::ski, ::ski],
+        IndR_his_v_slope_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[1].quiver(
+        IndR_his_u_slope_ens.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_his_v_slope_ens.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[1].format(
+        rtitle="1979-2014", ltitle="MME",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(models):
+        con = axs[num_mod+2].contourf(
+            IndR_his_hgt_slope.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+            zorder=0.8,
+            extend="both"
+        )
+        sepl.plt_sig(
+            IndR_his_hgt_slope.sel(models=mod,level=lev), axs[num_mod+2], n, np.where(IndR_his_hgt_pvalue.sel(models=mod,level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+        )
+        axs[num_mod+2].quiver(
+            IndR_his_u_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            IndR_his_v_slope.sel(models=mod,level=lev)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="grey6",
+        )
+
+        m = axs[num_mod+2].quiver(
+            IndR_his_u_slope.sel(models=mod,level=lev).where(IndR_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            IndR_his_v_slope.sel(models=mod,level=lev).where(IndR_his_wind_mask.sel(models=mod,level=lev) > 0.0)[::ski, ::ski],
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod+2].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        axs[num_mod+2].format(
+            rtitle="1979-2014", ltitle="{}".format(mod.data),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
+# %%
+#   plot the correlation scatter-plot, x:pcc, y:corr(IndR, NCR)
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(1.0, IndR_GPCP_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s", color="blue5")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter((np.array(IndR_200hgt_pcc)+np.array(IndR_850hgt_pcc))[num_models]/2.0, IndR_his_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter((np.array(IndR_200hgt_pcc)+np.array(IndR_850hgt_pcc))[26]/2.0, ca.cal_rMME(IndR_his_NC_regress[2],"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^")
+m = axs[0].scatter((np.array(IndR_200hgt_pcc)+np.array(IndR_850hgt_pcc))[27]/2.0, ca.cal_rMME(IndR_his_NC_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*")
+
+#   x-axis title
+axs[0].text(-0.90,0.03,s='pcc_mean')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='corr(IndR, NCR)')
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-1.0,1.2), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   only plot the precipitation regress onto AIR and IndR in gMME
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+# plot_array = np.reshape(range(1, 31), (6, 5))
+# plot_array[5,-1] = 0
+axs = fig.subplots(ncols=1, nrows=2, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    # India area
+    x0 = India_W
+    y0 = India_S
+    width = India_E-India_W
+    height = India_N-India_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # NC area
+    x0 = NC_W
+    y0 = NC_S
+    width = NC_E-NC_W
+    height = NC_N-NC_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # SJ-KP area
+    x0 = SJ_W
+    y0 = SJ_S
+    width = SJ_E-SJ_W
+    height = SJ_N-SJ_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0].contourf(
+    pre_AIR_India_pre_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    )
+sepl.plt_sig(
+    pre_AIR_India_pre_rvalue, axs[0], n, np.where(pre_AIR_India_pre_pvalue[::n, ::n] <= 0.10), "bright purple", 4.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="AIR and GPCP",
+)
+# ===================================================
+con = axs[1].contourf(
+    pre_his_India_pre_rvalue_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    
+    )
+sepl.plt_sig(
+    pre_his_India_pre_rvalue_gens, axs[1], n, np.where(pre_his_India_pre_rvalue_gens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
+)
+
+axs[1].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ===================================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
+# %%
+#   only plot the circulation regress onto AIR and IndR in MME
+startlevel=[-15, -8, -6]
+spacinglevel=[0.75, 0.4, 0.3]
+scalelevel=[0.23, 0.17, 0.14]
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 13), (3, 4))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ======================================
+for ax in axs:
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+    ax.add_patch(rect)
+    # India area
+    x0 = India_W
+    y0 = India_S
+    width = India_E-India_W
+    height = India_N-India_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # NC area
+    x0 = NC_W
+    y0 = NC_S
+    width = NC_E-NC_W
+    height = NC_N-NC_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # SJ-KP area
+    x0 = SJ_W
+    y0 = SJ_S
+    width = SJ_E-SJ_W
+    height = SJ_N-SJ_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+# ======================================
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    # if lev == 200.0:
+    #     for ax in axs[num_lev, :]:
+    #         x0 = 50
+    #         y0 = 15
+    #         width = 90
+    #         height = 32.5
+    #         sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+    # elif lev == 850.0:
+    #     for ax in axs[num_lev, :]:
+    #         x0 = 110
+    #         y0 = 15
+    #         width = 27
+    #         height = 22.5
+    #         sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+    con = axs[num_lev, 0].contourf(
+        IndRAIR_ERA5_hgt_slope.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndRAIR_ERA5_hgt_slope.sel(level=lev), axs[num_lev, 0], n, np.where(IndRAIR_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_lev, 0].quiver(
+        IndRAIR_ERA5_u_slope.sel(level=lev)[::ski, ::ski],
+        IndRAIR_ERA5_v_slope.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 0].quiver(
+        IndRAIR_ERA5_u_slope.sel(level=lev).where(IndRAIR_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndRAIR_ERA5_v_slope.sel(level=lev).where(IndRAIR_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[num_lev, 0].format(
+        rtitle="1979-2014 {:.0f}hPa".format(lev), ltitle="AIR & ERA5",
+    )
+    # ======================================
+    con = axs[num_lev, 1].contourf(
+        IndR_his_hgt_slope_gens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_hgt_slope_gens.sel(level=lev), axs[num_lev, 1], n, np.where(IndR_his_hgt_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[num_lev, 1].quiver(
+        IndR_his_u_slope_gens.sel(level=lev)[::ski, ::ski],
+        IndR_his_v_slope_gens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 1].quiver(
+        IndR_his_u_slope_gens.sel(level=lev).where(IndR_his_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_his_v_slope_gens.sel(level=lev).where(IndR_his_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[num_lev, 1].format(
+        rtitle="1979-2014 {:.0f}hPa".format(lev), ltitle="gMME",
+    )
+# ======================================
+    con = axs[num_lev, 2].contourf(
+        IndR_ssp585_p3_hgt_slope_gens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_ssp585_p3_hgt_slope_gens.sel(level=lev), axs[num_lev, 2], n, np.where(IndR_ssp585_p3_hgt_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[num_lev, 2].quiver(
+        IndR_ssp585_p3_u_slope_gens.sel(level=lev)[::ski, ::ski],
+        IndR_ssp585_p3_v_slope_gens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 2].quiver(
+        IndR_ssp585_p3_u_slope_gens.sel(level=lev).where(IndR_ssp585_p3_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_ssp585_p3_v_slope_gens.sel(level=lev).where(IndR_ssp585_p3_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 2].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[num_lev, 2].format(
+        rtitle="2064-2099 {:.0f}hPa".format(lev), ltitle="gMME",
+    )
+# ======================================
+    con = axs[num_lev, 3].contourf(
+        IndR_diff_hgt_slope_gens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_diff_hgt_slope_gens.sel(level=lev), axs[num_lev, 3], n, np.where(IndR_diff_hgt_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[num_lev, 3].quiver(
+        IndR_diff_u_slope_gens.sel(level=lev)[::ski, ::ski],
+        IndR_diff_v_slope_gens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 3].quiver(
+        IndR_diff_u_slope_gens.sel(level=lev).where(IndR_diff_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_diff_v_slope_gens.sel(level=lev).where(IndR_diff_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 3].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[num_lev, 3].format(
+        rtitle="diff {:.0f}hPa".format(lev), ltitle="gMME",
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="hgt&U reg IndR".format(lev))
+# %%
+#   plot the bar-plot of the IndR related NC precipitation for historical and ssp585_p3 (reg coeff.)
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_NC_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_NC_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_NC_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_NC_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_NC_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_NC_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and NC")
+# %%
+#   plot the correlation scatter-plot, x:corr(IndR, EAhigh), y:corr(IndR, NCR)
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+pmodels=['ACCESS-CM2','BCC-CSM2-MR','CESM2','CNRM-CM6-1','CNRM-ESM2-1','CanESM5','EC-Earth3','EC-Earth3-Veg','FGOALS-g3','GFDL-CM4','HadGEM3-GC31-LL','INM-CM5-0','IPSL-CM6A-LR','KACE-1-0-G','MIROC-ES2L','MIROC6','MPI-ESM1-2-HR','NESM3','NorESM2-LM','TaiESM1']
+m = axs[0].scatter(IndR_GPCP_EAhigh_regress[2], IndR_GPCP_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s", color="blue5", ec="black")
+
+for num_models, mod in enumerate(pmodels):
+    m = axs[0].scatter(IndR_his_EAhigh_regress[2].sel(models=mod), IndR_his_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, ec="black")
+    
+for num_models, mod in enumerate(gmodels):
+    m = axs[0].scatter(IndR_his_EAhigh_regress[2].sel(models=mod), IndR_his_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, marker="h", ec="black")
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(ca.cal_rMME(IndR_his_EAhigh_regress[2], "models"), ca.cal_rMME(IndR_his_NC_regress[2],"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^", ec="black")
+m = axs[0].scatter(ca.cal_rMME(IndR_his_EAhigh_regress[2].sel(models=gmodels), "models"), ca.cal_rMME(IndR_his_NC_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*", ec="black")
+xyregress = stats.linregress(IndR_his_EAhigh_regress[2].sel(models=gmodels).data,IndR_his_NC_regress[2].sel(models=gmodels).data)
+axs[0].line(np.linspace(-0.70,0), xyregress[0]*np.linspace(-0.70,0)+xyregress[1],zorder=0.8,color="sky blue")
+axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+#   x-axis title
+axs[0].text(-0.90,0.03,s='corr(IndR, EAhigh)')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='corr(IndR, NCR)')
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-1.0,1.0), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the correlation scatter-plot, x:corr(IndR, WNPhigh), y:corr(IndR, NCR)
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+pmodels=['ACCESS-CM2','BCC-CSM2-MR','CESM2','CNRM-CM6-1','CNRM-ESM2-1','CanESM5','EC-Earth3','EC-Earth3-Veg','FGOALS-g3','GFDL-CM4','HadGEM3-GC31-LL','INM-CM5-0','IPSL-CM6A-LR','KACE-1-0-G','MIROC-ES2L','MIROC6','MPI-ESM1-2-HR','NESM3','NorESM2-LM','TaiESM1']
+m = axs[0].scatter(IndR_GPCP_WNPhigh_regress[2], IndR_GPCP_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="GPCP", marker="s", color="blue5", ec="black")
+
+for num_models, mod in enumerate(pmodels):
+    m = axs[0].scatter(IndR_his_WNPhigh_regress[2].sel(models=mod), IndR_his_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, ec="black")
+    
+for num_models, mod in enumerate(gmodels):
+    m = axs[0].scatter(IndR_his_WNPhigh_regress[2].sel(models=mod), IndR_his_NC_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, marker="h", ec="black")
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(ca.cal_rMME(IndR_his_WNPhigh_regress[2], "models"), ca.cal_rMME(IndR_his_NC_regress[2],"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^", ec="black")
+m = axs[0].scatter(ca.cal_rMME(IndR_his_WNPhigh_regress[2].sel(models=gmodels), "models"), ca.cal_rMME(IndR_his_NC_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*", ec="black")
+# xyregress = stats.linregress(IndR_his_WNPhigh_regress[2].sel(models=gmodels).data,IndR_his_NC_regress[2].sel(models=gmodels).data)
+# axs[0].line(np.linspace(-0.70,0), xyregress[0]*np.linspace(-0.70,0)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+#   x-axis title
+axs[0].text(-0.95,0.03,s='corr(IndR, WNPhigh)')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='corr(IndR, NCR)')
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-1.0,1.0), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the India rainfall succession
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=7.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+# plot_array = np.reshape(range(1, 4), (1, 3))
+# plot_array[-1,-3:] = 0
+axs = fig.subplots(ncols=1, nrows=3)
+# for gMME
+scale = pplt.CutoffScale(2016,np.inf,2062)
+axs.format(xlim=(1979,2099),xscale=scale,xlocator=np.append(np.arange(1979,2015,5),np.arange(2064, 2100,5)),ylim=(-3.0,3.0))
+# axs = pplt.GridSpec(6,5)
+# ax = fig.subplot(axs[0])
+# bax = brokenaxes(xlims=((1979, 2014), (2064, 2099)), despine=False, subplot_spec=ax)
+m1 = axs[0].plot(np.arange(1979,2015,1), ca.standardize(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+axs[0].plot(np.arange(2064,2100,1), ca.standardize(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+# m2 = axs[0].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).mean(dim="models")), color="blue", lw=1.2)
+# axs[0].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).mean(dim="models")), color="blue", lw=1.2)
+axs[0].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.2,color="grey7")
+axs[0].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.2,color="grey7")
+axs[0].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
+axs[0].format(ltitle="gMME", rtitle="Total India", xticklabelsize=11)
+# ====================================
+m1 = axs[1].plot(np.arange(1979,2015,1), ca.standardize(prehis_nIndia_JJA.sel(time=prehis_nIndia_JJA.time.dt.year>=1979, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+axs[1].plot(np.arange(2064,2100,1), ca.standardize(pressp585_nIndia_JJA.sel(time=pressp585_nIndia_JJA.time.dt.year>=2064, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+ox = axs[1].alty(color="blue6", label="rate", linewidth=1)
+ox.plot(np.arange(1979,2015,1), (prehis_nIndia_JJA_sum/prehis_India_JJA_sum).sel(models=gmodels).mean(dim="models"), color="blue6", lw=1.2)
+ox.plot(np.arange(2064,2100,1), (pressp585_p3_nIndia_JJA_sum/pressp585_p3_India_JJA_sum).sel(models=gmodels).mean(dim="models"), color="blue6", lw=1.2)
+ox.format(ylim=(0.2,0.7))
+# m2 = axs[1].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).mean(dim="models")), color="blue", lw=1.2)
+# axs[1].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).mean(dim="models")), color="blue", lw=1.2)
+axs[1].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.2,color="grey7")
+axs[1].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.2,color="grey7")
+axs[1].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
+axs[1].format(ltitle="gMME", rtitle="North India", xticklabelsize=11)
+# =================================
+m1 = axs[2].plot(np.arange(1979,2015,1), ca.standardize(prehis_wIndia_JJA.sel(time=prehis_wIndia_JJA.time.dt.year>=1979, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+axs[2].plot(np.arange(2064,2100,1), ca.standardize(pressp585_wIndia_JJA.sel(time=pressp585_wIndia_JJA.time.dt.year>=2064, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+ox = axs[2].alty(color="blue6", label="rate", linewidth=1)
+ox.plot(np.arange(1979,2015,1), (prehis_wIndia_JJA_sum/prehis_India_JJA_sum).sel(models=gmodels).mean(dim="models"), color="blue6", lw=1.2)
+ox.plot(np.arange(2064,2100,1), (pressp585_p3_wIndia_JJA_sum/pressp585_p3_India_JJA_sum).sel(models=gmodels).mean(dim="models"), color="blue6", lw=1.2)
+ox.format(ylim=(0.0,0.6))
+# m2 = axs[2].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).mean(dim="models")), color="blue", lw=1.2)
+# axs[2].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).mean(dim="models")), color="blue", lw=1.2)
+axs[2].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.0,color="grey7")
+axs[2].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.0,color="grey7")
+axs[2].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
+axs[2].format(ltitle="gMME", rtitle="West India", xticklabelsize=11)
+
+fig.format(abc="(a)", abcloc="l", suptitle="IndR")
+# %%
+#   plot the 200hPa circulation mme result in 1979-2014, 2064-2099, diff
+startlevel=[-15, -8, -6]
+spacinglevel=[0.75, 0.4, 0.3]
+scalelevel=[0.23, 0.17, 0.14]
+for num_lev,lev in enumerate([200.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    # plot_array = np.reshape(range(1, 31), (6, 5))
+    # plot_array[-1,-1] = 0
+    axs = fig.subplots(ncols=3, nrows=1, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    # xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 1
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        # India area
+        x0 = India_W
+        y0 = India_S
+        width = India_E-India_W
+        height = India_N-India_S
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
+        # NC area
+        x0 = NC_W
+        y0 = NC_S
+        width = NC_E-NC_W
+        height = NC_N-NC_S
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
+        # SJ-KP area
+        x0 = SJ_W
+        y0 = SJ_S
+        width = SJ_E-SJ_W
+        height = SJ_N-SJ_S
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        IndR_his_hgt_slope_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_hgt_slope_ens.sel(level=lev), axs[0], n, np.where(IndR_his_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[0].quiver(
+        IndR_his_u_slope_ens.sel(level=lev)[::ski, ::ski],
+        IndR_his_v_slope_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[0].quiver(
+        IndR_his_u_slope_ens.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_his_v_slope_ens.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[0].format(
+        rtitle="1979-2014", ltitle="MME",
+    )
+    # ======================================
+    con = axs[1].contourf(
+        IndR_ssp585_p3_hgt_slope_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_ssp585_p3_hgt_slope_ens.sel(level=lev), axs[1], n, np.where(IndR_ssp585_p3_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[1].quiver(
+        IndR_ssp585_p3_u_slope_ens.sel(level=lev)[::ski, ::ski],
+        IndR_ssp585_p3_v_slope_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[1].quiver(
+        IndR_ssp585_p3_u_slope_ens.sel(level=lev).where(IndR_ssp585_p3_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_ssp585_p3_v_slope_ens.sel(level=lev).where(IndR_ssp585_p3_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[1].format(
+        rtitle="2064-2099", ltitle="MME",
+    )
+    # ======================================
+    con = axs[2].contourf(
+        IndR_diff_hgt_slope_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_diff_hgt_slope_ens.sel(level=lev), axs[2], n, np.where(IndR_diff_hgt_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[2].quiver(
+        IndR_diff_u_slope_ens.sel(level=lev)[::ski, ::ski],
+        IndR_diff_v_slope_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[2].quiver(
+        IndR_diff_u_slope_ens.sel(level=lev).where(IndR_diff_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_diff_v_slope_ens.sel(level=lev).where(IndR_diff_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[2].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[2].format(
+        rtitle="diff", ltitle="MME",
+    )
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
+# %%
+#   plot the bar-plot of the EA high
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_EAhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_EAhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_EAhigh_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_EAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-2.0e-6,2.0e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and EAhigh")
+# %%
+#   plot the bar-plot of the WA high
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_WAhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_WAhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_WAhigh_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_WAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_WAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_WAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-3.0e-6,3.0e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and WAhigh")
+# %%
+#   plot the bar-plot of the WNP high
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_WNPhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_WNPhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_WNPhigh_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_WNPhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_WNPhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_WNPhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-1.0e-6,1.0e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and WNPhigh")
+# %%
+#   plot the correlation scatter-plot, x:corr(IndR, WAhigh), y:corr(IndR, EAhigh)
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+pmodels=['ACCESS-CM2','BCC-CSM2-MR','CESM2','CNRM-CM6-1','CNRM-ESM2-1','CanESM5','EC-Earth3','EC-Earth3-Veg','FGOALS-g3','GFDL-CM4','HadGEM3-GC31-LL','INM-CM5-0','IPSL-CM6A-LR','KACE-1-0-G','MIROC-ES2L','MIROC6','MPI-ESM1-2-HR','NESM3','NorESM2-LM','TaiESM1']
+m = axs[0].scatter(IndR_GPCP_WAhigh_regress[2], IndR_GPCP_EAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="obs", marker="s", color="blue5", ec="black")
+
+for num_models, mod in enumerate(pmodels):
+    m = axs[0].scatter(IndR_his_WAhigh_regress[2].sel(models=mod), IndR_his_EAhigh_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, ec="black")
+    
+for num_models, mod in enumerate(gmodels):
+    m = axs[0].scatter(IndR_his_WAhigh_regress[2].sel(models=mod), IndR_his_EAhigh_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, marker="h", ec="black")
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(ca.cal_rMME(IndR_his_WAhigh_regress[2], "models"), ca.cal_rMME(IndR_his_EAhigh_regress[2],"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^", ec="black")
+m = axs[0].scatter(ca.cal_rMME(IndR_his_WAhigh_regress[2].sel(models=gmodels), "models"), ca.cal_rMME(IndR_his_EAhigh_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*", ec="black")
+# xyregress = stats.linregress(IndR_his_WAhigh_regress[2].sel(models=gmodels).data,IndR_his_EAhigh_regress[2].sel(models=gmodels).data)
+# axs[0].line(np.linspace(-0.70,0), xyregress[0]*np.linspace(-0.70,0)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+#   x-axis title
+axs[0].text(-0.95,0.03,s='corr(IndR, WAhigh)')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='corr(IndR, EAhigh)')
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-1.0,1.0), ylim=(-1.0,1.0), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the correlation scatter-plot, x:corr(IndR, WAhigh), y:corr(IndR, EAhigh)
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+pmodels=['ACCESS-CM2','BCC-CSM2-MR','CESM2','CNRM-CM6-1','CNRM-ESM2-1','CanESM5','EC-Earth3','EC-Earth3-Veg','FGOALS-g3','GFDL-CM4','HadGEM3-GC31-LL','INM-CM5-0','IPSL-CM6A-LR','KACE-1-0-G','MIROC-ES2L','MIROC6','MPI-ESM1-2-HR','NESM3','NorESM2-LM','TaiESM1']
+# m = axs[0].scatter(IndR_GPCP_WAhigh_regress[2], IndR_GPCP_EAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="obs", marker="s", color="blue5", ec="black")
+
+for num_models, mod in enumerate(pmodels):
+    m = axs[0].scatter(IndR_ssp585_p3_WAhigh_regress[2].sel(models=mod), IndR_ssp585_p3_EAhigh_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, ec="black")
+    
+for num_models, mod in enumerate(gmodels):
+    m = axs[0].scatter(IndR_ssp585_p3_WAhigh_regress[2].sel(models=mod), IndR_ssp585_p3_EAhigh_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, marker="h", ec="black")
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(ca.cal_rMME(IndR_ssp585_p3_WAhigh_regress[2], "models"), ca.cal_rMME(IndR_ssp585_p3_EAhigh_regress[2],"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^", ec="black")
+m = axs[0].scatter(ca.cal_rMME(IndR_ssp585_p3_WAhigh_regress[2].sel(models=gmodels), "models"), ca.cal_rMME(IndR_ssp585_p3_EAhigh_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*", ec="black")
+# xyregress = stats.linregress(IndR_ssp585_p3_WAhigh_regress[2].sel(models=gmodels).data,IndR_ssp585_p3_EAhigh_regress[2].sel(models=gmodels).data)
+# axs[0].line(np.linspace(-0.70,0), xyregress[0]*np.linspace(-0.70,0)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+#   x-axis title
+axs[0].text(-0.95,0.03,s='corr(IndR, WAhigh)')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='corr(IndR, EAhigh)')
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-1.0,1.0), ylim=(-1.0,1.0), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
+# %%
+#   only plot the circulation regress onto AIR and IndR in MME
+startlevel=[-15, -8, -6]
+spacinglevel=[0.75, 0.4, 0.3]
+scalelevel=[0.23, 0.17, 0.14]
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 4), (3, 1))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ======================================
+for ax in axs:
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+    ax.add_patch(rect)
+    # India area
+    x0 = India_W
+    y0 = India_S
+    width = India_E-India_W
+    height = India_N-India_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # NC area
+    x0 = NC_W
+    y0 = NC_S
+    width = NC_E-NC_W
+    height = NC_N-NC_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # SJ-KP area
+    x0 = SJ_W
+    y0 = SJ_S
+    width = SJ_E-SJ_W
+    height = SJ_N-SJ_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+# ======================================
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    if lev == 200.0:
+        for ax in axs[num_lev, :]:
+            x0 = EAhigh_W
+            y0 = EAhigh_S
+            width = EAhigh_E-EAhigh_W
+            height = EAhigh_N-EAhigh_S
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+            x0 = WAhigh_W
+            y0 = WAhigh_S
+            width = WAhigh_E-WAhigh_W
+            height = WAhigh_N-WAhigh_S
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+    elif lev == 850.0:
+        for ax in axs[num_lev, :]:
+            x0 = WNPhigh_W
+            y0 = WNPhigh_S
+            width = WNPhigh_E-WNPhigh_W
+            height = WNPhigh_N-WNPhigh_S
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+    # ======================================
+    con = axs[num_lev, 0].contourf(
+        IndR_his_hgt_slope_gens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_hgt_slope_gens.sel(level=lev), axs[num_lev, 0], n, np.where(IndR_his_hgt_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[num_lev, 0].quiver(
+        IndR_his_u_slope_gens.sel(level=lev)[::ski, ::ski],
+        IndR_his_v_slope_gens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 0].quiver(
+        IndR_his_u_slope_gens.sel(level=lev).where(IndR_his_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_his_v_slope_gens.sel(level=lev).where(IndR_his_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[num_lev, 0].format(
+        rtitle="1979-2014 {:.0f}hPa".format(lev), ltitle="gMME",
+    )
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="hgt&U reg IndR".format(lev))
+# %%
+#   plot the correlation scatter-plot, x:corr(IndR, WAhigh), y:corr(IndR, EAhigh)
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+pmodels=['ACCESS-CM2','BCC-CSM2-MR','CESM2','CNRM-CM6-1','CNRM-ESM2-1','CanESM5','EC-Earth3','EC-Earth3-Veg','FGOALS-g3','GFDL-CM4','HadGEM3-GC31-LL','INM-CM5-0','IPSL-CM6A-LR','KACE-1-0-G','MIROC-ES2L','MIROC6','MPI-ESM1-2-HR','NESM3','NorESM2-LM','TaiESM1']
+# m = axs[0].scatter(IndR_GPCP_WAhigh_regress[2], IndR_GPCP_EAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="obs", marker="s", color="blue5", ec="black")
+
+for num_models, mod in enumerate(pmodels):
+    m = axs[0].scatter(IndR_his_WNPhigh_regress[2].sel(models=mod), IndR_his_EAhigh_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, ec="black")
+    
+for num_models, mod in enumerate(gmodels):
+    m = axs[0].scatter(IndR_his_WNPhigh_regress[2].sel(models=mod), IndR_his_EAhigh_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, marker="h", ec="black")
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(ca.cal_rMME(IndR_his_WNPhigh_regress[2], "models"), ca.cal_rMME(IndR_his_EAhigh_regress[2],"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^", ec="black")
+m = axs[0].scatter(ca.cal_rMME(IndR_his_WNPhigh_regress[2].sel(models=gmodels), "models"), ca.cal_rMME(IndR_his_EAhigh_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*", ec="black")
+# xyregress = stats.linregress(IndR_his_WNPhigh_regress[2].sel(models=gmodels).data,IndR_his_EAhigh_regress[2].sel(models=gmodels).data)
+# axs[0].line(np.linspace(-0.70,0), xyregress[0]*np.linspace(-0.70,0)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+#   x-axis title
+axs[0].text(-0.95,0.03,s='corr(IndR, WNPhigh)')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='corr(IndR, EAhigh)')
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-1.0,1.0), ylim=(-1.0,1.0), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
+# %%
+#   plot the correlation scatter-plot, x:corr(IndR, WAhigh), y:corr(IndR, EAhigh)
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+pmodels=['ACCESS-CM2','BCC-CSM2-MR','CESM2','CNRM-CM6-1','CNRM-ESM2-1','CanESM5','EC-Earth3','EC-Earth3-Veg','FGOALS-g3','GFDL-CM4','HadGEM3-GC31-LL','INM-CM5-0','IPSL-CM6A-LR','KACE-1-0-G','MIROC-ES2L','MIROC6','MPI-ESM1-2-HR','NESM3','NorESM2-LM','TaiESM1']
+# m = axs[0].scatter(IndR_GPCP_WAhigh_regress[2], IndR_GPCP_EAhigh_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="obs", marker="s", color="blue5", ec="black")
+
+for num_models, mod in enumerate(pmodels):
+    m = axs[0].scatter(IndR_ssp585_p3_WNPhigh_regress[2].sel(models=mod), IndR_ssp585_p3_EAhigh_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, ec="black")
+    
+for num_models, mod in enumerate(gmodels):
+    m = axs[0].scatter(IndR_ssp585_p3_WNPhigh_regress[2].sel(models=mod), IndR_ssp585_p3_EAhigh_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod, marker="h", ec="black")
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(ca.cal_rMME(IndR_ssp585_p3_WNPhigh_regress[2], "models"), ca.cal_rMME(IndR_ssp585_p3_EAhigh_regress[2],"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^", ec="black")
+m = axs[0].scatter(ca.cal_rMME(IndR_ssp585_p3_WNPhigh_regress[2].sel(models=gmodels), "models"), ca.cal_rMME(IndR_ssp585_p3_EAhigh_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*", ec="black")
+# xyregress = stats.linregress(IndR_ssp585_p3_WNPhigh_regress[2].sel(models=gmodels).data,IndR_ssp585_p3_EAhigh_regress[2].sel(models=gmodels).data)
+# axs[0].line(np.linspace(-0.70,0), xyregress[0]*np.linspace(-0.70,0)+xyregress[1],zorder=0.8,color="sky blue")
+# axs[0].text(0.5,0.1,s='{:.3f}'.format(xyregress[0]))
+#   x-axis title
+axs[0].text(-0.95,0.03,s='corr(IndR, WNPhigh)')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='corr(IndR, EAhigh)')
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-1.0,1.0), ylim=(-1.0,1.0), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="ssp585_p3 Corr Coeff. with IndR")
+# %%
+#   plot the bar-plot of the IndR related EAM index for historical and ssp585_p3 (reg coeff.)
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_EAM_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_EAM_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_EAM_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_EAM_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_EAM_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_EAM_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-3.0,3.0),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and EAM")
+# %%
+#   plot the bar-plot of the IndR related IWF index for historical and ssp585_p3 (reg coeff.)
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_IWF_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_IWF_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_IWF_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_IWF_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_IWF_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_IWF_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-1.0e-6,1.0e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and IWF")
+# %%
+# plot the bar plot about the corr(IndR, LKY)
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_LKY_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_LKY_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_LKY_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_LKY_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_LKY_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_LKY_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-1e-6,1e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and LKY")
+
+# plot the bar plot about the corr(IndR, LKY)
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_LKY_regress[2].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_LKY_regress[2].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_LKY_rvalue.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_LKY_regress[2].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_LKY_regress[2].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_LKY_rvalue.sel(models=gmodels).mean(dim="models", skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-1,1),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Corr. Coeff. IndR and LKY")
+# %%
+#   plot the all-models bar-plots for corr(IndR, LKY)
+plot_data = np.zeros((27,3))
+plot_data[:-1,0] = IndR_his_LKY_regress[0].data
+plot_data[:-1,1] = IndR_ssp585_p3_LKY_regress[0].data
+plot_data[:-1,2] = IndR_diff_LKY_slope.data
+plot_data[-1,0] = IndR_his_LKY_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_LKY_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_LKY_slope.mean(dim="models", skipna=True).data
+
+label_models = list(models.data)
+label_models.append("MME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-1e-6,1e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and LKY")
+
+# plot the bar plot about the corr(IndR, LKY)
+plot_data = np.zeros((27,3))
+plot_data[:-1,0] = IndR_his_LKY_regress[2].data
+plot_data[:-1,1] = IndR_ssp585_p3_LKY_regress[2].data
+plot_data[:-1,2] = IndR_diff_LKY_rvalue.data
+plot_data[-1,0] = IndR_his_LKY_regress[2].mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_LKY_regress[2].mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_LKY_rvalue.mean(dim="models", skipna=True).data
+
+label_models = list(models.data)
+label_models.append("MME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-1,1),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Corr. Coeff. IndR and LKY")
+# %%
+#   plot the SST regress onto the IndR in historical
+#   corr. coeffs.
+startlevel=-1.0
+spacinglevel=0.1
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-2:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_Had_sst_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    IndR_Had_sst_rvalue, axs[0], n, np.where(IndR_Had_sst_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="HadISST & AIR",
+)
+# ======================================
+con = axs[1].contourf(
+    IndR_his_sst_rvalue_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    IndR_his_sst_rvalue_ens, axs[1], n, np.where(IndR_his_sst_rvalue_ens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[1].format(
+    rtitle="1979-2014", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+2].contourf(
+        IndR_his_sst_rvalue.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        IndR_his_sst_rvalue.sel(models=mod), axs[num_mod+2], n, np.where(IndR_his_sst_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+
+# ======================================
+#   reg. coeffs.
+startlevel=-6e-1
+spacinglevel=0.06
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-2:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_Had_sst_slope,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_Had_sst_slope, axs[0], n, np.where(IndR_Had_sst_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="HadISST & AIR",
+)
+# ======================================
+con = axs[1].contourf(
+    IndR_his_sst_slope_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_his_sst_slope_ens, axs[1], n, np.where(IndR_his_sst_slope_ens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[1].format(
+    rtitle="1979-2014", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+2].contourf(
+        IndR_his_sst_slope.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_sst_slope.sel(models=mod), axs[num_mod+2], n, np.where(IndR_his_sst_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+# %%
+#   plot the SST regress onto the IndR in ssp585_p3
+#   corr. coeffs.
+startlevel=-1.0
+spacinglevel=0.1
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-3:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+
+# ======================================
+con = axs[0].contourf(
+    IndR_ssp585_p3_sst_rvalue_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    IndR_ssp585_p3_sst_rvalue_ens, axs[0], n, np.where(IndR_ssp585_p3_sst_rvalue_ens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[0].format(
+    rtitle="2064-2099", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+1].contourf(
+        IndR_ssp585_p3_sst_rvalue.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        IndR_ssp585_p3_sst_rvalue.sel(models=mod), axs[num_mod+1], n, np.where(IndR_ssp585_p3_sst_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_mod+1].format(
+        rtitle="2064-2099", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+
+# ======================================
+#   reg. coeffs.
+startlevel=-6.0e-1
+spacinglevel=0.06
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-3:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_ssp585_p3_sst_slope_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_ssp585_p3_sst_slope_ens, axs[0], n, np.where(IndR_ssp585_p3_sst_slope_ens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[0].format(
+    rtitle="2064-2099", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+1].contourf(
+        IndR_ssp585_p3_sst_slope.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_ssp585_p3_sst_slope.sel(models=mod), axs[num_mod+1], n, np.where(IndR_ssp585_p3_sst_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_mod+1].format(
+        rtitle="2064-2099", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+# %%
+#   plot the SST regress onto the IndR in diff
+#   corr. coeffs.
+startlevel=-1.0
+spacinglevel=0.1
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-3:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+
+# ======================================
+con = axs[0].contourf(
+    IndR_diff_sst_rvalue_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    IndR_diff_sst_rvalue_ens, axs[0], n, np.where(IndR_diff_sst_ens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[0].format(
+    rtitle="diff", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+1].contourf(
+        IndR_diff_sst_rvalue.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+    )
+    axs[num_mod+1].format(
+        rtitle="diff", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+
+# ======================================
+#   reg. coeffs.
+startlevel=-6.0e-1
+spacinglevel=0.06
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-3:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_diff_sst_slope_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_diff_sst_slope_ens, axs[0], n, np.where(IndR_diff_sst_ens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[0].format(
+    rtitle="diff", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+1].contourf(
+        IndR_diff_sst_slope.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1].format(
+        rtitle="diff", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+# %%
+#   plot the good models SST regression result
+#   plot the SST regress onto the IndR in historical
+#   corr. coeffs.
+startlevel=-1.0
+spacinglevel=0.1
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-2:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_Had_sst_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    IndR_Had_sst_rvalue, axs[0], n, np.where(IndR_Had_sst_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="HadISST & AIR",
+)
+# ======================================
+con = axs[1].contourf(
+    IndR_his_sst_rvalue_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    IndR_his_sst_rvalue_gens, axs[1], n, np.where(IndR_his_sst_rvalue_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[1].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+2].contourf(
+        IndR_his_sst_rvalue.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        IndR_his_sst_rvalue.sel(models=mod), axs[num_mod+2], n, np.where(IndR_his_sst_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+
+# ======================================
+#   reg. coeffs.
+startlevel=-6e-1
+spacinglevel=0.06
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-2:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_Had_sst_slope,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_Had_sst_slope, axs[0], n, np.where(IndR_Had_sst_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="HadISST & AIR",
+)
+# ======================================
+con = axs[1].contourf(
+    IndR_his_sst_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_his_sst_slope_gens, axs[1], n, np.where(IndR_his_sst_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[1].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+2].contourf(
+        IndR_his_sst_slope.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_sst_slope.sel(models=mod), axs[num_mod+2], n, np.where(IndR_his_sst_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+# %%
+#   plot the SST regress onto the IndR in ssp585_p3 in good models
+#   corr. coeffs.
+startlevel=-1.0
+spacinglevel=0.1
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+
+# ======================================
+con = axs[0].contourf(
+    IndR_ssp585_p3_sst_rvalue_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    IndR_ssp585_p3_sst_rvalue_gens, axs[0], n, np.where(IndR_ssp585_p3_sst_rvalue_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[0].format(
+    rtitle="2064-2099", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+1].contourf(
+        IndR_ssp585_p3_sst_rvalue.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+    )
+    sepl.plt_sig(
+        IndR_ssp585_p3_sst_rvalue.sel(models=mod), axs[num_mod+1], n, np.where(IndR_ssp585_p3_sst_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_mod+1].format(
+        rtitle="2064-2099", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+
+# ======================================
+#   reg. coeffs.
+startlevel=-6.0e-1
+spacinglevel=0.06
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_ssp585_p3_sst_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_ssp585_p3_sst_slope_gens, axs[0], n, np.where(IndR_ssp585_p3_sst_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[0].format(
+    rtitle="2064-2099", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+1].contourf(
+        IndR_ssp585_p3_sst_slope.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_ssp585_p3_sst_slope.sel(models=mod), axs[num_mod+1], n, np.where(IndR_ssp585_p3_sst_pvalue.sel(models=mod)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_mod+1].format(
+        rtitle="2064-2099", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+# %%
+#   plot the SST regress onto the IndR in diff in good models
+#   corr. coeffs.
+startlevel=-1.0
+spacinglevel=0.1
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+
+# ======================================
+con = axs[0].contourf(
+    IndR_diff_sst_rvalue_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+)
+sepl.plt_sig(
+    IndR_diff_sst_rvalue_gens, axs[0], n, np.where(IndR_diff_sst_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[0].format(
+    rtitle="diff", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+1].contourf(
+        IndR_diff_sst_rvalue.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+    )
+    axs[num_mod+1].format(
+        rtitle="diff", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+
+# ======================================
+#   reg. coeffs.
+startlevel=-6.0e-1
+spacinglevel=0.06
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_diff_sst_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_diff_sst_slope_gens, axs[0], n, np.where(IndR_diff_sst_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[0].format(
+    rtitle="diff", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+1].contourf(
+        IndR_diff_sst_slope.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1].format(
+        rtitle="diff", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
+# %%
+#   plot the climatology-u wind in 200hPa in historical
+startlevel=-30
+spacinglevel=3
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    uERA5_ver_JJA.sel(level=200.0).mean(dim=["time"]),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+axs[0].line(ERA5_wj_axis[1], ERA5_wj_axis[0], lw=1.3, color="black")
+axs[0].format(
+    rtitle="1979-2014", ltitle="ERA5",
+)
+# ======================================
+con = axs[1].contourf(
+    uhis_ver_JJA.sel(models=gmodels, level=200.0).mean(dim=["time", "models"]),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+axs[1].line(his_wj_axis.coords["lon"], his_wj_axis_lat_gens, lw=1.3, color="black")
+axs[1].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+2].contourf(
+        uhis_ver_JJA.sel(models=mod, level=200.0).mean(dim="time"),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+2].line(his_wj_axis.coords["lon"], his_wj_axis.sel(models=mod), lw=1.3, color="black")
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="u-climatology")
+# %%
+#   plot the climatology-u wind in 200hPa in ssp585_p3
+startlevel=-30
+spacinglevel=3
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    ussp585_p3_ver_JJA.sel(models=gmodels, level=200.0).mean(dim=["time", "models"]),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+axs[0].line(ssp585_p3_wj_axis.coords["lon"], ssp585_p3_wj_axis_lat_gens, lw=1.3, color="black")
+axs[0].format(
+    rtitle="2064-2099", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+1].contourf(
+        ussp585_p3_ver_JJA.sel(models=mod, level=200.0).mean(dim="time"),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1].line(ssp585_p3_wj_axis.coords["lon"], ssp585_p3_wj_axis.sel(models=mod), lw=1.3, color="black")
+    axs[num_mod+1].format(
+        rtitle="2064-2099", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="u-climatology")
+# %%
+#   plot the climatology-u wind in 200hPa in diff
+startlevel=-5
+spacinglevel=0.5
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    ussp585_p3_ver_JJA.sel(models=gmodels, level=200.0).mean(dim=["time", "models"])-uhis_ver_JJA.sel(models=gmodels, level=200.0).mean(dim=["time", "models"]),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+axs[0].line(his_wj_axis.coords["lon"], his_wj_axis_lat_gens, lw=1.3, color="black")
+axs[0].line(ssp585_p3_wj_axis.coords["lon"], ssp585_p3_wj_axis_lat_gens, lw=1.3, color="red6")
+axs[0].format(
+    rtitle="diff", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+1].contourf(
+        ussp585_p3_ver_JJA.sel(models=mod, level=200.0).mean(dim="time")-uhis_ver_JJA.sel(models=mod, level=200.0).mean(dim="time"),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1].line(his_wj_axis.coords["lon"], his_wj_axis.sel(models=mod), lw=1.3, color="black")
+    axs[num_mod+1].line(ssp585_p3_wj_axis.coords["lon"], ssp585_p3_wj_axis.sel(models=mod), lw=1.3, color="red6")
+    axs[num_mod+1].format(
+        rtitle="diff", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="u-climatology")
+# %%

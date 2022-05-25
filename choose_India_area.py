@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-25 20:36:48
+LastEditTime: 2022-05-25 21:55:47
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
