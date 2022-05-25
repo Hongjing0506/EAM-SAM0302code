@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-23 13:24:07
+LastEditTime: 2022-05-25 20:36:48
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -1428,19 +1428,19 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         y0 = India_S
         width = India_E-India_W
         height = India_N-India_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # NC area
         x0 = NC_W
         y0 = NC_S
         width = NC_E-NC_W
         height = NC_N-NC_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # #   IWF area
         # x0 = 90
         # y0 = 5.0
         # width = 50.0
         # height = 27.5
-        # patches(ax, x0 - cl, y0, width, height, proj)
+        # sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # ======================================
     con = axs[0].contourf(
         IndRAIR_ERA5_hgt_rvalue.sel(level=lev),
@@ -1611,19 +1611,19 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         y0 = India_S
         width = India_E-India_W
         height = India_N-India_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # NC area
         x0 = NC_W
         y0 = NC_S
         width = NC_E-NC_W
         height = NC_N-NC_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # #   IWF area
         # x0 = 90
         # y0 = 5.0
         # width = 50.0
         # height = 27.5
-        # patches(ax, x0 - cl, y0, width, height, proj)
+        # sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # ======================================
     con = axs[0].contourf(
         IndRAIR_ERA5_hgt_slope.sel(level=lev),
@@ -1796,13 +1796,13 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
     pre_AIR_India_pre_rvalue,
@@ -1882,13 +1882,13 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
     pre_AIR_India_pre_slope,
@@ -1978,19 +1978,19 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         y0 = India_S
         width = India_E-India_W
         height = India_N-India_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # NC area
         x0 = NC_W
         y0 = NC_S
         width = NC_E-NC_W
         height = NC_N-NC_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # #   IWF area
         # x0 = 90
         # y0 = 5.0
         # width = 50.0
         # height = 27.5
-        # patches(ax, x0 - cl, y0, width, height, proj)
+        # sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # ======================================
     con = axs[0].contourf(
         IndR_ssp585_p3_hgt_rvalue_gens.sel(level=lev),
@@ -2118,19 +2118,19 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         y0 = India_S
         width = India_E-India_W
         height = India_N-India_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # NC area
         x0 = NC_W
         y0 = NC_S
         width = NC_E-NC_W
         height = NC_N-NC_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # #   IWF area
         # x0 = 90
         # y0 = 5.0
         # width = 50.0
         # height = 27.5
-        # patches(ax, x0 - cl, y0, width, height, proj)
+        # sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # ======================================
     con = axs[0].contourf(
         IndR_ssp585_p3_hgt_slope_gens.sel(level=lev),
@@ -2258,13 +2258,13 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
     pre_ssp585_p3_India_pre_rvalue_gens,
@@ -2330,13 +2330,13 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
     pre_ssp585_p3_India_pre_slope_gens,
@@ -2403,13 +2403,13 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
     pre_diff_India_pre_rvalue_gens,
@@ -2469,13 +2469,13 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
     pre_diff_India_pre_slope_gens,
@@ -2542,19 +2542,19 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         y0 = India_S
         width = India_E-India_W
         height = India_N-India_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # NC area
         x0 = NC_W
         y0 = NC_S
         width = NC_E-NC_W
         height = NC_N-NC_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # #   IWF area
         # x0 = 90
         # y0 = 5.0
         # width = 50.0
         # height = 27.5
-        # patches(ax, x0 - cl, y0, width, height, proj)
+        # sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # ======================================
     con = axs[0].contourf(
         IndR_diff_hgt_rvalue_gens.sel(level=lev),
@@ -2668,19 +2668,19 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         y0 = India_S
         width = India_E-India_W
         height = India_N-India_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # NC area
         x0 = NC_W
         y0 = NC_S
         width = NC_E-NC_W
         height = NC_N-NC_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # #   IWF area
         # x0 = 90
         # y0 = 5.0
         # width = 50.0
         # height = 27.5
-        # patches(ax, x0 - cl, y0, width, height, proj)
+        # sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # ======================================
     con = axs[0].contourf(
         IndR_diff_hgt_slope_gens.sel(level=lev),
@@ -2980,19 +2980,19 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         y0 = India_S
         width = India_E-India_W
         height = India_N-India_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # NC area
         x0 = NC_W
         y0 = NC_S
         width = NC_E-NC_W
         height = NC_N-NC_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # #   IWF area
         # x0 = 90
         # y0 = 5.0
         # width = 50.0
         # height = 27.5
-        # patches(ax, x0 - cl, y0, width, height, proj)
+        # sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # ======================================
     con = axs[0].contourf(
         IndRAIR_ERA5_hgt_rvalue.sel(level=lev),
@@ -3157,13 +3157,13 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
     pre_AIR_India_pre_rvalue,
@@ -3306,13 +3306,13 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
     vorERA5_cli_ver_JJA,
@@ -3385,13 +3385,13 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
     vorssp585_p3_cli_ver_JJA.mean(dim="models", skipna=True),
@@ -3451,19 +3451,19 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # SJ-KP area
     x0 = SJ_W
     y0 = SJ_S
     width = SJ_E-SJ_W
     height = SJ_N-SJ_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
     pre_AIR_India_pre_rvalue,
@@ -3535,19 +3535,19 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # SJ-KP area
     x0 = SJ_W
     y0 = SJ_S
     width = SJ_E-SJ_W
     height = SJ_N-SJ_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ======================================
 for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
@@ -3702,19 +3702,19 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         y0 = India_S
         width = India_E-India_W
         height = India_N-India_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # NC area
         x0 = NC_W
         y0 = NC_S
         width = NC_E-NC_W
         height = NC_N-NC_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # SJ-KP area
         x0 = SJ_W
         y0 = SJ_S
         width = SJ_E-SJ_W
         height = SJ_N-SJ_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # ======================================
     con = axs[0].contourf(
         IndRAIR_ERA5_hgt_slope.sel(level=lev),
@@ -3915,19 +3915,19 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # SJ-KP area
     x0 = SJ_W
     y0 = SJ_S
     width = SJ_E-SJ_W
     height = SJ_N-SJ_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ===================================================
 con = axs[0].contourf(
     pre_AIR_India_pre_rvalue,
@@ -3999,19 +3999,19 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # SJ-KP area
     x0 = SJ_W
     y0 = SJ_S
     width = SJ_E-SJ_W
     height = SJ_N-SJ_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ======================================
 for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     # if lev == 200.0:
@@ -4398,19 +4398,19 @@ for num_lev,lev in enumerate([200.0]):
         y0 = India_S
         width = India_E-India_W
         height = India_N-India_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # NC area
         x0 = NC_W
         y0 = NC_S
         width = NC_E-NC_W
         height = NC_N-NC_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # SJ-KP area
         x0 = SJ_W
         y0 = SJ_S
         width = SJ_E-SJ_W
         height = SJ_N-SJ_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # ======================================
     con = axs[0].contourf(
         IndR_his_hgt_slope_ens.sel(level=lev),
@@ -4744,19 +4744,19 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # SJ-KP area
     x0 = SJ_W
     y0 = SJ_S
     width = SJ_E-SJ_W
     height = SJ_N-SJ_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ======================================
 for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
@@ -5056,19 +5056,19 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         y0 = India_S
         width = India_E-India_W
         height = India_N-India_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # NC area
         x0 = NC_W
         y0 = NC_S
         width = NC_E-NC_W
         height = NC_N-NC_S
-        patches(ax, x0 - cl, y0, width, height, proj)
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
         # #   IWF area
         # x0 = 90
         # y0 = 5.0
         # width = 50.0
         # height = 27.5
-        # patches(ax, x0 - cl, y0, width, height, proj)
+        # sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # ======================================
     con = axs[0].contourf(
         IndRAIR_ERA5_hgt_slope.sel(level=lev),
@@ -5274,19 +5274,19 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # #   IWF area
     # x0 = 90
     # y0 = 5.0
     # width = 50.0
     # height = 27.5
-    # patches(ax, x0 - cl, y0, width, height, proj)
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ======================================
 for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     con = axs[num_lev].contourf(
