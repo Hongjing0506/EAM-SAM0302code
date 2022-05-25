@@ -828,3 +828,4 @@ IndR_ssp585_p3_wind_ens_mask = ca.wind_check(
     xr.where(IndR_ssp585_p3_u_slope_ens_mask > 0.0, 1.0, 0.0),
     xr.where(IndR_ssp585_p3_v_slope_ens_mask > 0.0, 1.0, 0.0),
 )
+# %%
