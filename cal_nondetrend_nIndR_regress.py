@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-05-25 17:08:24
+LastEditTime: 2022-05-25 17:13:43
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -131,7 +131,7 @@ whis_ver_JJA = fwhis_ver_JJA["wap"].sel(time=fwhis_ver_JJA["time"].dt.year>=1979
 
 #   read the SST data in observation and CMIP6
 fssthis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/tos_historical_r144x72_195001-201412.nc")
-ssthis_JJA = fssthis_JJA["sst"].sel(time=fssthis_JJA["time"].dt.year>=1979)
+ssthis_JJA = fssthis_JJA["tos"].sel(time=fssthis_JJA["time"].dt.year>=1979)
 
 
 
@@ -157,7 +157,7 @@ wssp585_ver_JJA = fwssp585_ver_JJA["wap"]
 wssp585_p3_ver_JJA = wssp585_ver_JJA.sel(time=wssp585_ver_JJA.time.dt.year>=2064)
 
 fsstssp585_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/tos_ssp585_r144x72_201501-209912.nc")
-sstssp585_JJA = fsstssp585_JJA["sst"]
+sstssp585_JJA = fsstssp585_JJA["tos"]
 sstssp585_p3_JJA = sstssp585_JJA.sel(time=sstssp585_JJA.time.dt.year>=2064)
 
 
@@ -195,4 +195,10 @@ fssp585_IWF = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_
 ssp585_IWF = fssp585_IWF["IWF"]
 ssp585_p3_IWF = fssp585_IWF["IWF"].sel(time=fssp585_IWF["time"].dt.year>=2064)
 
+# %%
+#   change the coordinate of variable
+preGPCP_JJA.coords["time"] = prehis_JJA.coords["time"]
+preAIR_JJA.coords["time"] = prehis_JJA.coords["time"]
+models = uhis_ver_JJA.coords["models"]
+models_array = models.data
 # %%
