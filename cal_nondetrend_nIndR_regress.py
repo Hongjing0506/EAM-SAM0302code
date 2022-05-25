@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-05-25 17:24:37
+LastEditTime: 2022-05-25 17:38:49
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -395,4 +395,156 @@ vorERA5_WNPhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uERA5_WNPhigh_JJ
 vorhis_WNPhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(uhis_WNPhigh_JJA, vhis_WNPhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
 vorssp585_WNPhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_WNPhigh_JJA, vssp585_WNPhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
 vorssp585_p3_WNPhigh_JJA = ca.cal_lat_weighted_mean(mpcalc.vorticity(ussp585_p3_WNPhigh_JJA, vssp585_p3_WNPhigh_JJA)).mean(dim="lon", skipna=True).metpy.dequantify()
+# %%
+#   calculate the precipitation fields regression onto IndR
+(
+    pre_GPCP_India_pre_slope,
+    pre_GPCP_India_pre_intercept,
+    pre_GPCP_India_pre_rvalue,
+    pre_GPCP_India_pre_pvalue,
+    pre_GPCP_India_pre_hypothesis,
+) = ca.dim_linregress(preGPCP_India_JJA, preGPCP_JJA)
+
+preAIR_JJA.coords["time"] = preGPCP_JJA.coords["time"]
+(
+    pre_AIR_India_pre_slope,
+    pre_AIR_India_pre_intercept,
+    pre_AIR_India_pre_rvalue,
+    pre_AIR_India_pre_pvalue,
+    pre_AIR_India_pre_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, preGPCP_JJA)
+
+(
+    pre_his_India_pre_slope,
+    pre_his_India_pre_intercept,
+    pre_his_India_pre_rvalue,
+    pre_his_India_pre_pvalue,
+    pre_his_India_pre_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, prehis_JJA)
+
+(
+    pre_ssp585_p3_India_pre_slope,
+    pre_ssp585_p3_India_pre_intercept,
+    pre_ssp585_p3_India_pre_rvalue,
+    pre_ssp585_p3_India_pre_pvalue,
+    pre_ssp585_p3_India_pre_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, pressp585_p3_JJA)
+# %%
+#   calculate the MME for historical and ssp585_p3
+pre_his_India_pre_slope_ens = pre_his_India_pre_slope.mean(dim="models", skipna=True)
+
+pre_his_India_pre_slope_ens_mask = xr.where((ca.MME_reg_mask(pre_his_India_pre_slope_ens, pre_his_India_pre_slope.std(dim="models", skipna=True), len(pre_his_India_pre_slope.coords["models"]), True) + ca.cal_mmemask(pre_his_India_pre_slope)) >= 2.0, 1.0, 0.0)
+
+pre_his_India_pre_rvalue_ens = ca.cal_rMME(pre_his_India_pre_rvalue,"models")
+
+pre_his_India_pre_rvalue_ens_mask = xr.where((ca.MME_reg_mask(pre_his_India_pre_rvalue_ens, pre_his_India_pre_rvalue.std(dim="models", skipna=True), len(pre_his_India_pre_rvalue.coords["models"]), True) + ca.cal_mmemask(pre_his_India_pre_slope)) >= 2.0, 1.0, 0.0)
+
+pre_ssp585_p3_India_pre_slope_ens = pre_ssp585_p3_India_pre_slope.mean(dim="models", skipna=True)
+
+pre_ssp585_p3_India_pre_slope_ens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_p3_India_pre_slope_ens, pre_ssp585_p3_India_pre_slope.std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_slope.coords["models"]), True) + ca.cal_mmemask(pre_ssp585_p3_India_pre_slope)) >= 2.0, 1.0, 0.0)
+
+pre_ssp585_p3_India_pre_rvalue_ens = ca.cal_rMME(pre_ssp585_p3_India_pre_rvalue,"models")
+
+pre_ssp585_p3_India_pre_rvalue_ens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_ens, pre_ssp585_p3_India_pre_rvalue.std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_rvalue.coords["models"]), True) + ca.cal_mmemask(pre_ssp585_p3_India_pre_slope)) >= 2.0, 1.0, 0.0)
+# %%
+#   calculate the hgt/u/v regression onto IndR in ERA5, historical, ssp585, ssp585_p3
+preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
+preAIR_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
+
+
+(
+    IndR_his_hgt_slope,
+    IndR_his_hgt_intercept,
+    IndR_his_hgt_rvalue,
+    IndR_his_hgt_pvalue,
+    IndR_his_hgt_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, hgthis_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    IndR_his_u_slope,
+    IndR_his_u_intercept,
+    IndR_his_u_rvalue,
+    IndR_his_u_pvalue,
+    IndR_his_u_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, uhis_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    IndR_his_v_slope,
+    IndR_his_v_intercept,
+    IndR_his_v_rvalue,
+    IndR_his_v_pvalue,
+    IndR_his_v_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, vhis_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    IndR_ssp585_p3_hgt_slope,
+    IndR_ssp585_p3_hgt_intercept,
+    IndR_ssp585_p3_hgt_rvalue,
+    IndR_ssp585_p3_hgt_pvalue,
+    IndR_ssp585_p3_hgt_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, hgtssp585_p3_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    IndR_ssp585_p3_u_slope,
+    IndR_ssp585_p3_u_intercept,
+    IndR_ssp585_p3_u_rvalue,
+    IndR_ssp585_p3_u_pvalue,
+    IndR_ssp585_p3_u_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, ussp585_p3_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    IndR_ssp585_p3_v_slope,
+    IndR_ssp585_p3_v_intercept,
+    IndR_ssp585_p3_v_rvalue,
+    IndR_ssp585_p3_v_pvalue,
+    IndR_ssp585_p3_v_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, vssp585_p3_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    IndRAIR_ERA5_hgt_slope,
+    IndRAIR_ERA5_hgt_intercept,
+    IndRAIR_ERA5_hgt_rvalue,
+    IndRAIR_ERA5_hgt_pvalue,
+    IndRAIR_ERA5_hgt_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, hgtERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    IndRAIR_ERA5_u_slope,
+    IndRAIR_ERA5_u_intercept,
+    IndRAIR_ERA5_u_rvalue,
+    IndRAIR_ERA5_u_pvalue,
+    IndRAIR_ERA5_u_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, uERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    IndRAIR_ERA5_v_slope,
+    IndRAIR_ERA5_v_intercept,
+    IndRAIR_ERA5_v_rvalue,
+    IndRAIR_ERA5_v_pvalue,
+    IndRAIR_ERA5_v_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, vERA5_ver_JJA.sel(level=[200.0, 500.0, 850.0]))
+
+(
+    IndRAIR_ERA5_vor_slope,
+    IndRAIR_ERA5_vor_intercept,
+    IndRAIR_ERA5_vor_rvalue,
+    IndRAIR_ERA5_vor_pvalue,
+    IndRAIR_ERA5_vor_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, vorERA5_ver_JJA)
+
+(
+    IndR_his_vor_slope,
+    IndR_his_vor_intercept,
+    IndR_his_vor_rvalue,
+    IndR_his_vor_pvalue,
+    IndR_his_vor_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, vorhis_ver_JJA)
+
+(
+    IndR_ssp585_p3_vor_slope,
+    IndR_ssp585_p3_vor_intercept,
+    IndR_ssp585_p3_vor_rvalue,
+    IndR_ssp585_p3_vor_pvalue,
+    IndR_ssp585_p3_vor_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, vorssp585_p3_ver_JJA)
 # %%
