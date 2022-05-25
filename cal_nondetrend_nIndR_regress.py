@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-05-25 20:40:32
+LastEditTime: 2022-05-25 20:51:21
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -1196,6 +1196,82 @@ IndR_diff_u_rvalue_gens = ca.cal_rMME(IndR_diff_u_rvalue.sel(models=gmodels), "m
 IndR_diff_v_rvalue = ca.cal_rdiff(IndR_ssp585_p3_v_rvalue, IndR_his_v_rvalue)
 IndR_diff_v_rvalue_gens = ca.cal_rMME(IndR_diff_v_rvalue.sel(models=gmodels), "models")
 # %%
+#   calculate the corr analysis between India and different variables
+#   NCR
+IndR_GPCP_NC_regress = stats.linregress(preAIR_JJA, preGPCP_NC_JJA)
+
+IndR_his_NC_regress = ca.dim_linregress(prehis_India_JJA, prehis_NC_JJA)
+
+IndR_ssp585_p3_NC_regress = ca.dim_linregress(pressp585_p3_India_JJA, pressp585_p3_NC_JJA)
+
+IndR_diff_NC_slope = IndR_ssp585_p3_NC_regress[0] - IndR_his_NC_regress[0]
+IndR_diff_NC_rvalue = ca.cal_rdiff(IndR_ssp585_p3_NC_regress[2], IndR_his_NC_regress[2])
+
+#   KP
+IndR_GPCP_KP_regress = stats.linregress(preAIR_JJA, preGPCP_KP_JJA)
+
+IndR_his_KP_regress = ca.dim_linregress(prehis_India_JJA, prehis_KP_JJA)
+
+IndR_ssp585_p3_KP_regress = ca.dim_linregress(pressp585_p3_India_JJA, pressp585_p3_KP_JJA)
+
+IndR_diff_KP_slope = IndR_ssp585_p3_KP_regress[0] - IndR_his_KP_regress[0]
+IndR_diff_KP_rvalue = ca.cal_rdiff(IndR_ssp585_p3_KP_regress[2], IndR_his_KP_regress[2])
+
+#   SJ (actually Southern Japan and Korean peninsula)
+IndR_GPCP_SJ_regress = stats.linregress(preAIR_JJA, preGPCP_SJ_JJA)
+
+IndR_his_SJ_regress = ca.dim_linregress(prehis_India_JJA, prehis_SJ_JJA)
+
+IndR_ssp585_p3_SJ_regress = ca.dim_linregress(pressp585_p3_India_JJA, pressp585_p3_SJ_JJA)
+
+IndR_diff_SJ_slope = IndR_ssp585_p3_SJ_regress[0] - IndR_his_SJ_regress[0]
+IndR_diff_SJ_rvalue = ca.cal_rdiff(IndR_ssp585_p3_SJ_regress[2], IndR_his_SJ_regress[2])
+
+#   EAhigh
+IndR_GPCP_EAhigh_regress = stats.linregress(preAIR_JJA, vorERA5_EAhigh_JJA)
+IndR_his_EAhigh_regress = ca.dim_linregress(prehis_India_JJA, vorhis_EAhigh_JJA)
+IndR_ssp585_p3_EAhigh_regress = ca.dim_linregress(pressp585_p3_India_JJA, vorssp585_p3_EAhigh_JJA)
+
+IndR_diff_EAhigh_slope = IndR_ssp585_p3_EAhigh_regress[0] - IndR_his_EAhigh_regress[0]
+IndR_diff_EAhigh_rvalue = ca.cal_rdiff(IndR_ssp585_p3_EAhigh_regress[2], IndR_his_EAhigh_regress[2])
+
+#   WNPhigh
+IndR_GPCP_WNPhigh_regress = stats.linregress(preAIR_JJA, vorERA5_WNPhigh_JJA)
+IndR_his_WNPhigh_regress = ca.dim_linregress(prehis_India_JJA, vorhis_WNPhigh_JJA)
+IndR_ssp585_p3_WNPhigh_regress = ca.dim_linregress(pressp585_p3_India_JJA, vorssp585_p3_WNPhigh_JJA)
+
+IndR_diff_WNPhigh_slope = IndR_ssp585_p3_WNPhigh_regress[0] - IndR_his_WNPhigh_regress[0]
+IndR_diff_WNPhigh_rvalue = ca.cal_rdiff(IndR_ssp585_p3_WNPhigh_regress[2], IndR_his_WNPhigh_regress[2])
+
+#   EAhigh
+IndR_GPCP_WAhigh_regress = stats.linregress(preAIR_JJA, vorERA5_WAhigh_JJA)
+IndR_his_WAhigh_regress = ca.dim_linregress(prehis_India_JJA, vorhis_WAhigh_JJA)
+IndR_ssp585_p3_WAhigh_regress = ca.dim_linregress(pressp585_p3_India_JJA, vorssp585_p3_WAhigh_JJA)
+
+IndR_diff_WAhigh_slope = IndR_ssp585_p3_WAhigh_regress[0] - IndR_his_WAhigh_regress[0]
+IndR_diff_WAhigh_rvalue = ca.cal_rdiff(IndR_ssp585_p3_WAhigh_regress[2], IndR_his_WAhigh_regress[2])
+
+#   EAM index
+IndR_GPCP_EAM_regress = stats.linregress(preAIR_JJA, ERA5_EAM)
+IndR_his_EAM_regress = ca.dim_linregress(prehis_India_JJA, his_EAM)
+IndR_ssp585_p3_EAM_regress = ca.dim_linregress(pressp585_p3_India_JJA, ssp585_p3_EAM)
+IndR_diff_EAM_slope = IndR_ssp585_p3_EAM_regress[0] - IndR_his_EAM_regress[0]
+IndR_diff_EAM_rvalue = ca.cal_rdiff(IndR_ssp585_p3_EAM_regress[2], IndR_his_EAM_regress[2])
+
+#   IWF index
+IndR_GPCP_IWF_regress = stats.linregress(preAIR_JJA, ERA5_IWF)
+IndR_his_IWF_regress = ca.dim_linregress(prehis_India_JJA, his_IWF)
+IndR_ssp585_p3_IWF_regress = ca.dim_linregress(pressp585_p3_India_JJA, ssp585_p3_IWF)
+IndR_diff_IWF_slope = IndR_ssp585_p3_IWF_regress[0] - IndR_his_IWF_regress[0]
+IndR_diff_IWF_rvalue = ca.cal_rdiff(IndR_ssp585_p3_IWF_regress[2], IndR_his_IWF_regress[2])
+
+#   LKY index
+IndR_GPCP_LKY_regress = stats.linregress(preAIR_JJA, ERA5_LKY)
+IndR_his_LKY_regress = ca.dim_linregress(prehis_India_JJA, his_LKY)
+IndR_ssp585_p3_LKY_regress = ca.dim_linregress(pressp585_p3_India_JJA, ssp585_p3_LKY)
+IndR_diff_LKY_slope = IndR_ssp585_p3_LKY_regress[0] - IndR_his_LKY_regress[0]
+IndR_diff_LKY_rvalue = ca.cal_rdiff(IndR_ssp585_p3_LKY_regress[2], IndR_his_LKY_regress[2])
+# %%
 #   plot the circulation regress onto IndR in good-models for corr coeff.
 startlevel=[-1.0, -1.0, -1.0]
 spacinglevel=[0.1, 0.1, 0.1]
@@ -1595,181 +1671,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
-# %%
-#   plot the precipitation fields of good-models for corr coeff.
-pplt.rc.grid = False
-pplt.rc.reso = "lo"
-cl = 0  # 设置地图投影的中心纬度
-proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
-plot_array = np.reshape(range(1, 9), (2, 4))
-axs = fig.subplots(plot_array, proj=proj)
-
-#   set the geo_ticks and map projection to the plots
-xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
-yticks = np.arange(-30, 46, 15)  # 设置经度刻度
-# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
-# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
-extents = [xticks[0], xticks[-1], yticks[0], 55.0]
-sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
-
-# ===================================================
-ski = 2
-n = 1
-w, h = 0.12, 0.14
-# ===================================================
-for ax in axs:
-    # India area
-    x0 = India_W
-    y0 = India_S
-    width = India_E-India_W
-    height = India_N-India_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
-    # NC area
-    x0 = NC_W
-    y0 = NC_S
-    width = NC_E-NC_W
-    height = NC_N-NC_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
-# ===================================================
-con = axs[0].contourf(
-    pre_AIR_India_pre_rvalue,
-    cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8,
-    )
-sepl.plt_sig(
-    pre_AIR_India_pre_rvalue, axs[0], n, np.where(pre_AIR_India_pre_pvalue[::n, ::n] <= 0.10), "bright purple", 4.0,
-)
-
-axs[0].format(
-    rtitle="1979-2014", ltitle="AIR",
-)
-# ===================================================
-con = axs[1].contourf(
-    pre_his_India_pre_rvalue_gens,
-    cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8,
-    
-    )
-sepl.plt_sig(
-    pre_his_India_pre_rvalue_gens, axs[1], n, np.where(pre_his_India_pre_rvalue_gens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
-)
-
-axs[1].format(
-    rtitle="1979-2014", ltitle="gMME",
-)
-# ===================================================
-for num_models,mod in enumerate(gmodels):
-    con = axs[num_models+2].contourf(
-    pre_his_India_pre_rvalue.sel(models=mod),
-    cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8,
-    )
-    sepl.plt_sig(
-        pre_his_India_pre_rvalue.sel(models=mod), axs[num_models+2], n, np.where(pre_his_India_pre_pvalue.sel(models=mod)[::n, ::n] <= 0.10), "bright purple", 4.0,
-    )
-
-    axs[num_models+2].format(
-        rtitle="1979-2014", ltitle="{}".format(mod),
-    )
-fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
-# %%
-#   plot the precipitation fields of good-models for reg coeff.
-pplt.rc.grid = False
-pplt.rc.reso = "lo"
-cl = 0  # 设置地图投影的中心纬度
-proj = pplt.PlateCarree(central_longitude=cl)
-
-fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
-plot_array = np.reshape(range(1, 9), (2, 4))
-axs = fig.subplots(plot_array, proj=proj)
-
-#   set the geo_ticks and map projection to the plots
-xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
-yticks = np.arange(-30, 46, 15)  # 设置经度刻度
-# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
-# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
-extents = [xticks[0], xticks[-1], yticks[0], 55.0]
-sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
-
-# ===================================================
-ski = 2
-n = 1
-w, h = 0.12, 0.14
-# ===================================================
-for ax in axs:
-    # India area
-    x0 = India_W
-    y0 = India_S
-    width = India_E-India_W
-    height = India_N-India_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
-    # NC area
-    x0 = NC_W
-    y0 = NC_S
-    width = NC_E-NC_W
-    height = NC_N-NC_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
-# ===================================================
-con = axs[0].contourf(
-    pre_AIR_India_pre_slope,
-    cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-2.0, 2.1, 0.1),
-    zorder=0.8,
-    extend="both"
-    )
-sepl.plt_sig(
-    pre_AIR_India_pre_slope, axs[0], n, np.where(pre_AIR_India_pre_pvalue[::n, ::n] <= 0.10), "bright purple", 4.0,
-)
-
-axs[0].format(
-    rtitle="1979-2014", ltitle="AIR",
-)
-
-# ===================================================
-con = axs[1].contourf(
-    pre_his_India_pre_slope_gens,
-    cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-2.0, 2.1, 0.1),
-    zorder=0.8,
-    extend="both"
-    )
-sepl.plt_sig(
-    pre_his_India_pre_slope_gens, axs[1], n, np.where(pre_his_India_pre_slope_gens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
-)
-
-axs[1].format(
-    rtitle="1979-2014", ltitle="gMME",
-)
-# ===================================================
-for num_models,mod in enumerate(gmodels):
-    con = axs[num_models+2].contourf(
-    pre_his_India_pre_slope.sel(models=mod),
-    cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-2.0, 2.1, 0.1),
-    zorder=0.8,
-    extend="both"
-    )
-    sepl.plt_sig(
-        pre_his_India_pre_slope.sel(models=mod), axs[num_models+2], n, np.where(pre_his_India_pre_pvalue.sel(models=mod)[::n, ::n] <= 0.10), "bright purple", 4.0,
-    )
-
-    axs[num_models+2].format(
-        rtitle="1979-2014", ltitle="{}".format(mod),
-    )
-fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 # %%
 #   plot the circulation regress on IndR in good-models for corr coeff. in ssp585_p3
 startlevel=[-1.0, -1.0, -1.0]
@@ -2643,88 +2545,4 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U reg IndR".format(lev))
 # %%
-#   plot the precipitation fields of good-models for corr coeff.
-pplt.rc.grid = False
-pplt.rc.reso = "lo"
-cl = 0  # 设置地图投影的中心纬度
-proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
-plot_array = np.reshape(range(1, 9), (2, 4))
-axs = fig.subplots(plot_array, proj=proj)
-
-#   set the geo_ticks and map projection to the plots
-xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
-yticks = np.arange(-30, 46, 15)  # 设置经度刻度
-# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
-# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
-extents = [xticks[0], xticks[-1], yticks[0], 55.0]
-sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
-
-# ===================================================
-ski = 2
-n = 1
-w, h = 0.12, 0.14
-# ===================================================
-for ax in axs:
-    # India area
-    x0 = India_W
-    y0 = India_S
-    width = India_E-India_W
-    height = India_N-India_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
-    # NC area
-    x0 = NC_W
-    y0 = NC_S
-    width = NC_E-NC_W
-    height = NC_N-NC_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
-# ===================================================
-con = axs[0].contourf(
-    pre_AIR_India_pre_rvalue,
-    cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8,
-    )
-sepl.plt_sig(
-    pre_AIR_India_pre_rvalue, axs[0], n, np.where(pre_AIR_India_pre_pvalue[::n, ::n] <= 0.10), "bright purple", 4.0,
-)
-
-axs[0].format(
-    rtitle="1979-2014", ltitle="AIR",
-)
-# ===================================================
-con = axs[1].contourf(
-    pre_his_India_pre_rvalue_gens,
-    cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8,
-    
-    )
-sepl.plt_sig(
-    pre_his_India_pre_rvalue_gens, axs[1], n, np.where(pre_his_India_pre_rvalue_gens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
-)
-
-axs[1].format(
-    rtitle="1979-2014", ltitle="gMME",
-)
-# ===================================================
-for num_models,mod in enumerate(gmodels):
-    con = axs[num_models+2].contourf(
-    pre_his_India_pre_rvalue.sel(models=mod),
-    cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-1.0, 1.1, 0.1),
-    zorder=0.8,
-    )
-    sepl.plt_sig(
-        pre_his_India_pre_rvalue.sel(models=mod), axs[num_models+2], n, np.where(pre_his_India_pre_pvalue.sel(models=mod)[::n, ::n] <= 0.10), "bright purple", 4.0,
-    )
-
-    axs[num_models+2].format(
-        rtitle="1979-2014", ltitle="{}".format(mod),
-    )
-fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
