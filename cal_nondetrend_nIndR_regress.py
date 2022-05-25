@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-05-25 17:38:49
+LastEditTime: 2022-05-25 18:06:43
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -547,4 +547,171 @@ preAIR_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
     IndR_ssp585_p3_vor_pvalue,
     IndR_ssp585_p3_vor_hypothesis,
 ) = ca.dim_linregress(pressp585_p3_India_JJA, vorssp585_p3_ver_JJA)
+# %%
+#   save the regression results
+level=IndR_his_hgt_slope.coords["level"]
+lat=IndR_his_hgt_slope.coords["lat"]
+lon=IndR_his_hgt_slope.coords["lon"]
+
+IndRAIR_ERA5_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], IndRAIR_ERA5_hgt_slope.data),
+        intercept=(["level", "lat", "lon"], IndRAIR_ERA5_hgt_intercept.data),
+        rvalue=(["level", "lat", "lon"], IndRAIR_ERA5_hgt_rvalue.data),
+        pvalue=(["level", "lat", "lon"], IndRAIR_ERA5_hgt_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], IndRAIR_ERA5_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of ERA5 regress onto 1979-2014 AIR"),
+)
+
+IndRAIR_ERA5_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], IndRAIR_ERA5_u_slope.data),
+        intercept=(["level", "lat", "lon"], IndRAIR_ERA5_u_intercept.data),
+        rvalue=(["level", "lat", "lon"], IndRAIR_ERA5_u_rvalue.data),
+        pvalue=(["level", "lat", "lon"], IndRAIR_ERA5_u_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], IndRAIR_ERA5_u_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of ERA5 regress onto 1979-2014 AIR"),
+)
+
+IndRAIR_ERA5_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["level", "lat", "lon"], IndRAIR_ERA5_v_slope.data),
+        intercept=(["level", "lat", "lon"], IndRAIR_ERA5_v_intercept.data),
+        rvalue=(["level", "lat", "lon"], IndRAIR_ERA5_v_rvalue.data),
+        pvalue=(["level", "lat", "lon"], IndRAIR_ERA5_v_pvalue.data),
+        hypothesis=(["level", "lat", "lon"], IndRAIR_ERA5_v_hypothesis.data),
+    ),
+    coords=dict(
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of ERA5 regress onto 1979-2014 AIR"),
+)
+
+IndR_his_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_his_hgt_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_his_hgt_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_his_hgt_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_his_hgt_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_his_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of historical regress onto 1979-2014 IndR"),
+)
+
+IndR_his_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_his_u_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_his_u_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_his_u_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_his_u_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_his_u_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of historical regress onto 1979-2014 IndR"),
+)
+
+IndR_his_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_his_v_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_his_v_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_his_v_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_his_v_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_his_v_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of historical regress onto 1979-2014 IndR"),
+)
+
+IndR_ssp585_p3_hgt_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_ssp585_p3_hgt_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_ssp585_p3_hgt_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_ssp585_p3_hgt_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_ssp585_p3_hgt_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_ssp585_p3_hgt_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="hgt fields of ssp585_p3 regress onto 2064-2099 IndR"),
+)
+
+IndR_ssp585_p3_u_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_ssp585_p3_u_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_ssp585_p3_u_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_ssp585_p3_u_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_ssp585_p3_u_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_ssp585_p3_u_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="u fields of ssp585_p3 regress onto 2064-2099 IndR"),
+)
+
+IndR_ssp585_p3_v_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["models", "level", "lat", "lon"], IndR_ssp585_p3_v_slope.data),
+        intercept=(["models", "level", "lat", "lon"], IndR_ssp585_p3_v_intercept.data),
+        rvalue=(["models", "level", "lat", "lon"], IndR_ssp585_p3_v_rvalue.data),
+        pvalue=(["models", "level", "lat", "lon"], IndR_ssp585_p3_v_pvalue.data),
+        hypothesis=(["models", "level", "lat", "lon"], IndR_ssp585_p3_v_hypothesis.data),
+    ),
+    coords=dict(
+        models=models.data,
+        level=level.data,
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="v fields of ssp585_p3 regress onto 2064-2099 IndR"),
+)
+
+IndRAIR_ERA5_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndRAIR_ERA5_hgt_regress.nc")
+IndRAIR_ERA5_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndRAIR_ERA5_u_regress.nc")
+IndRAIR_ERA5_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndRAIR_ERA5_v_regress.nc")
+
+IndR_his_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_hgt_regress.nc")
+IndR_his_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_u_regress.nc")
+IndR_his_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_v_regress.nc")
+
+IndR_ssp585_p3_hgt_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_hgt_regress.nc")
+IndR_ssp585_p3_u_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_u_regress.nc")
+IndR_ssp585_p3_v_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_v_regress.nc")
 # %%
