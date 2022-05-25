@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-05-25 21:18:36
+LastEditTime: 2022-05-25 21:21:59
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -3131,7 +3131,7 @@ con = axs[0].contourf(
     vorssp585_p3_cli_ver_JJA.mean(dim="models", skipna=True)-vorhis_cli_ver_JJA.mean(dim="models", skipna=True),
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-1.0e-6, 1.0e-6+1.0e-7, 1.0e-7),
+    levels=np.arange(-1.0e-5, 1.0e-5+1.0e-6, 1.0e-6),
     zorder=0.8,
     extend="both"
     )
@@ -3145,7 +3145,7 @@ for num_mod, mod in enumerate(models):
         vorssp585_p3_cli_ver_JJA.sel(models=mod) - vorhis_cli_ver_JJA.sel(models=mod),
         cmap="ColdHot",
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-        levels=np.arange(-1.0e-6, 1.0e-6+1.0e-7, 1.0e-7),
+        levels=np.arange(-1.0e-5, 1.0e-5+1.0e-6, 1.0e-6),
         zorder=0.8,
         extend="both"
     )
@@ -3155,3 +3155,247 @@ for num_mod, mod in enumerate(models):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="200hPa vor reg IndR")
 # %%
+#   only plot the precipitation regress onto AIR and IndR in MME
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+# plot_array = np.reshape(range(1, 31), (6, 5))
+# plot_array[5,-1] = 0
+axs = fig.subplots(ncols=1, nrows=2, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    # India area
+    x0 = India_W
+    y0 = India_S
+    width = India_E-India_W
+    height = India_N-India_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # NC area
+    x0 = NC_W
+    y0 = NC_S
+    width = NC_E-NC_W
+    height = NC_N-NC_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # SJ-KP area
+    x0 = SJ_W
+    y0 = SJ_S
+    width = SJ_E-SJ_W
+    height = SJ_N-SJ_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0].contourf(
+    pre_AIR_India_pre_rvalue,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    )
+sepl.plt_sig(
+    pre_AIR_India_pre_rvalue, axs[0], n, np.where(pre_AIR_India_pre_pvalue[::n, ::n] <= 0.10), "bright purple", 4.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="AIR and GPCP",
+)
+# ===================================================
+con = axs[1].contourf(
+    pre_his_India_pre_rvalue_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0, 1.1, 0.1),
+    zorder=0.8,
+    
+    )
+sepl.plt_sig(
+    pre_his_India_pre_rvalue_ens, axs[1], n, np.where(pre_his_India_pre_rvalue_ens_mask[::n, ::n] > 0.0), "bright purple", 4.0,
+)
+
+axs[1].format(
+    rtitle="1979-2014", ltitle="MME",
+)
+# ===================================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
+# %%
+#   only plot the circulation regress onto AIR and IndR in MME
+startlevel=[-15, -8, -6]
+spacinglevel=[0.75, 0.4, 0.3]
+scalelevel=[0.23, 0.17, 0.14]
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 7), (3, 2))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ======================================
+for ax in axs:
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+    ax.add_patch(rect)
+    # India area
+    x0 = India_W
+    y0 = India_S
+    width = India_E-India_W
+    height = India_N-India_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # NC area
+    x0 = NC_W
+    y0 = NC_S
+    width = NC_E-NC_W
+    height = NC_N-NC_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # SJ-KP area
+    x0 = SJ_W
+    y0 = SJ_S
+    width = SJ_E-SJ_W
+    height = SJ_N-SJ_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+# ======================================
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    if lev == 200.0:
+        for ax in axs[num_lev, :]:
+            x0 = 50
+            y0 = 15
+            width = 90
+            height = 32.5
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+            #   EAM index
+            x0 = 110.0
+            y0 = 40.0
+            width = 40.0
+            height = 10.0
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="green8", linestyle="-")
+            x0 = 110.0
+            y0 = 25.0
+            width = 40.0
+            height = 10.0
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="green8", linestyle="-")
+    elif lev == 850.0:
+        for ax in axs[num_lev, :]:
+            x0 = 110
+            y0 = 15
+            width = 27
+            height = 22.5
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+    con = axs[num_lev, 0].contourf(
+        IndRAIR_ERA5_hgt_slope.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndRAIR_ERA5_hgt_slope.sel(level=lev), axs[num_lev, 0], n, np.where(IndRAIR_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 3.0,
+    )
+    axs[num_lev, 0].quiver(
+        IndRAIR_ERA5_u_slope.sel(level=lev)[::ski, ::ski],
+        IndRAIR_ERA5_v_slope.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 0].quiver(
+        IndRAIR_ERA5_u_slope.sel(level=lev).where(IndRAIR_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndRAIR_ERA5_v_slope.sel(level=lev).where(IndRAIR_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[num_lev, 0].format(
+        rtitle="1979-2014 {:.0f}hPa".format(lev), ltitle="AIR & ERA5",
+    )
+    # ======================================
+    con = axs[num_lev, 1].contourf(
+        IndR_his_hgt_slope_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_hgt_slope_ens.sel(level=lev), axs[num_lev, 1], n, np.where(IndR_his_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 3.0,
+    )
+    axs[num_lev, 1].quiver(
+        IndR_his_u_slope_ens.sel(level=lev)[::ski, ::ski],
+        IndR_his_v_slope_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 1].quiver(
+        IndR_his_u_slope_ens.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_his_v_slope_ens.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    axs[num_lev, 1].format(
+        rtitle="1979-2014 {:.0f}hPa".format(lev), ltitle="MME",
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="hgt&U reg IndR".format(lev))
