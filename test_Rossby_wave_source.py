@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-05 17:39:45
 LastEditors: ChenHJ
-LastEditTime: 2022-06-06 13:17:25
+LastEditTime: 2022-06-06 13:19:41
 FilePath: /chenhj/0302code/test_Rossby_wave_source.py
 Aim: 
 Mission: 
@@ -52,9 +52,9 @@ from scipy import signal
 from eofs.multivariate.standard import MultivariateEof
 from eofs.standard import Eof
 #%%
-#   read the data from ERA5
+#   read the data from ERA5 and calculate bandpass filter
 fvERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/vwind_mon_r144x72_195001-201412.nc")
 vERA5 = fvERA5["v"]
-vERA5_MAM = ca.p_time(vERA5, 3, 5, True).sel(level=250.0)
-vERA5_MAM_fil = ca.b
+vERA5_fil = ca.butterworth_filter(vERA5, 8, 2*12, 9*12, "bandpass")
+vERA5_MAM = ca.p_time(vERA5_fil, 3, 5, True).sel(level=250.0)
 # %%
