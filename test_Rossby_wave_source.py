@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-05 17:39:45
 LastEditors: ChenHJ
-LastEditTime: 2022-06-06 21:35:34
+LastEditTime: 2022-06-06 21:46:11
 FilePath: /chenhj/0302code/test_Rossby_wave_source.py
 Aim: 
 Mission: 
@@ -107,6 +107,38 @@ revor_prime = pc1_revor_slope.copy()
 S = -1.0*mpcalc.divergence(udiv_prime*abvor_bar, vdiv_prime*abvor_bar) - 1.0*mpcalc.divergence(udiv_bar*revor_prime, vdiv_bar*revor_prime)
 
 # %%
+#   plot the Rossby wave source
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
 
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+# plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-3:] = 0
+axs = fig.subplots(ncols=1,nrows=1, proj=proj)
 
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([-60, 0, 60, 120])  # 设置纬度刻度
+yticks = np.array([30.0, 60.0])  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [-80.0, 150.0, 10.0, 80.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    S,
+    cmap="ColdHot",
+    levels=np.array([-3e-11,-2e-11,-1e-11,1e-11,2e-11,3e-11]),
+    zorder=0.8,
+    extend="both",
+    nozero=True
+)
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(suptitle="Rossby Wave Source")
 # %%
