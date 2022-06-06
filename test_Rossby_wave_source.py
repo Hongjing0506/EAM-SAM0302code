@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-05 17:39:45
 LastEditors: ChenHJ
-LastEditTime: 2022-06-06 17:08:06
+LastEditTime: 2022-06-06 17:53:14
 FilePath: /chenhj/0302code/test_Rossby_wave_source.py
 Aim: 
 Mission: 
@@ -85,4 +85,20 @@ pc1_vERA5_slope, pc1_vERA5_intercept, pc1_vERA5_rvalue, pc1_vERA5_pvalue, pc1_vE
 pc1_uERA5_slope, pc1_uERA5_intercept, pc1_uERA5_rvalue, pc1_uERA5_pvalue, pc1_uERA5_hypothesis = ca.dim_linregress(vERA5_MAM_pc1, uERA5_MAM)
 
 # %%
-#   calculate the irrotational(divergence) wind
+#   calculate the climatology absolute vorticity and irrotational(divergent) wind
+uERA5_MAM_cli = uERA5_MAM.mean(dim="time", skipna=True)
+vERA5_MAM_cli = vERA5_MAM.mean(dim="time", skipna=True)
+#   absolute vorticity
+abvor_cli = mpcalc.absolute_vorticity(uERA5_MAM, vERA5_MAM).metpy.dequantify().mean(dim="time", skipna=True)
+#   irrotational(divergence) wind
+w_bar = VectorWind(uERA5_MAM, vERA5_MAM)
+udiv_bar, vdiv_bar = w_bar.irrotationalcomponent()
+
+
+# %%
+#   calculate the prime irrotational(divergence) wind and prime vorticity
+w_prime = VectorWind(pc1_uERA5_slope, pc1_vERA5_slope)
+udiv_prime, vdiv_prime = w_prime.irrotationalcomponent()
+
+
+# %%
