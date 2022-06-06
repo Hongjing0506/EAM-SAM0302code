@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-05 17:39:45
 LastEditors: ChenHJ
-LastEditTime: 2022-06-06 17:53:14
+LastEditTime: 2022-06-06 21:35:34
 FilePath: /chenhj/0302code/test_Rossby_wave_source.py
 Aim: 
 Mission: 
@@ -64,8 +64,8 @@ uERA5_fil = ca.butterworth_filter(uERA5, 8, 2*12, 9*12, "bandpass")
 uERA5_MAM = ca.p_time(uERA5_fil, 3, 5, True).sel(level=250.0)
 # %%
 #   rearange the coordinate of vERA5_MAM into -180°-180°
-vERA5_MAM = ca.filplonlat(vERA5_MAM)
 uERA5_MAM = ca.filplonlat(uERA5_MAM)
+vERA5_MAM = ca.filplonlat(vERA5_MAM)
 EOF_area_N = 75.0
 EOF_area_S = 35.0
 EOF_area_E = 120.0
@@ -80,25 +80,33 @@ vERA5_MAM_EOF, vERA5_MAM_pc1, vERA5_MAM_pcC = ca.eof_analyse(vERA5_MAM_EOF_area_
 vERA5_MAM_EOF1 = vERA5_MAM_EOF[0,:,:]
 vERA5_MAM_pc1 = np.squeeze(vERA5_MAM_pc1,axis=1)
 # %%
-#   calculate the meridional wind regress coefficients onto pc1
-pc1_vERA5_slope, pc1_vERA5_intercept, pc1_vERA5_rvalue, pc1_vERA5_pvalue, pc1_vERA5_hypothesis = ca.dim_linregress(vERA5_MAM_pc1, vERA5_MAM)
-pc1_uERA5_slope, pc1_uERA5_intercept, pc1_uERA5_rvalue, pc1_uERA5_pvalue, pc1_uERA5_hypothesis = ca.dim_linregress(vERA5_MAM_pc1, uERA5_MAM)
-
-# %%
-#   calculate the climatology absolute vorticity and irrotational(divergent) wind
-uERA5_MAM_cli = uERA5_MAM.mean(dim="time", skipna=True)
-vERA5_MAM_cli = vERA5_MAM.mean(dim="time", skipna=True)
+#   calculate the absolute vorticity and irrotational(divergent) wind
 #   absolute vorticity
-abvor_cli = mpcalc.absolute_vorticity(uERA5_MAM, vERA5_MAM).metpy.dequantify().mean(dim="time", skipna=True)
+abvor = mpcalc.absolute_vorticity(uERA5_MAM, vERA5_MAM).metpy.dequantify()
+revor = mpcalc.vorticity(uERA5_MAM, vERA5_MAM).metpy.dequantify()
 #   irrotational(divergence) wind
-w_bar = VectorWind(uERA5_MAM, vERA5_MAM)
-udiv_bar, vdiv_bar = w_bar.irrotationalcomponent()
+w = VectorWind(uERA5_MAM, vERA5_MAM)
+udiv, vdiv = w.irrotationalcomponent()
 
+udiv_bar = udiv.mean(dim="time", skipna=True)
+vdiv_bar = vdiv.mean(dim="time", skipna=True)
+abvor_bar = abvor.mean(dim="time", skipna=True)
+
+pc1_udiv_slope, pc1_udiv_intercept, pc1_udiv_rvalue, pc1_udiv_pvalue, pc1_udiv_hypothesis = ca.dim_linregress(vERA5_MAM_pc1, udiv)
+pc1_vdiv_slope, pc1_vdiv_intercept, pc1_vdiv_rvalue, pc1_vdiv_pvalue, pc1_vdiv_hypothesis = ca.dim_linregress(vERA5_MAM_pc1, vdiv)
+pc1_revor_slope, pc1_revor_intercept, pc1_revor_rvalue, pc1_revor_pvalue, pc1_revor_hypothesis = ca.dim_linregress(vERA5_MAM_pc1, revor)
+
+#   udiv and vdiv prime
+udiv_prime = pc1_udiv_slope.copy()
+vdiv_prime = pc1_vdiv_slope.copy()
+
+#   vorticity prime
+revor_prime = pc1_revor_slope.copy()
+
+#   calculate the lineared Rossby wave source
+S = -1.0*mpcalc.divergence(udiv_prime*abvor_bar, vdiv_prime*abvor_bar) - 1.0*mpcalc.divergence(udiv_bar*revor_prime, vdiv_bar*revor_prime)
 
 # %%
-#   calculate the prime irrotational(divergence) wind and prime vorticity
-w_prime = VectorWind(pc1_uERA5_slope, pc1_vERA5_slope)
-udiv_prime, vdiv_prime = w_prime.irrotationalcomponent()
 
 
 # %%
