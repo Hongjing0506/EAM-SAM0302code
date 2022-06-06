@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-05 17:39:45
 LastEditors: ChenHJ
-LastEditTime: 2022-06-06 13:19:41
+LastEditTime: 2022-06-06 16:56:16
 FilePath: /chenhj/0302code/test_Rossby_wave_source.py
 Aim: 
 Mission: 
@@ -57,4 +57,20 @@ fvERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_d
 vERA5 = fvERA5["v"]
 vERA5_fil = ca.butterworth_filter(vERA5, 8, 2*12, 9*12, "bandpass")
 vERA5_MAM = ca.p_time(vERA5_fil, 3, 5, True).sel(level=250.0)
+# %%
+#   rearange the coordinate of vERA5_MAM into -180°-180°
+vERA5_MAM = ca.filplonlat(vERA5_MAM)
+EOF_area_N = 75.0
+EOF_area_S = 35.0
+EOF_area_E = 120.0
+EOF_area_W = -80.0
+
+lat = vERA5_MAM.coords["lat"]
+lon = vERA5_MAM.coords["lon"]
+lat_EOF_range = lat[(lat >= EOF_area_S) & (lat <= EOF_area_N)]
+lon_EOF_range = lon[(lon >= EOF_area_W) & (lon <= EOF_area_E)]
+vERA5_MAM_EOF_area_std = ca.standardize(vERA5_MAM.sel(lat=lat_EOF_range, lon=lon_EOF_range))
+vERA5_MAM_EOF, vERA5_MAM_pc1, vERA5_MAM_pcC = ca.eof_analyse(vERA5_MAM_EOF_area_std.data, lat_EOF_range.data, 1)
+vERA5_MAM_EOF1 = vERA5_MAM_EOF[0,:,:]
+vERA5_MAM_pc1 = np.squeeze(vERA5_MAM_pc1,axis=1)
 # %%
