@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-07 23:08:47
+LastEditTime: 2022-06-07 23:26:43
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -735,7 +735,27 @@ vdivERA5_prime = IndR_ERA5_vdiv_regress["slope"]
 vdivhis_prime = IndR_his_vdiv_regress["slope"]
 vdivssp585_p3_prime = IndR_ssp585_p3_vdiv_regress["slope"]
 #%%
-#   
+#   calculate the Rossby Wave Source
+wSERA51 = VectorWind(udivERA5_prime*abvorERA5_ver_JJA_cli, vdivERA5_prime*abvorERA5_ver_JJA_cli)
+
+wSERA52 = VectorWind(udivERA5_bar*vorERA5_ver_JJA_prime, vdivERA5_bar*vorERA5_ver_JJA_prime)
+
+SERA5 = -wSERA51.divergence()-wSERA52.divergence()
+
+wShis1 = VectorWind(udivhis_prime*abvorhis_ver_JJA_cli, vdivhis_prime*abvorhis_ver_JJA_cli)
+
+wShis2 = VectorWind(udivhis_bar*vorhis_ver_JJA_prime, vdivhis_bar*vorhis_ver_JJA_prime)
+
+Shis = -wShis1.divergence()-wShis2.divergence()
+
+wSssp585_p31 = VectorWind(udivssp585_p3_prime*abvorssp585_p3_ver_JJA_cli, vdivssp585_p3_prime*abvorssp585_p3_ver_JJA_cli)
+
+wSssp585_p32 = VectorWind(udivssp585_p3_bar*vorssp585_p3_ver_JJA_prime, vdivssp585_p3_bar*vorssp585_p3_ver_JJA_prime)
+
+Sssp585_p3 = -wSssp585_p31.divergence()-wSssp585_p32.divergence()
+
+# SERA5 = -1.0*mpcalc.divergence(udivERA5_prime*abvorERA5_ver_JJA_cli,vdivERA5_prime*abvorERA5_ver_JJA_cli).metpy.dequantify() - 1.0*mpcalc.divergence(udivERA5_bar*vorERA5_ver_JJA_prime,vdivERA5_bar*vorERA5_ver_JJA_prime).metpy.dequantify()
+
 #%%
 # #   calculate the hgt/u/v regression onto IndR in ERA5, historical, ssp585, ssp585_p3
 # preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
