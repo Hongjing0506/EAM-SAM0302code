@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-07 19:47:52
+LastEditTime: 2022-06-07 22:40:58
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -233,20 +233,21 @@ wERA5 = VectorWind(uERA5_ver_JJA.sel(level=200.0), vERA5_ver_JJA.sel(level=200.0
 whis = VectorWind(uhis_ver_JJA.sel(level=200.0), vhis_ver_JJA.sel(level=200.0))
 wssp585_p3 = VectorWind(ussp585_p3_ver_JJA.sel(level=200.0), vssp585_p3_ver_JJA.sel(level=200.0))
 
-udivERA5, vdivERA5 = wERA5.irrotationalcomponent()
-udivhis, vdivhis = whis.irrotationalcomponent()
-udivssp585_p3, vdivssp585_p3 = wssp585_p3.irrotationalcomponent()
+udivERA5_ver_JJA, vdivERA5_ver_JJA = wERA5.irrotationalcomponent()
+udivhis_ver_JJA, vdivhis_ver_JJA = whis.irrotationalcomponent()
+udivssp585_p3_ver_JJA, vdivssp585_p3_ver_JJA = wssp585_p3.irrotationalcomponent()
 
 #   irrotational(divergent) wind climatology
-udivERA5_bar = udivERA5.mean(dim="time", skipna=True)
-vdivERA5_bar = vdivERA5.mean(dim="time", skipna=True)
+udivERA5_bar = udivERA5_ver_JJA.mean(dim="time", skipna=True)
+vdivERA5_bar = vdivERA5_ver_JJA.mean(dim="time", skipna=True)
 
-udivhis_bar = udivhis.mean(dim="time", skipna=True)
-vdivhis_bar = vdivhis.mean(dim="time", skipna=True)
+udivhis_bar = udivhis_ver_JJA.mean(dim="time", skipna=True)
+vdivhis_bar = vdivhis_ver_JJA.mean(dim="time", skipna=True)
 
-udivssp585_p3_bar = udivssp585_p3.mean(dim="time", skipna=True)
-vdivssp585_p3_bar = vdivssp585_p3.mean(dim="time", skipna=True)
+udivssp585_p3_bar = udivssp585_p3_ver_JJA.mean(dim="time", skipna=True)
+vdivssp585_p3_bar = vdivssp585_p3_ver_JJA.mean(dim="time", skipna=True)
 
+# ==========================
 his_LKY = ca.LKY(uhis_ver_JJA, vhis_ver_JJA)
 ssp585_p3_LKY = ca.LKY(ussp585_p3_ver_JJA, vssp585_p3_ver_JJA)
 
@@ -478,6 +479,102 @@ pre_ssp585_p3_India_pre_rvalue_ens = ca.cal_rMME(pre_ssp585_p3_India_pre_rvalue,
 
 pre_ssp585_p3_India_pre_rvalue_ens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_ens, pre_ssp585_p3_India_pre_rvalue.std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_rvalue.coords["models"]), True) + ca.cal_mmemask(pre_ssp585_p3_India_pre_slope)) >= 2.0, 1.0, 0.0)
 # %%
+#   calculate the relative vorticity prime and irrotational winds prime
+preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
+preAIR_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
+
+(
+    IndR_ERA5_vor_slope,
+    IndR_ERA5_vor_intercept,
+    IndR_ERA5_vor_rvalue,
+    IndR_ERA5_vor_pvalue,
+    IndR_ERA5_vor_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, vorERA5_ver_JJA)
+
+(
+    IndR_his_vor_slope,
+    IndR_his_vor_intercept,
+    IndR_his_vor_rvalue,
+    IndR_his_vor_pvalue,
+    IndR_his_vor_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, vorhis_ver_JJA)
+
+(
+    IndR_ssp585_p3_vor_slope,
+    IndR_ssp585_p3_vor_intercept,
+    IndR_ssp585_p3_vor_rvalue,
+    IndR_ssp585_p3_vor_pvalue,
+    IndR_ssp585_p3_vor_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, vorssp585_p3_ver_JJA)
+
+(
+    IndR_ERA5_udiv_slope,
+    IndR_ERA5_udiv_intercept,
+    IndR_ERA5_udiv_rvalue,
+    IndR_ERA5_udiv_pvalue,
+    IndR_ERA5_udiv_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, udivERA5_ver_JJA)
+
+(
+    IndR_his_udiv_slope,
+    IndR_his_udiv_intercept,
+    IndR_his_udiv_rvalue,
+    IndR_his_udiv_pvalue,
+    IndR_his_udiv_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, udivhis_ver_JJA)
+
+(
+    IndR_ssp585_p3_udiv_slope,
+    IndR_ssp585_p3_udiv_intercept,
+    IndR_ssp585_p3_udiv_rvalue,
+    IndR_ssp585_p3_udiv_pvalue,
+    IndR_ssp585_p3_udiv_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, udivssp585_p3_ver_JJA)
+
+(
+    IndR_ERA5_vdiv_slope,
+    IndR_ERA5_vdiv_intercept,
+    IndR_ERA5_vdiv_rvalue,
+    IndR_ERA5_vdiv_pvalue,
+    IndR_ERA5_vdiv_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, vdivERA5_ver_JJA)
+
+(
+    IndR_his_vdiv_slope,
+    IndR_his_vdiv_intercept,
+    IndR_his_vdiv_rvalue,
+    IndR_his_vdiv_pvalue,
+    IndR_his_vdiv_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, vdivhis_ver_JJA)
+
+(
+    IndR_ssp585_p3_vdiv_slope,
+    IndR_ssp585_p3_vdiv_intercept,
+    IndR_ssp585_p3_vdiv_rvalue,
+    IndR_ssp585_p3_vdiv_pvalue,
+    IndR_ssp585_p3_vdiv_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, vdivssp585_p3_ver_JJA)
+# %%
+#   save the regression results
+level=IndR_his_vor_slope.coords["level"]
+lat=IndR_his_vor_slope.coords["lat"]
+lon=IndR_his_vor_slope.coords["lon"]
+
+IndRAIR_ERA5_vor_regress = xr.Dataset(
+    data_vars=dict(
+        slope=(["lat", "lon"], IndRAIR_ERA5_vor_slope.data),
+        intercept=(["lat", "lon"], IndRAIR_ERA5_vor_intercept.data),
+        rvalue=(["lat", "lon"], IndRAIR_ERA5_vor_rvalue.data),
+        pvalue=(["lat", "lon"], IndRAIR_ERA5_vor_pvalue.data),
+        hypothesis=(["lat", "lon"], IndRAIR_ERA5_vor_hypothesis.data),
+    ),
+    coords=dict(
+        lat=lat.data,
+        lon=lon.data,
+    ),
+    attrs=dict(description="relative vorticity fields of ERA5 regress onto 1979-2014 AIR"),
+)
+#%%
 # #   calculate the hgt/u/v regression onto IndR in ERA5, historical, ssp585, ssp585_p3
 # preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
 # preAIR_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
