@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-05 17:39:45
 LastEditors: ChenHJ
-LastEditTime: 2022-06-06 21:46:11
+LastEditTime: 2022-06-07 13:30:22
 FilePath: /chenhj/0302code/test_Rossby_wave_source.py
 Aim: 
 Mission: 
@@ -75,8 +75,8 @@ lat = vERA5_MAM.coords["lat"]
 lon = vERA5_MAM.coords["lon"]
 lat_EOF_range = lat[(lat >= EOF_area_S) & (lat <= EOF_area_N)]
 lon_EOF_range = lon[(lon >= EOF_area_W) & (lon <= EOF_area_E)]
-vERA5_MAM_EOF_area_std = ca.standardize(vERA5_MAM.sel(lat=lat_EOF_range, lon=lon_EOF_range))
-vERA5_MAM_EOF, vERA5_MAM_pc1, vERA5_MAM_pcC = ca.eof_analyse(vERA5_MAM_EOF_area_std.data, lat_EOF_range.data, 1)
+vERA5_MAM_EOF_area = vERA5_MAM.sel(lat=lat_EOF_range, lon=lon_EOF_range)
+vERA5_MAM_EOF, vERA5_MAM_pc1, vERA5_MAM_pcC = ca.eof_analyse(vERA5_MAM_EOF_area.data, lat_EOF_range.data, 1)
 vERA5_MAM_EOF1 = vERA5_MAM_EOF[0,:,:]
 vERA5_MAM_pc1 = np.squeeze(vERA5_MAM_pc1,axis=1)
 # %%
