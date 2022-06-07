@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-07 22:53:04
+LastEditTime: 2022-06-07 23:08:47
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -479,238 +479,263 @@ pre_ssp585_p3_India_pre_rvalue_ens = ca.cal_rMME(pre_ssp585_p3_India_pre_rvalue,
 
 pre_ssp585_p3_India_pre_rvalue_ens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_p3_India_pre_rvalue_ens, pre_ssp585_p3_India_pre_rvalue.std(dim="models", skipna=True), len(pre_ssp585_p3_India_pre_rvalue.coords["models"]), True) + ca.cal_mmemask(pre_ssp585_p3_India_pre_slope)) >= 2.0, 1.0, 0.0)
 # %%
-#   calculate the relative vorticity prime and irrotational winds prime
-preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
-preAIR_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
+# #   calculate the relative vorticity prime and irrotational winds prime
+# preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
+# preAIR_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
 
-(
-    IndR_ERA5_vor_slope,
-    IndR_ERA5_vor_intercept,
-    IndR_ERA5_vor_rvalue,
-    IndR_ERA5_vor_pvalue,
-    IndR_ERA5_vor_hypothesis,
-) = ca.dim_linregress(preAIR_JJA, vorERA5_ver_JJA)
+# (
+#     IndR_ERA5_vor_slope,
+#     IndR_ERA5_vor_intercept,
+#     IndR_ERA5_vor_rvalue,
+#     IndR_ERA5_vor_pvalue,
+#     IndR_ERA5_vor_hypothesis,
+# ) = ca.dim_linregress(preAIR_JJA, vorERA5_ver_JJA)
 
-(
-    IndR_his_vor_slope,
-    IndR_his_vor_intercept,
-    IndR_his_vor_rvalue,
-    IndR_his_vor_pvalue,
-    IndR_his_vor_hypothesis,
-) = ca.dim_linregress(prehis_India_JJA, vorhis_ver_JJA)
+# (
+#     IndR_his_vor_slope,
+#     IndR_his_vor_intercept,
+#     IndR_his_vor_rvalue,
+#     IndR_his_vor_pvalue,
+#     IndR_his_vor_hypothesis,
+# ) = ca.dim_linregress(prehis_India_JJA, vorhis_ver_JJA)
 
-(
-    IndR_ssp585_p3_vor_slope,
-    IndR_ssp585_p3_vor_intercept,
-    IndR_ssp585_p3_vor_rvalue,
-    IndR_ssp585_p3_vor_pvalue,
-    IndR_ssp585_p3_vor_hypothesis,
-) = ca.dim_linregress(pressp585_p3_India_JJA, vorssp585_p3_ver_JJA)
+# (
+#     IndR_ssp585_p3_vor_slope,
+#     IndR_ssp585_p3_vor_intercept,
+#     IndR_ssp585_p3_vor_rvalue,
+#     IndR_ssp585_p3_vor_pvalue,
+#     IndR_ssp585_p3_vor_hypothesis,
+# ) = ca.dim_linregress(pressp585_p3_India_JJA, vorssp585_p3_ver_JJA)
 
-(
-    IndR_ERA5_udiv_slope,
-    IndR_ERA5_udiv_intercept,
-    IndR_ERA5_udiv_rvalue,
-    IndR_ERA5_udiv_pvalue,
-    IndR_ERA5_udiv_hypothesis,
-) = ca.dim_linregress(preAIR_JJA, udivERA5_ver_JJA)
+# (
+#     IndR_ERA5_udiv_slope,
+#     IndR_ERA5_udiv_intercept,
+#     IndR_ERA5_udiv_rvalue,
+#     IndR_ERA5_udiv_pvalue,
+#     IndR_ERA5_udiv_hypothesis,
+# ) = ca.dim_linregress(preAIR_JJA, udivERA5_ver_JJA)
 
-(
-    IndR_his_udiv_slope,
-    IndR_his_udiv_intercept,
-    IndR_his_udiv_rvalue,
-    IndR_his_udiv_pvalue,
-    IndR_his_udiv_hypothesis,
-) = ca.dim_linregress(prehis_India_JJA, udivhis_ver_JJA)
+# (
+#     IndR_his_udiv_slope,
+#     IndR_his_udiv_intercept,
+#     IndR_his_udiv_rvalue,
+#     IndR_his_udiv_pvalue,
+#     IndR_his_udiv_hypothesis,
+# ) = ca.dim_linregress(prehis_India_JJA, udivhis_ver_JJA)
 
-(
-    IndR_ssp585_p3_udiv_slope,
-    IndR_ssp585_p3_udiv_intercept,
-    IndR_ssp585_p3_udiv_rvalue,
-    IndR_ssp585_p3_udiv_pvalue,
-    IndR_ssp585_p3_udiv_hypothesis,
-) = ca.dim_linregress(pressp585_p3_India_JJA, udivssp585_p3_ver_JJA)
+# (
+#     IndR_ssp585_p3_udiv_slope,
+#     IndR_ssp585_p3_udiv_intercept,
+#     IndR_ssp585_p3_udiv_rvalue,
+#     IndR_ssp585_p3_udiv_pvalue,
+#     IndR_ssp585_p3_udiv_hypothesis,
+# ) = ca.dim_linregress(pressp585_p3_India_JJA, udivssp585_p3_ver_JJA)
 
-(
-    IndR_ERA5_vdiv_slope,
-    IndR_ERA5_vdiv_intercept,
-    IndR_ERA5_vdiv_rvalue,
-    IndR_ERA5_vdiv_pvalue,
-    IndR_ERA5_vdiv_hypothesis,
-) = ca.dim_linregress(preAIR_JJA, vdivERA5_ver_JJA)
+# (
+#     IndR_ERA5_vdiv_slope,
+#     IndR_ERA5_vdiv_intercept,
+#     IndR_ERA5_vdiv_rvalue,
+#     IndR_ERA5_vdiv_pvalue,
+#     IndR_ERA5_vdiv_hypothesis,
+# ) = ca.dim_linregress(preAIR_JJA, vdivERA5_ver_JJA)
 
-(
-    IndR_his_vdiv_slope,
-    IndR_his_vdiv_intercept,
-    IndR_his_vdiv_rvalue,
-    IndR_his_vdiv_pvalue,
-    IndR_his_vdiv_hypothesis,
-) = ca.dim_linregress(prehis_India_JJA, vdivhis_ver_JJA)
+# (
+#     IndR_his_vdiv_slope,
+#     IndR_his_vdiv_intercept,
+#     IndR_his_vdiv_rvalue,
+#     IndR_his_vdiv_pvalue,
+#     IndR_his_vdiv_hypothesis,
+# ) = ca.dim_linregress(prehis_India_JJA, vdivhis_ver_JJA)
 
-(
-    IndR_ssp585_p3_vdiv_slope,
-    IndR_ssp585_p3_vdiv_intercept,
-    IndR_ssp585_p3_vdiv_rvalue,
-    IndR_ssp585_p3_vdiv_pvalue,
-    IndR_ssp585_p3_vdiv_hypothesis,
-) = ca.dim_linregress(pressp585_p3_India_JJA, vdivssp585_p3_ver_JJA)
-# %%
-#   save the regression results
-level=IndR_his_vor_slope.coords["level"]
-lat=IndR_his_vor_slope.coords["lat"]
-lon=IndR_his_vor_slope.coords["lon"]
+# (
+#     IndR_ssp585_p3_vdiv_slope,
+#     IndR_ssp585_p3_vdiv_intercept,
+#     IndR_ssp585_p3_vdiv_rvalue,
+#     IndR_ssp585_p3_vdiv_pvalue,
+#     IndR_ssp585_p3_vdiv_hypothesis,
+# ) = ca.dim_linregress(pressp585_p3_India_JJA, vdivssp585_p3_ver_JJA)
+# # %%
+# #   save the regression results
+# level=IndR_his_vor_slope.coords["level"]
+# lat=IndR_his_vor_slope.coords["lat"]
+# lon=IndR_his_vor_slope.coords["lon"]
 
-IndR_ERA5_vor_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["lat", "lon"], IndR_ERA5_vor_slope.data),
-        intercept=(["lat", "lon"], IndR_ERA5_vor_intercept.data),
-        rvalue=(["lat", "lon"], IndR_ERA5_vor_rvalue.data),
-        pvalue=(["lat", "lon"], IndR_ERA5_vor_pvalue.data),
-        hypothesis=(["lat", "lon"], IndR_ERA5_vor_hypothesis.data),
-    ),
-    coords=dict(
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="relative vorticity fields of ERA5 regress onto 1979-2014 AIR"),
-)
+# IndR_ERA5_vor_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["lat", "lon"], IndR_ERA5_vor_slope.data),
+#         intercept=(["lat", "lon"], IndR_ERA5_vor_intercept.data),
+#         rvalue=(["lat", "lon"], IndR_ERA5_vor_rvalue.data),
+#         pvalue=(["lat", "lon"], IndR_ERA5_vor_pvalue.data),
+#         hypothesis=(["lat", "lon"], IndR_ERA5_vor_hypothesis.data),
+#     ),
+#     coords=dict(
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="relative vorticity fields of ERA5 regress onto 1979-2014 AIR"),
+# )
 
-IndR_his_vor_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["models", "lat", "lon"], IndR_his_vor_slope.data),
-        intercept=(["models", "lat", "lon"], IndR_his_vor_intercept.data),
-        rvalue=(["models", "lat", "lon"], IndR_his_vor_rvalue.data),
-        pvalue=(["models", "lat", "lon"], IndR_his_vor_pvalue.data),
-        hypothesis=(["models", "lat", "lon"], IndR_his_vor_hypothesis.data),
-    ),
-    coords=dict(
-        models=models_array,
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="relative vorticity fields of historical regress onto 1979-2014 India Rainfall"),
-)
-IndR_ssp585_p3_vor_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["models", "lat", "lon"], IndR_ssp585_p3_vor_slope.data),
-        intercept=(["models", "lat", "lon"], IndR_ssp585_p3_vor_intercept.data),
-        rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_vor_rvalue.data),
-        pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_vor_pvalue.data),
-        hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_vor_hypothesis.data),
-    ),
-    coords=dict(
-        models=models_array,
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="relative vorticity fields of ssp585_p3 regress onto 2064-2099 India Rainfall"),
-)
+# IndR_his_vor_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["models", "lat", "lon"], IndR_his_vor_slope.data),
+#         intercept=(["models", "lat", "lon"], IndR_his_vor_intercept.data),
+#         rvalue=(["models", "lat", "lon"], IndR_his_vor_rvalue.data),
+#         pvalue=(["models", "lat", "lon"], IndR_his_vor_pvalue.data),
+#         hypothesis=(["models", "lat", "lon"], IndR_his_vor_hypothesis.data),
+#     ),
+#     coords=dict(
+#         models=models_array,
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="relative vorticity fields of historical regress onto 1979-2014 India Rainfall"),
+# )
+# IndR_ssp585_p3_vor_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["models", "lat", "lon"], IndR_ssp585_p3_vor_slope.data),
+#         intercept=(["models", "lat", "lon"], IndR_ssp585_p3_vor_intercept.data),
+#         rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_vor_rvalue.data),
+#         pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_vor_pvalue.data),
+#         hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_vor_hypothesis.data),
+#     ),
+#     coords=dict(
+#         models=models_array,
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="relative vorticity fields of ssp585_p3 regress onto 2064-2099 India Rainfall"),
+# )
 
-IndR_ERA5_vor_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_ERA5_vor_regress.nc")
-IndR_his_vor_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_vor_regress.nc")
-IndR_ssp585_p3_vor_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_vor_regress.nc")
+# IndR_ERA5_vor_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_ERA5_vor_regress.nc")
+# IndR_his_vor_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_vor_regress.nc")
+# IndR_ssp585_p3_vor_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_vor_regress.nc")
 
-IndR_ERA5_udiv_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["lat", "lon"], IndR_ERA5_udiv_slope.data),
-        intercept=(["lat", "lon"], IndR_ERA5_udiv_intercept.data),
-        rvalue=(["lat", "lon"], IndR_ERA5_udiv_rvalue.data),
-        pvalue=(["lat", "lon"], IndR_ERA5_udiv_pvalue.data),
-        hypothesis=(["lat", "lon"], IndR_ERA5_udiv_hypothesis.data),
-    ),
-    coords=dict(
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="relative divergent wind u fields of ERA5 regress onto 1979-2014 AIR"),
-)
+# IndR_ERA5_udiv_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["lat", "lon"], IndR_ERA5_udiv_slope.data),
+#         intercept=(["lat", "lon"], IndR_ERA5_udiv_intercept.data),
+#         rvalue=(["lat", "lon"], IndR_ERA5_udiv_rvalue.data),
+#         pvalue=(["lat", "lon"], IndR_ERA5_udiv_pvalue.data),
+#         hypothesis=(["lat", "lon"], IndR_ERA5_udiv_hypothesis.data),
+#     ),
+#     coords=dict(
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="relative divergent wind u fields of ERA5 regress onto 1979-2014 AIR"),
+# )
 
-IndR_his_udiv_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["models", "lat", "lon"], IndR_his_udiv_slope.data),
-        intercept=(["models", "lat", "lon"], IndR_his_udiv_intercept.data),
-        rvalue=(["models", "lat", "lon"], IndR_his_udiv_rvalue.data),
-        pvalue=(["models", "lat", "lon"], IndR_his_udiv_pvalue.data),
-        hypothesis=(["models", "lat", "lon"], IndR_his_udiv_hypothesis.data),
-    ),
-    coords=dict(
-        models=models_array,
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="relative divergent wind u fields of historical regress onto 1979-2014 India Rainfall"),
-)
-IndR_ssp585_p3_udiv_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["models", "lat", "lon"], IndR_ssp585_p3_udiv_slope.data),
-        intercept=(["models", "lat", "lon"], IndR_ssp585_p3_udiv_intercept.data),
-        rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_udiv_rvalue.data),
-        pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_udiv_pvalue.data),
-        hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_udiv_hypothesis.data),
-    ),
-    coords=dict(
-        models=models_array,
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="relative divergent wind u fields of ssp585_p3 regress onto 2064-2099 India Rainfall"),
-)
+# IndR_his_udiv_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["models", "lat", "lon"], IndR_his_udiv_slope.data),
+#         intercept=(["models", "lat", "lon"], IndR_his_udiv_intercept.data),
+#         rvalue=(["models", "lat", "lon"], IndR_his_udiv_rvalue.data),
+#         pvalue=(["models", "lat", "lon"], IndR_his_udiv_pvalue.data),
+#         hypothesis=(["models", "lat", "lon"], IndR_his_udiv_hypothesis.data),
+#     ),
+#     coords=dict(
+#         models=models_array,
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="relative divergent wind u fields of historical regress onto 1979-2014 India Rainfall"),
+# )
+# IndR_ssp585_p3_udiv_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["models", "lat", "lon"], IndR_ssp585_p3_udiv_slope.data),
+#         intercept=(["models", "lat", "lon"], IndR_ssp585_p3_udiv_intercept.data),
+#         rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_udiv_rvalue.data),
+#         pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_udiv_pvalue.data),
+#         hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_udiv_hypothesis.data),
+#     ),
+#     coords=dict(
+#         models=models_array,
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="relative divergent wind u fields of ssp585_p3 regress onto 2064-2099 India Rainfall"),
+# )
 
-IndR_ERA5_udiv_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_ERA5_udiv_regress.nc")
-IndR_his_udiv_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_udiv_regress.nc")
-IndR_ssp585_p3_udiv_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_udiv_regress.nc")
+# IndR_ERA5_udiv_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_ERA5_udiv_regress.nc")
+# IndR_his_udiv_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_udiv_regress.nc")
+# IndR_ssp585_p3_udiv_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_udiv_regress.nc")
 
-IndR_ERA5_vdiv_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["lat", "lon"], IndR_ERA5_vdiv_slope.data),
-        intercept=(["lat", "lon"], IndR_ERA5_vdiv_intercept.data),
-        rvalue=(["lat", "lon"], IndR_ERA5_vdiv_rvalue.data),
-        pvalue=(["lat", "lon"], IndR_ERA5_vdiv_pvalue.data),
-        hypothesis=(["lat", "lon"], IndR_ERA5_vdiv_hypothesis.data),
-    ),
-    coords=dict(
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="relative divergent wind v fields of ERA5 regress onto 1979-2014 AIR"),
-)
+# IndR_ERA5_vdiv_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["lat", "lon"], IndR_ERA5_vdiv_slope.data),
+#         intercept=(["lat", "lon"], IndR_ERA5_vdiv_intercept.data),
+#         rvalue=(["lat", "lon"], IndR_ERA5_vdiv_rvalue.data),
+#         pvalue=(["lat", "lon"], IndR_ERA5_vdiv_pvalue.data),
+#         hypothesis=(["lat", "lon"], IndR_ERA5_vdiv_hypothesis.data),
+#     ),
+#     coords=dict(
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="relative divergent wind v fields of ERA5 regress onto 1979-2014 AIR"),
+# )
 
-IndR_his_vdiv_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["models", "lat", "lon"], IndR_his_vdiv_slope.data),
-        intercept=(["models", "lat", "lon"], IndR_his_vdiv_intercept.data),
-        rvalue=(["models", "lat", "lon"], IndR_his_vdiv_rvalue.data),
-        pvalue=(["models", "lat", "lon"], IndR_his_vdiv_pvalue.data),
-        hypothesis=(["models", "lat", "lon"], IndR_his_vdiv_hypothesis.data),
-    ),
-    coords=dict(
-        models=models_array,
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="relative divergent wind v fields of historical regress onto 1979-2014 India Rainfall"),
-)
-IndR_ssp585_p3_vdiv_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["models", "lat", "lon"], IndR_ssp585_p3_vdiv_slope.data),
-        intercept=(["models", "lat", "lon"], IndR_ssp585_p3_vdiv_intercept.data),
-        rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_vdiv_rvalue.data),
-        pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_vdiv_pvalue.data),
-        hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_vdiv_hypothesis.data),
-    ),
-    coords=dict(
-        models=models_array,
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="relative divergent wind v fields of ssp585_p3 regress onto 2064-2099 India Rainfall"),
-)
+# IndR_his_vdiv_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["models", "lat", "lon"], IndR_his_vdiv_slope.data),
+#         intercept=(["models", "lat", "lon"], IndR_his_vdiv_intercept.data),
+#         rvalue=(["models", "lat", "lon"], IndR_his_vdiv_rvalue.data),
+#         pvalue=(["models", "lat", "lon"], IndR_his_vdiv_pvalue.data),
+#         hypothesis=(["models", "lat", "lon"], IndR_his_vdiv_hypothesis.data),
+#     ),
+#     coords=dict(
+#         models=models_array,
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="relative divergent wind v fields of historical regress onto 1979-2014 India Rainfall"),
+# )
+# IndR_ssp585_p3_vdiv_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["models", "lat", "lon"], IndR_ssp585_p3_vdiv_slope.data),
+#         intercept=(["models", "lat", "lon"], IndR_ssp585_p3_vdiv_intercept.data),
+#         rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_vdiv_rvalue.data),
+#         pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_vdiv_pvalue.data),
+#         hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_vdiv_hypothesis.data),
+#     ),
+#     coords=dict(
+#         models=models_array,
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="relative divergent wind v fields of ssp585_p3 regress onto 2064-2099 India Rainfall"),
+# )
 
-IndR_ERA5_vdiv_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_ERA5_vdiv_regress.nc")
-IndR_his_vdiv_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_vdiv_regress.nc")
-IndR_ssp585_p3_vdiv_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_vdiv_regress.nc")
+# IndR_ERA5_vdiv_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_ERA5_vdiv_regress.nc")
+# IndR_his_vdiv_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_vdiv_regress.nc")
+# IndR_ssp585_p3_vdiv_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_vdiv_regress.nc")
 #%%
+#   read the regression data
+IndR_ERA5_vor_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_ERA5_vor_regress.nc")
+IndR_his_vor_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_vor_regress.nc")
+IndR_ssp585_p3_vor_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_vor_regress.nc")
 
+IndR_ERA5_udiv_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_ERA5_udiv_regress.nc")
+IndR_his_udiv_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_udiv_regress.nc")
+IndR_ssp585_p3_udiv_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_udiv_regress.nc")
+
+IndR_ERA5_vdiv_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_ERA5_vdiv_regress.nc")
+IndR_his_vdiv_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_vdiv_regress.nc")
+IndR_ssp585_p3_vdiv_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_vdiv_regress.nc")
+
+vorERA5_ver_JJA_prime = IndR_ERA5_vor_regress["slope"]
+vorhis_ver_JJA_prime = IndR_his_vor_regress["slope"]
+vorssp585_p3_ver_JJA_prime = IndR_ssp585_p3_vor_regress["slope"]
+
+udivERA5_prime = IndR_ERA5_udiv_regress["slope"]
+udivhis_prime = IndR_his_udiv_regress["slope"]
+udivssp585_p3_prime = IndR_ssp585_p3_udiv_regress["slope"]
+
+vdivERA5_prime = IndR_ERA5_vdiv_regress["slope"]
+vdivhis_prime = IndR_his_vdiv_regress["slope"]
+vdivssp585_p3_prime = IndR_ssp585_p3_vdiv_regress["slope"]
+#%%
+#   
 #%%
 # #   calculate the hgt/u/v regression onto IndR in ERA5, historical, ssp585, ssp585_p3
 # preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
