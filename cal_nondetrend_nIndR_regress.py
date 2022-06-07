@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-05-25 21:57:00
+LastEditTime: 2022-06-07 19:47:52
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -215,6 +215,37 @@ vorssp585_ver_JJA = vorssp585_ver_JJA.metpy.dequantify()
 
 vorssp585_p3_ver_JJA = mpcalc.vorticity(ussp585_p3_ver_JJA.sel(level=200.0), vssp585_p3_ver_JJA.sel(level=200.0))
 vorssp585_p3_ver_JJA = vorssp585_p3_ver_JJA.metpy.dequantify()
+
+#   absolute vorticity in ERA5, historical and ssp585
+abvorERA5_ver_JJA = mpcalc.absolute_vorticity(uERA5_ver_JJA.sel(level=200.0), vERA5_ver_JJA.sel(level=200.0)).metpy.dequantify()
+
+abvorhis_ver_JJA = mpcalc.absolute_vorticity(uhis_ver_JJA.sel(level=200.0), vhis_ver_JJA.sel(level=200.0)).metpy.dequantify()
+
+abvorssp585_p3_ver_JJA = mpcalc.absolute_vorticity(ussp585_p3_ver_JJA.sel(level=200.0), vssp585_p3_ver_JJA.sel(level=200.0)).metpy.dequantify()
+
+#   absolute vorticity climatology mean
+abvorERA5_ver_JJA_cli = abvorERA5_ver_JJA.mean(dim="time", skipna=True)
+abvorhis_ver_JJA_cli = abvorhis_ver_JJA.mean(dim="time", skipna=True)
+abvorssp585_p3_ver_JJA_cli = abvorssp585_p3_ver_JJA.mean(dim="time", skipna=True)
+
+#   irrotational(divergent) wind
+wERA5 = VectorWind(uERA5_ver_JJA.sel(level=200.0), vERA5_ver_JJA.sel(level=200.0))
+whis = VectorWind(uhis_ver_JJA.sel(level=200.0), vhis_ver_JJA.sel(level=200.0))
+wssp585_p3 = VectorWind(ussp585_p3_ver_JJA.sel(level=200.0), vssp585_p3_ver_JJA.sel(level=200.0))
+
+udivERA5, vdivERA5 = wERA5.irrotationalcomponent()
+udivhis, vdivhis = whis.irrotationalcomponent()
+udivssp585_p3, vdivssp585_p3 = wssp585_p3.irrotationalcomponent()
+
+#   irrotational(divergent) wind climatology
+udivERA5_bar = udivERA5.mean(dim="time", skipna=True)
+vdivERA5_bar = vdivERA5.mean(dim="time", skipna=True)
+
+udivhis_bar = udivhis.mean(dim="time", skipna=True)
+vdivhis_bar = vdivhis.mean(dim="time", skipna=True)
+
+udivssp585_p3_bar = udivssp585_p3.mean(dim="time", skipna=True)
+vdivssp585_p3_bar = vdivssp585_p3.mean(dim="time", skipna=True)
 
 his_LKY = ca.LKY(uhis_ver_JJA, vhis_ver_JJA)
 ssp585_p3_LKY = ca.LKY(ussp585_p3_ver_JJA, vssp585_p3_ver_JJA)
