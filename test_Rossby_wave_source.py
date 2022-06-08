@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-05 17:39:45
 LastEditors: ChenHJ
-LastEditTime: 2022-06-07 13:30:22
+LastEditTime: 2022-06-07 23:42:22
 FilePath: /chenhj/0302code/test_Rossby_wave_source.py
 Aim: 
 Mission: 
@@ -104,8 +104,13 @@ vdiv_prime = pc1_vdiv_slope.copy()
 revor_prime = pc1_revor_slope.copy()
 
 #   calculate the lineared Rossby wave source
-S = -1.0*mpcalc.divergence(udiv_prime*abvor_bar, vdiv_prime*abvor_bar) - 1.0*mpcalc.divergence(udiv_bar*revor_prime, vdiv_bar*revor_prime)
+# S = -1.0*mpcalc.divergence(udiv_prime*abvor_bar, vdiv_prime*abvor_bar) - 1.0*mpcalc.divergence(udiv_bar*revor_prime, vdiv_bar*revor_prime)
 
+wS1 = VectorWind(udiv_prime*abvor_bar, vdiv_prime*abvor_bar)
+
+wS2 = VectorWind(udiv_bar*revor_prime, vdiv_bar*revor_prime)
+
+S = -wS1.divergence()-wS2.divergence()
 # %%
 #   plot the Rossby wave source
 pplt.rc.grid = False
