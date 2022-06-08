@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-07 23:26:43
+LastEditTime: 2022-06-08 10:57:18
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -1140,85 +1140,85 @@ IndR_ssp585_p3_wind_ens_mask = ca.wind_check(
 )
 # %%
 #   calculate the sst regress onto IndR in ERA5, historical and ssp585
-sstHad_JJA.coords["time"] = preAIR_JJA.coords["time"]
-(
-    IndR_Had_sst_slope,
-    IndR_Had_sst_intercept,
-    IndR_Had_sst_rvalue,
-    IndR_Had_sst_pvalue,
-    IndR_Had_sst_hypothesis,
-) = ca.dim_linregress(preAIR_JJA, sstHad_JJA)
+# sstHad_JJA.coords["time"] = preAIR_JJA.coords["time"]
+# (
+#     IndR_Had_sst_slope,
+#     IndR_Had_sst_intercept,
+#     IndR_Had_sst_rvalue,
+#     IndR_Had_sst_pvalue,
+#     IndR_Had_sst_hypothesis,
+# ) = ca.dim_linregress(preAIR_JJA, sstHad_JJA)
 
-(
-    IndR_his_sst_slope,
-    IndR_his_sst_intercept,
-    IndR_his_sst_rvalue,
-    IndR_his_sst_pvalue,
-    IndR_his_sst_hypothesis,
-) = ca.dim_linregress(prehis_India_JJA, ssthis_JJA)
+# (
+#     IndR_his_sst_slope,
+#     IndR_his_sst_intercept,
+#     IndR_his_sst_rvalue,
+#     IndR_his_sst_pvalue,
+#     IndR_his_sst_hypothesis,
+# ) = ca.dim_linregress(prehis_India_JJA, ssthis_JJA)
 
-(
-    IndR_ssp585_p3_sst_slope,
-    IndR_ssp585_p3_sst_intercept,
-    IndR_ssp585_p3_sst_rvalue,
-    IndR_ssp585_p3_sst_pvalue,
-    IndR_ssp585_p3_sst_hypothesis,
-) = ca.dim_linregress(pressp585_p3_India_JJA, sstssp585_p3_JJA)
+# (
+#     IndR_ssp585_p3_sst_slope,
+#     IndR_ssp585_p3_sst_intercept,
+#     IndR_ssp585_p3_sst_rvalue,
+#     IndR_ssp585_p3_sst_pvalue,
+#     IndR_ssp585_p3_sst_hypothesis,
+# ) = ca.dim_linregress(pressp585_p3_India_JJA, sstssp585_p3_JJA)
 
-#   save the result of the sst regression
-lat=IndR_Had_sst_slope.coords["lat"]
-lon=IndR_Had_sst_slope.coords["lon"]
+# #   save the result of the sst regression
+# lat=IndR_Had_sst_slope.coords["lat"]
+# lon=IndR_Had_sst_slope.coords["lon"]
 
-IndR_Had_sst_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["lat", "lon"], IndR_Had_sst_slope.data),
-        intercept=(["lat", "lon"], IndR_Had_sst_intercept.data),
-        rvalue=(["lat", "lon"], IndR_Had_sst_rvalue.data),
-        pvalue=(["lat", "lon"], IndR_Had_sst_pvalue.data),
-        hypothesis=(["lat", "lon"], IndR_Had_sst_hypothesis.data),
-    ),
-    coords=dict(
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="sst fields of HadISST regress onto 1979-2014 AIR"),
-)
+# IndR_Had_sst_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["lat", "lon"], IndR_Had_sst_slope.data),
+#         intercept=(["lat", "lon"], IndR_Had_sst_intercept.data),
+#         rvalue=(["lat", "lon"], IndR_Had_sst_rvalue.data),
+#         pvalue=(["lat", "lon"], IndR_Had_sst_pvalue.data),
+#         hypothesis=(["lat", "lon"], IndR_Had_sst_hypothesis.data),
+#     ),
+#     coords=dict(
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="sst fields of HadISST regress onto 1979-2014 AIR"),
+# )
 
-IndR_his_sst_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["models", "lat", "lon"], IndR_his_sst_slope.data),
-        intercept=(["models", "lat", "lon"], IndR_his_sst_intercept.data),
-        rvalue=(["models", "lat", "lon"], IndR_his_sst_rvalue.data),
-        pvalue=(["models", "lat", "lon"], IndR_his_sst_pvalue.data),
-        hypothesis=(["models", "lat", "lon"], IndR_his_sst_hypothesis.data),
-    ),
-    coords=dict(
-        models=models_array,
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="sst fields of historical regress onto 1979-2014 IndR"),
-)
+# IndR_his_sst_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["models", "lat", "lon"], IndR_his_sst_slope.data),
+#         intercept=(["models", "lat", "lon"], IndR_his_sst_intercept.data),
+#         rvalue=(["models", "lat", "lon"], IndR_his_sst_rvalue.data),
+#         pvalue=(["models", "lat", "lon"], IndR_his_sst_pvalue.data),
+#         hypothesis=(["models", "lat", "lon"], IndR_his_sst_hypothesis.data),
+#     ),
+#     coords=dict(
+#         models=models_array,
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="sst fields of historical regress onto 1979-2014 IndR"),
+# )
 
-IndR_ssp585_p3_sst_regress = xr.Dataset(
-    data_vars=dict(
-        slope=(["models", "lat", "lon"], IndR_ssp585_p3_sst_slope.data),
-        intercept=(["models", "lat", "lon"], IndR_ssp585_p3_sst_intercept.data),
-        rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_rvalue.data),
-        pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_pvalue.data),
-        hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_sst_hypothesis.data),
-    ),
-    coords=dict(
-        models=models_array,
-        lat=lat.data,
-        lon=lon.data,
-    ),
-    attrs=dict(description="sst fields of ssp585_p3 regress onto 2064-2099 IndR"),
-)
+# IndR_ssp585_p3_sst_regress = xr.Dataset(
+#     data_vars=dict(
+#         slope=(["models", "lat", "lon"], IndR_ssp585_p3_sst_slope.data),
+#         intercept=(["models", "lat", "lon"], IndR_ssp585_p3_sst_intercept.data),
+#         rvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_rvalue.data),
+#         pvalue=(["models", "lat", "lon"], IndR_ssp585_p3_sst_pvalue.data),
+#         hypothesis=(["models", "lat", "lon"], IndR_ssp585_p3_sst_hypothesis.data),
+#     ),
+#     coords=dict(
+#         models=models_array,
+#         lat=lat.data,
+#         lon=lon.data,
+#     ),
+#     attrs=dict(description="sst fields of ssp585_p3 regress onto 2064-2099 IndR"),
+# )
 
-IndR_Had_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_Had_sst_regress.nc")
-IndR_his_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_sst_regress.nc")
-IndR_ssp585_p3_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_sst_regress.nc")
+# IndR_Had_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_Had_sst_regress.nc")
+# IndR_his_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_his_sst_regress.nc")
+# IndR_ssp585_p3_sst_regress.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/nIndR_ssp585_p3_sst_regress.nc")
 # %%
 #   read the sst regression data
 IndR_Had_sst_regress = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/nIndR_Had_sst_regress.nc")
@@ -1315,6 +1315,13 @@ IndR_850hgt_std.append(float((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range2,
 #   pick up the good models and calculate the gMME for hgt, u, v, precip
 #   these gmodels are different from the ranking list calculated by the GPCP data
 gmodels = ["CAMS-CSM1-0", "CESM2-WACCM", "CMCC-ESM2", "INM-CM4-8", "MRI-ESM2-0", "UKESM1-0-LL"]
+
+Shis_gens = Shis.sel(models=gmodels).mean(dim="models", skipna=True)
+Sssp585_p3_gens = Sssp585_p3.sel(models=gmodels).mean(dim="models", skipna=True)
+
+Shis_gens_mask = xr.where((ca.MME_reg_mask(Shis_gens, Shis.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p3_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_gens, Sssp585_p3.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p3.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
 
 pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 pre_ssp585_p3_India_pre_slope_gens = pre_ssp585_p3_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -6079,4 +6086,76 @@ for num_mod, mod in enumerate(gmodels):
 # ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="u-climatology")
+# %%
+#   plot the Rossby Wave Source for ERA5 and historical
+startlevel=-7e-11
+spacinglevel=1e-11
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    SERA5,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="ERA5",
+)
+# ======================================
+con = axs[1].contourf(
+    Shis_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+
+sepl.plt_sig(
+    Shis_gens, axs[1], n, np.where(Shis_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+
+axs[1].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+2].contourf(
+        Shis.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="Rossby Wave Source")
 # %%
