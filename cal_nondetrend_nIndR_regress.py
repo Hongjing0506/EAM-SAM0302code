@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-08 14:24:45
+LastEditTime: 2022-06-09 23:25:07
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -740,6 +740,8 @@ wSERA51 = VectorWind(udivERA5_prime*abvorERA5_ver_JJA_cli, vdivERA5_prime*abvorE
 
 wSERA52 = VectorWind(udivERA5_bar*vorERA5_ver_JJA_prime, vdivERA5_bar*vorERA5_ver_JJA_prime)
 
+#   term1:-wSERA51.divergence()
+#   term2:-wSERA52.divergence()
 SERA5 = -wSERA51.divergence()-wSERA52.divergence()
 
 wShis1 = VectorWind(udivhis_prime*abvorhis_ver_JJA_cli, vdivhis_prime*abvorhis_ver_JJA_cli)
@@ -1316,11 +1318,24 @@ IndR_850hgt_std.append(float((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range2,
 #   these gmodels are different from the ranking list calculated by the GPCP data
 gmodels = ["CAMS-CSM1-0", "CESM2-WACCM", "CMCC-ESM2", "INM-CM4-8", "MRI-ESM2-0", "UKESM1-0-LL"]
 
+Shis_term1_gens = -wShis1.divergence().sel(models=gmodels).mean(dim="models", skipna=True)
+Shis_term2_gens = -wShis2.divergence().sel(models=gmodels).mean(dim="models", skipna=True)
+
+Sssp585_p3_term1_gens = -wSssp585_p31.divergence().sel(models=gmodels).mean(dim="models", skipna=True)
+Sssp585_p3_term2_gens = -wSssp585_p32.divergence().sel(models=gmodels).mean(dim="models", skipna=True)
+
 Shis_gens = Shis.sel(models=gmodels).mean(dim="models", skipna=True)
 Sssp585_p3_gens = Sssp585_p3.sel(models=gmodels).mean(dim="models", skipna=True)
 
+
 Shis_gens_mask = xr.where((ca.MME_reg_mask(Shis_gens, Shis.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sssp585_p3_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_gens, Sssp585_p3.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p3.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
+Shis_term1_gens_mask = xr.where((ca.MME_reg_mask(Shis_term1_gens, -wShis1.divergence().sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(-wShis1.divergence().sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p3_term1_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_term1_gens, -wSssp585_p31.divergence().sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(-wSssp585_p31.divergence().sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
+Shis_term2_gens_mask = xr.where((ca.MME_reg_mask(Shis_term2_gens, -wShis2.divergence().sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(-wShis2.divergence().sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p3_term2_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_term2_gens, -wSssp585_p32.divergence().sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(-wSssp585_p32.divergence().sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
 
 pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -6217,4 +6232,267 @@ for num_mod, mod in enumerate(gmodels):
 # ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="Rossby Wave Source")
+# %%
+#   plot the term1 and term2 in Rossby Wave Source
+startlevel=-3e-11
+spacinglevel=5e-12
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    -wSERA51.divergence(),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="ERA5",
+)
+# ======================================
+con = axs[1].contourf(
+    Shis_term1_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+
+sepl.plt_sig(
+    Shis_term1_gens, axs[1], n, np.where(Shis_term1_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+
+axs[1].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+2].contourf(
+        -wShis1.divergence().sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="Rossby Wave Source term1")
+# %%
+#   plot the Rossby Wave Source for ssp585_p3
+startlevel=-3e-11
+spacinglevel=5e-12
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    Sssp585_p3_term1_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+
+sepl.plt_sig(
+    Sssp585_p3_term1_gens, axs[0], n, np.where(Sssp585_p3_term1_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+
+axs[0].format(
+    rtitle="2064-2099", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+1].contourf(
+        -wSssp585_p31.divergence().sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1].format(
+        rtitle="2064-2099", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="Rossby Wave Source term1")
+
+# %%
+#   plot the term1 and term2 in Rossby Wave Source
+startlevel=-3e-11
+spacinglevel=5e-12
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    -wSERA52.divergence(),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="ERA5",
+)
+# ======================================
+con = axs[1].contourf(
+    Shis_term2_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+
+sepl.plt_sig(
+    Shis_term2_gens, axs[1], n, np.where(Shis_term2_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+
+axs[1].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+2].contourf(
+        -wShis2.divergence().sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="Rossby Wave Source term2")
+# %%
+#   plot the Rossby Wave Source for ssp585_p3
+startlevel=-3e-11
+spacinglevel=5e-12
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 9), (2, 4))
+plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    Sssp585_p3_term2_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+
+sepl.plt_sig(
+    Sssp585_p3_term2_gens, axs[0], n, np.where(Sssp585_p3_term2_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+
+axs[0].format(
+    rtitle="2064-2099", ltitle="gMME",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+1].contourf(
+        -wSssp585_p32.divergence().sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1].format(
+        rtitle="2064-2099", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="Rossby Wave Source term2")
 # %%
