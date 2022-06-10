@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-10 22:04:29
+LastEditTime: 2022-06-10 22:11:42
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -6263,7 +6263,7 @@ con = axs[0,0].contourf(
     SERA5,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
     zorder=0.8,
     extend="both"
 )
@@ -6276,7 +6276,7 @@ con = axs[1,0].contourf(
     Shis_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
     zorder=0.8,
     extend="both"
 )
@@ -6294,7 +6294,7 @@ for num_mod, mod in enumerate(gmodels):
         Shis.sel(models=mod),
         cmap="ColdHot",
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
         zorder=0.8,
         extend="both"
     )
@@ -6306,7 +6306,7 @@ con = axs[1,3].contourf(
     Sssp585_p3_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
     zorder=0.8,
     extend="both"
 )
@@ -6324,7 +6324,7 @@ for num_mod, mod in enumerate(gmodels):
         Sssp585_p3.sel(models=mod),
         cmap="ColdHot",
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
         zorder=0.8,
         extend="both"
     )
@@ -6336,7 +6336,7 @@ con = axs[0,1].contourf(
     -wSERA51.divergence(),
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
     zorder=0.8,
     extend="both"
 )
@@ -6349,7 +6349,7 @@ con = axs[1,1].contourf(
     Shis_term1_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
     zorder=0.8,
     extend="both"
 )
@@ -6367,7 +6367,7 @@ for num_mod, mod in enumerate(gmodels):
         -wShis1.divergence().sel(models=mod),
         cmap="ColdHot",
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
         zorder=0.8,
         extend="both"
     )
@@ -6379,7 +6379,7 @@ con = axs[1,4].contourf(
     Sssp585_p3_term1_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
     zorder=0.8,
     extend="both"
 )
@@ -6397,7 +6397,7 @@ for num_mod, mod in enumerate(gmodels):
         -wSssp585_p31.divergence().sel(models=mod),
         cmap="ColdHot",
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
         zorder=0.8,
         extend="both"
     )
@@ -6409,7 +6409,7 @@ con = axs[0,2].contourf(
     -wSERA52.divergence(),
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
     zorder=0.8,
     extend="both"
 )
@@ -6422,7 +6422,7 @@ con = axs[1,2].contourf(
     Shis_term2_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
     zorder=0.8,
     extend="both"
 )
@@ -6440,7 +6440,7 @@ for num_mod, mod in enumerate(gmodels):
         -wShis2.divergence().sel(models=mod),
         cmap="ColdHot",
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
         zorder=0.8,
         extend="both"
     )
@@ -6452,7 +6452,7 @@ con = axs[1,5].contourf(
     Sssp585_p3_term2_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
     zorder=0.8,
     extend="both"
 )
@@ -6470,7 +6470,7 @@ for num_mod, mod in enumerate(gmodels):
         -wSssp585_p32.divergence().sel(models=mod),
         cmap="ColdHot",
         cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
         zorder=0.8,
         extend="both"
     )
