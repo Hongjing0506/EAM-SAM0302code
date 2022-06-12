@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-10 22:11:42
+LastEditTime: 2022-06-12 16:10:18
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -745,16 +745,22 @@ wSERA52 = VectorWind(udivERA5_bar*vorERA5_ver_JJA_prime, vdivERA5_bar*vorERA5_ve
 SERA5 = -wSERA51.divergence()-wSERA52.divergence()
 
 wShis1 = VectorWind(udivhis_prime*abvorhis_ver_JJA_cli, vdivhis_prime*abvorhis_ver_JJA_cli)
+Shis1_ens = -wShis1.divergence().mean(dim="models", skipna=True)
 
 wShis2 = VectorWind(udivhis_bar*vorhis_ver_JJA_prime, vdivhis_bar*vorhis_ver_JJA_prime)
+Shis2_ens = -wShis2.divergence().mean(dim="models", skipna=True)
 
 Shis = -wShis1.divergence()-wShis2.divergence()
+Shis_ens = Shis.mean(dim="models", skipna=True)
 
 wSssp585_p31 = VectorWind(udivssp585_p3_prime*abvorssp585_p3_ver_JJA_cli, vdivssp585_p3_prime*abvorssp585_p3_ver_JJA_cli)
+Sssp585_p31_ens = -wSssp585_p31.divergence().mean(dim="models", skipna=True)
 
 wSssp585_p32 = VectorWind(udivssp585_p3_bar*vorssp585_p3_ver_JJA_prime, vdivssp585_p3_bar*vorssp585_p3_ver_JJA_prime)
+Sssp585_p32_ens = -wSssp585_p32.divergence().mean(dim="models", skipna=True)
 
 Sssp585_p3 = -wSssp585_p31.divergence()-wSssp585_p32.divergence()
+Sssp585_ens = Sssp585_p3.mean(dim="models", skipna=True)
 
 # SERA5 = -1.0*mpcalc.divergence(udivERA5_prime*abvorERA5_ver_JJA_cli,vdivERA5_prime*abvorERA5_ver_JJA_cli).metpy.dequantify() - 1.0*mpcalc.divergence(udivERA5_bar*vorERA5_ver_JJA_prime,vdivERA5_bar*vorERA5_ver_JJA_prime).metpy.dequantify()
 
@@ -1462,6 +1468,18 @@ his_wj_axis_lat_gens = his_wj_axis.sel(models=gmodels).mean(dim="models", skipna
 ssp585_p3_wj_axis_lat_gens = ssp585_p3_wj_axis.sel(models=gmodels).mean(dim="models", skipna=True)
 # %%
 #   calculate the good models difference between historical run and ssp585_p3 run
+Sdiff = Sssp585_p3 - Shis
+Sdiff_term1 = -wSssp585_p31.divergence()+wShis1.divergence()
+Sdiff_term2 = -wSssp585_p32.divergence()+wShis2.divergence()
+
+Sdiff_gens = Sssp585_p3_gens - Shis_gens
+Sdiff_term1_gens = Sssp585_p3_term1_gens - Shis_term1_gens
+Sdiff_term2_gens = Sssp585_p3_term2_gens - Shis_term2_gens
+
+Sdiff_gens_mask = ca.cal_mmemask(Sssp585_p3.sel(models=gmodels)-Shis.sel(models=gmodels))
+Sdiff_term1_gens_mask = ca.cal_mmemask(-wSssp585_p31.divergence().sel(models=gmodels)+wShis1.divergence().sel(models=gmodels))
+Sdiff_term2_gens_mask = ca.cal_mmemask(-wSssp585_p32.divergence().sel(models=gmodels)+wShis2.divergence().sel(models=gmodels))
+
 pre_diff_India_pre_slope = pre_ssp585_p3_India_pre_slope - pre_his_India_pre_slope
 
 pre_diff_India_pre_mask = ca.cal_mmemask(pre_diff_India_pre_slope)
@@ -6256,7 +6274,7 @@ extents = [xticks[0], xticks[-1], yticks[0], 55.0]
 sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
 # ===================================================
 ski = 2
-n = 2
+n = 1
 w, h = 0.12, 0.14
 # ======================================
 con = axs[0,0].contourf(
@@ -6477,6 +6495,125 @@ for num_mod, mod in enumerate(gmodels):
     axs[num_mod+2,5].format(
         rtitle="2064-2099", ltitle="{} RWS2".format(mod),
     )
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="Rossby Wave Source")
+# %%
+#   plot the difference in the RWS and term1 and term2
+#   plot the RWS, term1 and term2 in Rossby Wave Source
+startlevel=-3e-11
+spacinglevel=5e-12
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 22), (7, 3))
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0,0].contourf(
+    Sdiff_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+
+sepl.plt_sig(
+    Sdiff_gens, axs[0,0], n, np.where(Sdiff_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+
+axs[0,0].format(
+    rtitle="diff", ltitle="gMME RWS",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+1,0].contourf(
+        Sdiff.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1,0].format(
+        rtitle="diff", ltitle="{} RWS".format(mod),
+    )
+# ======================================
+con = axs[0,1].contourf(
+    Sdiff_term1_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+
+sepl.plt_sig(
+    Sdiff_term1_gens, axs[0,1], n, np.where(Sdiff_term1_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+
+axs[0,1].format(
+    rtitle="diff", ltitle="gMME RWS1",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+1,1].contourf(
+        Sdiff_term1.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1,1].format(
+        rtitle="diff", ltitle="{} RWS1".format(mod),
+    )
+# ======================================
+con = axs[0,2].contourf(
+    Sdiff_term2_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+
+sepl.plt_sig(
+    Sdiff_term2_gens, axs[0,2], n, np.where(Sdiff_term2_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+
+axs[0,2].format(
+    rtitle="diff", ltitle="gMME RWS2",
+)
+# ======================================
+for num_mod, mod in enumerate(gmodels):
+    con = axs[num_mod+1,2].contourf(
+        Sdiff_term2.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1,2].format(
+        rtitle="diff", ltitle="{} RWS2".format(mod),
+    )
+# ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="Rossby Wave Source")
 # %%
