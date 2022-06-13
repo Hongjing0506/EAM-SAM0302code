@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-12 16:10:18
+LastEditTime: 2022-06-13 17:40:45
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -736,35 +736,139 @@ vdivhis_prime = IndR_his_vdiv_regress["slope"]
 vdivssp585_p3_prime = IndR_ssp585_p3_vdiv_regress["slope"]
 #%%
 #   calculate the Rossby Wave Source
-wSERA51 = VectorWind(udivERA5_prime*abvorERA5_ver_JJA_cli, vdivERA5_prime*abvorERA5_ver_JJA_cli)
-
-wSERA52 = VectorWind(udivERA5_bar*vorERA5_ver_JJA_prime, vdivERA5_bar*vorERA5_ver_JJA_prime)
+SERA51 = -VectorWind(udivERA5_prime*abvorERA5_ver_JJA_cli, vdivERA5_prime*abvorERA5_ver_JJA_cli).divergence()
+SERA52 = -VectorWind(udivERA5_bar*vorERA5_ver_JJA_prime, vdivERA5_bar*vorERA5_ver_JJA_prime).divergence()
 
 #   term1:-wSERA51.divergence()
 #   term2:-wSERA52.divergence()
-SERA5 = -wSERA51.divergence()-wSERA52.divergence()
+SERA5 = SERA51 + SERA52
 
-wShis1 = VectorWind(udivhis_prime*abvorhis_ver_JJA_cli, vdivhis_prime*abvorhis_ver_JJA_cli)
-Shis1_ens = -wShis1.divergence().mean(dim="models", skipna=True)
+Shis1 = -VectorWind(udivhis_prime*abvorhis_ver_JJA_cli, vdivhis_prime*abvorhis_ver_JJA_cli).divergence()
+Shis1_ens = Shis1.mean(dim="models", skipna=True)
+Shis1_ens_mask = xr.where((ca.MME_reg_mask(Shis1_ens, Shis1.std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(Shis1)) >= 2.0, 1.0, 0.0)
 
-wShis2 = VectorWind(udivhis_bar*vorhis_ver_JJA_prime, vdivhis_bar*vorhis_ver_JJA_prime)
-Shis2_ens = -wShis2.divergence().mean(dim="models", skipna=True)
+Shis2 = -VectorWind(udivhis_bar*vorhis_ver_JJA_prime, vdivhis_bar*vorhis_ver_JJA_prime).divergence()
+Shis2_ens = Shis2.mean(dim="models", skipna=True)
+Shis2_ens_mask = xr.where((ca.MME_reg_mask(Shis2_ens, Shis2.std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(Shis2)) >= 2.0, 1.0, 0.0)
 
-Shis = -wShis1.divergence()-wShis2.divergence()
+Shis = Shis1 + Shis2
 Shis_ens = Shis.mean(dim="models", skipna=True)
+Shis_ens_mask = xr.where((ca.MME_reg_mask(Shis_ens, Shis.std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(Shis)) >= 2.0, 1.0, 0.0)
 
-wSssp585_p31 = VectorWind(udivssp585_p3_prime*abvorssp585_p3_ver_JJA_cli, vdivssp585_p3_prime*abvorssp585_p3_ver_JJA_cli)
-Sssp585_p31_ens = -wSssp585_p31.divergence().mean(dim="models", skipna=True)
+Sssp585_p31 = -VectorWind(udivssp585_p3_prime*abvorssp585_p3_ver_JJA_cli, vdivssp585_p3_prime*abvorssp585_p3_ver_JJA_cli).divergence()
+Sssp585_p31_ens = Sssp585_p31.mean(dim="models", skipna=True)
+Sssp585_p31_ens_mask = xr.where((ca.MME_reg_mask(Sssp585_p31_ens, Sssp585_p31.std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(Sssp585_p31)) >= 2.0, 1.0, 0.0)
+Sssp585_p32 = -VectorWind(udivssp585_p3_bar*vorssp585_p3_ver_JJA_prime, vdivssp585_p3_bar*vorssp585_p3_ver_JJA_prime).divergence()
+Sssp585_p32_ens = Sssp585_p32.mean(dim="models", skipna=True)
+Sssp585_p32_ens_mask = xr.where((ca.MME_reg_mask(Sssp585_p32_ens, Sssp585_p32.std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(Sssp585_p32)) >= 2.0, 1.0, 0.0)
 
-wSssp585_p32 = VectorWind(udivssp585_p3_bar*vorssp585_p3_ver_JJA_prime, vdivssp585_p3_bar*vorssp585_p3_ver_JJA_prime)
-Sssp585_p32_ens = -wSssp585_p32.divergence().mean(dim="models", skipna=True)
+Sssp585_p3 = Sssp585_p31 + Sssp585_p32
+Sssp585_p3_ens = Sssp585_p3.mean(dim="models", skipna=True)
+Sssp585_p3_ens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_ens, Sssp585_p3.std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(Sssp585_p3)) >= 2.0, 1.0, 0.0)
 
-Sssp585_p3 = -wSssp585_p31.divergence()-wSssp585_p32.divergence()
-Sssp585_ens = Sssp585_p3.mean(dim="models", skipna=True)
+Sdiff1 = Sssp585_p31 - Shis1
+Sdiff1_ens = Sdiff1.mean(dim="models", skipna=True)
+Sdiff1_ens_mask = ca.cal_mmemask(Sdiff1)
 
-# SERA5 = -1.0*mpcalc.divergence(udivERA5_prime*abvorERA5_ver_JJA_cli,vdivERA5_prime*abvorERA5_ver_JJA_cli).metpy.dequantify() - 1.0*mpcalc.divergence(udivERA5_bar*vorERA5_ver_JJA_prime,vdivERA5_bar*vorERA5_ver_JJA_prime).metpy.dequantify()
+Sdiff2 = Sssp585_p32 - Shis2
+Sdiff2_ens = Sdiff2.mean(dim="models", skipna=True)
+Sdiff2_ens_mask = ca.cal_mmemask(Sdiff2)
 
-#%%
+Sdiff = Sssp585_p3 - Shis
+Sdiff_ens = Sdiff.mean(dim="models", skipna=True)
+Sdiff_ens_mask = ca.cal_mmemask(Sdiff)
+
+# %%
+#   calculate the area mean of the Rossby wave source
+
+WARWS_N = 42.5
+WARWS_S = 32.5
+WARWS_E = 90
+WARWS_W = 62.5
+
+lat_WARWS_range = lat[(lat>=WARWS_S) & (lat<=WARWS_N)]
+lon_WARWS_range = lon[(lon>=WARWS_W) & (lon<=WARWS_E)]
+
+SERA5_WARWS = ca.cal_lat_weighted_mean(SERA5.sel(lat=lat_WARWS_range, lon=lon_WARWS_range)).mean(dim="lon", skipna=True)
+Shis_WARWS = ca.cal_lat_weighted_mean(Shis.sel(lat=lat_WARWS_range, lon=lon_WARWS_range)).mean(dim="lon", skipna=True)
+Sssp585_p3_WARWS = ca.cal_lat_weighted_mean(Sssp585_p3.sel(lat=lat_WARWS_range, lon=lon_WARWS_range)).mean(dim="lon", skipna=True)
+Sdiff_WARWS = Sssp585_p3_WARWS - Shis_WARWS
+
+SERA51_WARWS = ca.cal_lat_weighted_mean(SERA51.sel(lat=lat_WARWS_range, lon=lon_WARWS_range)).mean(dim="lon", skipna=True)
+Shis1_WARWS = ca.cal_lat_weighted_mean(Shis1.sel(lat=lat_WARWS_range, lon=lon_WARWS_range)).mean(dim="lon", skipna=True)
+Sssp585_p31_WARWS = ca.cal_lat_weighted_mean(Sssp585_p31.sel(lat=lat_WARWS_range, lon=lon_WARWS_range)).mean(dim="lon", skipna=True)
+Sdiff1_WARWS = Sssp585_p31_WARWS - Shis1_WARWS
+
+SERA52_WARWS = ca.cal_lat_weighted_mean(SERA52.sel(lat=lat_WARWS_range, lon=lon_WARWS_range)).mean(dim="lon", skipna=True)
+Shis2_WARWS = ca.cal_lat_weighted_mean(Shis2.sel(lat=lat_WARWS_range, lon=lon_WARWS_range)).mean(dim="lon", skipna=True)
+Sssp585_p32_WARWS = ca.cal_lat_weighted_mean(Sssp585_p32.sel(lat=lat_WARWS_range, lon=lon_WARWS_range)).mean(dim="lon", skipna=True)
+Sdiff2_WARWS = Sssp585_p32_WARWS - Shis2_WARWS
+
+EARWS_N = 40.0
+EARWS_S = 30.0
+EARWS_E = 117.5
+EARWS_W = 130.0
+
+lat_EARWS_range = lat[(lat>=EARWS_S) & (lat<=EARWS_N)]
+lon_EARWS_range = lon[(lon>=EARWS_W) & (lon<=EARWS_E)]
+
+SERA5_EARWS = ca.cal_lat_weighted_mean(SERA5.sel(lat=lat_EARWS_range, lon=lon_EARWS_range)).mean(dim="lon", skipna=True)
+Shis_EARWS = ca.cal_lat_weighted_mean(Shis.sel(lat=lat_EARWS_range, lon=lon_EARWS_range)).mean(dim="lon", skipna=True)
+Sssp585_p3_EARWS = ca.cal_lat_weighted_mean(Sssp585_p3.sel(lat=lat_EARWS_range, lon=lon_EARWS_range)).mean(dim="lon", skipna=True)
+Sdiff_EARWS = Sssp585_p3_EARWS - Shis_EARWS
+
+SERA51_EARWS = ca.cal_lat_weighted_mean(SERA51.sel(lat=lat_EARWS_range, lon=lon_EARWS_range)).mean(dim="lon", skipna=True)
+Shis1_EARWS = ca.cal_lat_weighted_mean(Shis1.sel(lat=lat_EARWS_range, lon=lon_EARWS_range)).mean(dim="lon", skipna=True)
+Sssp585_p31_EARWS = ca.cal_lat_weighted_mean(Sssp585_p31.sel(lat=lat_EARWS_range, lon=lon_EARWS_range)).mean(dim="lon", skipna=True)
+Sdiff1_EARWS = Sssp585_p31_EARWS - Shis1_EARWS
+
+SERA52_EARWS = ca.cal_lat_weighted_mean(SERA52.sel(lat=lat_EARWS_range, lon=lon_EARWS_range)).mean(dim="lon", skipna=True)
+Shis2_EARWS = ca.cal_lat_weighted_mean(Shis2.sel(lat=lat_EARWS_range, lon=lon_EARWS_range)).mean(dim="lon", skipna=True)
+Sssp585_p32_EARWS = ca.cal_lat_weighted_mean(Sssp585_p32.sel(lat=lat_EARWS_range, lon=lon_EARWS_range)).mean(dim="lon", skipna=True)
+Sdiff2_EARWS = Sssp585_p32_EARWS - Shis2_WARWS
+
+#   calculate the ens in WARWS and EARWS
+Shis_WARWS_ens = Shis_WARWS.mean(dim="models", skipna=True)
+Sssp585_p3_WARWS_ens = Sssp585_p3_WARWS.mean(dim="models", skipna=True)
+Sdiff_WARWS_ens = Sdiff_WARWS.mean(dim="models", skipna=True)
+Shis1_WARWS_ens = Shis1_WARWS.mean(dim="models", skipna=True)
+Sssp585_p31_WARWS_ens = Sssp585_p31_WARWS.mean(dim="models", skipna=True)
+Sdiff1_WARWS_ens = Sdiff1_WARWS.mean(dim="models", skipna=True)
+Shis2_WARWS_ens = Shis2_WARWS.mean(dim="models", skipna=True)
+Sssp585_p32_WARWS_ens = Sssp585_p32_WARWS.mean(dim="models", skipna=True)
+Sdiff2_WARWS_ens = Sdiff2_WARWS.mean(dim="models", skipna=True)
+
+Shis_EARWS_ens = Shis_EARWS.mean(dim="models", skipna=True)
+Sssp585_p3_EARWS_ens = Sssp585_p3_EARWS.mean(dim="models", skipna=True)
+Sdiff_EARWS_ens = Sdiff_EARWS.mean(dim="models", skipna=True)
+Shis1_EARWS_ens = Shis1_EARWS.mean(dim="models", skipna=True)
+Sssp585_p31_EARWS_ens = Sssp585_p31_EARWS.mean(dim="models", skipna=True)
+Sdiff1_EARWS_ens = Sdiff1_EARWS.mean(dim="models", skipna=True)
+Shis2_EARWS_ens = Shis2_EARWS.mean(dim="models", skipna=True)
+Sssp585_p32_EARWS_ens = Sssp585_p32_EARWS.mean(dim="models", skipna=True)
+Sdiff2_EARWS_ens = Sdiff2_EARWS.mean(dim="models", skipna=True)
+
+#   calculate the ens mask
+Shis_WARWS_ens_mask = xr.where((ca.MME_reg_mask(Shis_WARWS_ens, Shis_WARWS.std(dim="models", skipna=True), len(Shis_WARWS.coords["models"]), True) + ca.cal_mmemask(Shis_WARWS)) >= 2.0, 1.0, 0.0)
+Shis1_WARWS_ens_mask = xr.where((ca.MME_reg_mask(Shis1_WARWS_ens, Shis1_WARWS.std(dim="models", skipna=True), len(Shis1_WARWS.coords["models"]), True) + ca.cal_mmemask(Shis1_WARWS)) >= 2.0, 1.0, 0.0)
+Shis2_WARWS_ens_mask = xr.where((ca.MME_reg_mask(Shis2_WARWS_ens, Shis2_WARWS.std(dim="models", skipna=True), len(Shis2_WARWS.coords["models"]), True) + ca.cal_mmemask(Shis2_WARWS)) >= 2.0, 1.0, 0.0)
+Sssp585_p3_WARWS_ens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_WARWS_ens, Sssp585_p3_WARWS.std(dim="models", skipna=True), len(Sssp585_p3_WARWS.coords["models"]), True) + ca.cal_mmemask(Sssp585_p3_WARWS)) >= 2.0, 1.0, 0.0)
+Sssp585_p31_WARWS_ens_mask = xr.where((ca.MME_reg_mask(Sssp585_p31_WARWS_ens, Sssp585_p31_WARWS.std(dim="models", skipna=True), len(Sssp585_p31_WARWS.coords["models"]), True) + ca.cal_mmemask(Sssp585_p31_WARWS)) >= 2.0, 1.0, 0.0)
+Sssp585_p32_WARWS_ens_mask = xr.where((ca.MME_reg_mask(Sssp585_p32_WARWS_ens, Sssp585_p32_WARWS.std(dim="models", skipna=True), len(Sssp585_p32_WARWS.coords["models"]), True) + ca.cal_mmemask(Sssp585_p32_WARWS)) >= 2.0, 1.0, 0.0)
+Sdiff_WARWS_ens_mask = xr.where((ca.MME_reg_mask(Sdiff_WARWS_ens, Sdiff_WARWS.std(dim="models", skipna=True), len(Sdiff_WARWS.coords["models"]), True) + ca.cal_mmemask(Sdiff_WARWS)) >= 2.0, 1.0, 0.0)
+Sdiff1_WARWS_ens_mask = xr.where((ca.MME_reg_mask(Sdiff1_WARWS_ens, Sdiff1_WARWS.std(dim="models", skipna=True), len(Sdiff1_WARWS.coords["models"]), True) + ca.cal_mmemask(Sdiff1_WARWS)) >= 2.0, 1.0, 0.0)
+Sdiff2_WARWS_ens_mask = xr.where((ca.MME_reg_mask(Sdiff2_WARWS_ens, Sdiff2_WARWS.std(dim="models", skipna=True), len(Sdiff2_WARWS.coords["models"]), True) + ca.cal_mmemask(Sdiff2_WARWS)) >= 2.0, 1.0, 0.0)
+Shis_EARWS_ens_mask = xr.where((ca.MME_reg_mask(Shis_EARWS_ens, Shis_EARWS.std(dim="models", skipna=True), len(Shis_EARWS.coords["models"]), True) + ca.cal_mmemask(Shis_EARWS)) >= 2.0, 1.0, 0.0)
+Shis1_EARWS_ens_mask = xr.where((ca.MME_reg_mask(Shis1_EARWS_ens, Shis1_EARWS.std(dim="models", skipna=True), len(Shis1_EARWS.coords["models"]), True) + ca.cal_mmemask(Shis1_EARWS)) >= 2.0, 1.0, 0.0)
+Shis2_EARWS_ens_mask = xr.where((ca.MME_reg_mask(Shis2_EARWS_ens, Shis2_EARWS.std(dim="models", skipna=True), len(Shis2_EARWS.coords["models"]), True) + ca.cal_mmemask(Shis2_EARWS)) >= 2.0, 1.0, 0.0)
+Sssp585_p3_EARWS_ens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_EARWS_ens, Sssp585_p3_EARWS.std(dim="models", skipna=True), len(Sssp585_p3_EARWS.coords["models"]), True) + ca.cal_mmemask(Sssp585_p3_EARWS)) >= 2.0, 1.0, 0.0)
+Sssp585_p31_EARWS_ens_mask = xr.where((ca.MME_reg_mask(Sssp585_p31_EARWS_ens, Sssp585_p31_EARWS.std(dim="models", skipna=True), len(Sssp585_p31_EARWS.coords["models"]), True) + ca.cal_mmemask(Sssp585_p31_EARWS)) >= 2.0, 1.0, 0.0)
+Sssp585_p32_EARWS_ens_mask = xr.where((ca.MME_reg_mask(Sssp585_p32_EARWS_ens, Sssp585_p32_EARWS.std(dim="models", skipna=True), len(Sssp585_p32_EARWS.coords["models"]), True) + ca.cal_mmemask(Sssp585_p32_EARWS)) >= 2.0, 1.0, 0.0)
+Sdiff_EARWS_ens_mask = xr.where((ca.MME_reg_mask(Sdiff_EARWS_ens, Sdiff_EARWS.std(dim="models", skipna=True), len(Sdiff_EARWS.coords["models"]), True) + ca.cal_mmemask(Sdiff_EARWS)) >= 2.0, 1.0, 0.0)
+Sdiff1_EARWS_ens_mask = xr.where((ca.MME_reg_mask(Sdiff1_EARWS_ens, Sdiff1_EARWS.std(dim="models", skipna=True), len(Sdiff1_EARWS.coords["models"]), True) + ca.cal_mmemask(Sdiff1_EARWS)) >= 2.0, 1.0, 0.0)
+Sdiff2_EARWS_ens_mask = xr.where((ca.MME_reg_mask(Sdiff2_EARWS_ens, Sdiff2_EARWS.std(dim="models", skipna=True), len(Sdiff2_EARWS.coords["models"]), True) + ca.cal_mmemask(Sdiff2_EARWS)) >= 2.0, 1.0, 0.0)
+
+# %%
 # #   calculate the hgt/u/v regression onto IndR in ERA5, historical, ssp585, ssp585_p3
 # preGPCP_India_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
 # preAIR_JJA.coords["time"] = hgtERA5_ver_JJA.coords["time"]
@@ -1468,9 +1572,7 @@ his_wj_axis_lat_gens = his_wj_axis.sel(models=gmodels).mean(dim="models", skipna
 ssp585_p3_wj_axis_lat_gens = ssp585_p3_wj_axis.sel(models=gmodels).mean(dim="models", skipna=True)
 # %%
 #   calculate the good models difference between historical run and ssp585_p3 run
-Sdiff = Sssp585_p3 - Shis
-Sdiff_term1 = -wSssp585_p31.divergence()+wShis1.divergence()
-Sdiff_term2 = -wSssp585_p32.divergence()+wShis2.divergence()
+
 
 Sdiff_gens = Sssp585_p3_gens - Shis_gens
 Sdiff_term1_gens = Sssp585_p3_term1_gens - Shis_term1_gens
