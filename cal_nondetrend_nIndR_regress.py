@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-13 17:40:45
+LastEditTime: 2022-06-13 19:27:10
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -1428,25 +1428,30 @@ IndR_850hgt_std.append(float((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range2,
 #   these gmodels are different from the ranking list calculated by the GPCP data
 gmodels = ["CAMS-CSM1-0", "CESM2-WACCM", "CMCC-ESM2", "INM-CM4-8", "MRI-ESM2-0", "UKESM1-0-LL"]
 
-Shis_term1_gens = -wShis1.divergence().sel(models=gmodels).mean(dim="models", skipna=True)
-Shis_term2_gens = -wShis2.divergence().sel(models=gmodels).mean(dim="models", skipna=True)
+Shis1_gens = Shis1.sel(models=gmodels).mean(dim="models", skipna=True)
+Shis2_gens = Shis2.sel(models=gmodels).mean(dim="models", skipna=True)
+Sdiff1_gens = Sdiff1.sel(models=gmodels).mean(dim="models", skipna=True)
 
-Sssp585_p3_term1_gens = -wSssp585_p31.divergence().sel(models=gmodels).mean(dim="models", skipna=True)
-Sssp585_p3_term2_gens = -wSssp585_p32.divergence().sel(models=gmodels).mean(dim="models", skipna=True)
+Sssp585_p31_gens = Sssp585_p31.sel(models=gmodels).mean(dim="models", skipna=True)
+Sssp585_p32_gens = Sssp585_p32.sel(models=gmodels).mean(dim="models", skipna=True)
+Sdiff2_gens = Sdiff2.sel(models=gmodels).mean(dim="models", skipna=True)
 
 Shis_gens = Shis.sel(models=gmodels).mean(dim="models", skipna=True)
 Sssp585_p3_gens = Sssp585_p3.sel(models=gmodels).mean(dim="models", skipna=True)
+Sdiff_gens = Sdiff.sel(models=gmodels).mean(dim="models", skipna=True)
 
 
 Shis_gens_mask = xr.where((ca.MME_reg_mask(Shis_gens, Shis.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sssp585_p3_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_gens, Sssp585_p3.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p3.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sdiff_gens_mask = ca.cal_mmemask(Sdiff.sel(models=gmodels))
 
-Shis_term1_gens_mask = xr.where((ca.MME_reg_mask(Shis_term1_gens, -wShis1.divergence().sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(-wShis1.divergence().sel(models=gmodels))) >= 2.0, 1.0, 0.0)
-Sssp585_p3_term1_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_term1_gens, -wSssp585_p31.divergence().sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(-wSssp585_p31.divergence().sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Shis1_gens_mask = xr.where((ca.MME_reg_mask(Shis_gens, Shis1.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis1.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p31_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_gens, Sssp585_p31.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p31.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sdiff1_gens_mask = ca.cal_mmemask(Sdiff1.sel(models=gmoodels))
 
-Shis_term2_gens_mask = xr.where((ca.MME_reg_mask(Shis_term2_gens, -wShis2.divergence().sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(-wShis2.divergence().sel(models=gmodels))) >= 2.0, 1.0, 0.0)
-Sssp585_p3_term2_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_term2_gens, -wSssp585_p32.divergence().sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(-wSssp585_p32.divergence().sel(models=gmodels))) >= 2.0, 1.0, 0.0)
-
+Shis2_gens_mask = xr.where((ca.MME_reg_mask(Shis_gens, Shis2.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis2.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p32_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_gens, Sssp585_p32.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p32.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sdiff2_gens_mask = ca.cal_mmemask(Sdiff2.sel(models=gmoodels))
 
 pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 pre_ssp585_p3_India_pre_slope_gens = pre_ssp585_p3_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -1572,15 +1577,6 @@ his_wj_axis_lat_gens = his_wj_axis.sel(models=gmodels).mean(dim="models", skipna
 ssp585_p3_wj_axis_lat_gens = ssp585_p3_wj_axis.sel(models=gmodels).mean(dim="models", skipna=True)
 # %%
 #   calculate the good models difference between historical run and ssp585_p3 run
-
-
-Sdiff_gens = Sssp585_p3_gens - Shis_gens
-Sdiff_term1_gens = Sssp585_p3_term1_gens - Shis_term1_gens
-Sdiff_term2_gens = Sssp585_p3_term2_gens - Shis_term2_gens
-
-Sdiff_gens_mask = ca.cal_mmemask(Sssp585_p3.sel(models=gmodels)-Shis.sel(models=gmodels))
-Sdiff_term1_gens_mask = ca.cal_mmemask(-wSssp585_p31.divergence().sel(models=gmodels)+wShis1.divergence().sel(models=gmodels))
-Sdiff_term2_gens_mask = ca.cal_mmemask(-wSssp585_p32.divergence().sel(models=gmodels)+wShis2.divergence().sel(models=gmodels))
 
 pre_diff_India_pre_slope = pre_ssp585_p3_India_pre_slope - pre_his_India_pre_slope
 
@@ -6466,7 +6462,7 @@ axs[0,1].format(
 )
 # ======================================
 con = axs[1,1].contourf(
-    Shis_term1_gens,
+    Shis_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
@@ -6475,7 +6471,7 @@ con = axs[1,1].contourf(
 )
 
 sepl.plt_sig(
-    Shis_term1_gens, axs[1,1], n, np.where(Shis_term1_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+    Shis_gens, axs[1,1], n, np.where(Shis_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
 )
 
 axs[1,1].format(
@@ -6496,7 +6492,7 @@ for num_mod, mod in enumerate(gmodels):
     )
 # ======================================
 con = axs[1,4].contourf(
-    Sssp585_p3_term1_gens,
+    Sssp585_p3_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
@@ -6505,7 +6501,7 @@ con = axs[1,4].contourf(
 )
 
 sepl.plt_sig(
-    Sssp585_p3_term1_gens, axs[1,4], n, np.where(Sssp585_p3_term1_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+    Sssp585_p3_gens, axs[1,4], n, np.where(Sssp585_p3_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
 )
 
 axs[1,4].format(
@@ -6539,7 +6535,7 @@ axs[0,2].format(
 )
 # ======================================
 con = axs[1,2].contourf(
-    Shis_term2_gens,
+    Shis_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
@@ -6548,7 +6544,7 @@ con = axs[1,2].contourf(
 )
 
 sepl.plt_sig(
-    Shis_term2_gens, axs[1,2], n, np.where(Shis_term2_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+    Shis_gens, axs[1,2], n, np.where(Shis_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
 )
 
 axs[1,2].format(
@@ -6569,7 +6565,7 @@ for num_mod, mod in enumerate(gmodels):
     )
 # ======================================
 con = axs[1,5].contourf(
-    Sssp585_p3_term2_gens,
+    Sssp585_p3_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
@@ -6578,7 +6574,7 @@ con = axs[1,5].contourf(
 )
 
 sepl.plt_sig(
-    Sssp585_p3_term2_gens, axs[1,5], n, np.where(Sssp585_p3_term2_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+    Sssp585_p3_gens, axs[1,5], n, np.where(Sssp585_p3_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
 )
 
 axs[1,5].format(
@@ -6657,7 +6653,7 @@ for num_mod, mod in enumerate(gmodels):
     )
 # ======================================
 con = axs[0,1].contourf(
-    Sdiff_term1_gens,
+    Sdiff_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
@@ -6666,7 +6662,7 @@ con = axs[0,1].contourf(
 )
 
 sepl.plt_sig(
-    Sdiff_term1_gens, axs[0,1], n, np.where(Sdiff_term1_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+    Sdiff_gens, axs[0,1], n, np.where(Sdiff_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
 )
 
 axs[0,1].format(
@@ -6687,7 +6683,7 @@ for num_mod, mod in enumerate(gmodels):
     )
 # ======================================
 con = axs[0,2].contourf(
-    Sdiff_term2_gens,
+    Sdiff_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(startlevel, -startlevel+spacinglevel/2, spacinglevel),
@@ -6696,7 +6692,7 @@ con = axs[0,2].contourf(
 )
 
 sepl.plt_sig(
-    Sdiff_term2_gens, axs[0,2], n, np.where(Sdiff_term2_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+    Sdiff_gens, axs[0,2], n, np.where(Sdiff_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
 )
 
 axs[0,2].format(
