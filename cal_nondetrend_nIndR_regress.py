@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-13 20:15:22
+LastEditTime: 2022-06-13 20:45:37
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -6793,4 +6793,34 @@ axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-3e-11,3e-11),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=11, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="East Asia RWS2")
+# %%
+#   plot the scatter plot x:WARWS y:EARWS
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(SERA5_WARWS, SERA5_EARWS, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="ERA5", marker="s", color="blue5",ec="grey7")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(Shis_WARWS.sel(models=mod), Shis_EARWS.sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod,ec="grey7")
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(Shis_WARWS_ens, Shis_EARWS_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^",ec="grey7")
+m = axs[0].scatter(Shis_WARWS_gens, Shis_EARWS_gens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*",ec="grey7")
+
+# #   x-axis title
+# axs[0].text(-0.90,0.03,s='West Asia RWS')
+# #   y-axis title
+# axs[0].text(0.03,-0.55,s='East Asia RWS')
+axs[0].axhline(0,lw=1.0,color="grey7",zorder=0.9)
+axs[0].axvline(0,lw=1.0,color="grey7",zorder=0.9)
+
+xyregress = stats.linregress(Shis_WARWS.data,Shis_EARWS.data)
+axs[0].line(np.linspace(-1e-11,2.5e-11), xyregress[0]*np.linspace(-1e-11,2.5e-11)+xyregress[1],zorder=0.8,color="grey7",ls="--")
+
+axs[0].format(xlim=(-3e-11,3e-11), ylim=(-3e-11,3e-11), grid=False, xlabel="West Asia RWS", ylabel="East Asia RWS", ytickloc="both", xtickloc="both")
 # %%
