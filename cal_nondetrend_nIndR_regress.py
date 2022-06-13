@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-13 19:27:10
+LastEditTime: 2022-06-13 19:33:44
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -1447,11 +1447,60 @@ Sdiff_gens_mask = ca.cal_mmemask(Sdiff.sel(models=gmodels))
 
 Shis1_gens_mask = xr.where((ca.MME_reg_mask(Shis_gens, Shis1.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis1.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sssp585_p31_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_gens, Sssp585_p31.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p31.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
-Sdiff1_gens_mask = ca.cal_mmemask(Sdiff1.sel(models=gmoodels))
+Sdiff1_gens_mask = ca.cal_mmemask(Sdiff1.sel(models=gmodels))
 
 Shis2_gens_mask = xr.where((ca.MME_reg_mask(Shis_gens, Shis2.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis2.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sssp585_p32_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_gens, Sssp585_p32.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p32.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
-Sdiff2_gens_mask = ca.cal_mmemask(Sdiff2.sel(models=gmoodels))
+Sdiff2_gens_mask = ca.cal_mmemask(Sdiff2.sel(models=gmodels))
+
+#   calculate the area mean gens and gens mask
+Shis1_WARWS_gens = Shis1_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+Shis2_WARWS_gens = Shis2_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+Sdiff1_WARWS_gens = Sdiff1_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+
+Sssp585_p31_WARWS_gens = Sssp585_p31_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+Sssp585_p32_WARWS_gens = Sssp585_p32_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+Sdiff2_WARWS_gens = Sdiff2_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+
+Shis_WARWS_gens = Shis_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+Sssp585_p3_WARWS_gens = Sssp585_p3_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+Sdiff_WARWS_gens = Sdiff_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+
+Shis1_EARWS_gens = Shis1_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+Shis2_EARWS_gens = Shis2_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+Sdiff1_EARWS_gens = Sdiff1_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+
+Sssp585_p31_EARWS_gens = Sssp585_p31_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+Sssp585_p32_EARWS_gens = Sssp585_p32_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+Sdiff2_EARWS_gens = Sdiff2_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+
+Shis_EARWS_gens = Shis_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+Sssp585_p3_EARWS_gens = Sssp585_p3_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+Sdiff_EARWS_gens = Sdiff_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+
+Shis_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis_WARWS_gens, Shis_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p3_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_WARWS_gens, Sssp585_p3_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p3_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sdiff_WARWS_gens_mask = ca.cal_mmemask(Sdiff_WARWS.sel(models=gmodels))
+
+Shis1_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis_WARWS_gens, Shis1_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis1_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p31_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_WARWS_gens, Sssp585_p31_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p31_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sdiff1_WARWS_gens_mask = ca.cal_mmemask(Sdiff1_WARWS.sel(models=gmodels))
+
+Shis2_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis_WARWS_gens, Shis2_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis2_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p32_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_WARWS_gens, Sssp585_p32_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p32_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sdiff2_WARWS_gens_mask = ca.cal_mmemask(Sdiff2_WARWS.sel(models=gmodels))
+
+Shis_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis_EARWS_gens, Shis_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p3_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_EARWS_gens, Sssp585_p3_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p3_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sdiff_EARWS_gens_mask = ca.cal_mmemask(Sdiff_EARWS.sel(models=gmodels))
+
+Shis1_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis_EARWS_gens, Shis1_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis1_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p31_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_EARWS_gens, Sssp585_p31_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p31_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sdiff1_EARWS_gens_mask = ca.cal_mmemask(Sdiff1_EARWS.sel(models=gmodels))
+
+Shis2_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis_EARWS_gens, Shis2_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis2_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p32_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_EARWS_gens, Sssp585_p32_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p32_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sdiff2_EARWS_gens_mask = ca.cal_mmemask(Sdiff2_EARWS.sel(models=gmodels))
 
 pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 pre_ssp585_p3_India_pre_slope_gens = pre_ssp585_p3_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
