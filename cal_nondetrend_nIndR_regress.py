@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-13 20:05:06
+LastEditTime: 2022-06-13 20:11:59
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -806,8 +806,8 @@ Sdiff2_WARWS = Sssp585_p32_WARWS - Shis2_WARWS
 
 EARWS_N = 40.0
 EARWS_S = 30.0
-EARWS_E = 117.5
-EARWS_W = 130.0
+EARWS_E = 130.0
+EARWS_W = 117.5
 
 lat_EARWS_range = lat[(lat>=EARWS_S) & (lat<=EARWS_N)]
 lon_EARWS_range = lon[(lon>=EARWS_W) & (lon<=EARWS_E)]
@@ -6658,4 +6658,31 @@ axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-3e-11,3e-11),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=11, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="West Asia RWS")
+# %%
+#   plot the Bar-plot of the East-Asia RWS
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = Shis_EARWS.sel(models=gmodels).data
+plot_data[:-1,1] = Sssp585_p3_EARWS.sel(models=gmodels).data
+plot_data[:-1,2] = Sdiff_EARWS.sel(models=gmodels).data
+plot_data[-1,0] = Shis_EARWS_gens.data
+plot_data[-1,1] = Sssp585_p3_EARWS_gens.data
+plot_data[-1,2] = Sdiff_EARWS_gens.data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-3e-11,3e-11),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=11, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="East Asia RWS")
 # %%
