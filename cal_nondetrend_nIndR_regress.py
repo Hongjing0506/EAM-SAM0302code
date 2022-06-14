@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-14 21:30:38
+LastEditTime: 2022-06-14 22:00:21
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -3425,6 +3425,7 @@ plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
 #绘图
 fig=plt.figure(figsize=(12,8),dpi=300)
 plt.rc('font',family='Arial',size=13)
+plt.rcParams["axes.facecolor"] = "white"
 
 #调用函数
 ax1=fig.add_subplot(111,projection='polar')
@@ -3737,6 +3738,7 @@ scalelevel=[0.23, 0.17, 0.14]
 
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
+pplt.rc["figure.facecolor"] = "white"
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
@@ -3773,12 +3775,12 @@ for ax in axs:
     width = NC_E-NC_W
     height = NC_N-NC_S
     sepl.patches(ax, x0 - cl, y0, width, height, proj)
-    # SJ-KP area
-    x0 = SJ_W
-    y0 = SJ_S
-    width = SJ_E-SJ_W
-    height = SJ_N-SJ_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # # SJ-KP area
+    # x0 = SJ_W
+    # y0 = SJ_S
+    # width = SJ_E-SJ_W
+    # height = SJ_N-SJ_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ======================================
 for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
@@ -3788,17 +3790,17 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             width = 90
             height = 32.5
             sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
-            #   EAM index
-            x0 = 110.0
-            y0 = 40.0
-            width = 40.0
-            height = 10.0
-            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="green8", linestyle="-")
-            x0 = 110.0
-            y0 = 25.0
-            width = 40.0
-            height = 10.0
-            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="green8", linestyle="-")
+            # #   EAM index
+            # x0 = 110.0
+            # y0 = 40.0
+            # width = 40.0
+            # height = 10.0
+            # sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="green8", linestyle="-")
+            # x0 = 110.0
+            # y0 = 25.0
+            # width = 40.0
+            # height = 10.0
+            # sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="green8", linestyle="-")
     elif lev == 850.0:
         for ax in axs[num_lev, :]:
             x0 = 110
@@ -3895,7 +3897,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     )
 # ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-fig.format(abc="(a)", abcloc="l", suptitle="hgt&U reg IndR".format(lev))
+fig.format(abc="(a)", abcloc="l", suptitle="hgt&U reg SASMR".format(lev))
 # %%
 #   plot the avalue of hgt&u&v regress onto IndR in ERA5 and historical
 startlevel=[-15, -8, -6]
@@ -6994,7 +6996,7 @@ con = axs[0].contourf(
     pre_AIR_India_pre_slope,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-2.0,2.1, 0.1),
+    levels=np.arange(-2.0,2.1, 0.4),
     zorder=0.8,
     extend="both"
     )
@@ -7010,7 +7012,7 @@ con = axs[1].contourf(
     pre_his_India_pre_slope_ens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-2.0,2.1, 0.1),
+    levels=np.arange(-2.0,2.1, 0.4),
     zorder=0.8,
     extend="both"
     )
@@ -7023,5 +7025,5 @@ axs[1].format(
 )
 # ===================================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
+fig.format(abc="(a)", abcloc="l", suptitle="pre reg SASMR")
 # %%
