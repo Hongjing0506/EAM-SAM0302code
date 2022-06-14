@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-14 15:27:51
+LastEditTime: 2022-06-14 16:38:56
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -6882,4 +6882,38 @@ axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Reg. Coeff. IndR and EAhigh")
+# %%
+#   plot the scatter plot EARWS and corr(IndR, NCR)
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(IndR_GPCP_NC_regress[2], SERA5_EARWS, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="AIR&GPCP", marker="s", color="blue5",ec="grey7")
+
+pmodels=['ACCESS-CM2','BCC-CSM2-MR','CESM2','CNRM-CM6-1','CNRM-ESM2-1','CanESM5','EC-Earth3','EC-Earth3-Veg','FGOALS-g3','GFDL-CM4','HadGEM3-GC31-LL','INM-CM5-0','IPSL-CM6A-LR','KACE-1-0-G','MIROC-ES2L','MIROC6','MPI-ESM1-2-HR','NESM3','NorESM2-LM','TaiESM1']
+
+for num_models, mod in enumerate(pmodels):
+    m = axs[0].scatter(IndR_his_NC_regress[2].sel(models=mod), Shis_EARWS.sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod,ec="grey7")
+for num_models, mod in enumerate(gmodels):
+    m = axs[0].scatter(IndR_his_NC_regress[2].sel(models=mod), Shis_EARWS.sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod,ec="grey7", marker="h")
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(IndR_his_NC_regress[2].mean(dim="models", skipna=True), Shis_EARWS_ens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^",ec="grey7")
+m = axs[0].scatter(IndR_his_NC_regress[2].sel(models=gmodels).mean(dim="models", skipna=True), Shis_EARWS_gens, cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*",ec="grey7")
+
+# #   x-axis title
+# axs[0].text(-0.90,0.03,s='West Asia RWS')
+# #   y-axis title
+# axs[0].text(0.03,-0.55,s='East Asia RWS')
+axs[0].axhline(0,lw=1.0,color="grey7",zorder=0.9)
+axs[0].axvline(0,lw=1.0,color="grey7",zorder=0.9)
+
+# xyregress = stats.linregress(IndR_his_NC_regress[2].sel(models=gmodels).data,Shis_EARWS.sel(models=gmodels).data)
+# axs[0].line(np.linspace(-0.8,0.8), xyregress[0]*np.linspace(-0.8,0.8)+xyregress[1],zorder=0.8,color="grey7",ls="--")
+
+axs[0].format(xlim=(-1,1), ylim=(-4e-11,4e-11), grid=False, xlabel="corr(IndR, NCR)", ylabel="East Asia RWS", ytickloc="both", xtickloc="both",rtitle="1979-2014")
 # %%
