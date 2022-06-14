@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-14 17:24:05
+LastEditTime: 2022-06-14 17:30:34
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -6917,6 +6917,7 @@ axs[0].axvline(0,lw=1.0,color="grey7",zorder=0.9)
 
 axs[0].format(xlim=(-1,1), ylim=(-4e-11,4e-11), grid=False, xlabel="corr(IndR, NCR)", ylabel="East Asia RWS", ytickloc="both", xtickloc="both",rtitle="1979-2014")
 # %%
+#   scatter plot forr the WNPhigh and EARWS
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
 cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
