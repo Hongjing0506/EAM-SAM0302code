@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-13 20:51:48
+LastEditTime: 2022-06-14 15:27:51
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -6851,4 +6851,35 @@ xyregress = stats.linregress(Sssp585_p3_WARWS.data,Sssp585_p3_EARWS.data)
 axs[0].line(np.linspace(-1e-11,2.5e-11), xyregress[0]*np.linspace(-1e-11,2.5e-11)+xyregress[1],zorder=0.8,color="grey7",ls="--")
 
 axs[0].format(xlim=(-4e-11,4e-11), ylim=(-4e-11,4e-11), grid=False, xlabel="West Asia RWS", ylabel="East Asia RWS", ytickloc="both", xtickloc="both",rtitle="2064-2099")
+# %%
+#   plot the bar-plot of all models Corr(IndR, NCR)
+plot_data = np.zeros((28,3))
+plot_data[:-2,0] = IndR_his_NC_regress[0].data
+plot_data[:-2,1] = IndR_ssp585_p3_NC_regress[0].data
+plot_data[:-2,2] = IndR_diff_NC_slope.data
+plot_data[-2,0] = IndR_his_NC_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,1] = IndR_ssp585_p3_NC_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,2] = IndR_diff_NC_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,0] = IndR_his_NC_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_NC_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_NC_slope.mean(dim="models", skipna=True).data
+
+label_models = list(models_array)
+label_models.append("gMME")
+label_models.append("MME")
+
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+m = axs[0].bar(label_models,plot_data,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-0.7,0.7),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(suptitle="Reg. Coeff. IndR and EAhigh")
 # %%
