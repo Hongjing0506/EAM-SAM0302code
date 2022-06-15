@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-15 21:29:10
+LastEditTime: 2022-06-15 22:18:53
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -7522,6 +7522,107 @@ axs[3].axhline(0,lw=1.5,color="grey7")
 
 axs[3].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[3].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="East Asia RWS")
+# ax.outline_patch.set_linewidth(1.0)
+fig.format(abc="(a)", abcloc="l")
+# %%
+#   plot the Rossby wave Source change reason: term1 and term2
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=5.0, outerpad=2.0)
+axs = fig.subplots(ncols=2, nrows=2)
+#   plot the Bar-plot of the West-Asia RWS1
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = Shis1_WARWS.sel(models=gmodels).data
+plot_data[:-1,1] = Sssp585_p31_WARWS.sel(models=gmodels).data
+plot_data[:-1,2] = Sdiff1_WARWS.sel(models=gmodels).data
+plot_data[-1,0] = Shis1_WARWS_gens.data
+plot_data[-1,1] = Sssp585_p31_WARWS_gens.data
+plot_data[-1,2] = Sdiff1_WARWS_gens.data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+m = axs[0,0].bar(label_models,plot_data*1e11,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0,0].axhline(0,lw=1.5,color="grey7")
+# axs[0,0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0,0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0,0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0,0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0,0].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="West Asia RWS1")
+# ax.outline_patch.set_linewidth(1.0)
+# fig.format(suptitle="West Asia RWS1")
+#   plot the Bar-plot of the West-Asia RWS2
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = Shis2_WARWS.sel(models=gmodels).data
+plot_data[:-1,1] = Sssp585_p32_WARWS.sel(models=gmodels).data
+plot_data[:-1,2] = Sdiff2_WARWS.sel(models=gmodels).data
+plot_data[-1,0] = Shis2_WARWS_gens.data
+plot_data[-1,1] = Sssp585_p32_WARWS_gens.data
+plot_data[-1,2] = Sdiff2_WARWS_gens.data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+m = axs[0,1].bar(label_models,plot_data*1e11,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0,1].axhline(0,lw=1.5,color="grey7")
+# axs[0,1].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0,1].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0,1].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0,1].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0,1].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="West Asia RWS2")
+# ax.outline_patch.set_linewidth(1.0)
+# fig.format(suptitle="West Asia RWS2")
+#   plot the Bar-plot of the East-Asia RWS1
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = Shis1_EARWS.sel(models=gmodels).data
+plot_data[:-1,1] = Sssp585_p31_EARWS.sel(models=gmodels).data
+plot_data[:-1,2] = Sdiff1_EARWS.sel(models=gmodels).data
+plot_data[-1,0] = Shis1_EARWS_gens.data
+plot_data[-1,1] = Sssp585_p31_EARWS_gens.data
+plot_data[-1,2] = Sdiff1_EARWS_gens.data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+m = axs[1,0].bar(label_models,plot_data*1e11,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[1,0].axhline(0,lw=1.5,color="grey7")
+# axs[1,0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[1,0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[1,0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[1,0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[1,0].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="East Asia RWS1")
+# ax.outline_patch.set_linewidth(1.0)
+# fig.format(suptitle="East Asia RWS1")
+
+#   plot the Bar-plot of the East-Asia RWS2
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = Shis2_EARWS.sel(models=gmodels).data
+plot_data[:-1,1] = Sssp585_p32_EARWS.sel(models=gmodels).data
+plot_data[:-1,2] = Sdiff2_EARWS.sel(models=gmodels).data
+plot_data[-1,0] = Shis2_EARWS_gens.data
+plot_data[-1,1] = Sssp585_p32_EARWS_gens.data
+plot_data[-1,2] = Sdiff2_EARWS_gens.data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+m = axs[1,1].bar(label_models,plot_data*1e11,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[1,1].axhline(0,lw=1.5,color="grey7")
+# axs[1,1].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[1,1].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[1,1].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[1,1].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[1,1].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="East Asia RWS2")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(abc="(a)", abcloc="l")
 # %%
