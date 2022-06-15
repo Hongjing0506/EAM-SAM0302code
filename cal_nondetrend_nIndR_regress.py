@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-15 19:51:13
+LastEditTime: 2022-06-15 21:29:10
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -7411,5 +7411,117 @@ axs[3].format(
 )
 # ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l")
+# %%
+#   plot the scatter plot x:WARWS y:EARWS
+legendlist = []
+pplt.rc["figure.facecolor"] = "white"
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0)
+# , wspace=4.0, hspace=6.0, outerpad=2.0
+array = np.array([[1,1,2,2,0,0],[1,1,2,2,0,0],[3,3,3,4,4,4],[3,3,3,4,4,4]])
+axs = fig.subplots(array, pad=3.0, outerpad=2.0)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(SERA5_WARWS*1e11, SERA5_EARWS*1e11, cycle=cycle, labels="ERA5", marker="s", color="blue5",ec="grey7")
+legendlist.append(m)
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(Shis_WARWS.sel(models=mod)*1e11, Shis_EARWS.sel(models=mod)*1e11, cycle=cycle, labels=mod,ec="grey7")
+    legendlist.append(m)
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(Shis_WARWS_ens*1e11, Shis_EARWS_ens*1e11, cycle=cycle, labels="MME", marker="^",ec="grey7")
+legendlist.append(m)
+m = axs[0].scatter(Shis_WARWS_gens*1e11, Shis_EARWS_gens*1e11, cycle=cycle, labels="gMME", marker="*",ec="grey7")
+legendlist.append(m)
+
+# #   x-axis title
+# axs[0].text(-0.90,0.03,s='West Asia RWS')
+# #   y-axis title
+# axs[0].text(0.03,-0.55,s='East Asia RWS')
+axs[0].axhline(0,lw=1.0,color="grey7",zorder=0.9)
+axs[0].axvline(0,lw=1.0,color="grey7",zorder=0.9)
+
+xyregress = stats.linregress(Shis_WARWS.data*1e11,Shis_EARWS.data*1e11)
+axs[0].line(np.linspace(-1,2.5), xyregress[0]*np.linspace(-1,2.5)+xyregress[1],zorder=0.8,color="grey7",ls="--")
+
+axs[0].format(xlim=(-3.5,3.5), ylim=(-3.5,3.5), grid=False, xlabel="West Asia RWS", ylabel="East Asia RWS", ytickloc="both", xtickloc="both",ltitle="1979-2014")
+
+# cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+
+for num_models, mod in enumerate(models_array):
+    m = axs[1].scatter(Sssp585_p3_WARWS.sel(models=mod)*1e11, Sssp585_p3_EARWS.sel(models=mod)*1e11, cycle=cycle, labels=mod,ec="grey7")
+# fig.legend(loc="bottom", labels=models)
+# axs[1].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[1].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[1].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[1].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[1].scatter(Sssp585_p3_WARWS_ens*1e11, Sssp585_p3_EARWS_ens*1e11, cycle=cycle, labels="MME", marker="^",ec="grey7")
+m = axs[1].scatter(Sssp585_p3_WARWS_gens*1e11, Sssp585_p3_EARWS_gens*1e11, cycle=cycle, labels="gMME", marker="*",ec="grey7")
+
+# #   x-axis title
+# axs[1].text(-0.90,0.03,s='West Asia RWS')
+# #   y-axis title
+# axs[1].text(0.03,-0.55,s='East Asia RWS')
+axs[1].axhline(0,lw=1.0,color="grey7",zorder=0.9)
+axs[1].axvline(0,lw=1.0,color="grey7",zorder=0.9)
+
+xyregress = stats.linregress(Sssp585_p3_WARWS.data*1e11,Sssp585_p3_EARWS.data*1e11)
+axs[1].line(np.linspace(-1,2.5), xyregress[0]*np.linspace(-1,2.5)+xyregress[1],zorder=0.8,color="grey7",ls="--")
+
+axs[1].format(xlim=(-3.5,3.5), ylim=(-3.5,3.5), grid=False, xlabel="West Asia RWS", ylabel="East Asia RWS", ytickloc="both", xtickloc="both",ltitle="2064-2099")
+
+axs[1].legend(handles=legendlist,loc="r", ncols=2, frameon=False, space=5.0)
+# axs[4].axis("off")
+
+#   plot the Bar-plot of the West-Asia RWS
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = Shis_WARWS.sel(models=gmodels).data
+plot_data[:-1,1] = Sssp585_p3_WARWS.sel(models=gmodels).data
+plot_data[:-1,2] = Sdiff_WARWS.sel(models=gmodels).data
+plot_data[-1,0] = Shis_WARWS_gens.data
+plot_data[-1,1] = Sssp585_p3_WARWS_gens.data
+plot_data[-1,2] = Sdiff_WARWS_gens.data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+m = axs[2].bar(label_models,plot_data*1e11,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[2].axhline(0,lw=1.5,color="grey7")
+# axs[2].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[2].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[2].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[2].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[2].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="West Asia RWS")
+
+#   plot the Bar-plot of the East-Asia RWS
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = Shis_EARWS.sel(models=gmodels).data
+plot_data[:-1,1] = Sssp585_p3_EARWS.sel(models=gmodels).data
+plot_data[:-1,2] = Sdiff_EARWS.sel(models=gmodels).data
+plot_data[-1,0] = Shis_EARWS_gens.data
+plot_data[-1,1] = Sssp585_p3_EARWS_gens.data
+plot_data[-1,2] = Sdiff_EARWS_gens.data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+m = axs[3].bar(label_models,plot_data*1e11,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[3].axhline(0,lw=1.5,color="grey7")
+# axs[3].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[3].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[3].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[3].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[3].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="East Asia RWS")
+# ax.outline_patch.set_linewidth(1.0)
 fig.format(abc="(a)", abcloc="l")
 # %%
