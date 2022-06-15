@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-15 22:18:53
+LastEditTime: 2022-06-15 22:27:41
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -7624,5 +7624,97 @@ axs[1,1].axhline(0,lw=1.5,color="grey7")
 axs[1,1].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[1,1].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="East Asia RWS2")
 # ax.outline_patch.set_linewidth(1.0)
+fig.format(abc="(a)", abcloc="l")
+# %%
+#   plot the SST reg SASMR in ERA5 HadISST, historical, ssp585_p3 and diff
+startlevel=-6e-1
+spacinglevel=0.12
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+# plot_array = np.reshape(range(1, 31), (5, 6))
+# plot_array[-1,-2:] = 0
+axs = fig.subplots(ncols=1, nrows=4, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    IndR_Had_sst_slope,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_Had_sst_slope, axs[0], n, np.where(IndR_Had_sst_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
+)
+
+axs[0].format(
+    rtitle="1979-2014", ltitle="HadISST & AIR",
+)
+# ======================================
+con = axs[1].contourf(
+    IndR_his_sst_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_his_sst_slope_gens, axs[1], n, np.where(IndR_his_sst_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[1].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ======================================
+con = axs[2].contourf(
+    IndR_ssp585_p3_sst_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_ssp585_p3_sst_slope_gens, axs[2], n, np.where(IndR_ssp585_p3_sst_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[2].format(
+    rtitle="2064-2099", ltitle="gMME",
+)
+# ======================================
+con = axs[3].contourf(
+    IndR_diff_sst_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    IndR_diff_sst_slope_gens, axs[3], n, np.where(IndR_diff_sst_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+axs[3].format(
+    rtitle="diff", ltitle="MME",
+)
+# ======================================
+
+fig.colorbar(con, loc="b", width=0.13, length=0.85, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
