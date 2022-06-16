@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-16 16:12:05
+LastEditTime: 2022-06-16 20:42:04
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -3733,7 +3733,7 @@ fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 # %%
 #   only plot the circulation regress onto AIR and IndR in MME
 startlevel=[-15, -8, -6]
-spacinglevel=[0.75, 0.4, 0.3]
+spacinglevel=[1.5, 0.8, 0.6]
 scalelevel=[0.23, 0.17, 0.14]
 
 pplt.rc.grid = False
@@ -3763,18 +3763,18 @@ w, h = 0.12, 0.14
 for ax in axs:
     rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
     ax.add_patch(rect)
-    # India area
-    x0 = India_W
-    y0 = India_S
-    width = India_E-India_W
-    height = India_N-India_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
-    # NC area
-    x0 = NC_W
-    y0 = NC_S
-    width = NC_E-NC_W
-    height = NC_N-NC_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # # India area
+    # x0 = India_W
+    # y0 = India_S
+    # width = India_E-India_W
+    # height = India_N-India_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # # NC area
+    # x0 = NC_W
+    # y0 = NC_S
+    # width = NC_E-NC_W
+    # height = NC_N-NC_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # # SJ-KP area
     # x0 = SJ_W
     # y0 = SJ_S
@@ -3849,7 +3849,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     axs[num_lev, 0].format(
-        rtitle="1979-2014 {:.0f}hPa".format(lev), ltitle="AIR & ERA5",
+        ltitle="1979-2014 {:.0f}hPa".format(lev), rtitle="AIR & ERA5",
     )
     # ======================================
     con = axs[num_lev, 1].contourf(
@@ -3893,11 +3893,12 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     axs[num_lev, 1].format(
-        rtitle="1979-2014 {:.0f}hPa".format(lev), ltitle="MME",
+        ltitle="1979-2014 {:.0f}hPa".format(lev), rtitle="MME",
     )
+    cb = axs[num_lev, 1].colorbar(con, loc="r", width=0.13, length=0.8, label="", ticklabelsize=7)
+    cb.set_ticks(np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]*2))
 # ======================================
-fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-fig.format(abc="(a)", abcloc="l", suptitle="hgt&U reg SASMR".format(lev))
+fig.format(abc="(a)", abcloc="l")
 # %%
 #   plot the avalue of hgt&u&v regress onto IndR in ERA5 and historical
 startlevel=[-15, -8, -6]
@@ -6984,7 +6985,7 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj, linestyle="-")
     # NC area
     x0 = NC_W
     y0 = NC_S
@@ -7005,7 +7006,7 @@ sepl.plt_sig(
 )
 
 axs[0].format(
-    rtitle="1979-2014", ltitle="GPCP & AIR",
+    ltitle="1979-2014", rtitle="GPCP & AIR",
 )
 # ===================================================
 con = axs[1].contourf(
@@ -7021,7 +7022,7 @@ sepl.plt_sig(
 )
 
 axs[1].format(
-    rtitle="1979-2014", ltitle="MME",
+    ltitle="1979-2014", rtitle="MME",
 )
 # ===================================================
 cb = fig.colorbar(con, loc="b", width=0.13, length=0.7, label="", ticklabelsize=7)
@@ -7058,7 +7059,7 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj, linestyle="-")
     # NC area
     x0 = NC_W
     y0 = NC_S
@@ -7069,7 +7070,7 @@ for ax in axs:
 con = axs[0].contourf(
     pre_his_India_pre_slope_gens,
     cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    cmap_kw={"left": 0.06, "right": 0.94},
     levels=np.arange(-2.0,2.1, 0.4),
     zorder=0.8,
     extend="both"
@@ -7079,13 +7080,13 @@ sepl.plt_sig(
 )
 
 axs[0].format(
-    rtitle="1979-2014", ltitle="historical gMME",
+    ltitle="1979-2014", rtitle="gMME",
 )
 # ===================================================
 con = axs[1].contourf(
     pre_ssp585_p3_India_pre_slope_gens,
     cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    cmap_kw={"left": 0.06, "right": 0.94},
     levels=np.arange(-2.0,2.1, 0.4),
     zorder=0.8,
     extend="both"
@@ -7095,15 +7096,16 @@ sepl.plt_sig(
 )
 
 axs[1].format(
-    rtitle="2064-2099", ltitle="ssp585_p3 gMME",
+    ltitle="2064-2099", rtitle="gMME",
 )
 # ===================================================
-fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+cb = fig.colorbar(con, loc="b", width=0.13, length=0.7, label="", ticklabelsize=7)
+cb.set_ticks(np.arange(-2.0,2.1, 0.4))
 fig.format(abc="(a)", abcloc="l")
 # %%
 #   only plot the circulation regress onto IndR in ssp585_p3 and difference
 startlevel=[-15, -8, -6]
-spacinglevel=[0.15, 0.8, 0.6]
+spacinglevel=[1.5, 0.8, 0.6]
 scalelevel=[0.23, 0.17, 0.14]
 
 pplt.rc.grid = False
@@ -7133,18 +7135,18 @@ w, h = 0.12, 0.14
 for ax in axs:
     rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
     ax.add_patch(rect)
-    # India area
-    x0 = India_W
-    y0 = India_S
-    width = India_E-India_W
-    height = India_N-India_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
-    # NC area
-    x0 = NC_W
-    y0 = NC_S
-    width = NC_E-NC_W
-    height = NC_N-NC_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # # India area
+    # x0 = India_W
+    # y0 = India_S
+    # width = India_E-India_W
+    # height = India_N-India_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj, linestyle="-")
+    # # NC area
+    # x0 = NC_W
+    # y0 = NC_S
+    # width = NC_E-NC_W
+    # height = NC_N-NC_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj)
     # # SJ-KP area
     # x0 = SJ_W
     # y0 = SJ_S
@@ -7194,7 +7196,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     axs[num_lev, 0].format(
-        rtitle="2064-2099 {:.0f}hPa".format(lev), ltitle="gMME",
+        ltitle="2064-2099 {:.0f}hPa".format(lev), rtitle="gMME",
     )
 # ======================================
     con = axs[num_lev, 1].contourf(
@@ -7238,11 +7240,12 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
     axs[num_lev, 1].format(
-        rtitle="diff {:.0f}hPa".format(lev), ltitle="gMME",
+        ltitle="diff {:.0f}hPa".format(lev), rtitle="gMME",
     )
+    cb = axs[num_lev, 1].colorbar(con, loc="r", width=0.13, length=0.8, label="", ticklabelsize=7)
+    cb.set_ticks(np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]*2))
 # ======================================
-fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-fig.format(abc="(a)", abcloc="l", suptitle="hgt&U reg SASMR".format(lev))
+fig.format(abc="(a)", abcloc="l")
 # %%
 #   fig. 6
 pplt.rc["figure.facecolor"] = "white"
@@ -7269,8 +7272,8 @@ axs[0].axhline(0,lw=1.5,color="grey7")
 #     if i > 0:
 #         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
-axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[0].format(ylim=(-3.0,3.0),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WAhigh")
+axs[0].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
+axs[0].format(ylim=(-3.0,3.0),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WA")
 
 #   plot the bar-plot of the EA high
 plot_data = np.zeros((7,3))
@@ -7293,8 +7296,8 @@ axs[1].axhline(0,lw=1.5,color="grey7")
 #     if i > 0:
 #         axs[1].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
-axs[1].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[1].format(ylim=(-2.0,2.0),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="EAhigh")
+axs[1].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
+axs[1].format(ylim=(-2.0,2.0),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="EA")
 
 #   plot the bar-plot of the WNP high
 plot_data = np.zeros((7,3))
@@ -7316,8 +7319,8 @@ axs[2].axhline(0,lw=1.5,color="grey7")
 #     if i > 0:
 #         axs[2].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
-axs[2].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[2].format(ylim=(-1.0,1.0),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WNPhigh")
+axs[2].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
+axs[2].format(ylim=(-1.0,1.0),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WNP")
 
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(abc="(a)", abcloc="l")
@@ -7417,10 +7420,10 @@ fig.format(abc="(a)", abcloc="l")
 #   plot the scatter plot x:WARWS y:EARWS
 legendlist = []
 pplt.rc["figure.facecolor"] = "white"
-fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0)
+fig = pplt.figure(span=False, share=False, refwidth=4.0, refheight=4.0, outerpad=1.0)
 # , wspace=4.0, hspace=6.0, outerpad=2.0
-array = np.array([[1,1,2,2,0,0],[1,1,2,2,0,0],[3,3,3,4,4,4],[3,3,3,4,4,4]])
-axs = fig.subplots(array, pad=3.0, outerpad=2.0)
+array = np.array([[1,1,2,2,5,5],[1,1,2,2,5,5],[3,3,3,4,4,4],[3,3,3,4,4,4]])
+axs = fig.subplots(array, wspace=7.0)
 cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
 # cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
 # m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
@@ -7449,7 +7452,7 @@ axs[0].axvline(0,lw=1.0,color="grey7",zorder=0.9)
 xyregress = stats.linregress(Shis_WARWS.data*1e11,Shis_EARWS.data*1e11)
 axs[0].line(np.linspace(-1,2.5), xyregress[0]*np.linspace(-1,2.5)+xyregress[1],zorder=0.8,color="grey7",ls="--")
 
-axs[0].format(xlim=(-3.5,3.5), ylim=(-3.5,3.5), grid=False, xlabel="West Asia RWS", ylabel="East Asia RWS", ytickloc="both", xtickloc="both",ltitle="1979-2014")
+axs[0].format(xlim=(-3.5,3.5), ylim=(-3.5,3.5), grid=False, xlabel="West Asia RWS", ylabel="East Asia RWS", ytickloc="both", xtickloc="both",ltitle="1979-2014", abc="(a)", abcloc="l")
 
 # cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
 
@@ -7473,10 +7476,10 @@ axs[1].axvline(0,lw=1.0,color="grey7",zorder=0.9)
 xyregress = stats.linregress(Sssp585_p3_WARWS.data*1e11,Sssp585_p3_EARWS.data*1e11)
 axs[1].line(np.linspace(-1,2.5), xyregress[0]*np.linspace(-1,2.5)+xyregress[1],zorder=0.8,color="grey7",ls="--")
 
-axs[1].format(xlim=(-3.5,3.5), ylim=(-3.5,3.5), grid=False, xlabel="West Asia RWS", ylabel="East Asia RWS", ytickloc="both", xtickloc="both",ltitle="2064-2099")
+axs[1].format(xlim=(-3.5,3.5), ylim=(-3.5,3.5), grid=False, xlabel="West Asia RWS", ylabel="East Asia RWS", ytickloc="both", xtickloc="both",ltitle="2064-2099", abc="(a)", abcloc="l")
 
-axs[1].legend(handles=legendlist,loc="r", ncols=2, frameon=False, space=5.0)
-# axs[4].axis("off")
+axs[4].legend(handles=legendlist,loc="cl", ncols=2, frameon=False, space=3.0)
+axs[4].axis("off")
 
 #   plot the Bar-plot of the West-Asia RWS
 plot_data = np.zeros((7,3))
@@ -7498,8 +7501,8 @@ axs[2].axhline(0,lw=1.5,color="grey7")
 #     if i > 0:
 #         axs[2].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
-axs[2].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[2].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="West Asia RWS")
+axs[2].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
+axs[2].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="West Asia RWS", abc="(a)", abcloc="l")
 
 #   plot the Bar-plot of the East-Asia RWS
 plot_data = np.zeros((7,3))
@@ -7521,10 +7524,10 @@ axs[3].axhline(0,lw=1.5,color="grey7")
 #     if i > 0:
 #         axs[3].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
-axs[3].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[3].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="East Asia RWS")
+axs[3].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
+axs[3].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="East Asia RWS", abc="(a)", abcloc="l")
 # ax.outline_patch.set_linewidth(1.0)
-fig.format(abc="(a)", abcloc="l")
+# fig.format(abc="(a)", abcloc="l")
 # %%
 #   plot the Rossby wave Source change reason: term1 and term2
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=5.0, outerpad=2.0)
@@ -7712,7 +7715,7 @@ sepl.plt_sig(
     IndR_diff_sst_slope_gens, axs[3], n, np.where(IndR_diff_sst_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
 )
 axs[3].format(
-    rtitle="diff", ltitle="MME",
+    rtitle="diff", ltitle="gMME",
 )
 # ======================================
 
