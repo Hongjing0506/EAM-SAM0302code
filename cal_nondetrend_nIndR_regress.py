@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-15 22:27:41
+LastEditTime: 2022-06-16 16:12:05
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -6996,12 +6996,12 @@ con = axs[0].contourf(
     pre_AIR_India_pre_slope,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-2.0,2.1, 0.4),
+    levels=np.arange(-2.0,2.1, 0.2),
     zorder=0.8,
     extend="both"
     )
 sepl.plt_sig(
-    pre_AIR_India_pre_slope, axs[0], n, np.where(pre_AIR_India_pre_pvalue[::n, ::n] < 0.05), "bright purple", 4.0,
+    pre_AIR_India_pre_slope, axs[0], n, np.where(pre_AIR_India_pre_pvalue[::n, ::n] < 0.10), "bright purple", 4.0,
 )
 
 axs[0].format(
@@ -7012,20 +7012,21 @@ con = axs[1].contourf(
     pre_his_India_pre_slope_ens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-2.0,2.1, 0.4),
+    levels=np.arange(-2.0,2.1, 0.2),
     zorder=0.8,
-    extend="both"
+    extend="both",
     )
 sepl.plt_sig(
     pre_his_India_pre_slope_ens, axs[1], n, np.where(pre_his_India_pre_slope_ens_mask[::n, ::n] > 0.00), "bright purple", 4.0,
 )
 
 axs[1].format(
-    rtitle="1979-2014", ltitle="historical MME",
+    rtitle="1979-2014", ltitle="MME",
 )
 # ===================================================
-fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-fig.format(abc="(a)", abcloc="l", suptitle="pre reg SASMR")
+cb = fig.colorbar(con, loc="b", width=0.13, length=0.7, label="", ticklabelsize=7)
+cb.set_ticks(np.arange(-2.0,2.1, 0.4))
+fig.format(abc="(a)", abcloc="l")
 # %%
 #  gMME precipitation regress onto IndR
 pplt.rc.grid = False
@@ -7068,7 +7069,7 @@ for ax in axs:
 con = axs[0].contourf(
     pre_his_India_pre_slope_gens,
     cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94},
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-2.0,2.1, 0.4),
     zorder=0.8,
     extend="both"
@@ -7084,7 +7085,7 @@ axs[0].format(
 con = axs[1].contourf(
     pre_ssp585_p3_India_pre_slope_gens,
     cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94},
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
     levels=np.arange(-2.0,2.1, 0.4),
     zorder=0.8,
     extend="both"
@@ -7098,7 +7099,7 @@ axs[1].format(
 )
 # ===================================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
-fig.format(abc="(a)", abcloc="l", suptitle="pre reg SASMR")
+fig.format(abc="(a)", abcloc="l")
 # %%
 #   only plot the circulation regress onto IndR in ssp585_p3 and difference
 startlevel=[-15, -8, -6]
