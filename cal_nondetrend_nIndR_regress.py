@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-19 17:20:20
+LastEditTime: 2022-06-19 22:22:51
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -94,7 +94,7 @@ hgtERA5_ver_JJA = ca.p_time(hgtERA5, 6, 8, True)
 hgtERA5_ver_JJA = hgtERA5_ver_JJA-hgtERA5_ver_JJA.mean(dim="lon", skipna=True)
 uERA5_ver_JJA = ca.p_time(uERA5, 6, 8, True)
 vERA5_ver_JJA = ca.p_time(vERA5, 6, 8, True)
-qERA5_ver_JJA = ca.p_time(qERA5, 6, 9, True)
+qERA5_ver_JJA = ca.p_time(qERA5, 6, 8, True)
 spERA5_JJA = ca.p_time(spERA5, 6, 8, True)
 wERA5_JJA = ca.p_time(wERA5, 6, 8, True)
 sstHad_JJA = ca.p_time(sstHad, 6, 8, True)
@@ -825,7 +825,7 @@ Sdiff1_EARWS = Sssp585_p31_EARWS - Shis1_EARWS
 SERA52_EARWS = ca.cal_lat_weighted_mean(SERA52.sel(lat=lat_EARWS_range, lon=lon_EARWS_range)).mean(dim="lon", skipna=True)
 Shis2_EARWS = ca.cal_lat_weighted_mean(Shis2.sel(lat=lat_EARWS_range, lon=lon_EARWS_range)).mean(dim="lon", skipna=True)
 Sssp585_p32_EARWS = ca.cal_lat_weighted_mean(Sssp585_p32.sel(lat=lat_EARWS_range, lon=lon_EARWS_range)).mean(dim="lon", skipna=True)
-Sdiff2_EARWS = Sssp585_p32_EARWS - Shis2_WARWS
+Sdiff2_EARWS = Sssp585_p32_EARWS - Shis2_EARWS
 
 #   calculate the ens in WARWS and EARWS
 Shis_WARWS_ens = Shis_WARWS.mean(dim="models", skipna=True)
@@ -1376,7 +1376,7 @@ lon_ranking_range1 = lon[(lon>=50) & (lon<=140.0)]
 
 #   for 850hPa
 lat_ranking_range2 = lat[(lat>=15) & (lat<=37.5)]
-lon_ranking_range2 = lon[(lon>=110) & (lon<=137.0)]
+lon_ranking_range2 = lon[(lon>=110) & (lon<=137.5)]
 
 IndR_ranking_list = []
 IndR_200hgt_pcc = []
@@ -1446,21 +1446,22 @@ Shis_gens_mask = xr.where((ca.MME_reg_mask(Shis_gens, Shis.sel(models=gmodels).s
 Sssp585_p3_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_gens, Sssp585_p3.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p3.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sdiff_gens_mask = ca.cal_mmemask(Sdiff.sel(models=gmodels))
 
-Shis1_gens_mask = xr.where((ca.MME_reg_mask(Shis_gens, Shis1.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis1.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
-Sssp585_p31_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_gens, Sssp585_p31.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p31.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Shis1_gens_mask = xr.where((ca.MME_reg_mask(Shis1_gens, Shis1.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis1.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p31_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p31_gens, Sssp585_p31.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p31.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sdiff1_gens_mask = ca.cal_mmemask(Sdiff1.sel(models=gmodels))
 
-Shis2_gens_mask = xr.where((ca.MME_reg_mask(Shis_gens, Shis2.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis2.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
-Sssp585_p32_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_gens, Sssp585_p32.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p32.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Shis2_gens_mask = xr.where((ca.MME_reg_mask(Shis2_gens, Shis2.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis2.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p32_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p32_gens, Sssp585_p32.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p32.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sdiff2_gens_mask = ca.cal_mmemask(Sdiff2.sel(models=gmodels))
 
 #   calculate the area mean gens and gens mask
 Shis1_WARWS_gens = Shis1_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
 Shis2_WARWS_gens = Shis2_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
-Sdiff1_WARWS_gens = Sdiff1_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
 
 Sssp585_p31_WARWS_gens = Sssp585_p31_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
 Sssp585_p32_WARWS_gens = Sssp585_p32_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+
+Sdiff1_WARWS_gens = Sdiff1_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
 Sdiff2_WARWS_gens = Sdiff2_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
 
 Shis_WARWS_gens = Shis_WARWS.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -1469,10 +1470,11 @@ Sdiff_WARWS_gens = Sdiff_WARWS.sel(models=gmodels).mean(dim="models", skipna=Tru
 
 Shis1_EARWS_gens = Shis1_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
 Shis2_EARWS_gens = Shis2_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
-Sdiff1_EARWS_gens = Sdiff1_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
 
 Sssp585_p31_EARWS_gens = Sssp585_p31_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
 Sssp585_p32_EARWS_gens = Sssp585_p32_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
+
+Sdiff1_EARWS_gens = Sdiff1_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
 Sdiff2_EARWS_gens = Sdiff2_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
 
 Shis_EARWS_gens = Shis_EARWS.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -1483,24 +1485,24 @@ Shis_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis_WARWS_gens, Shis_WARWS.sel
 Sssp585_p3_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_WARWS_gens, Sssp585_p3_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p3_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sdiff_WARWS_gens_mask = ca.cal_mmemask(Sdiff_WARWS.sel(models=gmodels))
 
-Shis1_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis_WARWS_gens, Shis1_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis1_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
-Sssp585_p31_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_WARWS_gens, Sssp585_p31_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p31_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Shis1_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis1_WARWS_gens, Shis1_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis1_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p31_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p31_WARWS_gens, Sssp585_p31_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p31_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sdiff1_WARWS_gens_mask = ca.cal_mmemask(Sdiff1_WARWS.sel(models=gmodels))
 
-Shis2_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis_WARWS_gens, Shis2_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis2_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
-Sssp585_p32_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_WARWS_gens, Sssp585_p32_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p32_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Shis2_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis2_WARWS_gens, Shis2_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis2_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p32_WARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p32_WARWS_gens, Sssp585_p32_WARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p32_WARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sdiff2_WARWS_gens_mask = ca.cal_mmemask(Sdiff2_WARWS.sel(models=gmodels))
 
 Shis_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis_EARWS_gens, Shis_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sssp585_p3_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_EARWS_gens, Sssp585_p3_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p3_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sdiff_EARWS_gens_mask = ca.cal_mmemask(Sdiff_EARWS.sel(models=gmodels))
 
-Shis1_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis_EARWS_gens, Shis1_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis1_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
-Sssp585_p31_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_EARWS_gens, Sssp585_p31_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p31_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Shis1_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis1_EARWS_gens, Shis1_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis1_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p31_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p31_EARWS_gens, Sssp585_p31_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p31_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sdiff1_EARWS_gens_mask = ca.cal_mmemask(Sdiff1_EARWS.sel(models=gmodels))
 
-Shis2_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis_EARWS_gens, Shis2_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis2_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
-Sssp585_p32_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p3_EARWS_gens, Sssp585_p32_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p32_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Shis2_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Shis2_EARWS_gens, Shis2_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Shis2_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+Sssp585_p32_EARWS_gens_mask = xr.where((ca.MME_reg_mask(Sssp585_p32_EARWS_gens, Sssp585_p32_EARWS.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(Sssp585_p32_EARWS.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 Sdiff2_EARWS_gens_mask = ca.cal_mmemask(Sdiff2_EARWS.sel(models=gmodels))
 
 pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -3416,7 +3418,7 @@ for num_models,mod in enumerate(pre_his_India_pre_slope.coords["models"].data):
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 # %%
-#   plot the taylor-diagram
+#   fig. 3 plot the taylor-diagram
 labels = list(models.data)
 labels.append("MME")
 labels.append("gMME")
@@ -3732,7 +3734,7 @@ axs[1].format(
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="pre reg IndR")
 # %%
-#   only plot the circulation regress onto AIR and IndR in MME
+#   fig. 2 only plot the circulation regress onto AIR and IndR in MME
 startlevel=[-15, -8, -6]
 spacinglevel=[1.5, 0.8, 0.6]
 scalelevel=[0.23, 0.17, 0.14]
@@ -3743,7 +3745,7 @@ pplt.rc["figure.facecolor"] = "white"
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+fig = pplt.figure(span=False, share=False, refwidth=6.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 plot_array = np.reshape(range(1, 7), (3, 2))
 # plot_array[-1,-1] = 0
 axs = fig.subplots(plot_array, proj=proj)
@@ -3751,7 +3753,7 @@ axs = fig.subplots(plot_array, proj=proj)
 #   set the geo_ticks and map projection to the plots
 # xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
 xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
-yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+yticks = np.arange(0, 46, 15)  # 设置经度刻度
 # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
 # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
 extents = [xticks[0], xticks[-1], yticks[0], 55.0]
@@ -3806,7 +3808,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         for ax in axs[num_lev, :]:
             x0 = 110
             y0 = 15
-            width = 27
+            width = 27.5
             height = 22.5
             sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
     con = axs[num_lev, 0].contourf(
@@ -6956,7 +6958,7 @@ axs[0].axvline(0,lw=1.0,color="grey7",zorder=0.9)
 axs[0].format(xlim=(-1,1), ylim=(-4e-11,4e-11), grid=False, xlabel="corr(IndR, WNPhigh)", ylabel="East Asia RWS", ytickloc="both", xtickloc="both",rtitle="1979-2014")
 # %%
 #   for word figure
-#   plot the precipitation regress onto IndR(AIRI)
+#   fig. 1 plot the precipitation regress onto IndR(AIRI)
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
 pplt.rc["figure.facecolor"] = "white"
@@ -6968,11 +6970,11 @@ plot_array = np.reshape(range(1, 3), (2, 1))
 axs = fig.subplots(plot_array, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
-xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
-yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+xticks = np.array([60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(0, 46, 15)  # 设置经度刻度
 # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
 # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
-extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+extents = [40.0, xticks[-1], yticks[0], 55.0]
 sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
 
 # ===================================================
@@ -6998,7 +7000,7 @@ con = axs[0].contourf(
     pre_AIR_India_pre_slope,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-2.0,2.1, 0.2),
+    levels=np.arange(-1.6,1.7,0.2),
     zorder=0.8,
     extend="both"
     )
@@ -7014,7 +7016,7 @@ con = axs[1].contourf(
     pre_his_India_pre_slope_ens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-2.0,2.1, 0.2),
+    levels=np.arange(-1.6,1.7,0.2),
     zorder=0.8,
     extend="both",
     )
@@ -7072,7 +7074,7 @@ con = axs[0].contourf(
     pre_his_India_pre_slope_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-2.0,2.1, 0.4),
+    levels=np.arange(-1.6,1.7,0.2),
     zorder=0.8,
     extend="both"
     )
@@ -7088,7 +7090,7 @@ con = axs[1].contourf(
     pre_ssp585_p3_India_pre_slope_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94},
-    levels=np.arange(-2.0,2.1, 0.4),
+    levels=np.arange(-1.6,1.7,0.2),
     zorder=0.8,
     extend="both"
     )
@@ -7100,11 +7102,27 @@ axs[1].format(
     ltitle="2064-2099", rtitle="gMME",
 )
 # ===================================================
+# con = axs[2].contourf(
+#     pre_diff_India_pre_slope_gens,
+#     cmap="ColdHot",
+#     cmap_kw={"left": 0.06, "right": 0.94},
+#     levels=np.arange(-1.6,1.7,0.2),
+#     zorder=0.8,
+#     extend="both"
+#     )
+# sepl.plt_sig(
+#     pre_diff_India_pre_slope_gens, axs[2], n, np.where(pre_diff_India_pre_gens_mask[::n, ::n] > 0.00), "bright purple", 4.0,
+# )
+
+# axs[2].format(
+#     ltitle="diff", rtitle="gMME",
+# )
+# ===================================================
 cb = fig.colorbar(con, loc="b", width=0.13, length=0.7, label="", ticklabelsize=7)
 cb.set_ticks(np.arange(-2.0,2.1, 0.4))
 fig.format(abc="(a)", abcloc="l")
 # %%
-#   only plot the circulation regress onto IndR in ssp585_p3 and difference
+#   fig. 5 only plot the circulation regress onto IndR in ssp585_p3 and difference
 startlevel=[-15, -8, -6]
 spacinglevel=[1.5, 0.8, 0.6]
 scalelevel=[0.23, 0.17, 0.14]
@@ -7115,7 +7133,7 @@ pplt.rc["figure.facecolor"] = "white"
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+fig = pplt.figure(span=False, share=False, refwidth=6.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 plot_array = np.reshape(range(1, 10), (3, 3))
 # plot_array[-1,-1] = 0
 axs = fig.subplots(plot_array, proj=proj)
@@ -7123,7 +7141,7 @@ axs = fig.subplots(plot_array, proj=proj)
 #   set the geo_ticks and map projection to the plots
 # xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
 xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
-yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+yticks = np.arange(0, 46, 15)  # 设置经度刻度
 # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
 # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
 extents = [xticks[0], xticks[-1], yticks[0], 55.0]
@@ -7294,7 +7312,7 @@ fig.format(abc="(a)", abcloc="l")
 # %%
 #   fig. 6
 pplt.rc["figure.facecolor"] = "white"
-fig = pplt.figure(span=False, share=False, refheight=3.0, refwidth=8.0, wspace=4.0, hspace=4.0, outerpad=2.0)
+fig = pplt.figure(span=False, share=False, refheight=3.0, refwidth=10.0, wspace=4.0, hspace=4.0, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=3)
 
 #   plot the bar-plot of the WA high
@@ -7370,7 +7388,7 @@ axs[2].format(ylim=(-1.0,1.0),xlocator=np.arange(0,27), xtickminor=False, ytickm
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(abc="(a)", abcloc="l")
 # %%
-#   Only plot the RWS for reanalysis historical and ssp585_p3
+#   fig. 7 Only plot the RWS for reanalysis historical and ssp585_p3
 startlevel=-3e-11
 spacinglevel=5e-12
 pplt.rc.grid = False
@@ -7379,13 +7397,13 @@ pplt.rc["figure.facecolor"] = "white"
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+fig = pplt.figure(span=False, share=False, refwidth=6.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=4, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
 # xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
 xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
-yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+yticks = np.arange(0, 46, 15)  # 设置经度刻度
 # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
 # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
 extents = [xticks[0], xticks[-1], yticks[0], 55.0]
@@ -7462,10 +7480,10 @@ axs[3].format(
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l")
 # %%
-#   plot the scatter plot x:WARWS y:EARWS
+#   fig. 8 plot the scatter plot x:WARWS y:EARWS
 legendlist = []
 pplt.rc["figure.facecolor"] = "white"
-fig = pplt.figure(span=False, share=False, refwidth=4.0, refheight=4.0, outerpad=1.0)
+fig = pplt.figure(span=False, share=False, refwidth=6.0, refheight=4.0, outerpad=1.0)
 # , wspace=4.0, hspace=6.0, outerpad=2.0
 array = np.array([[1,1,2,2,5,5],[1,1,2,2,5,5],[3,3,3,4,4,4],[3,3,3,4,4,4]])
 axs = fig.subplots(array, wspace=7.0)
@@ -7474,8 +7492,15 @@ cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
 # m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
 m = axs[0].scatter(SERA5_WARWS*1e11, SERA5_EARWS*1e11, cycle=cycle, labels="ERA5", marker="s", color="blue5",ec="grey7")
 legendlist.append(m)
-for num_models, mod in enumerate(models_array):
+
+pmodels=['ACCESS-CM2','BCC-CSM2-MR','CESM2','CNRM-CM6-1','CNRM-ESM2-1','CanESM5','EC-Earth3','EC-Earth3-Veg','FGOALS-g3','GFDL-CM4','HadGEM3-GC31-LL','INM-CM5-0','IPSL-CM6A-LR','KACE-1-0-G','MIROC-ES2L','MIROC6','MPI-ESM1-2-HR','NESM3','NorESM2-LM','TaiESM1']
+
+for num_models, mod in enumerate(pmodels):
     m = axs[0].scatter(Shis_WARWS.sel(models=mod)*1e11, Shis_EARWS.sel(models=mod)*1e11, cycle=cycle, labels=mod,ec="grey7")
+    legendlist.append(m)
+    
+for num_models, mod in enumerate(gmodels):
+    m = axs[0].scatter(Shis_WARWS.sel(models=mod)*1e11, Shis_EARWS.sel(models=mod)*1e11, cycle=cycle, labels=mod,ec="grey7", marker="h")
     legendlist.append(m)
 # fig.legend(loc="bottom", labels=models)
 # axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -7501,8 +7526,10 @@ axs[0].format(xlim=(-3.5,3.5), ylim=(-3.5,3.5), grid=False, xlabel="West Asia RW
 
 # cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
 
-for num_models, mod in enumerate(models_array):
+for num_models, mod in enumerate(pmodels):
     m = axs[1].scatter(Sssp585_p3_WARWS.sel(models=mod)*1e11, Sssp585_p3_EARWS.sel(models=mod)*1e11, cycle=cycle, labels=mod,ec="grey7")
+for num_models, mod in enumerate(gmodels):
+    m = axs[1].scatter(Sssp585_p3_WARWS.sel(models=mod)*1e11, Sssp585_p3_EARWS.sel(models=mod)*1e11, cycle=cycle, labels=mod,ec="grey7",marker="h")
 # fig.legend(loc="bottom", labels=models)
 # axs[1].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
 # axs[1].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
@@ -7574,8 +7601,8 @@ axs[3].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickminor
 # ax.outline_patch.set_linewidth(1.0)
 # fig.format(abc="(a)", abcloc="l")
 # %%
-#   plot the Rossby wave Source change reason: term1 and term2
-fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=5.0, outerpad=2.0)
+#   fig. 9 plot the Rossby wave Source change reason: term1 and term2
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=10.0, wspace=4.0, hspace=5.0, outerpad=2.0)
 axs = fig.subplots(ncols=2, nrows=2)
 #   plot the Bar-plot of the West-Asia RWS1
 plot_data = np.zeros((7,3))
@@ -7675,7 +7702,7 @@ axs[1,1].format(ylim=(-3,3),xlocator=np.arange(0,27), xtickminor=False, ytickmin
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(abc="(a)", abcloc="l")
 # %%
-#   plot the SST reg SASMR in ERA5 HadISST, historical, ssp585_p3 and diff
+#   fig. 10 plot the SST reg SASMR in ERA5 HadISST, historical, ssp585_p3 and diff
 startlevel=-6e-1
 spacinglevel=0.12
 
@@ -7766,5 +7793,64 @@ axs[3].format(
 # ======================================
 
 fig.colorbar(con, loc="b", width=0.13, length=0.85, label="")
+fig.format(abc="(a)", abcloc="l")
+# %%
+TIO_W = 50.0
+TIO_E = 100.0
+TIO_S = -20
+TIO_N = 20
+
+WP_W = 120
+WP_E = 160
+WP_S = -20
+WP_N = 20
+
+EP_W = 120
+EP_E = 160
+EP_S = -20
+EP_N = 20
+
+lat_TIO_range = lat[(lat>=TIO_S) & (lat<=TIO_N)]
+lon_TIO_range = lon[(lon>=TIO_W) & (lon<=TIO_E)]
+
+lat_WP_range = lat[(lat>=WP_S) & (lat<=WP_N)]
+lon_WP_range = lon[(lon>=WP_W) & (lon<=WP_E)]
+
+SSThis_TIO_JJA = ca.cal_lat_weighted_mean(IndR_his_sst_slope.sel(lat=lat_TIO_range, lon=lon_TIO_range)).mean(dim="lon", skipna=True)
+SSTssp585_p3_TIO_JJA = ca.cal_lat_weighted_mean(IndR_ssp585_p3_sst_slope.sel(lat=lat_TIO_range, lon=lon_TIO_range)).mean(dim="lon", skipna=True)
+
+SSThis_WP_JJA = ca.cal_lat_weighted_mean(IndR_his_sst_slope.sel(lat=lat_WP_range, lon=lon_WP_range)).mean(dim="lon", skipna=True)
+SSTssp585_p3_WP_JJA = ca.cal_lat_weighted_mean(IndR_ssp585_p3_sst_slope.sel(lat=lat_WP_range, lon=lon_WP_range)).mean(dim="lon", skipna=True)
+
+SSTa_his_WPTIO_JJA = SSThis_WP_JJA-SSThis_TIO_JJA
+SSTa_ssp585_p3_WPTIO_JJA = SSTssp585_p3_WP_JJA-SSTssp585_p3_TIO_JJA
+
+SSTa_diff_WPTIO_JJA = SSTa_ssp585_p3_WPTIO_JJA - SSTa_his_WPTIO_JJA
+# %%
+#	plot the bar plot
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=5.0, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = SSTa_his_WPTIO_JJA.sel(models=gmodels).data
+plot_data[:-1,1] = SSTa_ssp585_p3_WPTIO_JJA.sel(models=gmodels).data
+plot_data[:-1,2] = SSTa_diff_WPTIO_JJA.sel(models=gmodels).data
+plot_data[-1,0] = SSTa_his_WPTIO_JJA.sel(models=gmodels).mean(dim="models",skipna=True).data
+plot_data[-1,1] = SSTa_ssp585_p3_WPTIO_JJA.sel(models=gmodels).mean(dim="models",skipna=True).data
+plot_data[-1,2] = SSTa_diff_WPTIO_JJA.sel(models=gmodels).mean(dim="models",skipna=True).data
+
+label_models = list(gmodels)
+label_models.append("gMME")
+
+m = axs[0].bar(label_models,plot_data*1e11,width=0.4,cycle="tab10",edgecolor="grey7")
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
+axs[0].format(ylim=(-2e10,2e10),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="SSTa WP-TIO")
+# ax.outline_patch.set_linewidth(1.0)
 fig.format(abc="(a)", abcloc="l")
 # %%
