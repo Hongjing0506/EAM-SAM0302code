@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-20 13:24:04
+LastEditTime: 2022-06-20 14:21:36
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -8185,4 +8185,184 @@ axs[3].format(
     ltitle="diff", rtitle="gMME",
 )
 fig.format(abc="(a)", abcloc="l", suptitle="200hPa  divergent wind climatology")
+# %%
+# plot the prime udiv and vdiv
+udivhis_prime_gens = udivhis_prime.sel(models=gmodels).mean(dim="models",skipna=True)
+udivhis_prime_gens_mask = xr.where((ca.MME_reg_mask(udivhis_prime_gens, udivhis_prime.sel(models=gmodels).std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(udivhis_prime.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
+vdivhis_prime_gens = vdivhis_prime.sel(models=gmodels).mean(dim="models",skipna=True)
+vdivhis_prime_gens_mask = xr.where((ca.MME_reg_mask(vdivhis_prime_gens, vdivhis_prime.sel(models=gmodels).std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(vdivhis_prime.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
+udivssp585_p3_prime_gens = udivssp585_p3_prime.sel(models=gmodels).mean(dim="models",skipna=True)
+udivssp585_p3_prime_gens_mask = xr.where((ca.MME_reg_mask(udivssp585_p3_prime_gens, udivssp585_p3_prime.sel(models=gmodels).std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(udivssp585_p3_prime.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
+vdivssp585_p3_prime_gens = vdivssp585_p3_prime.sel(models=gmodels).mean(dim="models",skipna=True)
+vdivssp585_p3_prime_gens_mask = xr.where((ca.MME_reg_mask(vdivssp585_p3_prime_gens, vdivssp585_p3_prime.sel(models=gmodels).std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(vdivssp585_p3_prime.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
+udivdiff_prime_gens = udivssp585_p3_prime_gens-udivhis_prime_gens
+
+vdivdiff_prime_gens = vdivssp585_p3_prime_gens-vdivhis_prime_gens
+
+udivdiff_prime_gens_mask = ca.cal_mmemask((udivssp585_p3_prime-udivhis_prime).sel(models=gmodels))
+vdivdiff_prime_gens_mask = ca.cal_mmemask((vdivssp585_p3_prime-vdivhis_prime).sel(models=gmodels))
+
+winddivhis_prime_gens_mask = ca.wind_check(
+    xr.where(udivhis_prime_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdivhis_prime_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(udivhis_prime_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdivhis_prime_gens_mask > 0.0, 1.0, 0.0),
+)
+winddivssp585_p3_prime_gens_mask = ca.wind_check(
+    xr.where(udivssp585_p3_prime_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdivssp585_p3_prime_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(udivssp585_p3_prime_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdivssp585_p3_prime_gens_mask > 0.0, 1.0, 0.0),
+)
+winddivdiff_prime_gens_mask = ca.wind_check(
+    xr.where(udivdiff_prime_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdivdiff_prime_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(udivdiff_prime_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdivdiff_prime_gens_mask > 0.0, 1.0, 0.0),
+)
+
+startlevel=-80
+spacinglevel=10
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+# plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(ncols=1, nrows=4, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+# ======================================
+m = axs[0].quiver(
+    udivERA5_prime[::ski, ::ski],
+    vdivERA5_prime[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.1,
+    pivot="mid",
+    color="black",
+    )
+qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+axs[0].format(
+    ltitle="1979-2014", rtitle="ERA5",
+)
+# ======================================
+axs[1].quiver(
+    udivhis_prime_gens[::ski, ::ski],
+    vdivhis_prime_gens[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.1,
+    pivot="mid",
+    color="grey7",
+    )
+m = axs[1].quiver(
+    udivhis_prime_gens.where(winddivhis_prime_gens_mask > 0.0)[::ski, ::ski],
+    vdivhis_prime_gens.where(winddivhis_prime_gens_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.1,
+    pivot="mid",
+    color="black",
+    )
+qk = axs[1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+axs[1].format(
+    ltitle="1979-2014", rtitle="gMME",
+)
+# ======================================
+axs[2].quiver(
+    udivssp585_p3_prime_gens[::ski, ::ski],
+    vdivssp585_p3_prime_gens[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.1,
+    pivot="mid",
+    color="grey7",
+    )
+m = axs[2].quiver(
+    udivssp585_p3_prime_gens.where(winddivssp585_p3_prime_gens_mask > 0.0)[::ski, ::ski],
+    vdivssp585_p3_prime_gens.where(winddivssp585_p3_prime_gens_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.1,
+    pivot="mid",
+    color="black",
+    )
+qk = axs[2].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+axs[2].format(
+    ltitle="2064-2099", rtitle="gMME",
+)
+# ======================================
+axs[3].quiver(
+    udivdiff_prime_gens[::ski, ::ski],
+    vdivdiff_prime_gens[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.05,
+    pivot="mid",
+    color="grey5",
+    )
+m = axs[3].quiver(
+    udivdiff_prime_gens.where(winddivdiff_prime_gens_mask > 0.0)[::ski, ::ski],
+    vdivdiff_prime_gens.where(winddivdiff_prime_gens_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.05,
+    pivot="mid",
+    color="black",
+    )
+qk = axs[3].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+axs[3].format(
+    ltitle="diff", rtitle="gMME",
+)
+fig.format(abc="(a)", abcloc="l", suptitle="200hPa  divergent wind prime")
 # %%
