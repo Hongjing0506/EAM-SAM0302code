@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-19 22:22:51
+LastEditTime: 2022-06-20 11:39:21
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -7854,3 +7854,210 @@ axs[0].format(ylim=(-2e10,2e10),xlocator=np.arange(0,27), xtickminor=False, ytic
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(abc="(a)", abcloc="l")
 # %%
+# plot the change of the 200hPa level circulation
+# calculate the hgt and wind difference in the two periods
+udiff_cli = (ussp585_p3_ver_JJA.sel(level=200.0).mean(dim="time",skipna=True) - uhis_ver_JJA.sel(level=200.0).mean(dim="time",skipna=True))
+udiff_cli_gens = udiff_cli.sel(models=gmodels).mean(dim="models",skipna=True)
+udiff_cli_gens_mask = ca.cal_mmemask(udiff_cli.sel(models=gmodels))
+
+vdiff_cli = (vssp585_p3_ver_JJA.sel(level=200.0).mean(dim="time",skipna=True) - vhis_ver_JJA.sel(level=200.0).mean(dim="time",skipna=True))
+vdiff_cli_gens = vdiff_cli.sel(models=gmodels).mean(dim="models",skipna=True)
+vdiff_cli_gens_mask = ca.cal_mmemask(vdiff_cli.sel(models=gmodels))
+
+hgtdiff_cli = (hgtssp585_p3_ver_JJA.sel(level=200.0).mean(dim="time",skipna=True) - hgthis_ver_JJA.sel(level=200.0).mean(dim="time",skipna=True))
+hgtdiff_cli_gens = hgtdiff_cli.sel(models=gmodels).mean(dim="models",skipna=True)
+hgtdiff_cli_gens_mask = ca.cal_mmemask(hgtdiff_cli.sel(models=gmodels))
+
+winddiff_cli_gens_mask = ca.wind_check(
+    xr.where(udiff_cli_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdiff_cli_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(udiff_cli_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdiff_cli_gens_mask > 0.0, 1.0, 0.0),
+)
+
+#   plot the diff climatology-u,v,hgt wind in 200hPa 
+startlevel=-80
+spacinglevel=10
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+# plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(ncols=1, nrows=3, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+# ======================================
+con = axs[0].contourf(
+    hgthis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"]),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+m = axs[0].quiver(
+    uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"])[::ski, ::ski],
+    vhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"])[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.8,
+    pivot="mid",
+    color="black",
+    )
+qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+axs[0].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
+# ======================================
+con = axs[1].contourf(
+    hgtssp585_p3_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"]),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+m = axs[1].quiver(
+    ussp585_p3_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"])[::ski, ::ski],
+    vssp585_p3_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"])[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.8,
+    pivot="mid",
+    color="black",
+    )
+qk = axs[1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+axs[1].format(
+    rtitle="2064-2099", ltitle="gMME",
+)
+axs[1].colorbar(con, loc="b")
+# ======================================
+startlevel=-30
+spacinglevel=3
+# ======================================
+con = axs[2].contourf(
+    hgtdiff_cli_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+axs[2].quiver(
+    udiff_cli_gens[::ski, ::ski],
+    vdiff_cli_gens[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.23,
+    pivot="mid",
+    color="grey6",
+    )
+axs[2].format(
+    rtitle="diff", ltitle="gMME",
+)
+m = axs[2].quiver(
+        udiff_cli_gens.where(winddiff_cli_gens_mask > 0.0)[::ski, ::ski],
+        vdiff_cli_gens.where(winddiff_cli_gens_mask > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=0.23,
+        pivot="mid",
+        color="black",
+    )
+
+qk = axs[2].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+# ======================================
+axs[2].colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="200hPa climatology")
+# %%
+# plot the climatology divergent wind and climatology vorticity
+
+startlevel=-80
+spacinglevel=10
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+# plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(ncols=1, nrows=3, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+# ======================================
+con = axs[0].contourf(
+    hgthis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"]),
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+m = axs[0].quiver(
+    uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"])[::ski, ::ski],
+    vhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"])[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.8,
+    pivot="mid",
+    color="black",
+    )
+qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+axs[0].format(
+    rtitle="1979-2014", ltitle="gMME",
+)
