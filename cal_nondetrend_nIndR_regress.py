@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-20 11:39:21
+LastEditTime: 2022-06-20 13:24:04
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -8007,6 +8007,44 @@ fig.format(abc="(a)", abcloc="l", suptitle="200hPa climatology")
 # %%
 # plot the climatology divergent wind and climatology vorticity
 
+udivhis_bar_gens = udivhis_bar.sel(models=gmodels).mean(dim="models",skipna=True)
+udivhis_bar_gens_mask = xr.where((ca.MME_reg_mask(udivhis_bar_gens, udivhis_bar.sel(models=gmodels).std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(udivhis_bar.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
+vdivhis_bar_gens = vdivhis_bar.sel(models=gmodels).mean(dim="models",skipna=True)
+vdivhis_bar_gens_mask = xr.where((ca.MME_reg_mask(vdivhis_bar_gens, vdivhis_bar.sel(models=gmodels).std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(vdivhis_bar.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
+udivssp585_p3_bar_gens = udivssp585_p3_bar.sel(models=gmodels).mean(dim="models",skipna=True)
+udivssp585_p3_bar_gens_mask = xr.where((ca.MME_reg_mask(udivssp585_p3_bar_gens, udivssp585_p3_bar.sel(models=gmodels).std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(udivssp585_p3_bar.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
+vdivssp585_p3_bar_gens = vdivssp585_p3_bar.sel(models=gmodels).mean(dim="models",skipna=True)
+vdivssp585_p3_bar_gens_mask = xr.where((ca.MME_reg_mask(vdivssp585_p3_bar_gens, vdivssp585_p3_bar.sel(models=gmodels).std(dim="models", skipna=True), len(models), True) + ca.cal_mmemask(vdivssp585_p3_bar.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
+udivdiff_bar_gens = udivssp585_p3_bar_gens-udivhis_bar_gens
+
+vdivdiff_bar_gens = vdivssp585_p3_bar_gens-vdivhis_bar_gens
+
+udivdiff_bar_gens_mask = ca.cal_mmemask((udivssp585_p3_bar-udivhis_bar).sel(models=gmodels))
+vdivdiff_bar_gens_mask = ca.cal_mmemask((vdivssp585_p3_bar-vdivhis_bar).sel(models=gmodels))
+
+winddivhis_bar_gens_mask = ca.wind_check(
+    xr.where(udivhis_bar_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdivhis_bar_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(udivhis_bar_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdivhis_bar_gens_mask > 0.0, 1.0, 0.0),
+)
+winddivssp585_p3_bar_gens_mask = ca.wind_check(
+    xr.where(udivssp585_p3_bar_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdivssp585_p3_bar_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(udivssp585_p3_bar_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdivssp585_p3_bar_gens_mask > 0.0, 1.0, 0.0),
+)
+winddivdiff_bar_gens_mask = ca.wind_check(
+    xr.where(udivdiff_bar_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdivdiff_bar_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(udivdiff_bar_gens_mask > 0.0, 1.0, 0.0),
+    xr.where(vdivdiff_bar_gens_mask > 0.0, 1.0, 0.0),
+)
+
 startlevel=-80
 spacinglevel=10
 pplt.rc.grid = False
@@ -8017,7 +8055,7 @@ proj = pplt.PlateCarree(central_longitude=cl)
 fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 # plot_array = np.reshape(range(1, 9), (2, 4))
 # plot_array[-1,-1] = 0
-axs = fig.subplots(ncols=1, nrows=3, proj=proj)
+axs = fig.subplots(ncols=1, nrows=4, proj=proj)
 
 #   set the geo_ticks and map projection to the plots
 # xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
@@ -8035,17 +8073,9 @@ for ax in axs:
         rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
         ax.add_patch(rect)
 # ======================================
-con = axs[0].contourf(
-    hgthis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"]),
-    cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
-    zorder=0.8,
-    extend="both"
-)
 m = axs[0].quiver(
-    uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"])[::ski, ::ski],
-    vhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time", "models"])[::ski, ::ski],
+    udivERA5_bar[::ski, ::ski],
+    vdivERA5_bar[::ski, ::ski],
     zorder=1.1,
     headwidth=2.6,
     headlength=2.3,
@@ -8056,8 +8086,103 @@ m = axs[0].quiver(
     color="black",
     )
 qk = axs[0].quiverkey(
-        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        m, X=1 - w / 2, Y=0.7 * h, U=1.0, label="1.0", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
     )
 axs[0].format(
-    rtitle="1979-2014", ltitle="gMME",
+    ltitle="1979-2014", rtitle="ERA5",
 )
+# ======================================
+axs[1].quiver(
+    udivhis_bar_gens[::ski, ::ski],
+    vdivhis_bar_gens[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.8,
+    pivot="mid",
+    color="grey7",
+    )
+m = axs[1].quiver(
+    udivhis_bar_gens.where(winddivhis_bar_gens_mask > 0.0)[::ski, ::ski],
+    vdivhis_bar_gens.where(winddivhis_bar_gens_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.8,
+    pivot="mid",
+    color="black",
+    )
+qk = axs[1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=1.0, label="1.0", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+axs[1].format(
+    ltitle="1979-2014", rtitle="gMME",
+)
+# ======================================
+axs[2].quiver(
+    udivssp585_p3_bar_gens[::ski, ::ski],
+    vdivssp585_p3_bar_gens[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.8,
+    pivot="mid",
+    color="grey7",
+    )
+m = axs[2].quiver(
+    udivssp585_p3_bar_gens.where(winddivssp585_p3_bar_gens_mask > 0.0)[::ski, ::ski],
+    vdivssp585_p3_bar_gens.where(winddivssp585_p3_bar_gens_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.8,
+    pivot="mid",
+    color="black",
+    )
+qk = axs[2].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=1.0, label="1.0", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+axs[2].format(
+    ltitle="2064-2099", rtitle="gMME",
+)
+# ======================================
+axs[3].quiver(
+    udivdiff_bar_gens[::ski, ::ski],
+    vdivdiff_bar_gens[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.4,
+    pivot="mid",
+    color="grey7",
+    )
+m = axs[3].quiver(
+    udivdiff_bar_gens.where(winddivdiff_bar_gens_mask > 0.0)[::ski, ::ski],
+    vdivdiff_bar_gens.where(winddivdiff_bar_gens_mask > 0.0)[::ski, ::ski],
+    zorder=1.1,
+    headwidth=2.6,
+    headlength=2.3,
+    headaxislength=2.3,
+    scale_units="xy",
+    scale=0.4,
+    pivot="mid",
+    color="black",
+    )
+qk = axs[3].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=1.0, label="1.0", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+axs[3].format(
+    ltitle="diff", rtitle="gMME",
+)
+fig.format(abc="(a)", abcloc="l", suptitle="200hPa  divergent wind climatology")
+# %%
