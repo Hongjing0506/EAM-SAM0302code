@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-25 16:39:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-20 14:58:47
+LastEditTime: 2022-06-22 11:48:47
 FilePath: /chenhj/0302code/cal_nondetrend_nIndR_regress.py
 Aim: 
 Mission: 
@@ -8582,4 +8582,95 @@ axs[3].format(
 # ======================================
 axs[3].colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="200hPa anomaly vorticity")
+# %%
+# calculate and plot the standardize deviation of precipitation
+preGPCP_JJA_std = preGPCP_JJA.std(dim="time",skipna=True)
+prehis_JJA_std = prehis_JJA.std(dim="time",skipna=True)
+pressp585_p3_JJA_std = pressp585_p3_JJA.std(dim="time",skipna=True)
+prediff_JJA_std = pressp585_p3_JJA_std - prehis_JJA_std
+prediff_JJA_std_gens = prediff_JJA_std.sel(models=gmodels).mean(dim="models",skipna=True)
+prediff_JJA_std_gens_mask = ca.cal_mmemask(prediff_JJA_std.sel(models=gmodels))
+
+# startlevel=
+# spacinglevel=5e-7
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+# plot_array = np.reshape(range(1, 9), (2, 4))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(ncols=1, nrows=4, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+yticks = np.arange(-15, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    preGPCP_JJA_std,
+    cmap="greys",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(0, 5.5, 0.5),
+    zorder=0.8,
+    extend="max"
+)
+
+axs[0].format(
+    ltitle="1979-2014", rtitle="GPCP",
+)
+# ======================================
+con = axs[1].contourf(
+    prehis_JJA_std.sel(models=gmodels).mean(dim="models",skipna=True),
+    cmap="greys",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(0, 5.5, 0.5),
+    zorder=0.8,
+    extend="max"
+)
+
+axs[1].format(
+    ltitle="1979-2014", rtitle="gMME",
+)
+# ======================================
+con = axs[2].contourf(
+    pressp585_p3_JJA_std.sel(models=gmodels).mean(dim="models",skipna=True),
+    cmap="greys",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(0, 5.5, 0.5),
+    zorder=0.8,
+    extend="max"
+)
+
+axs[2].format(
+    ltitle="2064-2099", rtitle="gMME",
+)
+axs[2].colorbar(con, loc="b", width=0.13, length=0.7, label="")
+# ======================================
+con = axs[3].contourf(
+    prediff_JJA_std_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-3, 3.1, 0.3),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+        prediff_JJA_std_gens, axs[3], n, np.where(prediff_JJA_std_gens_mask[::n, ::n] > 0), "bright purple", 3.0,
+    )
+axs[3].format(
+    ltitle="diff", rtitle="gMME",
+)
+# ======================================
+axs[3].colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="precip std")
 # %%
