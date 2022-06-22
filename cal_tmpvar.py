@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-05-22 00:29:08
+LastEditTime: 2022-06-22 20:58:55
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -50,22 +50,6 @@ from scipy.interpolate import interp2d
 from eofs.multivariate.standard import MultivariateEof
 from eofs.standard import Eof
 
-
-def patches(ax, x0, y0, width, height, proj):
-    from matplotlib.patches import Rectangle
-
-    rect = Rectangle(
-        (x0, y0),
-        width,
-        height,
-        fc="none",
-        ec="grey7",
-        linewidth=0.8,
-        zorder=1.1,
-        transform=proj,
-        linestyle="--",
-    )
-    ax.add_patch(rect)
 # %%
 #   read multi-models data of historical
 hgt_his_path = (
@@ -230,6 +214,170 @@ for path, dir_list, file_name in g:
 tosds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 toshis_ds = xr.DataArray(tosds_his["tos"])
 toshis_ds.coords["models"] = modelname_tos
+
+#   read multi-models data of ssp585
+hgt_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/zg"
+)
+g = os.walk(hgt_ssp585_path)
+filepath = []
+modelname_hgt = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_hgt.append(filename[loc[1] + 1 : loc[2]])
+hgtds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+hgtssp585_ds = xr.DataArray(hgtds_ssp585["zg"])
+hgtssp585_ds.coords["models"] = modelname_hgt
+# %%
+u_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ua"
+)
+g = os.walk(u_ssp585_path)
+filepath = []
+modelname_u = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_u.append(filename[loc[1] + 1 : loc[2]])
+uds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+ussp585_ds = xr.DataArray(uds_ssp585["ua"])
+ussp585_ds.coords["models"] = modelname_u
+# %%
+v_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/va"
+)
+g = os.walk(v_ssp585_path)
+filepath = []
+modelname_v = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_v.append(filename[loc[1] + 1 : loc[2]])
+vds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+vssp585_ds = xr.DataArray(vds_ssp585["va"])
+vssp585_ds.coords["models"] = modelname_v
+# %%
+sp_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ps"
+)
+g = os.walk(sp_ssp585_path)
+filepath = []
+modelname_sp = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_sp.append(filename[loc[1] + 1 : loc[2]])
+spds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+spssp585_ds = xr.DataArray(spds_ssp585["ps"])
+spssp585_ds.coords["models"] = modelname_sp
+# %%
+q_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/hus"
+)
+g = os.walk(q_ssp585_path)
+filepath = []
+modelname_q = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_q.append(filename[loc[1] + 1 : loc[2]])
+qds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+qssp585_ds = xr.DataArray(qds_ssp585["hus"])
+qssp585_ds.coords["models"] = modelname_q
+
+
+# %%
+pr_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/pr"
+)
+g = os.walk(pr_ssp585_path)
+filepath = []
+modelname_pr = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_pr.append(filename[loc[1] + 1 : loc[2]])
+preds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+pressp585_ds = xr.DataArray(preds_ssp585["pr"])*3600*24
+pressp585_ds.coords["models"] = modelname_pr
+
+# %%
+wap_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/wap"
+)
+g = os.walk(wap_ssp585_path)
+filepath = []
+modelname_wap = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_wap.append(filename[loc[1] + 1 : loc[2]])
+wapds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+wapssp585_ds = xr.DataArray(wapds_ssp585["wap"])
+wapssp585_ds.coords["models"] = modelname_wap
+# %%
+ta_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ta"
+)
+g = os.walk(ta_ssp585_path)
+filepath = []
+modelname_ta = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_ta.append(filename[loc[1] + 1 : loc[2]])
+tads_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+tassp585_ds = xr.DataArray(tads_ssp585["ta"])
+tassp585_ds.coords["models"] = modelname_ta
+# %%
+ts_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ts"
+)
+g = os.walk(ts_ssp585_path)
+filepath = []
+modelname_ts = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_ts.append(filename[loc[1] + 1 : loc[2]])
+tsds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+tsssp585_ds = xr.DataArray(tsds_ssp585["ts"])
+tsssp585_ds.coords["models"] = modelname_ts
+
+tos_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tos"
+)
+g = os.walk(tos_ssp585_path)
+filepath = []
+modelname_tos = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_tos.append(filename[loc[1] + 1 : loc[2]])
+tosds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+tosssp585_ds = xr.DataArray(tosds_ssp585["tos"])
+tosssp585_ds.coords["models"] = modelname_tos
 # %%
 #   recalculate the plevel of the different variables in historical run
 hgthis_ds.coords["plev"] = hgthis_ds["plev"] / 100.0
@@ -244,6 +392,22 @@ waphis_ds.coords["plev"] = waphis_ds["plev"] / 100.0
 waphis_ds = waphis_ds.rename({"plev": "level"})
 tahis_ds.coords["plev"] = tahis_ds["plev"] / 100.0
 tahis_ds = tahis_ds.rename({"plev": "level"})
+
+#   recalculate the plevel of the different variables in ssp585 run
+hgtssp585_ds.coords["plev"] = hgtssp585_ds["plev"] / 100.0
+hgtssp585_ds = hgtssp585_ds.rename({"plev": "level"})
+ussp585_ds.coords["plev"] = ussp585_ds["plev"] / 100.0
+ussp585_ds = ussp585_ds.rename({"plev": "level"})
+vssp585_ds.coords["plev"] = vssp585_ds["plev"] / 100.0
+vssp585_ds = vssp585_ds.rename({"plev": "level"})
+qssp585_ds.coords["plev"] = qssp585_ds["plev"] / 100.0
+qssp585_ds = qssp585_ds.rename({"plev": "level"})
+wapssp585_ds.coords["plev"] = wapssp585_ds["plev"] / 100.0
+wapssp585_ds = wapssp585_ds.rename({"plev": "level"})
+tassp585_ds.coords["plev"] = tassp585_ds["plev"] / 100.0
+tassp585_ds = tassp585_ds.rename({"plev": "level"})
+
+
 # %%
 #   calculate the JJA mean in different variables of multi-models
 hgthis_ds_ver_JJA = ca.p_time(hgthis_ds, 6, 8, True)
@@ -254,11 +418,20 @@ waphis_ds_ver_JJA = ca.p_time(waphis_ds, 6, 8, True)
 tahis_ds_ver_JJA = ca.p_time(tahis_ds, 6, 8, True)
 sphis_ds_JJA = ca.p_time(sphis_ds, 6, 8, True)
 prehis_ds_JJA = ca.p_time(prehis_ds, 6, 8, True)
-
-# %%
 tshis_ds_JJA = ca.p_time(tshis_ds, 6, 8, True)
 toshis_ds_JJA = ca.p_time(toshis_ds, 6, 8, True)
 
+#   calculate the JJA mean in different variables of multi-models
+hgtssp585_ds_ver_JJA = ca.p_time(hgtssp585_ds, 6, 8, True)
+ussp585_ds_ver_JJA = ca.p_time(ussp585_ds, 6, 8, True)
+vssp585_ds_ver_JJA = ca.p_time(vssp585_ds, 6, 8, True)
+qssp585_ds_ver_JJA = ca.p_time(qssp585_ds, 6, 8, True)
+wapssp585_ds_ver_JJA = ca.p_time(wapssp585_ds, 6, 8, True)
+tassp585_ds_ver_JJA = ca.p_time(tassp585_ds, 6, 8, True)
+spssp585_ds_JJA = ca.p_time(spssp585_ds, 6, 8, True)
+pressp585_ds_JJA = ca.p_time(pressp585_ds, 6, 8, True)
+tsssp585_ds_JJA = ca.p_time(tsssp585_ds, 6, 8, True)
+tosssp585_ds_JJA = ca.p_time(tosssp585_ds, 6, 8, True)
 # %%
 #   reorder the multi-models in historical run
 hgthis_ds_ver_JJA_copy = hgthis_ds_ver_JJA.copy()
@@ -269,14 +442,23 @@ waphis_ds_ver_JJA_copy = waphis_ds_ver_JJA.copy()
 tahis_ds_ver_JJA_copy = tahis_ds_ver_JJA.copy()
 sphis_ds_JJA_copy = sphis_ds_JJA.copy()
 prehis_ds_JJA_copy = prehis_ds_JJA.copy()
-models = hgthis_ds_ver_JJA.coords["models"]
-# %%
 tshis_ds_JJA_copy = tshis_ds_JJA.copy()
 toshis_ds_JJA_copy = toshis_ds_JJA.copy()
-# %%
 
+#   reorder the multi-models in ssp585 run
+hgtssp585_ds_ver_JJA_copy = hgtssp585_ds_ver_JJA.copy()
+ussp585_ds_ver_JJA_copy = ussp585_ds_ver_JJA.copy()
+vssp585_ds_ver_JJA_copy = vssp585_ds_ver_JJA.copy()
+qssp585_ds_ver_JJA_copy = qssp585_ds_ver_JJA.copy()
+wapssp585_ds_ver_JJA_copy = wapssp585_ds_ver_JJA.copy()
+tassp585_ds_ver_JJA_copy = tassp585_ds_ver_JJA.copy()
+spssp585_ds_JJA_copy = spssp585_ds_JJA.copy()
+pressp585_ds_JJA_copy = pressp585_ds_JJA.copy()
+tsssp585_ds_JJA_copy = tsssp585_ds_JJA.copy()
+tosssp585_ds_JJA_copy = tosssp585_ds_JJA.copy()
 
-print(models)
+models = hgthis_ds_ver_JJA.coords["models"]
+# print(models)
 for i, mod in enumerate(models):
     hgthis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(hgthis_ds_ver_JJA.sel(models=mod))
     uhis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(uhis_ds_ver_JJA.sel(models=mod))
@@ -286,6 +468,20 @@ for i, mod in enumerate(models):
     tahis_ds_ver_JJA_copy[i, :, :, :, :] = np.array(tahis_ds_ver_JJA.sel(models=mod))
     sphis_ds_JJA_copy[i, :, :, :] = np.array(sphis_ds_JJA.sel(models=mod))
     prehis_ds_JJA_copy[i, :, :, :] = np.array(prehis_ds_JJA.sel(models=mod))
+    tshis_ds_JJA_copy[i, :, :, :] = np.array(tshis_ds_JJA.sel(models=mod))
+    toshis_ds_JJA_copy[i, :, :, :] = np.array(toshis_ds_JJA.sel(models=mod))
+    
+    hgtssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(hgtssp585_ds_ver_JJA.sel(models=mod))
+    ussp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(ussp585_ds_ver_JJA.sel(models=mod))
+    vssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(vssp585_ds_ver_JJA.sel(models=mod))
+    qssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(qssp585_ds_ver_JJA.sel(models=mod))
+    wapssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(wapssp585_ds_ver_JJA.sel(models=mod))
+    tassp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(tassp585_ds_ver_JJA.sel(models=mod))
+    spssp585_ds_JJA_copy[i, :, :, :] = np.array(spssp585_ds_JJA.sel(models=mod))
+    pressp585_ds_JJA_copy[i, :, :, :] = np.array(pressp585_ds_JJA.sel(models=mod))
+    tsssp585_ds_JJA_copy[i, :, :, :] = np.array(tsssp585_ds_JJA.sel(models=mod))
+    tosssp585_ds_JJA_copy[i, :, :, :] = np.array(tosssp585_ds_JJA.sel(models=mod))
+    
 hgthis_ds_ver_JJA = hgthis_ds_ver_JJA_copy.copy()
 uhis_ds_ver_JJA = uhis_ds_ver_JJA_copy.copy()
 vhis_ds_ver_JJA = vhis_ds_ver_JJA_copy.copy()
@@ -294,6 +490,8 @@ waphis_ds_ver_JJA = waphis_ds_ver_JJA_copy.copy()
 tahis_ds_ver_JJA = tahis_ds_ver_JJA_copy.copy()
 sphis_ds_JJA = sphis_ds_JJA_copy.copy()
 prehis_ds_JJA = prehis_ds_JJA_copy.copy()
+tshis_ds_JJA = tshis_ds_JJA_copy.copy()
+toshis_ds_JJA = toshis_ds_JJA_copy.copy()
 
 hgthis_ds_ver_JJA.coords["models"] = models
 uhis_ds_ver_JJA.coords["models"] = models
@@ -303,19 +501,31 @@ waphis_ds_ver_JJA.coords["models"] = models
 tahis_ds_ver_JJA.coords["models"] = models
 sphis_ds_JJA.coords["models"] = models
 prehis_ds_JJA.coords["models"] = models
-
-
-# %%
-models = hgthis_ds.coords["models"]
-print(models)
-for i, mod in enumerate(models):
-    tshis_ds_JJA_copy[i, :, :, :] = np.array(tshis_ds_JJA.sel(models=mod))
-    toshis_ds_JJA_copy[i, :, :, :] = np.array(toshis_ds_JJA.sel(models=mod))
-tshis_ds_JJA = tshis_ds_JJA_copy.copy()
-toshis_ds_JJA = toshis_ds_JJA_copy.copy()
-
 tshis_ds_JJA.coords["models"] = models
 toshis_ds_JJA.coords["models"] = models
+
+
+hgtssp585_ds_ver_JJA = hgtssp585_ds_ver_JJA_copy.copy()
+ussp585_ds_ver_JJA = ussp585_ds_ver_JJA_copy.copy()
+vssp585_ds_ver_JJA = vssp585_ds_ver_JJA_copy.copy()
+qssp585_ds_ver_JJA = qssp585_ds_ver_JJA_copy.copy()
+wapssp585_ds_ver_JJA = wapssp585_ds_ver_JJA_copy.copy()
+tassp585_ds_ver_JJA = tassp585_ds_ver_JJA_copy.copy()
+spssp585_ds_JJA = spssp585_ds_JJA_copy.copy()
+pressp585_ds_JJA = pressp585_ds_JJA_copy.copy()
+tsssp585_ds_JJA = tsssp585_ds_JJA_copy.copy()
+tosssp585_ds_JJA = tosssp585_ds_JJA_copy.copy()
+
+hgtssp585_ds_ver_JJA.coords["models"] = models
+ussp585_ds_ver_JJA.coords["models"] = models
+vssp585_ds_ver_JJA.coords["models"] = models
+qssp585_ds_ver_JJA.coords["models"] = models
+wapssp585_ds_ver_JJA.coords["models"] = models
+tassp585_ds_ver_JJA.coords["models"] = models
+spssp585_ds_JJA.coords["models"] = models
+pressp585_ds_JJA.coords["models"] = models
+tsssp585_ds_JJA.coords["models"] = models
+tosssp585_ds_JJA.coords["models"] = models
 # %%
 #   output the non-detrend variables of multi-models in historical run
 hgthis_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/zg_historical_r144x72_195001-201412.nc")
@@ -326,9 +536,25 @@ waphis_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EA
 tahis_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/ta_historical_r144x72_195001-201412.nc")
 prehis_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/pr_historical_r144x72_195001-201412.nc")
 sphis_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/ps_historical_r144x72_195001-201412.nc")
-# %%
 tshis_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/ts_historical_r144x72_195001-201412.nc")
 toshis_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/tos_historical_r144x72_195001-201412.nc")
+
+#   output the non-detrend variables of multi-models in ssp585 run
+hgtssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/zg_ssp585_r144x72_201501-209912.nc")
+ussp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ua_ssp585_r144x72_201501-209912.nc")
+vssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/va_ssp585_r144x72_201501-209912.nc")
+qssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/hus_ssp585_r144x72_201501-209912.nc")
+wapssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/wap_ssp585_r144x72_201501-209912.nc")
+tassp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ta_ssp585_r144x72_201501-209912.nc")
+pressp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/pr_ssp585_r144x72_201501-209912.nc")
+spssp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ps_ssp585_r144x72_201501-209912.nc")
+tsssp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ts_ssp585_r144x72_201501-209912.nc")
+tosssp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/tos_ssp585_r144x72_201501-209912.nc")
+# %%
+# concatenate the variables in historical to ssp585
+
+
+
 # %%
 #   calculate the detrend of different variables of multi-models
 hgthis_ds_ver_JJA = ca.detrend_dim(hgthis_ds_ver_JJA, "time", deg=1, demean=False)
@@ -498,261 +724,7 @@ uq_dpg_his_JJA_detrend.name = "uq_dpg"
 vq_dpg_his_JJA_detrend.name = "vq_dpg"
 uq_dpg_his_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_uq_dpg.nc")
 vq_dpg_his_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_vq_dpg.nc")
-# %%
-#   read multi-models data of ssp585
-hgt_ssp585_path = (
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/zg"
-)
-g = os.walk(hgt_ssp585_path)
-filepath = []
-modelname_hgt = []
-for path, dir_list, file_name in g:
-    for filename in file_name:
-        if re.search("ensemble", filename) == None:
-            filepath.append(os.path.join(path, filename))
-            loc = ca.retrieve_allstrindex(filename, "_")
-            modelname_hgt.append(filename[loc[1] + 1 : loc[2]])
-hgtds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-hgtssp585_ds = xr.DataArray(hgtds_ssp585["zg"])
-hgtssp585_ds.coords["models"] = modelname_hgt
-# %%
-u_ssp585_path = (
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ua"
-)
-g = os.walk(u_ssp585_path)
-filepath = []
-modelname_u = []
-for path, dir_list, file_name in g:
-    for filename in file_name:
-        if re.search("ensemble", filename) == None:
-            filepath.append(os.path.join(path, filename))
-            loc = ca.retrieve_allstrindex(filename, "_")
-            modelname_u.append(filename[loc[1] + 1 : loc[2]])
-uds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-ussp585_ds = xr.DataArray(uds_ssp585["ua"])
-ussp585_ds.coords["models"] = modelname_u
-# %%
-v_ssp585_path = (
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/va"
-)
-g = os.walk(v_ssp585_path)
-filepath = []
-modelname_v = []
-for path, dir_list, file_name in g:
-    for filename in file_name:
-        if re.search("ensemble", filename) == None:
-            filepath.append(os.path.join(path, filename))
-            loc = ca.retrieve_allstrindex(filename, "_")
-            modelname_v.append(filename[loc[1] + 1 : loc[2]])
-vds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-vssp585_ds = xr.DataArray(vds_ssp585["va"])
-vssp585_ds.coords["models"] = modelname_v
-# %%
-sp_ssp585_path = (
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ps"
-)
-g = os.walk(sp_ssp585_path)
-filepath = []
-modelname_sp = []
-for path, dir_list, file_name in g:
-    for filename in file_name:
-        if re.search("ensemble", filename) == None:
-            filepath.append(os.path.join(path, filename))
-            loc = ca.retrieve_allstrindex(filename, "_")
-            modelname_sp.append(filename[loc[1] + 1 : loc[2]])
-spds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-spssp585_ds = xr.DataArray(spds_ssp585["ps"])
-spssp585_ds.coords["models"] = modelname_sp
-# %%
-q_ssp585_path = (
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/hus"
-)
-g = os.walk(q_ssp585_path)
-filepath = []
-modelname_q = []
-for path, dir_list, file_name in g:
-    for filename in file_name:
-        if re.search("ensemble", filename) == None:
-            filepath.append(os.path.join(path, filename))
-            loc = ca.retrieve_allstrindex(filename, "_")
-            modelname_q.append(filename[loc[1] + 1 : loc[2]])
-qds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-qssp585_ds = xr.DataArray(qds_ssp585["hus"])
-qssp585_ds.coords["models"] = modelname_q
 
-
-# %%
-pr_ssp585_path = (
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/pr"
-)
-g = os.walk(pr_ssp585_path)
-filepath = []
-modelname_pr = []
-for path, dir_list, file_name in g:
-    for filename in file_name:
-        if re.search("ensemble", filename) == None:
-            filepath.append(os.path.join(path, filename))
-            loc = ca.retrieve_allstrindex(filename, "_")
-            modelname_pr.append(filename[loc[1] + 1 : loc[2]])
-preds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-pressp585_ds = xr.DataArray(preds_ssp585["pr"])*3600*24
-pressp585_ds.coords["models"] = modelname_pr
-
-# %%
-wap_ssp585_path = (
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/wap"
-)
-g = os.walk(wap_ssp585_path)
-filepath = []
-modelname_wap = []
-for path, dir_list, file_name in g:
-    for filename in file_name:
-        if re.search("ensemble", filename) == None:
-            filepath.append(os.path.join(path, filename))
-            loc = ca.retrieve_allstrindex(filename, "_")
-            modelname_wap.append(filename[loc[1] + 1 : loc[2]])
-wapds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-wapssp585_ds = xr.DataArray(wapds_ssp585["wap"])
-wapssp585_ds.coords["models"] = modelname_wap
-# %%
-ta_ssp585_path = (
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ta"
-)
-g = os.walk(ta_ssp585_path)
-filepath = []
-modelname_ta = []
-for path, dir_list, file_name in g:
-    for filename in file_name:
-        if re.search("ensemble", filename) == None:
-            filepath.append(os.path.join(path, filename))
-            loc = ca.retrieve_allstrindex(filename, "_")
-            modelname_ta.append(filename[loc[1] + 1 : loc[2]])
-tads_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-tassp585_ds = xr.DataArray(tads_ssp585["ta"])
-tassp585_ds.coords["models"] = modelname_ta
-# %%
-ts_ssp585_path = (
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/ts"
-)
-g = os.walk(ts_ssp585_path)
-filepath = []
-modelname_ts = []
-for path, dir_list, file_name in g:
-    for filename in file_name:
-        if re.search("ensemble", filename) == None:
-            filepath.append(os.path.join(path, filename))
-            loc = ca.retrieve_allstrindex(filename, "_")
-            modelname_ts.append(filename[loc[1] + 1 : loc[2]])
-tsds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-tsssp585_ds = xr.DataArray(tsds_ssp585["ts"])
-tsssp585_ds.coords["models"] = modelname_ts
-
-tos_ssp585_path = (
-    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tos"
-)
-g = os.walk(tos_ssp585_path)
-filepath = []
-modelname_tos = []
-for path, dir_list, file_name in g:
-    for filename in file_name:
-        if re.search("ensemble", filename) == None:
-            filepath.append(os.path.join(path, filename))
-            loc = ca.retrieve_allstrindex(filename, "_")
-            modelname_tos.append(filename[loc[1] + 1 : loc[2]])
-tosds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
-tosssp585_ds = xr.DataArray(tosds_ssp585["tos"])
-tosssp585_ds.coords["models"] = modelname_tos
-# %%
-#   recalculate the plevel of the different variables in ssp585 run
-hgtssp585_ds.coords["plev"] = hgtssp585_ds["plev"] / 100.0
-hgtssp585_ds = hgtssp585_ds.rename({"plev": "level"})
-ussp585_ds.coords["plev"] = ussp585_ds["plev"] / 100.0
-ussp585_ds = ussp585_ds.rename({"plev": "level"})
-vssp585_ds.coords["plev"] = vssp585_ds["plev"] / 100.0
-vssp585_ds = vssp585_ds.rename({"plev": "level"})
-qssp585_ds.coords["plev"] = qssp585_ds["plev"] / 100.0
-qssp585_ds = qssp585_ds.rename({"plev": "level"})
-wapssp585_ds.coords["plev"] = wapssp585_ds["plev"] / 100.0
-wapssp585_ds = wapssp585_ds.rename({"plev": "level"})
-tassp585_ds.coords["plev"] = tassp585_ds["plev"] / 100.0
-tassp585_ds = tassp585_ds.rename({"plev": "level"})
-# %%
-#   calculate the JJA mean in different variables of multi-models
-hgtssp585_ds_ver_JJA = ca.p_time(hgtssp585_ds, 6, 8, True)
-ussp585_ds_ver_JJA = ca.p_time(ussp585_ds, 6, 8, True)
-vssp585_ds_ver_JJA = ca.p_time(vssp585_ds, 6, 8, True)
-qssp585_ds_ver_JJA = ca.p_time(qssp585_ds, 6, 8, True)
-wapssp585_ds_ver_JJA = ca.p_time(wapssp585_ds, 6, 8, True)
-tassp585_ds_ver_JJA = ca.p_time(tassp585_ds, 6, 8, True)
-spssp585_ds_JJA = ca.p_time(spssp585_ds, 6, 8, True)
-pressp585_ds_JJA = ca.p_time(pressp585_ds, 6, 8, True)
-# %%
-tsssp585_ds_JJA = ca.p_time(tsssp585_ds, 6, 8, True)
-tosssp585_ds_JJA = ca.p_time(tosssp585_ds, 6, 8, True)
-# %%
-#   reorder the multi-models in ssp585 run
-hgtssp585_ds_ver_JJA_copy = hgtssp585_ds_ver_JJA.copy()
-ussp585_ds_ver_JJA_copy = ussp585_ds_ver_JJA.copy()
-vssp585_ds_ver_JJA_copy = vssp585_ds_ver_JJA.copy()
-qssp585_ds_ver_JJA_copy = qssp585_ds_ver_JJA.copy()
-wapssp585_ds_ver_JJA_copy = wapssp585_ds_ver_JJA.copy()
-tassp585_ds_ver_JJA_copy = tassp585_ds_ver_JJA.copy()
-spssp585_ds_JJA_copy = spssp585_ds_JJA.copy()
-pressp585_ds_JJA_copy = pressp585_ds_JJA.copy()
-# %%
-tsssp585_ds_JJA_copy = tsssp585_ds_JJA.copy()
-tosssp585_ds_JJA_copy = tosssp585_ds_JJA.copy()
-# %%
-# print(models)
-for i, mod in enumerate(models):
-    hgtssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(hgtssp585_ds_ver_JJA.sel(models=mod))
-    ussp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(ussp585_ds_ver_JJA.sel(models=mod))
-    vssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(vssp585_ds_ver_JJA.sel(models=mod))
-    qssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(qssp585_ds_ver_JJA.sel(models=mod))
-    wapssp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(wapssp585_ds_ver_JJA.sel(models=mod))
-    tassp585_ds_ver_JJA_copy[i, :, :, :, :] = np.array(tassp585_ds_ver_JJA.sel(models=mod))
-    spssp585_ds_JJA_copy[i, :, :, :] = np.array(spssp585_ds_JJA.sel(models=mod))
-    pressp585_ds_JJA_copy[i, :, :, :] = np.array(pressp585_ds_JJA.sel(models=mod))
-hgtssp585_ds_ver_JJA = hgtssp585_ds_ver_JJA_copy.copy()
-ussp585_ds_ver_JJA = ussp585_ds_ver_JJA_copy.copy()
-vssp585_ds_ver_JJA = vssp585_ds_ver_JJA_copy.copy()
-qssp585_ds_ver_JJA = qssp585_ds_ver_JJA_copy.copy()
-wapssp585_ds_ver_JJA = wapssp585_ds_ver_JJA_copy.copy()
-tassp585_ds_ver_JJA = tassp585_ds_ver_JJA_copy.copy()
-spssp585_ds_JJA = spssp585_ds_JJA_copy.copy()
-pressp585_ds_JJA = pressp585_ds_JJA_copy.copy()
-
-hgtssp585_ds_ver_JJA.coords["models"] = models
-ussp585_ds_ver_JJA.coords["models"] = models
-vssp585_ds_ver_JJA.coords["models"] = models
-qssp585_ds_ver_JJA.coords["models"] = models
-wapssp585_ds_ver_JJA.coords["models"] = models
-tassp585_ds_ver_JJA.coords["models"] = models
-spssp585_ds_JJA.coords["models"] = models
-pressp585_ds_JJA.coords["models"] = models
-# %%
-for i, mod in enumerate(models):
-    tsssp585_ds_JJA_copy[i, :, :, :] = np.array(tsssp585_ds_JJA.sel(models=mod))
-    tosssp585_ds_JJA_copy[i, :, :, :] = np.array(tosssp585_ds_JJA.sel(models=mod))
-
-tsssp585_ds_JJA = tsssp585_ds_JJA_copy.copy()
-tosssp585_ds_JJA = tosssp585_ds_JJA_copy.copy()
-
-tsssp585_ds_JJA.coords["models"] = models
-tosssp585_ds_JJA.coords["models"] = models
-# %%
-#   output the non-detrend variables of multi-models in ssp585 run
-hgtssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/zg_ssp585_r144x72_201501-209912.nc")
-ussp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ua_ssp585_r144x72_201501-209912.nc")
-vssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/va_ssp585_r144x72_201501-209912.nc")
-qssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/hus_ssp585_r144x72_201501-209912.nc")
-wapssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/wap_ssp585_r144x72_201501-209912.nc")
-tassp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ta_ssp585_r144x72_201501-209912.nc")
-pressp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/pr_ssp585_r144x72_201501-209912.nc")
-spssp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ps_ssp585_r144x72_201501-209912.nc")
-# %%
-tsssp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ts_ssp585_r144x72_201501-209912.nc")
-tosssp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/tos_ssp585_r144x72_201501-209912.nc")
 # %%
 #   calculate the detrend of different variables of multi-models
 hgtssp585_ds_ver_JJA = ca.detrend_dim(hgtssp585_ds_ver_JJA, "time", deg=1, demean=False)
