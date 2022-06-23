@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-05-25 21:55:47
+LastEditTime: 2022-06-23 16:08:36
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -53,22 +53,8 @@ from eofs.multivariate.standard import MultivariateEof
 from eofs.standard import Eof
 
 
-def patches(ax, x0, y0, width, height, proj):
-    from matplotlib.patches import Rectangle
-
-    rect = Rectangle(
-        (x0, y0), width, height, fc="none", ec="grey7", linewidth=0.8, zorder=1.1, transform=proj, linestyle="--",
-    )
-    ax.add_patch(rect)
 # %%
-#   read the data in CRU/GPCP/ERA5/historical/ssp585
-# fpreCRU = xr.open_dataset(
-#     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/cru_ts4.01_r144x72_195001-201412.nc"
-# )
-# preCRU = fpreCRU["pre"]
-# preCRU_JJA = ca.p_time(preCRU, 6, 8, True)/30.67
-# preCRU_JJA = ca.detrend_dim(preCRU_JJA, "time", deg=1, demean=False)
-# preCRU_JJA.attrs["units"] = "mm/day"
+#   read data from observation and reanalysis data
 
 fpreGPCP = xr.open_dataset(
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/GPCP_r144x72_197901-201412.nc"
@@ -81,19 +67,6 @@ preAIR = xr.open_dataarray("/home/ys17-23/Extension/All_India_Rainfall_index/AIR
 preAIR_JJA = ca.p_time(preAIR, 6, 8, True)
 preAIR_JJA = preAIR_JJA.sel(time=(preAIR_JJA.time.dt.year>=1979) & (preAIR_JJA.time.dt.year <=2014))
 preAIR_JJA = ca.detrend_dim(preAIR_JJA, "time", deg=1, demean=False)
-
-fprehis = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pr_historical_r144x72_195001-201412.nc")
-prehis_JJA = fprehis["pr"].sel(time=fprehis["time"].dt.year>=1979)
-prehis_JJA.attrs["units"] = "mm/day"
-prehis_JJA.attrs["standard_name"] = "precipitation"
-prehis_JJA = ca.detrend_dim(prehis_JJA, "time", deg=1, demean=False)
-
-fpressp585 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pr_ssp585_r144x72_201501-209912.nc")
-pressp585_JJA = fpressp585["pr"]
-pressp585_JJA.attrs["units"] = "mm/day"
-pressp585_JJA.attrs["standard_name"] = "precipitation"
-pressp585_p3_JJA = pressp585_JJA.sel(time=pressp585_JJA.time.dt.year>=2064)
-pressp585_p3_JJA = ca.detrend_dim(pressp585_p3_JJA, "time", deg=1, demean=False)
 
 fhgtERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/hgt_mon_r144x72_195001-201412.nc")
 hgtERA5 = fhgtERA5["z"].sel(time=fhgtERA5["time"].dt.year>=1979)
@@ -139,110 +112,99 @@ spERA5_JJA = ca.detrend_dim(spERA5_JJA, "time", deg=1, demean=False)
 wERA5_JJA = ca.detrend_dim(wERA5_JJA, "time", deg=1, demean=False)
 sstHad_JJA = ca.detrend_dim(sstHad_JJA, "time", deg=1, demean=False)
 
-fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc")
-hgthis_ver_JJA = fhgthis_ver_JJA["zg"].sel(time=fhgthis_ver_JJA["time"].dt.year>=1979)
-hgthis_ver_JJA = hgthis_ver_JJA - hgthis_ver_JJA.mean(dim="lon", skipna=True)
-hgthis_ver_JJA = ca.detrend_dim(hgthis_ver_JJA, "time", deg=1, demean=False)
-
-fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_195001-201412.nc")
-uhis_ver_JJA = fuhis_ver_JJA["ua"].sel(time=fuhis_ver_JJA["time"].dt.year>=1979)
-uhis_ver_JJA = ca.detrend_dim(uhis_ver_JJA, "time", deg=1, demean=False)
-
-fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_195001-201412.nc")
-vhis_ver_JJA = fvhis_ver_JJA["va"].sel(time=fvhis_ver_JJA["time"].dt.year>=1979)
-vhis_ver_JJA = ca.detrend_dim(vhis_ver_JJA, "time", deg=1, demean=False)
-
-fwhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/wap_historical_r144x72_195001-201412.nc") 
-whis_ver_JJA = fwhis_ver_JJA["wap"].sel(time=fwhis_ver_JJA["time"].dt.year>=1979)
-whis_ver_JJA = ca.detrend_dim(whis_ver_JJA, "time", deg=1, demean=False)
-
-#   read the SST data in observation and CMIP6
-fssthis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/tos_historical_r144x72_195001-201412.nc")
-ssthis_JJA = fssthis_JJA["sst"].sel(time=fssthis_JJA["time"].dt.year>=1979)
-ssthis_JJA = ca.detrend_dim(ssthis_JJA, "time", deg=1, demean=False)
-
-
-fhgtssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_201501-209912.nc")
-hgtssp585_ver_JJA = fhgtssp585_ver_JJA["zg"]
-hgtssp585_p3_ver_JJA = hgtssp585_ver_JJA.sel(time=hgtssp585_ver_JJA.time.dt.year>=2064)
-
-
-hgtssp585_ver_JJA = hgtssp585_ver_JJA - hgtssp585_ver_JJA.mean(dim="lon", skipna=True)
-hgtssp585_p3_ver_JJA = hgtssp585_p3_ver_JJA - hgtssp585_p3_ver_JJA.mean(dim="lon", skipna=True)
-hgtssp585_p3_ver_JJA = ca.detrend_dim(hgtssp585_p3_ver_JJA, "time", deg=1, demean=False)
-
-
-fussp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_201501-209912.nc")
-ussp585_ver_JJA = fussp585_ver_JJA["ua"]
-ussp585_p3_ver_JJA = ussp585_ver_JJA.sel(time=ussp585_ver_JJA.time.dt.year>=2064)
-ussp585_p3_ver_JJA = ca.detrend_dim(ussp585_p3_ver_JJA, "time", deg=1, demean=False)
-
-fvssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_201501-209912.nc")
-vssp585_ver_JJA = fvssp585_ver_JJA["va"]
-vssp585_p3_ver_JJA = vssp585_ver_JJA.sel(time=vssp585_ver_JJA.time.dt.year>=2064)
-vssp585_p3_ver_JJA = ca.detrend_dim(vssp585_p3_ver_JJA, "time", deg=1, demean=False)
-
-fwssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/wap_ssp585_r144x72_201501-209912.nc")
-wssp585_ver_JJA = fwssp585_ver_JJA["wap"]
-wssp585_p3_ver_JJA = wssp585_ver_JJA.sel(time=wssp585_ver_JJA.time.dt.year>=2064)
-wssp585_p3_ver_JJA = ca.detrend_dim(wssp585_p3_ver_JJA, "time", deg=1, demean=False)
-
-fsstssp585_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/tos_ssp585_r144x72_201501-209912.nc")
-sstssp585_JJA = fsstssp585_JJA["sst"]
-sstssp585_p3_JJA = sstssp585_JJA.sel(time=sstssp585_JJA.time.dt.year>=2064)
-sstssp585_JJA = ca.detrend_dim(sstssp585_JJA, "time", deg=1, demean=False)
-sstssp585_p3_JJA = ca.detrend_dim(sstssp585_p3_JJA, "time", deg=1, demean=False)
-
-#   read the temperature data in ERA5/historical/ssp585
 ftERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/obs/temp_mon_r144x72_195001-201412.nc")
 tERA5 = ftERA5["t"].sel(time=ftERA5["time"].dt.year>=1979)
 tERA5_ver_JJA = ca.p_time(tERA5, 6, 8, True)
 tERA5_ver_JJA = ca.detrend_dim(tERA5_ver_JJA, "time", deg=1, demean=False)
 
-fthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ta_historical_r144x72_195001-201412.nc")
+# read the data from CMIP6 historical experiment
+fprehis = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/pr_historical_r144x72_197901-201412.nc")
+prehis_JJA = fprehis["pr"].sel(time=fprehis["time"].dt.year>=1979)
+prehis_JJA.attrs["units"] = "mm/day"
+prehis_JJA.attrs["standard_name"] = "precipitation"
+
+fhgthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_197901-201412.nc")
+hgthis_ver_JJA = fhgthis_ver_JJA["zg"].sel(time=fhgthis_ver_JJA["time"].dt.year>=1979)
+hgthis_ver_JJA = hgthis_ver_JJA - hgthis_ver_JJA.mean(dim="lon", skipna=True)
+hgthis_ver_JJA = ca.detrend_dim(hgthis_ver_JJA, "time", deg=1, demean=False)
+
+fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ua_historical_r144x72_197901-201412.nc")
+uhis_ver_JJA = fuhis_ver_JJA["ua"].sel(time=fuhis_ver_JJA["time"].dt.year>=1979)
+
+fvhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/va_historical_r144x72_197901-201412.nc")
+vhis_ver_JJA = fvhis_ver_JJA["va"].sel(time=fvhis_ver_JJA["time"].dt.year>=1979)
+
+fwhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/wap_historical_r144x72_197901-201412.nc") 
+whis_ver_JJA = fwhis_ver_JJA["wap"].sel(time=fwhis_ver_JJA["time"].dt.year>=1979)
+
+fssthis_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/tos_historical_r144x72_197901-201412.nc")
+ssthis_JJA = fssthis_JJA["sst"].sel(time=fssthis_JJA["time"].dt.year>=1979)
+
+fthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/ta_historical_r144x72_197901-201412.nc")
 this_ver_JJA = fthis_ver_JJA["ta"].sel(time=fthis_ver_JJA["time"].dt.year>=1979)
-this_ver_JJA = ca.detrend_dim(this_ver_JJA, "time", deg=1, demean=False)
 
-ftssp585_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ta_ssp585_r144x72_201501-209912.nc")
-tssp585_ver_JJA = ftssp585_ver_JJA["ta"]
-tssp585_p3_ver_JJA = tssp585_ver_JJA.sel(time=tssp585_ver_JJA.time.dt.year>=2064)
-tssp585_p3_ver_JJA = ca.detrend_dim(tssp585_p3_ver_JJA, "time", deg=1, demean=False)
+# read the data from CMIP6 ssp585 experiment and read the last period of ssp585
+fpressp585_p3 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pr_ssp585_r144x72_206401-209912.nc")
+pressp585_p3_JJA = fpressp585_p3["pr"]
+pressp585_p3_JJA.attrs["units"] = "mm/day"
+pressp585_p3_JJA.attrs["standard_name"] = "precipitation"
 
-ERA5_EAM = ca.EAM(uERA5_ver_JJA)
-ERA5_EAM = ca.detrend_dim(ERA5_EAM, "time", deg=1, demean=False)
+fhgtssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_206401-209912.nc")
+hgtssp585_p3_ver_JJA = fhgtssp585_p3_ver_JJA["zg"]
+hgtssp585_p3_ver_JJA = hgtssp585_p3_ver_JJA - hgtssp585_p3_ver_JJA.mean(dim="lon", skipna=True)
+hgtssp585_p3_ver_JJA = ca.detrend_dim(hgtssp585_p3_ver_JJA, "time", deg=1, demean=False)
 
-ERA5_IWF = ca.IWF(uERA5_ver_JJA, vERA5_ver_JJA)
-ERA5_IWF = ca.detrend_dim(ERA5_IWF, "time", deg=1, demean=False)
 
-ERA5_LKY = ca.LKY(uERA5_ver_JJA, vERA5_ver_JJA)
-ERA5_LKY = ca.detrend_dim(ERA5_LKY, "time", deg=1, demean=False)
+fussp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_206401-209912.nc")
+ussp585_p3_ver_JJA = fussp585_p3_ver_JJA["ua"]
 
-fhis_EAM = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_EAM_index_1950-2014.nc")
-his_EAM = fhis_EAM["EAM"].sel(time=fhis_EAM["time"].dt.year>=1979)
-his_EAM = ca.detrend_dim(his_EAM, "time", deg=1, demean=False)
+fvssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_206401-209912.nc")
+vssp585_p3_ver_JJA = fvssp585_p3_ver_JJA["va"]
 
-fssp585_EAM = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_EAM_index_2015-2099.nc")
-ssp585_EAM = fssp585_EAM["EAM"]
-ssp585_p3_EAM = fssp585_EAM["EAM"].sel(time=fssp585_EAM["time"].dt.year>=2064)
-ssp585_EAM = ca.detrend_dim(ssp585_EAM, "time", deg=1, demean=False)
-ssp585_p3_EAM = ca.detrend_dim(ssp585_p3_EAM, "time", deg=1, demean=False)
+fwssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/wap_ssp585_r144x72_206401-209912.nc")
+wssp585_p3_ver_JJA = fwssp585_p3_ver_JJA["wap"]
 
-fhis_IWF = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_IWF_index_1950-2014.nc")
-his_IWF = fhis_IWF["IWF"].sel(time=fhis_IWF["time"].dt.year>=1979)
-his_IWF = ca.detrend_dim(his_IWF, "time", deg=1, demean=False)
+fsstssp585_p3_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/tos_ssp585_r144x72_206401-209912.nc")
+sstssp585_p3_JJA = fsstssp585_p3_JJA["sst"]
 
-fssp585_IWF = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_IWF_index_2015-2099.nc")
-ssp585_IWF = fssp585_IWF["IWF"]
-ssp585_p3_IWF = fssp585_IWF["IWF"].sel(time=fssp585_IWF["time"].dt.year>=2064)
-ssp585_IWF = ca.detrend_dim(ssp585_IWF, "time", deg=1, demean=False)
-ssp585_p3_IWF = ca.detrend_dim(ssp585_p3_IWF, "time", deg=1, demean=False)
+ftssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ta_ssp585_r144x72_206401-209912.nc")
+tssp585_p3_ver_JJA = ftssp585_p3_ver_JJA["ta"]
+
+# ERA5_EAM = ca.EAM(uERA5_ver_JJA)
+# ERA5_EAM = ca.detrend_dim(ERA5_EAM, "time", deg=1, demean=False)
+
+# ERA5_IWF = ca.IWF(uERA5_ver_JJA, vERA5_ver_JJA)
+# ERA5_IWF = ca.detrend_dim(ERA5_IWF, "time", deg=1, demean=False)
+
+# ERA5_LKY = ca.LKY(uERA5_ver_JJA, vERA5_ver_JJA)
+# ERA5_LKY = ca.detrend_dim(ERA5_LKY, "time", deg=1, demean=False)
+
+# fhis_EAM = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_EAM_index_1950-2014.nc")
+# his_EAM = fhis_EAM["EAM"].sel(time=fhis_EAM["time"].dt.year>=1979)
+# his_EAM = ca.detrend_dim(his_EAM, "time", deg=1, demean=False)
+
+# fssp585_EAM = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_EAM_index_2015-2099.nc")
+# ssp585_EAM = fssp585_EAM["EAM"]
+# ssp585_p3_EAM = fssp585_EAM["EAM"].sel(time=fssp585_EAM["time"].dt.year>=2064)
+# ssp585_EAM = ca.detrend_dim(ssp585_EAM, "time", deg=1, demean=False)
+# ssp585_p3_EAM = ca.detrend_dim(ssp585_p3_EAM, "time", deg=1, demean=False)
+
+# fhis_IWF = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/his_IWF_index_1950-2014.nc")
+# his_IWF = fhis_IWF["IWF"].sel(time=fhis_IWF["time"].dt.year>=1979)
+# his_IWF = ca.detrend_dim(his_IWF, "time", deg=1, demean=False)
+
+# fssp585_IWF = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ssp585_IWF_index_2015-2099.nc")
+# ssp585_IWF = fssp585_IWF["IWF"]
+# ssp585_p3_IWF = fssp585_IWF["IWF"].sel(time=fssp585_IWF["time"].dt.year>=2064)
+# ssp585_IWF = ca.detrend_dim(ssp585_IWF, "time", deg=1, demean=False)
+# ssp585_p3_IWF = ca.detrend_dim(ssp585_p3_IWF, "time", deg=1, demean=False)
 
 #   read the pcc data from the files
-fNCR_200hgt_pcc = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCR_200hgt_pcc.nc")
-NCR_200hgt_pcc = fNCR_200hgt_pcc["pcc"]
+# fNCR_200hgt_pcc = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCR_200hgt_pcc.nc")
+# NCR_200hgt_pcc = fNCR_200hgt_pcc["pcc"]
 
-fNCR_850hgt_pcc = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCR_850hgt_pcc.nc")
-NCR_850hgt_pcc = fNCR_850hgt_pcc["pcc"]
+# fNCR_850hgt_pcc = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/NCR_850hgt_pcc.nc")
+# NCR_850hgt_pcc = fNCR_850hgt_pcc["pcc"]
 #   read the his_dpg and ssp585_dpg
 # his_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/his_dsdpg500-200.nc")
 # ssp585_dsdpg = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ssp585_dsdpg500-200.nc")
@@ -4318,47 +4280,47 @@ axs[0].format(xlim=(-1.0,1.0), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=F
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=7.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 # plot_array = np.reshape(range(1, 4), (1, 3))
 # plot_array[-1,-3:] = 0
-axs = fig.subplots(ncols=1, nrows=3)
+axs = fig.subplots(ncols=1, nrows=1)
 # for gMME
-scale = pplt.CutoffScale(2016,np.inf,2062)
-axs.format(xlim=(1979,2099),xscale=scale,xlocator=np.append(np.arange(1979,2015,5),np.arange(2064, 2100,5)),ylim=(-3.0,3.0))
+# scale = pplt.CutoffScale(2016,np.inf,2062)
+axs.format(xlim=(1979,2099),xlocator=np.append(np.arange(1979,2015,5),np.arange(2064, 2100,5)),ylim=(0.0,10.0))
 # axs = pplt.GridSpec(6,5)
 # ax = fig.subplot(axs[0])
 # bax = brokenaxes(xlims=((1979, 2014), (2064, 2099)), despine=False, subplot_spec=ax)
-m1 = axs[0].plot(np.arange(1979,2015,1), ca.standardize(prehis_India_JJA.sel(time=prehis_India_JJA.time.dt.year>=1979, models=gmodels).mean(dim="models")), color="black", lw=1.2)
-axs[0].plot(np.arange(2064,2100,1), ca.standardize(pressp585_India_JJA.sel(time=pressp585_India_JJA.time.dt.year>=2064, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+m1 = axs[0].plot(np.arange(1979,2015,1), prehis_India_JJA.sel(models=gmodels).mean(dim="models",skipna=True), color="black", lw=1.2)
+axs[0].plot(np.arange(2015,2100,1), pressp585_India_JJA.sel(models=gmodels).mean(dim="models",skipna=True), color="black", lw=1.2)
 # m2 = axs[0].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).mean(dim="models")), color="blue", lw=1.2)
 # axs[0].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).mean(dim="models")), color="blue", lw=1.2)
-axs[0].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.2,color="grey7")
-axs[0].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.2,color="grey7")
-axs[0].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
+# axs[0].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.2,color="grey7")
+# axs[0].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.2,color="grey7")
+# axs[0].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
 axs[0].format(ltitle="gMME", rtitle="Total India")
 # ====================================
-m1 = axs[1].plot(np.arange(1979,2015,1), ca.standardize(prehis_nIndia_JJA.sel(time=prehis_nIndia_JJA.time.dt.year>=1979, models=gmodels).mean(dim="models")), color="black", lw=1.2)
-axs[1].plot(np.arange(2064,2100,1), ca.standardize(pressp585_nIndia_JJA.sel(time=pressp585_nIndia_JJA.time.dt.year>=2064, models=gmodels).mean(dim="models")), color="black", lw=1.2)
-ox = axs[1].alty(color="blue6", label="rate", linewidth=1)
-ox.plot(np.arange(1979,2015,1), (prehis_nIndia_JJA_sum/prehis_India_JJA_sum).sel(models=gmodels).mean(dim="models"), color="blue6", lw=1.2)
-ox.plot(np.arange(2064,2100,1), (pressp585_p3_nIndia_JJA_sum/pressp585_p3_India_JJA_sum).sel(models=gmodels).mean(dim="models"), color="blue6", lw=1.2)
-ox.format(ylim=(0.2,0.7))
-# m2 = axs[1].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).mean(dim="models")), color="blue", lw=1.2)
-# axs[1].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).mean(dim="models")), color="blue", lw=1.2)
-axs[1].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.2,color="grey7")
-axs[1].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.2,color="grey7")
-axs[1].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
-axs[1].format(ltitle="gMME", rtitle="North India")
-# =================================
-m1 = axs[2].plot(np.arange(1979,2015,1), ca.standardize(prehis_wIndia_JJA.sel(time=prehis_wIndia_JJA.time.dt.year>=1979, models=gmodels).mean(dim="models")), color="black", lw=1.2)
-axs[2].plot(np.arange(2064,2100,1), ca.standardize(pressp585_wIndia_JJA.sel(time=pressp585_wIndia_JJA.time.dt.year>=2064, models=gmodels).mean(dim="models")), color="black", lw=1.2)
-ox = axs[2].alty(color="blue6", label="rate", linewidth=1)
-ox.plot(np.arange(1979,2015,1), (prehis_wIndia_JJA_sum/prehis_India_JJA_sum).sel(models=gmodels).mean(dim="models"), color="blue6", lw=1.2)
-ox.plot(np.arange(2064,2100,1), (pressp585_p3_wIndia_JJA_sum/pressp585_p3_India_JJA_sum).sel(models=gmodels).mean(dim="models"), color="blue6", lw=1.2)
-ox.format(ylim=(0.0,0.6))
-# m2 = axs[2].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).mean(dim="models")), color="blue", lw=1.2)
-# axs[2].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).mean(dim="models")), color="blue", lw=1.2)
-axs[2].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.0,color="grey7")
-axs[2].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.0,color="grey7")
-axs[2].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
-axs[2].format(ltitle="gMME", rtitle="West India")
+# m1 = axs[1].plot(np.arange(1979,2015,1), ca.standardize(prehis_nIndia_JJA.sel(time=prehis_nIndia_JJA.time.dt.year>=1979, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+# axs[1].plot(np.arange(2064,2100,1), ca.standardize(pressp585_nIndia_JJA.sel(time=pressp585_nIndia_JJA.time.dt.year>=2064, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+# ox = axs[1].alty(color="blue6", label="rate", linewidth=1)
+# ox.plot(np.arange(1979,2015,1), (prehis_nIndia_JJA_sum/prehis_India_JJA_sum).sel(models=gmodels).mean(dim="models"), color="blue6", lw=1.2)
+# ox.plot(np.arange(2064,2100,1), (pressp585_p3_nIndia_JJA_sum/pressp585_p3_India_JJA_sum).sel(models=gmodels).mean(dim="models"), color="blue6", lw=1.2)
+# ox.format(ylim=(0.2,0.7))
+# # m2 = axs[1].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).mean(dim="models")), color="blue", lw=1.2)
+# # axs[1].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).mean(dim="models")), color="blue", lw=1.2)
+# axs[1].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.2,color="grey7")
+# axs[1].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.2,color="grey7")
+# axs[1].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
+# axs[1].format(ltitle="gMME", rtitle="North India")
+# # =================================
+# m1 = axs[2].plot(np.arange(1979,2015,1), ca.standardize(prehis_wIndia_JJA.sel(time=prehis_wIndia_JJA.time.dt.year>=1979, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+# axs[2].plot(np.arange(2064,2100,1), ca.standardize(pressp585_wIndia_JJA.sel(time=pressp585_wIndia_JJA.time.dt.year>=2064, models=gmodels).mean(dim="models")), color="black", lw=1.2)
+# ox = axs[2].alty(color="blue6", label="rate", linewidth=1)
+# ox.plot(np.arange(1979,2015,1), (prehis_wIndia_JJA_sum/prehis_India_JJA_sum).sel(models=gmodels).mean(dim="models"), color="blue6", lw=1.2)
+# ox.plot(np.arange(2064,2100,1), (pressp585_p3_wIndia_JJA_sum/pressp585_p3_India_JJA_sum).sel(models=gmodels).mean(dim="models"), color="blue6", lw=1.2)
+# ox.format(ylim=(0.0,0.6))
+# # m2 = axs[2].plot(np.arange(1979,2015,1), ca.standardize(uhis_EA_JJA.sel(time=uhis_EA_JJA.time.dt.year>=1979).mean(dim="models")), color="blue", lw=1.2)
+# # axs[2].plot(np.arange(2064,2100,1), ca.standardize(ussp585_EA_JJA.sel(time=ussp585_EA_JJA.time.dt.year>=2064).mean(dim="models")), color="blue", lw=1.2)
+# axs[2].plot(np.arange(1979,2015,1),np.zeros(36),lw=1.0,color="grey7")
+# axs[2].plot(np.arange(2064,2100,1),np.zeros(36),lw=1.0,color="grey7")
+# axs[2].fill_between([2014,2064],-3,3,color="grey7", alpha=0.1)
+# axs[2].format(ltitle="gMME", rtitle="West India")
 
 fig.format(abc="(a)", abcloc="l", suptitle="IndR")
 # %%
