@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-05-06 15:24:33
 LastEditors: ChenHJ
-LastEditTime: 2022-06-23 16:08:36
+LastEditTime: 2022-06-23 16:10:55
 FilePath: /chenhj/0302code/choose_India_area.py
 Aim: 
 Mission: 
@@ -144,30 +144,30 @@ fthis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SA
 this_ver_JJA = fthis_ver_JJA["ta"].sel(time=fthis_ver_JJA["time"].dt.year>=1979)
 
 # read the data from CMIP6 ssp585 experiment and read the last period of ssp585
-fpressp585_p3 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pr_ssp585_r144x72_206401-209912.nc")
+fpressp585_p3 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pr_ssp585_p3_r144x72_206401-209912.nc")
 pressp585_p3_JJA = fpressp585_p3["pr"]
 pressp585_p3_JJA.attrs["units"] = "mm/day"
 pressp585_p3_JJA.attrs["standard_name"] = "precipitation"
 
-fhgtssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_r144x72_206401-209912.nc")
+fhgtssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_p3_r144x72_206401-209912.nc")
 hgtssp585_p3_ver_JJA = fhgtssp585_p3_ver_JJA["zg"]
 hgtssp585_p3_ver_JJA = hgtssp585_p3_ver_JJA - hgtssp585_p3_ver_JJA.mean(dim="lon", skipna=True)
 hgtssp585_p3_ver_JJA = ca.detrend_dim(hgtssp585_p3_ver_JJA, "time", deg=1, demean=False)
 
 
-fussp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_r144x72_206401-209912.nc")
+fussp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_p3_r144x72_206401-209912.nc")
 ussp585_p3_ver_JJA = fussp585_p3_ver_JJA["ua"]
 
-fvssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_r144x72_206401-209912.nc")
+fvssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_p3_r144x72_206401-209912.nc")
 vssp585_p3_ver_JJA = fvssp585_p3_ver_JJA["va"]
 
-fwssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/wap_ssp585_r144x72_206401-209912.nc")
+fwssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/wap_ssp585_p3_r144x72_206401-209912.nc")
 wssp585_p3_ver_JJA = fwssp585_p3_ver_JJA["wap"]
 
-fsstssp585_p3_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/tos_ssp585_r144x72_206401-209912.nc")
+fsstssp585_p3_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/tos_ssp585_p3_r144x72_206401-209912.nc")
 sstssp585_p3_JJA = fsstssp585_p3_JJA["sst"]
 
-ftssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ta_ssp585_r144x72_206401-209912.nc")
+ftssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ta_ssp585_p3_r144x72_206401-209912.nc")
 tssp585_p3_ver_JJA = ftssp585_p3_ver_JJA["ta"]
 
 # ERA5_EAM = ca.EAM(uERA5_ver_JJA)
