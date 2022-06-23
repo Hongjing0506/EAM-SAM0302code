@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-06-23 12:07:15
+LastEditTime: 2022-06-23 15:18:02
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -614,26 +614,79 @@ tsCMIP6_ds_JJA_detrend.name = "ts"
 tosCMIP6_ds_JJA_detrend.name = "sst"
 # %%
 # cut the CMIP6 variables into two experiment
-hgthis_ds_ver_JJA_detrend = hgtCMIP6_ds_ver_JJA_detrend.sel(time=hgtCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014)
-hgtssp585_ds_ver_JJA_detrend = hgtCMIP6_ds_ver_JJA_detrend.sel(time=hgtCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015)
-uhis_ds_ver_JJA_detrend = uCMIP6_ds_ver_JJA_detrend.sel(time=uCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014)
-ussp585_ds_ver_JJA_detrend = uCMIP6_ds_ver_JJA_detrend.sel(time=uCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015)
-vhis_ds_ver_JJA_detrend = vCMIP6_ds_ver_JJA_detrend.sel(time=vCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014)
-vssp585_ds_ver_JJA_detrend = vCMIP6_ds_ver_JJA_detrend.sel(time=vCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015)
-qhis_ds_ver_JJA_detrend = qCMIP6_ds_ver_JJA_detrend.sel(time=qCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014)
-qssp585_ds_ver_JJA_detrend = qCMIP6_ds_ver_JJA_detrend.sel(time=qCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015)
-waphis_ds_ver_JJA_detrend = wapCMIP6_ds_ver_JJA_detrend.sel(time=wapCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014)
-wapssp585_ds_ver_JJA_detrend = wapCMIP6_ds_ver_JJA_detrend.sel(time=wapCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015)
-tahis_ds_ver_JJA_detrend = taCMIP6_ds_ver_JJA_detrend.sel(time=taCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014)
-tassp585_ds_ver_JJA_detrend = taCMIP6_ds_ver_JJA_detrend.sel(time=taCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015)
-sphis_ds_JJA_detrend = spCMIP6_ds_JJA_detrend.sel(time=spCMIP6_ds_JJA_detrend.time.dt.year<=2014)
-spssp585_ds_JJA_detrend = spCMIP6_ds_JJA_detrend.sel(time=spCMIP6_ds_JJA_detrend.time.dt.year>=2015)
-prehis_ds_JJA_detrend = preCMIP6_ds_JJA_detrend.sel(time=preCMIP6_ds_JJA_detrend.time.dt.year<=2014)
-pressp585_ds_JJA_detrend = preCMIP6_ds_JJA_detrend.sel(time=preCMIP6_ds_JJA_detrend.time.dt.year>=2015)
-tshis_ds_JJA_detrend = tsCMIP6_ds_JJA_detrend.sel(time=tsCMIP6_ds_JJA_detrend.time.dt.year<=2014)
-tsssp585_ds_JJA_detrend = tsCMIP6_ds_JJA_detrend.sel(time=tsCMIP6_ds_JJA_detrend.time.dt.year>=2015)
-toshis_ds_JJA_detrend = tosCMIP6_ds_JJA_detrend.sel(time=tosCMIP6_ds_JJA_detrend.time.dt.year<=2014)
-tosssp585_ds_JJA_detrend = tosCMIP6_ds_JJA_detrend.sel(time=tosCMIP6_ds_JJA_detrend.time.dt.year>=2015)
+hgthis_ds_ver_JJA_detrend = ca.detrend_dim(hgtCMIP6_ds_ver_JJA_detrend.sel(time=hgtCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=False)
+hgtssp585_ds_ver_JJA_detrend = ca.detrend_dim(hgtCMIP6_ds_ver_JJA_detrend.sel(time=hgtCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015), "time", deg=1, demean=False)
+hgtssp585_p3_ds_ver_JJA_detrend = ca.detrend_dim(hgtCMIP6_ds_ver_JJA_detrend.sel(time=hgtCMIP6_ds_ver_JJA_detrend.time.dt.year>=2064), "time", deg=1, demean=False)
+
+uhis_ds_ver_JJA_detrend = ca.detrend_dim(uCMIP6_ds_ver_JJA_detrend.sel(time=uCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=False)
+ussp585_ds_ver_JJA_detrend = ca.detrend_dim(uCMIP6_ds_ver_JJA_detrend.sel(time=uCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015), "time", deg=1, demean=False)
+ussp585_p3_ds_ver_JJA_detrend = ca.detrend_dim(uCMIP6_ds_ver_JJA_detrend.sel(time=uCMIP6_ds_ver_JJA_detrend.time.dt.year>=2064), "time", deg=1, demean=False)
+
+vhis_ds_ver_JJA_detrend = ca.detrend_dim(vCMIP6_ds_ver_JJA_detrend.sel(time=vCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=False)
+vssp585_ds_ver_JJA_detrend = ca.detrend_dim(vCMIP6_ds_ver_JJA_detrend.sel(time=vCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015), "time", deg=1, demean=False)
+vssp585_p3_ds_ver_JJA_detrend = ca.detrend_dim(vCMIP6_ds_ver_JJA_detrend.sel(time=vCMIP6_ds_ver_JJA_detrend.time.dt.year>=2064), "time", deg=1, demean=False)
+
+qhis_ds_ver_JJA_detrend = ca.detrend_dim(qCMIP6_ds_ver_JJA_detrend.sel(time=qCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=False)
+qssp585_ds_ver_JJA_detrend = ca.detrend_dim(qCMIP6_ds_ver_JJA_detrend.sel(time=qCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015), "time", deg=1, demean=False)
+qssp585_p3_ds_ver_JJA_detrend = ca.detrend_dim(qCMIP6_ds_ver_JJA_detrend.sel(time=qCMIP6_ds_ver_JJA_detrend.time.dt.year>=2064), "time", deg=1, demean=False)
+
+waphis_ds_ver_JJA_detrend = ca.detrend_dim(wapCMIP6_ds_ver_JJA_detrend.sel(time=wapCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=False)
+wapssp585_ds_ver_JJA_detrend = ca.detrend_dim(wapCMIP6_ds_ver_JJA_detrend.sel(time=wapCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015), "time", deg=1, demean=False)
+wapssp585_p3_ds_ver_JJA_detrend = ca.detrend_dim(wapCMIP6_ds_ver_JJA_detrend.sel(time=wapCMIP6_ds_ver_JJA_detrend.time.dt.year>=2064), "time", deg=1, demean=False)
+
+tahis_ds_ver_JJA_detrend = ca.detrend_dim(taCMIP6_ds_ver_JJA_detrend.sel(time=taCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=False)
+tassp585_ds_ver_JJA_detrend = ca.detrend_dim(taCMIP6_ds_ver_JJA_detrend.sel(time=taCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015), "time", deg=1, demean=False)
+tassp585_p3_ds_ver_JJA_detrend = ca.detrend_dim(taCMIP6_ds_ver_JJA_detrend.sel(time=taCMIP6_ds_ver_JJA_detrend.time.dt.year>=2064), "time", deg=1, demean=False)
+
+sphis_ds_JJA_detrend = ca.detrend_dim(spCMIP6_ds_JJA_detrend.sel(time=spCMIP6_ds_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=False)
+spssp585_ds_JJA_detrend = ca.detrend_dim(spCMIP6_ds_JJA_detrend.sel(time=spCMIP6_ds_JJA_detrend.time.dt.year>=2015), "time", deg=1, demean=False)
+spssp585_p3_ds_JJA_detrend = ca.detrend_dim(spCMIP6_ds_JJA_detrend.sel(time=spCMIP6_ds_JJA_detrend.time.dt.year>=2064), "time", deg=1, demean=False)
+
+prehis_ds_JJA_detrend = ca.detrend_dim(preCMIP6_ds_JJA_detrend.sel(time=preCMIP6_ds_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=False)
+pressp585_ds_JJA_detrend = ca.detrend_dim(preCMIP6_ds_JJA_detrend.sel(time=preCMIP6_ds_JJA_detrend.time.dt.year>=2015), "time", deg=1, demean=False)
+pressp585_p3_ds_JJA_detrend = ca.detrend_dim(preCMIP6_ds_JJA_detrend.sel(time=preCMIP6_ds_JJA_detrend.time.dt.year>=2064), "time", deg=1, demean=False)
+
+tshis_ds_JJA_detrend = ca.detrend_dim(tsCMIP6_ds_JJA_detrend.sel(time=tsCMIP6_ds_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=False)
+tsssp585_ds_JJA_detrend = ca.detrend_dim(tsCMIP6_ds_JJA_detrend.sel(time=tsCMIP6_ds_JJA_detrend.time.dt.year>=2015), "time", deg=1, demean=False)
+tsssp585_p3_ds_JJA_detrend = ca.detrend_dim(tsCMIP6_ds_JJA_detrend.sel(time=tsCMIP6_ds_JJA_detrend.time.dt.year>=2064), "time", deg=1, demean=False)
+
+toshis_ds_JJA_detrend = ca.detrend_dim(tosCMIP6_ds_JJA_detrend.sel(time=tosCMIP6_ds_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=False)
+tosssp585_ds_JJA_detrend = ca.detrend_dim(tosCMIP6_ds_JJA_detrend.sel(time=tosCMIP6_ds_JJA_detrend.time.dt.year>=2015), "time", deg=1, demean=False)
+tosssp585_p3_ds_JJA_detrend = ca.detrend_dim(tosCMIP6_ds_JJA_detrend.sel(time=tosCMIP6_ds_JJA_detrend.time.dt.year>=2064), "time", deg=1, demean=False)
+# %%
+#   rename the variables of detrend data
+hgthis_ds_ver_JJA_detrend.name = "zg"
+uhis_ds_ver_JJA_detrend.name = "ua"
+vhis_ds_ver_JJA_detrend.name = "va"
+qhis_ds_ver_JJA_detrend.name = "hus"
+waphis_ds_ver_JJA_detrend.name = "wap"
+tahis_ds_ver_JJA_detrend.name = "ta"
+sphis_ds_JJA_detrend.name = "ps"
+prehis_ds_JJA_detrend.name = "pr"
+tshis_ds_JJA_detrend.name = "ts"
+toshis_ds_JJA_detrend.name = "sst"
+
+hgtssp585_ds_ver_JJA_detrend.name = "zg"
+ussp585_ds_ver_JJA_detrend.name = "ua"
+vssp585_ds_ver_JJA_detrend.name = "va"
+qssp585_ds_ver_JJA_detrend.name = "hus"
+wapssp585_ds_ver_JJA_detrend.name = "wap"
+tassp585_ds_ver_JJA_detrend.name = "ta"
+spssp585_ds_JJA_detrend.name = "ps"
+pressp585_ds_JJA_detrend.name = "pr"
+tsssp585_ds_JJA_detrend.name = "ts"
+tosssp585_ds_JJA_detrend.name = "sst"
+
+hgtssp585_p3_ds_ver_JJA_detrend.name = "zg"
+ussp585_p3_ds_ver_JJA_detrend.name = "ua"
+vssp585_p3_ds_ver_JJA_detrend.name = "va"
+qssp585_p3_ds_ver_JJA_detrend.name = "hus"
+wapssp585_p3_ds_ver_JJA_detrend.name = "wap"
+tassp585_p3_ds_ver_JJA_detrend.name = "ta"
+spssp585_p3_ds_JJA_detrend.name = "ps"
+pressp585_p3_ds_JJA_detrend.name = "pr"
+tsssp585_p3_ds_JJA_detrend.name = "ts"
+tosssp585_p3_ds_JJA_detrend.name = "sst"
 # %%
 #   output the detrended variables of multi-models in historical run
 hgthis_ds_ver_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_195001-201412.nc")
@@ -657,6 +710,17 @@ pressp585_ds_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj
 spssp585_ds_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ps_ssp585_r144x72_201501-209912.nc")
 tsssp585_ds_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ts_ssp585_r144x72_201501-209912.nc")
 tosssp585_ds_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/tos_ssp585_r144x72_201501-209912.nc")
+
+hgtssp585_p3_ds_ver_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/zg_ssp585_p3_r144x72_206401-209912.nc")
+ussp585_p3_ds_ver_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ua_ssp585_p3_r144x72_206401-209912.nc")
+vssp585_p3_ds_ver_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/va_ssp585_p3_r144x72_206401-209912.nc")
+qssp585_p3_ds_ver_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/hus_ssp585_p3_r144x72_206401-209912.nc")
+wapssp585_p3_ds_ver_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/wap_ssp585_p3_r144x72_206401-209912.nc")
+tassp585_p3_ds_ver_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ta_ssp585_p3_r144x72_206401-209912.nc")
+pressp585_p3_ds_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/pr_ssp585_p3_r144x72_206401-209912.nc")
+spssp585_p3_ds_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ps_ssp585_p3_r144x72_206401-209912.nc")
+tsssp585_p3_ds_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ts_ssp585_p3_r144x72_206401-209912.nc")
+tosssp585_p3_ds_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/tos_ssp585_p3_r144x72_206401-209912.nc")
 # %%
 #   read non-detrend data
 fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/ua_historical_r144x72_195001-201412.nc")
