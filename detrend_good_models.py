@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-28 16:29:43
 LastEditors: ChenHJ
-LastEditTime: 2022-06-28 20:52:11
+LastEditTime: 2022-06-28 21:30:38
 FilePath: /chenhj/0302code/detrend_good_models.py
 Aim: 
 This code is to plot the detrended results of good models
@@ -2917,16 +2917,16 @@ fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="SST reg IndR")
 # %%
 # plot the WAhigh related to SASMR in period 1979-2014, 2064-2099 and diff
-plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_WAhigh_regress[0].data
-plot_data[:-1,1] = IndR_ssp585_p3_WAhigh_regress[0].data
-plot_data[:-1,2] = IndR_diff_WAhigh_slope.data
-plot_data[-1,0] = IndR_his_WAhigh_regress[0].mean(dim="models", skipna=True).data
-plot_data[-1,1] = IndR_ssp585_p3_WAhigh_regress[0].mean(dim="models", skipna=True).data
-plot_data[-1,2] = IndR_diff_WAhigh_slope.mean(dim="models", skipna=True).data
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_WAhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_WAhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_WAhigh_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_WAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_WAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_WAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
 
-label_models = list(models_array)
-label_models.append("MME")
+label_models = list(gmodels)
+label_models.append("gMME")
 
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
@@ -2939,21 +2939,21 @@ axs[0].axhline(0,lw=1.5,color="grey7")
 #         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[0].format(ylim=(-3.0e-6,3.0e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+axs[0].format(ylim=(-3.0e-6,3.0e-6),xlocator=np.arange(0,7), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Reg. Coeff. IndR and WAhigh")
 # %%
 # plot the EAhigh related to SASMR in period 1979-2014, 2064-2099 and diff
-plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_EAhigh_regress[0].data
-plot_data[:-1,1] = IndR_ssp585_p3_EAhigh_regress[0].data
-plot_data[:-1,2] = IndR_diff_EAhigh_slope.data
-plot_data[-1,0] = IndR_his_EAhigh_regress[0].mean(dim="models", skipna=True).data
-plot_data[-1,1] = IndR_ssp585_p3_EAhigh_regress[0].mean(dim="models", skipna=True).data
-plot_data[-1,2] = IndR_diff_EAhigh_slope.mean(dim="models", skipna=True).data
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_EAhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_EAhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_EAhigh_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_EAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
 
-label_models = list(models_array)
-label_models.append("MME")
+label_models = list(gmodels)
+label_models.append("gMME")
 
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
@@ -2966,22 +2966,22 @@ axs[0].axhline(0,lw=1.5,color="grey7")
 #         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[0].format(ylim=(-2.0e-6,2.0e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+axs[0].format(ylim=(-2.0e-6,2.0e-6),xlocator=np.arange(0,7), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Reg. Coeff. IndR and EAhigh")
 
 # %%
 # plot the WNPhigh related to SASMR in period 1979-2014, 2064-2099 and diff
-plot_data = np.zeros((27,3))
-plot_data[:-1,0] = IndR_his_WNPhigh_regress[0].data
-plot_data[:-1,1] = IndR_ssp585_p3_WNPhigh_regress[0].data
-plot_data[:-1,2] = IndR_diff_WNPhigh_slope.data
-plot_data[-1,0] = IndR_his_WNPhigh_regress[0].mean(dim="models", skipna=True).data
-plot_data[-1,1] = IndR_ssp585_p3_WNPhigh_regress[0].mean(dim="models", skipna=True).data
-plot_data[-1,2] = IndR_diff_WNPhigh_slope.mean(dim="models", skipna=True).data
+plot_data = np.zeros((7,3))
+plot_data[:-1,0] = IndR_his_WNPhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,1] = IndR_ssp585_p3_WNPhigh_regress[0].sel(models=gmodels).data
+plot_data[:-1,2] = IndR_diff_WNPhigh_slope.sel(models=gmodels).data
+plot_data[-1,0] = IndR_his_WNPhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_WNPhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_WNPhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
 
-label_models = list(models_array)
-label_models.append("MME")
+label_models = list(gmodels)
+label_models.append("gMME")
 
 fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=8.0, wspace=4.0, hspace=3.5, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=1)
@@ -2994,6 +2994,7 @@ axs[0].axhline(0,lw=1.5,color="grey7")
 #         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
-axs[0].format(ylim=(-1.0e-6,1.0e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
+axs[0].format(ylim=(-1.0e-6,1.0e-6),xlocator=np.arange(0,7), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Reg. Coeff. IndR and WNPhigh")
+# %%
