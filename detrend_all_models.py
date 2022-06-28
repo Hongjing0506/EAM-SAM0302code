@@ -2,14 +2,14 @@
 Author: ChenHJ
 Date: 2022-06-25 11:38:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-28 15:56:35
+LastEditTime: 2022-06-28 16:29:07
 FilePath: /chenhj/0302code/detrend_all_models.py
 Aim: 
 This code is to plot the detrended results of all models
 including:
 1) precipitation regress on SASMR
 2) circulation regress on SASMR at 200hPa, 500hPa and 850hPa
-3) 
+3) sea surface temperature regress on SASMR
 Mission: 
 '''
 # %%
