@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-28 21:32:17
 LastEditors: ChenHJ
-LastEditTime: 2022-06-29 20:20:37
+LastEditTime: 2022-06-29 21:09:04
 FilePath: /chenhj/0302code/nondetrend_all_models.py
 Aim: 
 This code is to plot the non-detrended results of all models
@@ -3175,4 +3175,133 @@ for num_mod, mod in enumerate(models_array):
 # ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="precip trend")
+# %%
+# plot the trend of hgt, u, v
+startlevel=[-1.5e-16, -5.0e-17, -2e-17]
+spacinglevel=[1.5e-17, 5.0e-18, 2e-18]
+scalelevel=[0.60, 0.40, 0.30]
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    pplt.rc.grid = False
+    pplt.rc.reso = "lo"
+    cl = 0  # 设置地图投影的中心纬度
+    proj = pplt.PlateCarree(central_longitude=cl)
+
+    fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+    plot_array = np.reshape(range(1, 31), (6, 5))
+    plot_array[-1,-2:] = 0
+    plot_array[0,0] = 0
+    axs = fig.subplots(plot_array, proj=proj)
+
+    #   set the geo_ticks and map projection to the plots
+    # xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+    yticks = np.arange(-30, 46, 15)  # 设置经度刻度
+    # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+    # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+    extents = [xticks[0], xticks[-1], yticks[0], 55.0]
+    sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents)
+    # ===================================================
+    ski = 2
+    n = 1
+    w, h = 0.12, 0.14
+    # ======================================
+    for ax in axs:
+        rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+        ax.add_patch(rect)
+        # India area
+        x0 = India_W
+        y0 = India_S
+        width = India_E-India_W
+        height = India_N-India_S
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
+        # NC area
+        x0 = NC_W
+        y0 = NC_S
+        width = NC_E-NC_W
+        height = NC_N-NC_S
+        sepl.patches(ax, x0 - cl, y0, width, height, proj)
+        # #   IWF area
+        # x0 = 90
+        # y0 = 5.0
+        # width = 50.0
+        # height = 27.5
+        # sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # ======================================
+    con = axs[0].contourf(
+        hgttrend_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+
+    m = axs[0].quiver(
+        utrend_ens.sel(level=lev)[::ski, ::ski]*1e19,
+        vtrend_ens.sel(level=lev)[::ski, ::ski]*1e19,
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+    )
+    if lev == 200.0:
+      axs[0].line(his_wj_axis_ens.coords["lon"], his_wj_axis_ens.data, lw=1.3, color="green6", ls="--")
+      axs[0].contour(
+          uhis_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          color="green6",
+          levels=np.array([20.0, 25.0, 30.0]),
+          zorder=0.8
+      )
+    axs[0].format(
+        rtitle="1979-2099", ltitle="MME",
+    )
+    # ======================================
+    for num_mod, mod in enumerate(models_array):
+        con = axs[num_mod+1].contourf(
+            hgttrend.sel(models=mod,level=lev),
+            cmap="ColdHot",
+            cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+            levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+            zorder=0.8,
+            extend="both"
+        )
+
+        m = axs[num_mod+1].quiver(
+            utrend.sel(models=mod,level=lev)[::ski, ::ski]*1e19,
+            vtrend.sel(models=mod,level=lev)[::ski, ::ski]*1e19,
+            zorder=1.1,
+            headwidth=2.6,
+            headlength=2.3,
+            headaxislength=2.3,
+            scale_units="xy",
+            scale=scalelevel[num_lev],
+            pivot="mid",
+            color="black",
+        )
+
+        qk = axs[num_mod+1].quiverkey(
+            m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.05, fontproperties={"size": 5}, zorder=3.1,
+        )
+        if lev == 200.0:
+          axs[num_mod+1].line(his_wj_axis.coords["lon"], his_wj_axis.sel(models=mod), lw=1.3, color="green6", ls="--")
+          axs[num_mod+1].contour(
+          uhis_ver_JJA.sel(level=200.0).sel(models=mod).mean(dim="time").loc[0.0:,:],
+          color="green6",
+          levels=np.array([20.0, 25.0, 30.0]),
+          zorder=0.8
+          )
+        axs[num_mod+1].format(
+            rtitle="1979-2099", ltitle="{}".format(mod),
+        )
+    # ======================================
+    fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+    fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U trend".format(lev))
 # %%
