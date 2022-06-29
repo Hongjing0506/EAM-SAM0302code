@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-25 11:38:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-29 17:32:19
+LastEditTime: 2022-06-29 17:56:45
 FilePath: /chenhj/0302code/detrend_all_models.py
 Aim: 
 This code is to plot the detrended results of all models
@@ -1020,14 +1020,15 @@ IndR_diff_WAhigh_slope = IndR_ssp585_p3_WAhigh_regress[0] - IndR_his_WAhigh_regr
 IndR_diff_WAhigh_rvalue = ca.cal_rdiff(IndR_ssp585_p3_WAhigh_regress[2], IndR_his_WAhigh_regress[2])
 
 # calculate the precipitation standard deviation for ERA5, historical and ssp585_p3 and then calculate the difference between ssp585_p3 and historical
-preAIR_JJA_std = preAIR_JJA.std(dim="time",skipna=True)
+preGPCP_JJA_std = preGPCP_JJA.std(dim="time",skipna=True)
 prehis_JJA_std = prehis_JJA.std(dim="time",skipna=True)
 pressp585_p3_JJA_std = pressp585_p3_JJA.std(dim="time",skipna=True)
 
-prediff_std = pressp585_p3_JJA_std - prehis_JJA_std
+prediff_JJA_std = pressp585_p3_JJA_std - prehis_JJA_std
 
 prehis_JJA_std_ens = prehis_JJA_std.mean(dim="models",skipna=True)
 pressp585_p3_JJA_std_ens = pressp585_p3_JJA_std.mean(dim="models",skipna=True)
+prediff_JJA_std_ens = prediff_JJA_std.mean(dim="models",skipna=True)
 
 # %%
 # plot the precipitation regress onto SASMR in period 1979-2014, 2064-2099 and diff
@@ -3020,4 +3021,184 @@ axs[0].legend(handles=m, loc='ur', labels=["historical", "ssp585_p3", "diff"])
 axs[0].format(ylim=(-1.0e-6,1.0e-6),xlocator=np.arange(0,27), xtickminor=False, ytickminor=False, grid=False, xrotation=45, xticklabelsize=12, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8")
 # ax.outline_patch.set_linewidth(1.0)
 fig.format(suptitle="Reg. Coeff. IndR and WNPhigh")
+# %%
+# plot the standard deviation of precipitation in 1979-2014, 2064-2099 and diff for all models
+# 1979-2014
+startlevel=-6.0
+spacinglevel=0.5
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-2:] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    preGPCP_JJA_std,
+    cmap="blues",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(0, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="max"
+)
+axs[0].format(
+    rtitle="1979-2014", ltitle="GPCP",
+)
+# ======================================
+con = axs[1].contourf(
+    prehis_JJA_std_ens,
+    cmap="blues",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(0, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="max"
+)
+axs[1].format(
+    rtitle="1979-2014", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+2].contourf(
+        prehis_JJA_std.sel(models=mod),
+        cmap="blues",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(0, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="max"
+    )
+    axs[num_mod+2].format(
+        rtitle="1979-2014", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="precip std")
+
+# 2064-2099
+startlevel=-6.0
+spacinglevel=0.5
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-2:] = 0
+plot_array[0,0] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    pressp585_p3_JJA_std_ens,
+    cmap="blues",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(0, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="max"
+)
+axs[0].format(
+    rtitle="2064-2099", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+1].contourf(
+        pressp585_p3_JJA_std.sel(models=mod),
+        cmap="blues",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(0, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="max"
+    )
+    axs[num_mod+1].format(
+        rtitle="2064-2099", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="precip std")
+
+# diff
+startlevel=-3.0
+spacinglevel=0.5
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-2:] = 0
+plot_array[0,0] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    prediff_JJA_std_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+axs[0].format(
+    rtitle="diff", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+1].contourf(
+        prediff_JJA_std.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1].format(
+        rtitle="diff", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="precip std")
 # %%
