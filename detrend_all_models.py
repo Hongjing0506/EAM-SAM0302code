@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-25 11:38:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-28 17:18:40
+LastEditTime: 2022-06-29 17:32:19
 FilePath: /chenhj/0302code/detrend_all_models.py
 Aim: 
 This code is to plot the detrended results of all models
@@ -13,6 +13,7 @@ including:
 4) WAhigh related to SASMR
 5) EAhigh related to SASMR
 6) WNPhigh related to SASMR
+7) precipitation standard deviation
 Mission: 
 '''
 # %%
@@ -1017,6 +1018,16 @@ IndR_ssp585_p3_WAhigh_regress = ca.dim_linregress(pressp585_p3_India_JJA, vorssp
 
 IndR_diff_WAhigh_slope = IndR_ssp585_p3_WAhigh_regress[0] - IndR_his_WAhigh_regress[0]
 IndR_diff_WAhigh_rvalue = ca.cal_rdiff(IndR_ssp585_p3_WAhigh_regress[2], IndR_his_WAhigh_regress[2])
+
+# calculate the precipitation standard deviation for ERA5, historical and ssp585_p3 and then calculate the difference between ssp585_p3 and historical
+preAIR_JJA_std = preAIR_JJA.std(dim="time",skipna=True)
+prehis_JJA_std = prehis_JJA.std(dim="time",skipna=True)
+pressp585_p3_JJA_std = pressp585_p3_JJA.std(dim="time",skipna=True)
+
+prediff_std = pressp585_p3_JJA_std - prehis_JJA_std
+
+prehis_JJA_std_ens = prehis_JJA_std.mean(dim="models",skipna=True)
+pressp585_p3_JJA_std_ens = pressp585_p3_JJA_std.mean(dim="models",skipna=True)
 
 # %%
 # plot the precipitation regress onto SASMR in period 1979-2014, 2064-2099 and diff
