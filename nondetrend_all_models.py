@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-28 21:32:17
 LastEditors: ChenHJ
-LastEditTime: 2022-06-29 21:09:04
+LastEditTime: 2022-06-29 21:12:22
 FilePath: /chenhj/0302code/nondetrend_all_models.py
 Aim: 
 This code is to plot the non-detrended results of all models
@@ -3304,4 +3304,60 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     # ======================================
     fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
     fig.format(abc="(a)", abcloc="l", suptitle="{:.0f}hPa hgt&U trend".format(lev))
+# %%
+# plot the SST trend
+startlevel=-3.0e-18
+spacinglevel=3e-19
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-2:] = 0
+plot_array[0,0] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    tostrend_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+axs[0].format(
+    rtitle="1979-2099", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+1].contourf(
+        tostrend.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1].format(
+        rtitle="1979-2099", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="sst trend")
 # %%
