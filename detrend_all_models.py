@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-25 11:38:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-29 17:56:45
+LastEditTime: 2022-06-29 18:12:22
 FilePath: /chenhj/0302code/detrend_all_models.py
 Aim: 
 This code is to plot the detrended results of all models
@@ -3177,7 +3177,7 @@ w, h = 0.12, 0.14
 con = axs[0].contourf(
     prediff_JJA_std_ens,
     cmap="ColdHot",
-    cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+    cmap_kw={"left": 0.06, "right": 0.94},
     levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
     zorder=0.8,
     extend="both"
@@ -3190,7 +3190,7 @@ for num_mod, mod in enumerate(models_array):
     con = axs[num_mod+1].contourf(
         prediff_JJA_std.sel(models=mod),
         cmap="ColdHot",
-        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        cmap_kw={"left": 0.06, "right": 0.94},
         levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
         zorder=0.8,
         extend="both"
