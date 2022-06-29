@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-28 21:32:17
 LastEditors: ChenHJ
-LastEditTime: 2022-06-29 19:44:42
+LastEditTime: 2022-06-29 20:20:37
 FilePath: /chenhj/0302code/nondetrend_all_models.py
 Aim: 
 This code is to plot the non-detrended results of all models
@@ -14,6 +14,9 @@ including:
 5) EAhigh related to SASMR
 6) WNPhigh related to SASMR
 7) precipitation standard deviation
+8) linear trend of precipitation
+9) linear trend of hgt, u, v
+10) linear trend of sst
 Mission: 
 '''
 # %%
@@ -931,6 +934,19 @@ prediff_JJA_std = pressp585_p3_JJA_std - prehis_JJA_std
 prehis_JJA_std_ens = prehis_JJA_std.mean(dim="models",skipna=True)
 pressp585_p3_JJA_std_ens = pressp585_p3_JJA_std.mean(dim="models",skipna=True)
 prediff_JJA_std_ens = prediff_JJA_std.mean(dim="models",skipna=True)
+
+# read the linear trend of different variables such as precipitation, hgt, u, v and SST
+pretrend = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/preCMIP6_trend.nc")
+hgttrend = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/hgtCMIP6_trend.nc")
+utrend = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/uCMIP6_trend.nc")
+vtrend = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/vCMIP6_trend.nc")
+tostrend = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/tosCMIP6_trend.nc")
+
+pretrend_ens = pretrend.mean(dim="models",skipna=True)
+hgttrend_ens = hgttrend.mean(dim="models",skipna=True)
+utrend_ens = utrend.mean(dim="models",skipna=True)
+vtrend_ens = vtrend.mean(dim="models",skipna=True)
+tostrend_ens = tostrend.mean(dim="models",skipna=True)
 # %%
 # plot the precipitation regress onto SASMR in period 1979-2014, 2064-2099 and diff
 #   1979-2014 reg coeff.
@@ -3103,4 +3119,60 @@ for num_mod, mod in enumerate(models_array):
 # ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="precip std")
+# %%
+# plot the trend of precipitation
+startlevel=-3.0e-18
+spacinglevel=3e-19
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 31), (5, 6))
+plot_array[-1,-2:] = 0
+plot_array[0,0] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360])  # 设置纬度刻度
+yticks = np.arange(-60, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], yticks[0], yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    pretrend_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+axs[0].format(
+    rtitle="1979-2099", ltitle="MME",
+)
+# ======================================
+for num_mod, mod in enumerate(models_array):
+    con = axs[num_mod+1].contourf(
+        pretrend.sel(models=mod),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94},
+        levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+        zorder=0.8,
+        extend="both"
+    )
+    axs[num_mod+1].format(
+        rtitle="1979-2099", ltitle="{}".format(mod),
+    )
+# ======================================
+fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
+fig.format(abc="(a)", abcloc="l", suptitle="precip trend")
 # %%
