@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-06-23 15:55:36
+LastEditTime: 2022-06-29 15:53:51
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -588,6 +588,29 @@ spCMIP6_ds_JJA = xr.concat([sphis_ds_JJA.sel(time=sphis_ds_JJA.time.dt.year>=197
 tsCMIP6_ds_JJA = xr.concat([tshis_ds_JJA.sel(time=tshis_ds_JJA.time.dt.year>=1979), tsssp585_ds_JJA], "time")
 tosCMIP6_ds_JJA = xr.concat([toshis_ds_JJA.sel(time=toshis_ds_JJA.time.dt.year>=1979), tosssp585_ds_JJA], "time")
 
+# %%
+# calculate the trend of different variables
+hgtCMIP6_ds_ver_JJA_trend = hgtCMIP6_ds_ver_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
+uCMIP6_ds_ver_JJA_trend = uCMIP6_ds_ver_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
+vCMIP6_ds_ver_JJA_trend = vCMIP6_ds_ver_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
+qCMIP6_ds_ver_JJA_trend = qCMIP6_ds_ver_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
+wapCMIP6_ds_ver_JJA_trend = wapCMIP6_ds_ver_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
+taCMIP6_ds_ver_JJA_trend = taCMIP6_ds_ver_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
+preCMIP6_ds_JJA_trend = preCMIP6_ds_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
+spCMIP6_ds_JJA_trend = spCMIP6_ds_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
+tsCMIP6_ds_JJA_trend = tsCMIP6_ds_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
+tosCMIP6_ds_JJA_trend = tosCMIP6_ds_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
+
+hgtCMIP6_ds_ver_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/hgtCMIP6_trend.nc")
+uCMIP6_ds_ver_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/uCMIP6_trend.nc")
+vCMIP6_ds_ver_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/vCMIP6_trend.nc")
+qCMIP6_ds_ver_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/qCMIP6_trend.nc")
+wapCMIP6_ds_ver_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/wapCMIP6_trend.nc")
+taCMIP6_ds_ver_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/taCMIP6_trend.nc")
+preCMIP6_ds_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/preCMIP6_trend.nc")
+spCMIP6_ds_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/spCMIP6_trend.nc")
+tsCMIP6_ds_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/tsCMIP6_trend.nc")
+tosCMIP6_ds_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/tosCMIP6_trend.nc")
 # %%
 #   calculate the detrend of different variables of multi-models
 hgtCMIP6_ds_ver_JJA_detrend = ca.detrend_dim(hgtCMIP6_ds_ver_JJA, "time", deg=1, demean=False)
