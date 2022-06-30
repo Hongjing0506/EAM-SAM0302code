@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-28 16:29:43
 LastEditors: ChenHJ
-LastEditTime: 2022-06-29 18:16:03
+LastEditTime: 2022-06-30 19:43:48
 FilePath: /chenhj/0302code/detrend_good_models.py
 Aim: 
 This code is to plot the detrended results of good models
@@ -866,7 +866,7 @@ his_wj_axis_lat = np.zeros((26, 41))
 his_wj_axis_lon = np.zeros((26, 41))
 ssp585_p3_wj_axis_lat = np.zeros((26, 41))
 ssp585_p3_wj_axis_lon = np.zeros((26, 41))
-for num_mod, mod in enumerate(gmodels):
+for num_mod, mod in enumerate(models_array):
     his_wj_axis_lat[num_mod,:], his_wj_axis_lon[num_mod,:] = ca.cal_ridge_line(uhis_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range, models=mod).mean(dim="time", skipna=True), ridge_trough="max")
     ssp585_p3_wj_axis_lat[num_mod,:], ssp585_p3_wj_axis_lon[num_mod,:] = ca.cal_ridge_line(ussp585_p3_ver_JJA.sel(level=200.0, lat=lat_wj_range, lon=lon_wj_range, models=mod).mean(dim="time", skipna=True), ridge_trough="max")
 his_wj_axis = xr.DataArray(
@@ -1637,7 +1637,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
       axs[1].line(his_wj_axis_gens.coords["lon"], his_wj_axis_gens.data, lw=1.3, color="green6", ls="--")
       axs[1].contour(
-          uhis_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="green6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
@@ -1846,7 +1846,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
       axs[1].line(his_wj_axis_gens.coords["lon"], his_wj_axis_gens.data, lw=1.3, color="green6", ls="--")
       axs[1].contour(
-          uhis_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="green6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
@@ -2004,7 +2004,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
       axs[0].line(ssp585_p3_wj_axis_gens.coords["lon"], ssp585_p3_wj_axis_gens.data, lw=1.3, color="grape6", ls="--")
       axs[0].contour(
-          ussp585_p3_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          ussp585_p3_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="grape6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
@@ -2162,7 +2162,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
       axs[0].line(ssp585_p3_wj_axis_gens.coords["lon"], ssp585_p3_wj_axis_gens.data, lw=1.3, color="grape6", ls="--")
       axs[0].contour(
-          ussp585_p3_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          ussp585_p3_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="grape6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
@@ -2320,14 +2320,14 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
       axs[0].line(his_wj_axis_gens.coords["lon"], his_wj_axis_gens.data, lw=1.3, color="green6", ls="--")
       axs[0].contour(
-          uhis_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="green6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
       )
       axs[0].line(ssp585_p3_wj_axis_gens.coords["lon"], ssp585_p3_wj_axis_gens.data, lw=1.3, color="grape6", ls="--")
       axs[0].contour(
-          ussp585_p3_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          ussp585_p3_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="grape6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
@@ -2476,14 +2476,14 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
       axs[0].line(his_wj_axis_gens.coords["lon"], his_wj_axis_gens.data, lw=1.3, color="green6", ls="--")
       axs[0].contour(
-          uhis_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="green6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
       )
       axs[0].line(ssp585_p3_wj_axis_gens.coords["lon"], ssp585_p3_wj_axis_gens.data, lw=1.3, color="grape6", ls="--")
       axs[0].contour(
-          ussp585_p3_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          ussp585_p3_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="grape6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8

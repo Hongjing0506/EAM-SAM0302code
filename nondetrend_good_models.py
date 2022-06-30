@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-28 22:21:13
 LastEditors: ChenHJ
-LastEditTime: 2022-06-29 21:19:28
+LastEditTime: 2022-06-30 17:09:47
 FilePath: /chenhj/0302code/nondetrend_good_models.py
 Aim: 
 This code is to plot the non-detrended results of good models
@@ -1551,7 +1551,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
       axs[1].line(his_wj_axis_gens.coords["lon"], his_wj_axis_gens.data, lw=1.3, color="green6", ls="--")
       axs[1].contour(
-          uhis_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="green6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
@@ -1760,7 +1760,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
       axs[1].line(his_wj_axis_gens.coords["lon"], his_wj_axis_gens.data, lw=1.3, color="green6", ls="--")
       axs[1].contour(
-          uhis_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="green6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
@@ -1918,7 +1918,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
       axs[0].line(ssp585_p3_wj_axis_gens.coords["lon"], ssp585_p3_wj_axis_gens.data, lw=1.3, color="grape6", ls="--")
       axs[0].contour(
-          ussp585_p3_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          ussp585_p3_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="grape6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
@@ -2076,7 +2076,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
       axs[0].line(ssp585_p3_wj_axis_gens.coords["lon"], ssp585_p3_wj_axis_gens.data, lw=1.3, color="grape6", ls="--")
       axs[0].contour(
-          ussp585_p3_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          ussp585_p3_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="grape6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
@@ -2234,14 +2234,14 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
       axs[0].line(his_wj_axis_gens.coords["lon"], his_wj_axis_gens.data, lw=1.3, color="green6", ls="--")
       axs[0].contour(
-          uhis_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="green6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
       )
       axs[0].line(ssp585_p3_wj_axis_gens.coords["lon"], ssp585_p3_wj_axis_gens.data, lw=1.3, color="grape6", ls="--")
       axs[0].contour(
-          ussp585_p3_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          ussp585_p3_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="grape6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
@@ -2390,14 +2390,14 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     if lev == 200.0:
       axs[0].line(his_wj_axis_gens.coords["lon"], his_wj_axis_gens.data, lw=1.3, color="green6", ls="--")
       axs[0].contour(
-          uhis_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="green6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
       )
       axs[0].line(ssp585_p3_wj_axis_gens.coords["lon"], ssp585_p3_wj_axis_gens.data, lw=1.3, color="grape6", ls="--")
       axs[0].contour(
-          ussp585_p3_ver_JJA.sel(level=200.0).mean(dim=["time","models"]).loc[0.0:,:],
+          ussp585_p3_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
           color="grape6",
           levels=np.array([20.0, 25.0, 30.0]),
           zorder=0.8
