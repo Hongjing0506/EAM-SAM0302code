@@ -938,4 +938,639 @@ hgttrend_ens = hgttrend.mean(dim="models",skipna=True)
 utrend_ens = utrend.mean(dim="models",skipna=True)
 vtrend_ens = vtrend.mean(dim="models",skipna=True)
 tostrend_ens = tostrend.mean(dim="models",skipna=True)
+
+# %% ##mark: plot the figure 1: precipitation regress onto SASMR, obseration and MME, 1979-2014, regression coefficient
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+pplt.rc["figure.facecolor"] = "white"
+pplt.rc["font.large"]
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 3), (2, 1))
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([60, 90, 120])  # 设置纬度刻度
+yticks = np.arange(0, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [50.0, 140.0, yticks[0], 45.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents, labelsize=8)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    # India area
+    x0 = India_W
+    y0 = India_S
+    width = India_E-India_W
+    height = India_N-India_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj, linestyle="-")
+    # NC area
+    x0 = NC_W
+    y0 = NC_S
+    width = NC_E-NC_W
+    height = NC_N-NC_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0].contourf(
+    pre_AIR_India_pre_slope,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.6,1.7,0.2),
+    zorder=0.8,
+    extend="both"
+    )
+sepl.plt_sig(
+    pre_AIR_India_pre_slope, axs[0], n, np.where(pre_AIR_India_pre_pvalue[::n, ::n] < 0.10), "bright purple", 12.0,
+)
+
+axs[0].format(
+    ltitle="1979-2014", rtitle="GPCP & AIR",
+)
+# ===================================================
+con = axs[1].contourf(
+    pre_his_India_pre_slope_ens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.6,1.7,0.2),
+    zorder=0.8,
+    extend="both",
+    )
+sepl.plt_sig(
+    pre_his_India_pre_slope_ens, axs[1], n, np.where(pre_his_India_pre_slope_ens_mask[::n, ::n] > 0.00), "bright purple", 12.0,
+)
+
+axs[1].format(
+    ltitle="1979-2014", rtitle="MME",
+)
+# ===================================================
+cb = fig.colorbar(con, loc="b", width=0.13, length=0.7, label="", ticklabelsize=8)
+cb.set_ticks(np.arange(-2.0,2.1, 0.4))
+fig.format(abc="(a)", abcloc="l")
+# %% ##mark: plot the figure 2: precipitation regress into SASMR, obseration and MME, 1979-2014, regression coefficient
+startlevel=[-15, -8, -6]
+spacinglevel=[1.5, 0.8, 0.6]
+scalelevel=[0.23, 0.17, 0.14]
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+pplt.rc["figure.facecolor"] = "white"
+pplt.rc["font.large"] = 14
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=6.0, wspace=6.0, hspace=5, outerpad=2.0)
+plot_array = np.reshape(range(1, 7), (3, 2))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([60, 90, 120])  # 设置纬度刻度
+yticks = np.arange(0, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [40.0, 140.0, yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents, labelsize=12)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ======================================
+for ax in axs:
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+    ax.add_patch(rect)
+    # # India area
+    # x0 = India_W
+    # y0 = India_S
+    # width = India_E-India_W
+    # height = India_N-India_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # # NC area
+    # x0 = NC_W
+    # y0 = NC_S
+    # width = NC_E-NC_W
+    # height = NC_N-NC_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # # SJ-KP area
+    # x0 = SJ_W
+    # y0 = SJ_S
+    # width = SJ_E-SJ_W
+    # height = SJ_N-SJ_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj)
+# ======================================
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    if lev == 200.0:
+        for ax in axs[num_lev, :]:
+            x0 = 50
+            y0 = 15
+            width = 90
+            height = 32.5
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+            # #   EAM index
+            # x0 = 110.0
+            # y0 = 40.0
+            # width = 40.0
+            # height = 10.0
+            # sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="green8", linestyle="-")
+            # x0 = 110.0
+            # y0 = 25.0
+            # width = 40.0
+            # height = 10.0
+            # sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="green8", linestyle="-")
+    elif lev == 850.0:
+        for ax in axs[num_lev, :]:
+            x0 = 110
+            y0 = 15
+            width = 27.5
+            height = 22.5
+            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-")
+    con = axs[num_lev, 0].contourf(
+        IndRAIR_ERA5_hgt_slope.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndRAIR_ERA5_hgt_slope.sel(level=lev), axs[num_lev, 0], n, np.where(IndRAIR_ERA5_hgt_pvalue.sel(level=lev)[::n, ::n] <= 0.05), "bright purple", 12.0,
+    )
+    axs[num_lev, 0].quiver(
+        IndRAIR_ERA5_u_slope.sel(level=lev)[::ski, ::ski],
+        IndRAIR_ERA5_v_slope.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 0].quiver(
+        IndRAIR_ERA5_u_slope.sel(level=lev).where(IndRAIR_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndRAIR_ERA5_v_slope.sel(level=lev).where(IndRAIR_ERA5_wind_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size": 8}, zorder=3.1,
+    )
+    axs[num_lev, 0].format(
+        ltitle="1979-2014 {:.0f}hPa".format(lev), rtitle="AIR & ERA5",
+    )
+    # ======================================
+    con = axs[num_lev, 1].contourf(
+        IndR_his_hgt_slope_ens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_hgt_slope_ens.sel(level=lev), axs[num_lev, 1], n, np.where(IndR_his_hgt_slope_ens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 12.0,
+    )
+    axs[num_lev, 1].quiver(
+        IndR_his_u_slope_ens.sel(level=lev)[::ski, ::ski],
+        IndR_his_v_slope_ens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 1].quiver(
+        IndR_his_u_slope_ens.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_his_v_slope_ens.sel(level=lev).where(IndR_his_wind_ens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size": 8}, zorder=3.1,
+    )
+    axs[num_lev, 1].format(
+        ltitle="1979-2014 {:.0f}hPa".format(lev), rtitle="MME",
+    )
+    cb = axs[num_lev, 1].colorbar(con, loc="r", width=0.13, length=0.8, label="", ticklabelsize=12, pad=3.0)
+    cb.set_ticks(np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]*2))
+# ======================================
+fig.format(abc="(a)", abcloc="l")
+# %%
+#   fig. 3 plot the taylor-diagram
+labels = list(models.data)
+labels.append("MME")
+labels.append("gMME")
+# plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文
+plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
+
+#绘图
+fig=plt.figure(figsize=(13,8),dpi=300)
+plt.rc('font',size=15)
+plt.rcParams["axes.facecolor"] = "white"
+
+#调用函数
+ax1=fig.add_subplot(111,projection='polar')
+box = ax1.get_position()
+ax1.set_position([0, box.y0, box.width*1.2, box.height])
+# ax1.text(0.6,0.1,'(a)',fontsize=15)
+# tar(ax1,np.array(IndR_EAM_pcc),np.array(IndR_EAM_std),labels)
+sepl.taylor_diagram(ax1,np.array(IndR_200hgt_pcc),np.array(IndR_200hgt_std), dotlables=labels, lables=True, color="r")
+sepl.taylor_diagram(ax1,np.array(IndR_850hgt_pcc),np.array(IndR_850hgt_std), color="b")
+plt.legend(loc="center left", bbox_to_anchor=(1.1,0.5), ncol=2, frameon=True, numpoints=1, handlelength=0)
+# %%
+#  fig. 4 gMME precipitation regress onto IndR
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+pplt.rc["figure.facecolor"] = "white"
+pplt.rc["font.large"] = 11
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 4), (3, 1))
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([60, 90, 120])  # 设置经度刻度
+yticks = np.arange(0, 46, 15)  # 设置纬度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [50.0, 140.0, yticks[0], 45.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents, labelsize=10)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    # India area
+    x0 = India_W
+    y0 = India_S
+    width = India_E-India_W
+    height = India_N-India_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj, linestyle="-")
+    # NC area
+    x0 = NC_W
+    y0 = NC_S
+    width = NC_E-NC_W
+    height = NC_N-NC_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+# ===================================================
+con = axs[0].contourf(
+    pre_his_India_pre_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.6,1.7,0.2),
+    zorder=0.8,
+    extend="both"
+    )
+sepl.plt_sig(
+    pre_his_India_pre_slope_gens, axs[0], n, np.where(pre_his_India_pre_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 12.0,
+)
+
+axs[0].format(
+    ltitle="1979-2014", rtitle="gMME",
+)
+# ===================================================
+con = axs[1].contourf(
+    pre_ssp585_p3_India_pre_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.6,1.7,0.2),
+    zorder=0.8,
+    extend="both"
+    )
+sepl.plt_sig(
+    pre_ssp585_p3_India_pre_slope_gens, axs[1], n, np.where(pre_ssp585_p3_India_pre_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 12.0,
+)
+
+axs[1].format(
+    ltitle="2064-2099", rtitle="gMME",
+)
+# ===================================================
+cb = axs[1].colorbar(con, loc="b", width=0.13, length=0.85, label="", ticklabelsize=9)
+cb.set_ticks(np.arange(-2.0,2.1, 0.4))
+# ===================================================
+con = axs[2].contourf(
+    pre_diff_India_pre_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.2,1.3,0.2),
+    zorder=0.8,
+    extend="both"
+    )
+sepl.plt_sig(
+    pre_diff_India_pre_slope_gens, axs[2], n, np.where(pre_diff_India_pre_gens_mask[::n, ::n] > 0.00), "bright purple", 12.0,
+)
+
+axs[2].format(
+    ltitle="diff", rtitle="gMME",
+)
+# ===================================================
+cb = fig.colorbar(con, loc="b", width=0.13, length=0.85, label="", ticklabelsize=9)
+cb.set_ticks(np.arange(-1.2, 1.3, 0.4))
+fig.format(abc="(a)", abcloc="l")
+# %%
+#   fig. 5 only plot the circulation regress onto IndR in ssp585_p3 and difference
+startlevel=[-15, -8, -6]
+spacinglevel=[1.5, 0.8, 0.6]
+scalelevel=[0.23, 0.17, 0.14]
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+pplt.rc["figure.facecolor"] = "white"
+pplt.rc["font.large"] = 16
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=6.0, wspace=4.2, hspace=3.7, outerpad=2.0)
+plot_array = np.reshape(range(1, 10), (3, 3))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([60, 90, 120])  # 设置纬度刻度
+yticks = np.arange(0, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [40.0, 140.0, yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, 5, 5, extents, labelsize=14, marjotticklen=6.0, minorticklen=5.0)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ======================================
+for ax in axs:
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=0.5, zorder=1.1)
+    ax.add_patch(rect)
+    # # India area
+    # x0 = India_W
+    # y0 = India_S
+    # width = India_E-India_W
+    # height = India_N-India_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj, linestyle="-")
+    # # NC area
+    # x0 = NC_W
+    # y0 = NC_S
+    # width = NC_E-NC_W
+    # height = NC_N-NC_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # # SJ-KP area
+    # x0 = SJ_W
+    # y0 = SJ_S
+    # width = SJ_E-SJ_W
+    # height = SJ_N-SJ_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj)
+# ======================================
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    con = axs[num_lev, 0].contourf(
+        IndR_his_hgt_slope_gens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_hgt_slope_gens.sel(level=lev), axs[num_lev, 0], n, np.where(IndR_his_hgt_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 12.0,
+    )
+    axs[num_lev, 0].quiver(
+        IndR_his_u_slope_gens.sel(level=lev)[::ski, ::ski],
+        IndR_his_v_slope_gens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 0].quiver(
+        IndR_his_u_slope_gens.sel(level=lev).where(IndR_his_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_his_v_slope_gens.sel(level=lev).where(IndR_his_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size":10}, zorder=3.1,
+    )
+    axs[num_lev, 0].format(
+        ltitle="1979-2014 {:.0f}hPa".format(lev), rtitle="gMME",
+    )
+	# ======================================
+    con = axs[num_lev, 1].contourf(
+        IndR_ssp585_p3_hgt_slope_gens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_ssp585_p3_hgt_slope_gens.sel(level=lev), axs[num_lev, 1], n, np.where(IndR_ssp585_p3_hgt_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 12.0,
+    )
+    axs[num_lev, 1].quiver(
+        IndR_ssp585_p3_u_slope_gens.sel(level=lev)[::ski, ::ski],
+        IndR_ssp585_p3_v_slope_gens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 1].quiver(
+        IndR_ssp585_p3_u_slope_gens.sel(level=lev).where(IndR_ssp585_p3_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_ssp585_p3_v_slope_gens.sel(level=lev).where(IndR_ssp585_p3_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size":10}, zorder=3.1,
+    )
+    axs[num_lev, 1].format(
+        ltitle="2064-2099 {:.0f}hPa".format(lev), rtitle="gMME",
+    )
+# ======================================
+    con = axs[num_lev, 2].contourf(
+        IndR_diff_hgt_slope_gens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_diff_hgt_slope_gens.sel(level=lev), axs[num_lev, 2], n, np.where(IndR_diff_hgt_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 12.0,
+    )
+    axs[num_lev, 2].quiver(
+        IndR_diff_u_slope_gens.sel(level=lev)[::ski, ::ski],
+        IndR_diff_v_slope_gens.sel(level=lev)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="grey6",
+    )
+
+    m = axs[num_lev, 2].quiver(
+        IndR_diff_u_slope_gens.sel(level=lev).where(IndR_diff_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_diff_v_slope_gens.sel(level=lev).where(IndR_diff_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 2].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size":10}, zorder=3.1,
+    )
+    axs[num_lev, 2].format(
+        ltitle="diff {:.0f}hPa".format(lev), rtitle="gMME",
+    )
+    cb = axs[num_lev, 2].colorbar(con, loc="r", width=0.15, length=0.8, label="", ticklabelsize=13, pad=2.0)
+    cb.set_ticks(np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]*2))
+# ======================================
+fig.format(abc="(a)", abcloc="l")
+# %%
+#   fig. 6
+pplt.rc["figure.facecolor"] = "white"
+pplt.rc["font.large"] = 12
+pplt.rc["legend.fontsize"] = 10
+fig = pplt.figure(span=False, share=False, refheight=3.0, refwidth=10.0, wspace=4.0, hspace=6.0, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=3)
+
+#   plot the bar-plot of the WA high
+plot_data = np.zeros((28,3))
+plot_data[:-2,0] = IndR_his_WAhigh_regress[0].data
+plot_data[:-2,1] = IndR_ssp585_p3_WAhigh_regress[0].data
+plot_data[:-2,2] = IndR_diff_WAhigh_slope.data
+plot_data[-2,0] = IndR_his_WAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,1] = IndR_ssp585_p3_WAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,2] = IndR_diff_WAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,0] = IndR_his_WAhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_WAhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_WAhigh_slope.mean(dim="models", skipna=True).data
+label_models = [i+"*" if i in gmodels else i for i in models_array]
+label_models.append("gMME")
+label_models.append("MME")
+
+m = axs[0].bar(label_models,plot_data*1e6,width=0.5,cycle="tab10",edgecolor="grey7")
+
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
+axs[0].format(ylim=(-3.0,3.0),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WA")
+
+#   plot the bar-plot of the EA high
+plot_data = np.zeros((28,3))
+plot_data[:-2,0] = IndR_his_EAhigh_regress[0].data
+plot_data[:-2,1] = IndR_ssp585_p3_EAhigh_regress[0].data
+plot_data[:-2,2] = IndR_diff_EAhigh_slope.data
+plot_data[-2,0] = IndR_his_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,1] = IndR_ssp585_p3_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,2] = IndR_diff_EAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,0] = IndR_his_EAhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_EAhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_EAhigh_slope.mean(dim="models", skipna=True).data
+
+
+m = axs[1].bar(label_models,plot_data*1e6,width=0.5,cycle="tab10",edgecolor="grey7")
+axs[1].axhline(0,lw=1.5,color="grey7")
+
+# axs[1].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[1].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[1].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[1].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
+axs[1].format(ylim=(-2.0,2.0),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="EA")
+
+#   plot the bar-plot of the WNP high
+plot_data = np.zeros((28,3))
+plot_data[:-2,0] = IndR_his_WNPhigh_regress[0].data
+plot_data[:-2,1] = IndR_ssp585_p3_WNPhigh_regress[0].data
+plot_data[:-2,2] = IndR_diff_WNPhigh_slope.data
+plot_data[-2,0] = IndR_his_WNPhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,1] = IndR_ssp585_p3_WNPhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,2] = IndR_diff_WNPhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,0] = IndR_his_WNPhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_WNPhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_WNPhigh_slope.mean(dim="models", skipna=True).data
+
+
+m = axs[2].bar(label_models,plot_data*1e6,width=0.5,cycle="tab10",edgecolor="grey7")
+axs[2].axhline(0,lw=1.5,color="grey7")
+# axs[2].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[2].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[2].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[2].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
+axs[2].format(ylim=(-1.2,1.2),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WNP")
+
+axs.format(xrotation=45, ticklabelsize=10.0)
+fig.format(abc="(a)", abcloc="l")
 # %%
