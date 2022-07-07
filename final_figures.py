@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-07-07 15:42:39
 LastEditors: ChenHJ
-LastEditTime: 2022-07-08 01:09:39
+LastEditTime: 2022-07-08 02:09:14
 FilePath: /chenhj/0302code/final_figures.py
 Aim: This file is to plot final figures in paper.
 There are 10 figures in paper.
@@ -1494,8 +1494,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     cb.set_ticks(np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]*2))
 # ======================================
 fig.format(abc="(a)", abcloc="l")
-# %%
-#   fig. 6
+# %% ##mark: plot the figure 6:  bar plots that show the WAAC, EAAC and WNPAC in all 26 models, gMME and MME in the period of 1979-2014 & 2064-2099 & diff
 pplt.rc["figure.facecolor"] = "white"
 pplt.rc["font.large"] = 12
 pplt.rc["legend.fontsize"] = 10
@@ -1513,7 +1512,8 @@ plot_data[-2,2] = IndR_diff_WAhigh_slope.sel(models=gmodels).mean(dim="models", 
 plot_data[-1,0] = IndR_his_WAhigh_regress[0].mean(dim="models", skipna=True).data
 plot_data[-1,1] = IndR_ssp585_p3_WAhigh_regress[0].mean(dim="models", skipna=True).data
 plot_data[-1,2] = IndR_diff_WAhigh_slope.mean(dim="models", skipna=True).data
-label_models = [i+"*" if i in gmodels else i for i in models_array]
+plt.rc("text", usetex=False)
+label_models = [r"$\bf{"+i+"}$" if i in gmodels else i for i in models_array]
 label_models.append("gMME")
 label_models.append("MME")
 
