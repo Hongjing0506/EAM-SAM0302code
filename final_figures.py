@@ -1306,7 +1306,7 @@ cb = fig.colorbar(con, loc="b", width=0.13, length=0.85, label="", ticklabelsize
 cb.set_ticks(np.arange(-1.2, 1.3, 0.4))
 fig.format(abc="(a)", abcloc="l")
 # %%
-#   fig. 5 only plot the circulation regress onto IndR in ssp585_p3 and difference
+# %% ##mark: plot the figure 5:  circulation regress onto SASMR, gMME, 1979-2014 & 2064-2099 & diff, 200/500/850hPa
 startlevel=[-15, -8, -6]
 spacinglevel=[1.5, 0.8, 0.6]
 scalelevel=[0.23, 0.17, 0.14]
