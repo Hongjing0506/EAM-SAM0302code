@@ -2,18 +2,27 @@
 Author: ChenHJ
 Date: 2022-07-07 15:42:39
 LastEditors: ChenHJ
-LastEditTime: 2022-07-07 17:12:16
+LastEditTime: 2022-07-08 01:05:19
 FilePath: /chenhj/0302code/final_figures.py
 Aim: This file is to plot final figures in paper.
 There are 10 figures in paper.
-1) precipitation regress into SASMR, obseration and MME, 1979-2014
-2) 
+1) precipitation regress onto SASMR, observation and MME, 1979-2014
+2) circulation regress onto SASMR, observation and MME, 1979-2014, 200/500/850hPa
+3) taylor-diagram including 200hPa pcc and 850hPa pcc
+4) precipitation regress onto SASMR, gMME, 1979-2014 & 2064-2099 & diff
+5) circulation regress onto SASMR, gMME, 1979-2014 & 2064-2099 & diff, 200/500/850hPa
+6) bar plots that show the WAAC, EAAC and WNPAC in all 26 models, gMME and MME in the period of 1979-2014 & 2064-2099 & diff
+7) Sea surface temperature regress onto SASMR, observation and gMME, 1979-2014 & 2064-2099 & diff
+8) without trend: precipitation regress onto SASMR, gMME, 1979-2014 & 2064-2099 & diff
+9) without trend: circulation regress onto SASMR, gMME, 1979-2014 & 2064-2099 & diff, 200/500/850hPa
+10) bar plots that show the WAAC, EAAC and WNPAC in all 26 models, gMME and MME in the period of 1979-2014 & 2064-2099 & diff
 Mission: 
 '''
 # %%
+# thie part is for the nondetrend plots
 from mailbox import _PartialFile
 import numpy as np
-import xarra;y as xr
+import xarray as xr
 import os
 import re
 from cdo import Cdo
@@ -939,7 +948,7 @@ utrend_ens = utrend.mean(dim="models",skipna=True)
 vtrend_ens = vtrend.mean(dim="models",skipna=True)
 tostrend_ens = tostrend.mean(dim="models",skipna=True)
 
-# %% ##mark: plot the figure 1: precipitation regress onto SASMR, obseration and MME, 1979-2014, regression coefficient
+# %% ##mark: plot the figure 1: precipitation regress onto SASMR, observation and MME, 1979-2014, regression coefficient
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
 pplt.rc["figure.facecolor"] = "white"
@@ -1013,7 +1022,7 @@ axs[1].format(
 cb = fig.colorbar(con, loc="b", width=0.13, length=0.7, label="", ticklabelsize=8)
 cb.set_ticks(np.arange(-2.0,2.1, 0.4))
 fig.format(abc="(a)", abcloc="l")
-# %% ##mark: plot the figure 2: precipitation regress into SASMR, obseration and MME, 1979-2014, regression coefficient
+# %% ##mark: plot the figure 2: circulation regress onto SASMR, observation and MME, 1979-2014, 200/500/850hPa
 startlevel=[-15, -8, -6]
 spacinglevel=[1.5, 0.8, 0.6]
 scalelevel=[0.23, 0.17, 0.14]
@@ -1182,8 +1191,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     cb.set_ticks(np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]*2))
 # ======================================
 fig.format(abc="(a)", abcloc="l")
-# %%
-#   fig. 3 plot the taylor-diagram
+# %% ##mark: plot the figure 3:  taylor-diagram including 200hPa pcc and 850hPa pcc
 labels = list(models.data)
 labels.append("MME")
 labels.append("gMME")
