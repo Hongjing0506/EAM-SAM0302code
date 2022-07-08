@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-07-07 15:42:39
 LastEditors: ChenHJ
-LastEditTime: 2022-07-08 17:08:29
+LastEditTime: 2022-07-08 19:37:46
 FilePath: /chenhj/0302code/final_figures.py
 Aim: This file is to plot final figures in paper.
 There are 10 figures in paper.
@@ -1547,8 +1547,8 @@ fig.format(abc="(a)", abcloc="l")
 # %% ##mark: plot the figure 6:  bar plots that show the WAAC, EAAC and WNPAC in all 26 models, gMME and MME in the period of 1979-2014 & 2064-2099 & diff
 pplt.rc["figure.facecolor"] = "white"
 pplt.rc["font.large"] = 12
-pplt.rc["legend.fontsize"] = 10
-fig = pplt.figure(span=False, share=False, refheight=3.0, refwidth=10.0, wspace=4.0, hspace=6.0, outerpad=2.0)
+pplt.rc["legend.fontsize"] = 12
+fig = pplt.figure(span=False, share=False, refheight=3.0, refwidth=10.0, wspace=4.0, hspace=10.0, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=3)
 
 #   plot the bar-plot of the WA high
@@ -1556,18 +1556,18 @@ plot_data = np.zeros((28,3))
 plot_data[:-2,0] = IndR_his_WAhigh_regress[0].data
 plot_data[:-2,1] = IndR_ssp585_p3_WAhigh_regress[0].data
 plot_data[:-2,2] = IndR_diff_WAhigh_slope.data
-plot_data[-2,0] = IndR_his_WAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
-plot_data[-2,1] = IndR_ssp585_p3_WAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
-plot_data[-2,2] = IndR_diff_WAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
-plot_data[-1,0] = IndR_his_WAhigh_regress[0].mean(dim="models", skipna=True).data
-plot_data[-1,1] = IndR_ssp585_p3_WAhigh_regress[0].mean(dim="models", skipna=True).data
-plot_data[-1,2] = IndR_diff_WAhigh_slope.mean(dim="models", skipna=True).data
+plot_data[-1,0] = IndR_his_WAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_WAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_WAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,0] = IndR_his_WAhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-2,1] = IndR_ssp585_p3_WAhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-2,2] = IndR_diff_WAhigh_slope.mean(dim="models", skipna=True).data
 plt.rc("text", usetex=False)
 label_models = [r"$\bf{"+i+"}$" if i in gmodels else i for i in models_array]
-label_models.append("gMME")
 label_models.append("MME")
+label_models.append("gMME")
 
-m = axs[0].bar(label_models,plot_data*1e6,width=0.5,cycle="tab10",edgecolor="grey7")
+m = axs[0].bar(label_models,plot_data*1e6,width=0.6,cycle="tab10",edgecolor="grey7")
 
 axs[0].axhline(0,lw=1.5,color="grey7")
 # axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
@@ -1577,22 +1577,22 @@ axs[0].axhline(0,lw=1.5,color="grey7")
 #         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
-axs[0].format(ylim=(-3.0,3.0),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WA")
+axs[0].format(ylim=(-2.5,2.5),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WA")
 
 #   plot the bar-plot of the EA high
 plot_data = np.zeros((28,3))
 plot_data[:-2,0] = IndR_his_EAhigh_regress[0].data
 plot_data[:-2,1] = IndR_ssp585_p3_EAhigh_regress[0].data
 plot_data[:-2,2] = IndR_diff_EAhigh_slope.data
-plot_data[-2,0] = IndR_his_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
-plot_data[-2,1] = IndR_ssp585_p3_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
-plot_data[-2,2] = IndR_diff_EAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
-plot_data[-1,0] = IndR_his_EAhigh_regress[0].mean(dim="models", skipna=True).data
-plot_data[-1,1] = IndR_ssp585_p3_EAhigh_regress[0].mean(dim="models", skipna=True).data
-plot_data[-1,2] = IndR_diff_EAhigh_slope.mean(dim="models", skipna=True).data
+plot_data[-1,0] = IndR_his_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_EAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,0] = IndR_his_EAhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-2,1] = IndR_ssp585_p3_EAhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-2,2] = IndR_diff_EAhigh_slope.mean(dim="models", skipna=True).data
 
 
-m = axs[1].bar(label_models,plot_data*1e6,width=0.5,cycle="tab10",edgecolor="grey7")
+m = axs[1].bar(label_models,plot_data*1e6,width=0.6,cycle="tab10",edgecolor="grey7")
 axs[1].axhline(0,lw=1.5,color="grey7")
 
 # axs[1].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
@@ -1609,15 +1609,15 @@ plot_data = np.zeros((28,3))
 plot_data[:-2,0] = IndR_his_WNPhigh_regress[0].data
 plot_data[:-2,1] = IndR_ssp585_p3_WNPhigh_regress[0].data
 plot_data[:-2,2] = IndR_diff_WNPhigh_slope.data
-plot_data[-2,0] = IndR_his_WNPhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
-plot_data[-2,1] = IndR_ssp585_p3_WNPhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
-plot_data[-2,2] = IndR_diff_WNPhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
-plot_data[-1,0] = IndR_his_WNPhigh_regress[0].mean(dim="models", skipna=True).data
-plot_data[-1,1] = IndR_ssp585_p3_WNPhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,0] = IndR_his_WNPhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_WNPhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_WNPhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,0] = IndR_his_WNPhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-2,1] = IndR_ssp585_p3_WNPhigh_regress[0].mean(dim="models", skipna=True).data
 plot_data[-1,2] = IndR_diff_WNPhigh_slope.mean(dim="models", skipna=True).data
 
 
-m = axs[2].bar(label_models,plot_data*1e6,width=0.5,cycle="tab10",edgecolor="grey7")
+m = axs[2].bar(label_models,plot_data*1e6,width=0.6,cycle="tab10",edgecolor="grey7")
 axs[2].axhline(0,lw=1.5,color="grey7")
 # axs[2].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
 # axs[2].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
@@ -1628,20 +1628,20 @@ axs[2].axhline(0,lw=1.5,color="grey7")
 axs[2].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
 axs[2].format(ylim=(-1.2,1.2),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WNP")
 
-axs.format(xrotation=45, ticklabelsize=10.0)
+axs.format(xrotation=45, ticklabelsize=10.0, linewidth=1.2, titlepad=7.0, yticklabelsize=13)
 fig.format(abc="(a)", abcloc="l")
 # %% ##mark: plot the figure 7:  Sea surface temperature regress onto SASMR, observation and gMME, 1979-2014 & 2064-2099 & diff
 startlevel=-6e-1
 spacinglevel=0.06
 pplt.rc["figure.facecolor"] = "white"
-pplt.rc["font.large"] = 10
-pplt.rc["legend.fontsize"] = 10
+pplt.rc["font.large"] = 9
+pplt.rc["legend.fontsize"] = 9
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
 cl = 180  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=4.0, outerpad=2.0)
 plot_array = np.reshape(range(1, 5), (4, 1))
 axs = fig.subplots(plot_array, proj=proj)
 
@@ -1651,8 +1651,8 @@ xticks = np.array([30, 60, 90, 120, 150, 180, 210, 240, 270, 300])  # 设置纬�
 yticks = np.arange(0, 61, 30)  # 设置经度刻度
 # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
 # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
-extents = [30, 300, -15, yticks[-1]]
-sepl.geo_ticks(axs, xticks, yticks, cl, 10, 10, extents, labelsize=8)
+extents = [xticks[0], xticks[-1], -15, yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, extents, majorticklabelsize=8, latminorspace=10, coastlinewidth=1.0)
 # ===================================================
 ski = 2
 n = 2
@@ -1671,7 +1671,7 @@ sepl.plt_sig(
 )
 
 axs[0].format(
-    rtitle="1979-2014", ltitle="HadISST & AIR",
+    ltitle="1979-2014", rtitle="HadISST & AIR",
 )
 # ======================================
 con = axs[1].contourf(
@@ -1686,7 +1686,7 @@ sepl.plt_sig(
     IndR_his_sst_slope_gens, axs[1], n, np.where(IndR_his_sst_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
 )
 axs[1].format(
-    rtitle="1979-2014", ltitle="gMME",
+    ltitle="1979-2014", rtitle="gMME",
 )
 # ======================================
 con = axs[2].contourf(
@@ -1701,7 +1701,7 @@ sepl.plt_sig(
     IndR_ssp585_p3_sst_slope_gens, axs[2], n, np.where(IndR_ssp585_p3_sst_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
 )
 axs[2].format(
-    rtitle="2064-2099", ltitle="gMME",
+    ltitle="2064-2099", rtitle="gMME",
 )
 cb = axs[2].colorbar(con, loc="b", width=0.13, length=0.7, label="")
 cb.set_ticks(np.arange(-0.6,0.61,0.24))
@@ -1721,11 +1721,12 @@ sepl.plt_sig(
     IndR_diff_sst_rvalue_gens, axs[3], n, np.where(IndR_diff_sst_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
 )
 axs[3].format(
-    rtitle="diff", ltitle="gMME",
+    ltitle="diff", rtitle="gMME",
 )
 cb = axs[3].colorbar(con, loc="b", width=0.13, length=0.7, label="")
 cb.set_ticks(np.arange(-1.0,1.1,0.4))
 # ======================================
+axs.format(linewidth=1.2, titlepad=5.5)
 fig.format(abc="(a)", abcloc="l")
 
 # %%
