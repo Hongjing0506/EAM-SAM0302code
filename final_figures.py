@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-07-07 15:42:39
 LastEditors: ChenHJ
-LastEditTime: 2022-07-08 15:42:23
+LastEditTime: 2022-07-08 15:50:52
 FilePath: /chenhj/0302code/final_figures.py
 Aim: This file is to plot final figures in paper.
 There are 10 figures in paper.
@@ -1232,11 +1232,11 @@ plt.legend(loc="center left", bbox_to_anchor=(1.1,0.5), ncol=2, frameon=True, nu
 pplt.rc.grid = False
 pplt.rc.reso = "lo"
 pplt.rc["figure.facecolor"] = "white"
-pplt.rc["font.large"] = 11
+pplt.rc["font.large"] = 12
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=2.8, outerpad=2.0)
 plot_array = np.reshape(range(1, 4), (3, 1))
 axs = fig.subplots(plot_array, proj=proj)
 
@@ -1246,7 +1246,7 @@ yticks = np.arange(0, 46, 15)  # 设置纬度刻度
 # 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
 # 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
 extents = [50.0, 140.0, yticks[0], 45.0]
-sepl.geo_ticks(axs, xticks, yticks, cl, 10, 5, extents, labelsize=10)
+sepl.geo_ticks(axs, xticks, yticks, cl, extents, majorticklabelsize=11, majorticklen=5.0, minorticklen=4.0)
 
 # ===================================================
 ski = 2
@@ -1259,13 +1259,13 @@ for ax in axs:
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj, linestyle="-")
+    sepl.patches(ax, x0 - cl, y0, width, height, proj, linestyle="-", linewidth=1.2)
     # NC area
     x0 = NC_W
     y0 = NC_S
     width = NC_E-NC_W
     height = NC_N-NC_S
-    sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    sepl.patches(ax, x0 - cl, y0, width, height, proj, linewidth=1.2)
 # ===================================================
 con = axs[0].contourf(
     pre_his_India_pre_slope_gens,
@@ -1299,7 +1299,7 @@ axs[1].format(
     ltitle="2064-2099", rtitle="gMME",
 )
 # ===================================================
-cb = axs[1].colorbar(con, loc="b", width=0.13, length=0.85, label="", ticklabelsize=9)
+cb = axs[1].colorbar(con, loc="b", width=0.13, length=0.85, label="", ticklabelsize=10, linewidth=1.2)
 cb.set_ticks(np.arange(-2.0,2.1, 0.4))
 # ===================================================
 con = axs[2].contourf(
@@ -1318,8 +1318,9 @@ axs[2].format(
     ltitle="diff", rtitle="gMME",
 )
 # ===================================================
-cb = fig.colorbar(con, loc="b", width=0.13, length=0.85, label="", ticklabelsize=9)
+cb = fig.colorbar(con, loc="b", width=0.13, length=0.85, label="", ticklabelsize=10, linewidth=1.2)
 cb.set_ticks(np.arange(-1.2, 1.3, 0.4))
+axs.format(linewidth=1.2, titlepad=6.0)
 fig.format(abc="(a)", abcloc="l")
 # %%
 # %% ##mark: plot the figure 5:  circulation regress onto SASMR, gMME, 1979-2014 & 2064-2099 & diff, 200/500/850hPa
