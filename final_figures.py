@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-07-07 15:42:39
 LastEditors: ChenHJ
-LastEditTime: 2022-07-08 20:25:43
+LastEditTime: 2022-07-10 01:29:44
 FilePath: /chenhj/0302code/final_figures.py
 Aim: This file is to plot final figures in paper.
 There are 10 figures in paper.
@@ -228,9 +228,9 @@ lon = preGPCP_JJA.coords["lon"]
 
 India_N = 32.5
 # India_N = 30.0
-India_S = 8.0
+India_S = 7.5
 India_W = 70.0
-India_E = 86.0
+India_E = 85.0
 lat_India_range = lat[(lat >= India_S) & (lat <= India_N)]
 lon_India_range = lon[(lon >= India_W) & (lon <= India_E)]
 
@@ -1154,7 +1154,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size": 10}, zorder=3.1,
     )
     axs[num_lev, 0].format(
-        ltitle="1979-2014 {:.0f}hPa".format(lev), rtitle="AIR & ERA5",
+        ltitle="1979-2014 {:.0f} hPa".format(lev), rtitle="AIR & ERA5",
     )
     # ======================================
     con = axs[num_lev, 1].contourf(
@@ -1200,7 +1200,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size": 10}, zorder=3.1,
     )
     axs[num_lev, 1].format(
-        ltitle="1979-2014 {:.0f}hPa".format(lev), rtitle="MME",
+        ltitle="1979-2014 {:.0f} hPa".format(lev), rtitle="MME",
     )
     cb = axs[num_lev, 1].colorbar(con, loc="r", width=0.17, length=0.8, label="", ticklabelsize=12, pad=2.5)
     cb.set_ticks(np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]*2))
@@ -1338,7 +1338,7 @@ pplt.rc["font.large"] = 16
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(span=False, share=False, refwidth=6.0, wspace=[6.2, 8.2], hspace=5.7, outerpad=2.0)
+fig = pplt.figure(span=False, share=False, refwidth=6.0, wspace=[4.2, 6.2], hspace=3.5, outerpad=2.0)
 plot_array = np.reshape(range(1, 10), (3, 3))
 # plot_array[-1,-1] = 0
 axs = fig.subplots(plot_array, proj=proj)
@@ -1443,7 +1443,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size":10}, zorder=3.1,
     )
     axs[num_lev, 0].format(
-        ltitle="1979-2014 {:.0f}hPa".format(lev), rtitle="gMME",
+        ltitle="1979-2014 {:.0f} hPa".format(lev), rtitle="gMME",
     )
 	# ======================================
     con = axs[num_lev, 1].contourf(
@@ -1489,7 +1489,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size":10}, zorder=3.1,
     )
     axs[num_lev, 1].format(
-        ltitle="2064-2099 {:.0f}hPa".format(lev), rtitle="gMME",
+        ltitle="2064-2099 {:.0f} hPa".format(lev), rtitle="gMME",
     )
     cb = axs[num_lev, 1].colorbar(con, loc="r", width=0.17, length=0.8, label="", ticklabelsize=12, pad=1.8)
     cb.set_ticks(np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]*2))
@@ -1537,7 +1537,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size":10}, zorder=3.1,
     )
     axs[num_lev, 2].format(
-        ltitle="diff {:.0f}hPa".format(lev), rtitle="gMME",
+        ltitle="diff {:.0f} hPa".format(lev), rtitle="gMME",
     )
     cb = axs[num_lev, 2].colorbar(con, loc="r", width=0.17, length=0.8, label="", ticklabelsize=12, pad=1.8)
     cb.set_ticks(np.arange(diffstartlevel[num_lev], -diffstartlevel[num_lev]+diffspacinglevel[num_lev], diffspacinglevel[num_lev]*2))
@@ -1548,7 +1548,7 @@ fig.format(abc="(a)", abcloc="l")
 pplt.rc["figure.facecolor"] = "white"
 pplt.rc["font.large"] = 12
 pplt.rc["legend.fontsize"] = 12
-fig = pplt.figure(span=False, share=False, refheight=3.0, refwidth=10.0, wspace=4.0, hspace=10.0, outerpad=2.0)
+fig = pplt.figure(span=False, share=False, refheight=3.0, refwidth=10.0, wspace=4.0, hspace=7.0, outerpad=2.0)
 axs = fig.subplots(ncols=1, nrows=3)
 
 #   plot the bar-plot of the WA high
@@ -1577,7 +1577,7 @@ axs[0].axhline(0,lw=1.5,color="grey7")
 #         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[0].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
-axs[0].format(ylim=(-2.5,2.5),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WA")
+axs[0].format(ylim=(-2.5,2.5),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WAAC")
 
 #   plot the bar-plot of the EA high
 plot_data = np.zeros((28,3))
@@ -1602,7 +1602,7 @@ axs[1].axhline(0,lw=1.5,color="grey7")
 #         axs[1].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[1].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
-axs[1].format(ylim=(-2.0,2.0),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="EA")
+axs[1].format(ylim=(-2.0,2.0),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="EAAC")
 
 #   plot the bar-plot of the WNP high
 plot_data = np.zeros((28,3))
@@ -1626,7 +1626,7 @@ axs[2].axhline(0,lw=1.5,color="grey7")
 #         axs[2].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[2].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
-axs[2].format(ylim=(-1.2,1.2),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WNP")
+axs[2].format(ylim=(-1.2,1.2),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WNPAC")
 
 axs.format(xrotation=45, ticklabelsize=10.0, linewidth=1.2, titlepad=7.0, yticklabelsize=13)
 fig.format(abc="(a)", abcloc="l")
@@ -1641,7 +1641,7 @@ pplt.rc.reso = "lo"
 cl = 180  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=4.0, outerpad=2.0)
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=2.5, outerpad=2.0)
 plot_array = np.reshape(range(1, 5), (4, 1))
 axs = fig.subplots(plot_array, proj=proj)
 
@@ -1703,7 +1703,7 @@ sepl.plt_sig(
 axs[2].format(
     ltitle="2064-2099", rtitle="gMME",
 )
-cb = axs[2].colorbar(con, loc="b", width=0.13, length=0.7, label="")
+cb = axs[2].colorbar(con, loc="b", width=0.13, length=0.7, label="", ticklabelsize=8.0)
 cb.set_ticks(np.arange(-0.6,0.61,0.24))
 # ======================================
 startlevel=-1.0
@@ -1723,7 +1723,7 @@ sepl.plt_sig(
 axs[3].format(
     ltitle="diff", rtitle="gMME",
 )
-cb = axs[3].colorbar(con, loc="b", width=0.13, length=0.7, label="")
+cb = axs[3].colorbar(con, loc="b", width=0.13, length=0.7, label="", ticklabelsize=8.0)
 cb.set_ticks(np.arange(-1.0,1.1,0.4))
 # ======================================
 axs.format(linewidth=1.2, titlepad=5.5)
@@ -1979,9 +1979,9 @@ lon = preGPCP_JJA.coords["lon"]
 
 India_N = 32.5
 # India_N = 30.0
-India_S = 8.0
+India_S = 7.5
 India_W = 70.0
-India_E = 86.0
+India_E = 85.0
 lat_India_range = lat[(lat >= India_S) & (lat <= India_N)]
 lon_India_range = lon[(lon >= India_W) & (lon <= India_E)]
 
@@ -2789,7 +2789,7 @@ pplt.rc["font.large"] = 12
 cl = 0  # 设置地图投影的中心纬度
 proj = pplt.PlateCarree(central_longitude=cl)
 
-fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=2.8, outerpad=2.0)
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=4.0, outerpad=2.0)
 plot_array = np.reshape(range(1, 4), (3, 1))
 axs = fig.subplots(plot_array, proj=proj)
 
@@ -2875,4 +2875,314 @@ cb = fig.colorbar(con, loc="b", width=0.13, length=0.85, label="", ticklabelsize
 cb.set_ticks(np.arange(-1.2, 1.3, 0.4))
 axs.format(linewidth=1.2, titlepad=6.0)
 fig.format(abc="(a)", abcloc="l")
+# %% ##mark: plot the figure 9:  circulation regress onto SASMR, gMME, 1979-2014 & 2064-2099 & diff, 200/500/850hPa
+startlevel=[-15, -8, -6]
+spacinglevel=[1.5, 0.8, 0.6]
+scalelevel=[0.30, 0.17, 0.14]
+
+diffstartlevel=[-15, -8, -4]
+diffspacinglevel=[1.5, 0.8, 0.4]
+diffscalelevel=[0.30, 0.17, 0.10]
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+pplt.rc["figure.facecolor"] = "white"
+pplt.rc["font.large"] = 16
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=6.0, wspace=[6.2, 8.2], hspace=5.7, outerpad=2.0)
+plot_array = np.reshape(range(1, 10), (3, 3))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([60, 90, 120])  # 设置纬度刻度
+yticks = np.arange(0, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [40.0, 140.0, yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, extents, majorticklabelsize=14, lonminorspace=5, coastlinewidth=1.7, majorticklabelpad=3.0, majorticklen=6.0, minorticklen=5.0)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ======================================
+for ax in axs:
+    rect = Rectangle((1 - w, 0), w, h, transform=ax.transAxes, fc="white", ec="k", lw=1.3, zorder=1.1)
+    ax.add_patch(rect)
+    # # India area
+    # x0 = India_W
+    # y0 = India_S
+    # width = India_E-India_W
+    # height = India_N-India_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj, linestyle="-")
+    # # NC area
+    # x0 = NC_W
+    # y0 = NC_S
+    # width = NC_E-NC_W
+    # height = NC_N-NC_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj)
+    # # SJ-KP area
+    # x0 = SJ_W
+    # y0 = SJ_S
+    # width = SJ_E-SJ_W
+    # height = SJ_N-SJ_S
+    # sepl.patches(ax, x0 - cl, y0, width, height, proj)
+# ======================================
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    # if lev == 200.0:
+    #     #   WAhigh
+    #     x0 = WAhigh_W
+    #     y0 = WAhigh_S
+    #     width = WAhigh_E-WAhigh_W
+    #     height = WAhigh_N-WAhigh_S
+    #     sepl.patches(axs[num_lev, 0], x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-", linewidth=1.7)
+    #     #   EAhigh
+    #     x0 = EAhigh_W
+    #     y0 = EAhigh_S
+    #     width = EAhigh_E-EAhigh_W
+    #     height = EAhigh_N-EAhigh_S
+    #     sepl.patches(axs[num_lev, 0], x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-", linewidth=1.7)
+    # elif lev == 850.0:
+    #     #   WNPhigh
+    #     x0 = WNPhigh_W
+    #     y0 = WNPhigh_S
+    #     width = WNPhigh_E-WNPhigh_W
+    #     height = WNPhigh_N-WNPhigh_S
+    #     sepl.patches(axs[num_lev, 0], x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-", linewidth=1.7)
+    # ======================================
+    con = axs[num_lev, 0].contourf(
+        IndR_his_hgt_slope_gens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_his_hgt_slope_gens.sel(level=lev), axs[num_lev, 0], n, np.where(IndR_his_hgt_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 19.0,
+    )
+    # axs[num_lev, 0].quiver(
+    #     IndR_his_u_slope_gens.sel(level=lev)[::ski, ::ski],
+    #     IndR_his_v_slope_gens.sel(level=lev)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=scalelevel[num_lev],
+    #     pivot="mid",
+    #     color="grey6",
+    # )
+
+    m = axs[num_lev, 0].quiver(
+        IndR_his_u_slope_gens.sel(level=lev).where(IndR_his_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_his_v_slope_gens.sel(level=lev).where(IndR_his_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        minlength=0.5,
+        width=0.004,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 0].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size":10}, zorder=3.1,
+    )
+    axs[num_lev, 0].format(
+        ltitle="1979-2014 {:.0f} hPa".format(lev), rtitle="gMME",
+    )
+	# ======================================
+    con = axs[num_lev, 1].contourf(
+        IndR_ssp585_p3_hgt_slope_gens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+        levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_ssp585_p3_hgt_slope_gens.sel(level=lev), axs[num_lev, 1], n, np.where(IndR_ssp585_p3_hgt_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 19.0,
+    )
+    # axs[num_lev, 1].quiver(
+    #     IndR_ssp585_p3_u_slope_gens.sel(level=lev)[::ski, ::ski],
+    #     IndR_ssp585_p3_v_slope_gens.sel(level=lev)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=scalelevel[num_lev],
+    #     pivot="mid",
+    #     color="grey6",
+    # )
+
+    m = axs[num_lev, 1].quiver(
+        IndR_ssp585_p3_u_slope_gens.sel(level=lev).where(IndR_ssp585_p3_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_ssp585_p3_v_slope_gens.sel(level=lev).where(IndR_ssp585_p3_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        minlength=0.5,
+        width=0.004,
+        scale_units="xy",
+        scale=scalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 1].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size":10}, zorder=3.1,
+    )
+    axs[num_lev, 1].format(
+        ltitle="2064-2099 {:.0f} hPa".format(lev), rtitle="gMME",
+    )
+    cb = axs[num_lev, 1].colorbar(con, loc="r", width=0.17, length=0.8, label="", ticklabelsize=12, pad=1.8)
+    cb.set_ticks(np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]*2))
+# ======================================
+    con = axs[num_lev, 2].contourf(
+        IndR_diff_hgt_slope_gens.sel(level=lev),
+        cmap="ColdHot",
+        cmap_kw={"left": 0.06, "right": 0.94},
+        levels=np.arange(diffstartlevel[num_lev], -diffstartlevel[num_lev]+diffspacinglevel[num_lev], diffspacinglevel[num_lev]),
+        zorder=0.8,
+        extend="both"
+    )
+    sepl.plt_sig(
+        IndR_diff_hgt_slope_gens.sel(level=lev), axs[num_lev, 2], n, np.where(IndR_diff_hgt_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 19.0,
+    )
+    # axs[num_lev, 2].quiver(
+    #     IndR_diff_u_slope_gens.sel(level=lev)[::ski, ::ski],
+    #     IndR_diff_v_slope_gens.sel(level=lev)[::ski, ::ski],
+    #     zorder=1.1,
+    #     headwidth=2.6,
+    #     headlength=2.3,
+    #     headaxislength=2.3,
+    #     scale_units="xy",
+    #     scale=scalelevel[num_lev],
+    #     pivot="mid",
+    #     color="grey6",
+    # )
+
+    m = axs[num_lev, 2].quiver(
+        IndR_diff_u_slope_gens.sel(level=lev).where(IndR_diff_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        IndR_diff_v_slope_gens.sel(level=lev).where(IndR_diff_wind_gens_mask.sel(level=lev) > 0.0)[::ski, ::ski],
+        zorder=1.1,
+        headwidth=2.6,
+        headlength=2.3,
+        headaxislength=2.3,
+        minlength=0.1,
+        width=0.004,
+        scale_units="xy",
+        scale=diffscalelevel[num_lev],
+        pivot="mid",
+        color="black",
+    )
+
+    qk = axs[num_lev, 2].quiverkey(
+        m, X=1 - w / 2, Y=0.7 * h, U=0.5, label="0.5", labelpos="S", labelsep=0.10, fontproperties={"size":10}, zorder=3.1,
+    )
+    axs[num_lev, 2].format(
+        ltitle="diff {:.0f} hPa".format(lev), rtitle="gMME",
+    )
+    cb = axs[num_lev, 2].colorbar(con, loc="r", width=0.17, length=0.8, label="", ticklabelsize=12, pad=1.8)
+    cb.set_ticks(np.arange(diffstartlevel[num_lev], -diffstartlevel[num_lev]+diffspacinglevel[num_lev], diffspacinglevel[num_lev]*2))
+# ======================================
+axs.format(linewidth=1.5, titlepad=8.0)
+fig.format(abc="(a)", abcloc="l")
+
+# %% ##mark: plot the figure 10:  bar plots that show the WAAC, EAAC and WNPAC in all 26 models, gMME and MME in the period of 1979-2014 & 2064-2099 & diff
+pplt.rc["figure.facecolor"] = "white"
+pplt.rc["font.large"] = 12
+pplt.rc["legend.fontsize"] = 12
+fig = pplt.figure(span=False, share=False, refheight=3.0, refwidth=10.0, wspace=4.0, hspace=10.0, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=3)
+
+#   plot the bar-plot of the WA high
+plot_data = np.zeros((28,3))
+plot_data[:-2,0] = IndR_his_WAhigh_regress[0].data
+plot_data[:-2,1] = IndR_ssp585_p3_WAhigh_regress[0].data
+plot_data[:-2,2] = IndR_diff_WAhigh_slope.data
+plot_data[-1,0] = IndR_his_WAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_WAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_WAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,0] = IndR_his_WAhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-2,1] = IndR_ssp585_p3_WAhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-2,2] = IndR_diff_WAhigh_slope.mean(dim="models", skipna=True).data
+plt.rc("text", usetex=False)
+label_models = [r"$\bf{"+i+"}$" if i in gmodels else i for i in models_array]
+label_models.append("MME")
+label_models.append("gMME")
+
+m = axs[0].bar(label_models,plot_data*1e6,width=0.6,cycle="tab10",edgecolor="grey7")
+
+axs[0].axhline(0,lw=1.5,color="grey7")
+# axs[0].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[0].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[0].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[0].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
+axs[0].format(ylim=(-2.5,2.5),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WAAC")
+
+#   plot the bar-plot of the EA high
+plot_data = np.zeros((28,3))
+plot_data[:-2,0] = IndR_his_EAhigh_regress[0].data
+plot_data[:-2,1] = IndR_ssp585_p3_EAhigh_regress[0].data
+plot_data[:-2,2] = IndR_diff_EAhigh_slope.data
+plot_data[-1,0] = IndR_his_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_EAhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_EAhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,0] = IndR_his_EAhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-2,1] = IndR_ssp585_p3_EAhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-2,2] = IndR_diff_EAhigh_slope.mean(dim="models", skipna=True).data
+
+
+m = axs[1].bar(label_models,plot_data*1e6,width=0.6,cycle="tab10",edgecolor="grey7")
+axs[1].axhline(0,lw=1.5,color="grey7")
+
+# axs[1].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[1].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[1].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[1].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
+axs[1].format(ylim=(-2.0,2.0),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="EAAC")
+
+#   plot the bar-plot of the WNP high
+plot_data = np.zeros((28,3))
+plot_data[:-2,0] = IndR_his_WNPhigh_regress[0].data
+plot_data[:-2,1] = IndR_ssp585_p3_WNPhigh_regress[0].data
+plot_data[:-2,2] = IndR_diff_WNPhigh_slope.data
+plot_data[-1,0] = IndR_his_WNPhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,1] = IndR_ssp585_p3_WNPhigh_regress[0].sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_WNPhigh_slope.sel(models=gmodels).mean(dim="models", skipna=True).data
+plot_data[-2,0] = IndR_his_WNPhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-2,1] = IndR_ssp585_p3_WNPhigh_regress[0].mean(dim="models", skipna=True).data
+plot_data[-1,2] = IndR_diff_WNPhigh_slope.mean(dim="models", skipna=True).data
+
+
+m = axs[2].bar(label_models,plot_data*1e6,width=0.6,cycle="tab10",edgecolor="grey7")
+axs[2].axhline(0,lw=1.5,color="grey7")
+# axs[2].axhline(ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# axs[2].axhline(-ca.cal_rlim1(0.95, 36),lw=1.5,color="grey7",ls='--')
+# for num,i in enumerate(gmodels):
+#     if i > 0:
+#         axs[2].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
+
+axs[2].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
+axs[2].format(ylim=(-1.2,1.2),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WNPAC")
+
+axs.format(xrotation=45, ticklabelsize=10.0, linewidth=1.2, titlepad=7.0, yticklabelsize=13)
+fig.format(abc="(a)", abcloc="l")
+
 # %%
