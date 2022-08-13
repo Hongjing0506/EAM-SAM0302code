@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-07-07 15:42:39
 LastEditors: ChenHJ
-LastEditTime: 2022-07-10 01:29:44
+LastEditTime: 2022-08-12 13:03:31
 FilePath: /chenhj/0302code/final_figures.py
 Aim: This file is to plot final figures in paper.
 There are 10 figures in paper.
@@ -443,6 +443,31 @@ preAIR_JJA.coords["time"] = preGPCP_JJA.coords["time"]
     pre_ssp585_p3_India_pre_hypothesis,
 ) = ca.dim_linregress(pressp585_p3_India_JJA, pressp585_p3_JJA)
 
+# calculate the omega regress onto the precipitation
+wERA5_JJA.coords["time"] = preAIR_JJA.coords["time"]
+(
+    IndRAIR_ERA5_w_slope,
+    IndRAIR_ERA5_w_intercept,
+    IndRAIR_ERA5_w_rvalue,
+    IndRAIR_ERA5_w_pvalue,
+    IndRAIR_ERA5_w_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, wERA5_JJA.sel(level=500.0))
+
+(
+    IndR_his_w_slope,
+    IndR_his_w_intercept,
+    IndR_his_w_rvalue,
+    IndR_his_w_pvalue,
+    IndR_his_w_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, whis_ver_JJA.sel(level=500.0))
+
+(
+    IndR_ssp585_p3_w_slope,
+    IndR_ssp585_p3_w_intercept,
+    IndR_ssp585_p3_w_rvalue,
+    IndR_ssp585_p3_w_pvalue,
+    IndR_ssp585_p3_w_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, wssp585_p3_ver_JJA.sel(level=500.0))
 #   calculate the MME for historical and ssp585_p3
 pre_his_India_pre_slope_ens = pre_his_India_pre_slope.mean(dim="models", skipna=True)
 
@@ -681,6 +706,8 @@ IndR_850hgt_std.append(float((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range2,
 #   these gmodels are different from the ranking list calculated by the GPCP data
 gmodels = ["CAMS-CSM1-0", "CESM2-WACCM", "CMCC-ESM2", "INM-CM4-8", "MRI-ESM2-0", "UKESM1-0-LL"]
 # gmodels = ["CESM2-WACCM", "CMCC-ESM2", "MRI-ESM2-0", "UKESM1-0-LL"]
+IndR_his_w_slope_gens = IndR_his_w_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+IndR_his_w_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_w_slope_gens, IndR_his_w_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_w_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
 pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 pre_ssp585_p3_India_pre_slope_gens = pre_ssp585_p3_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -688,7 +715,8 @@ pre_ssp585_p3_India_pre_slope_gens = pre_ssp585_p3_India_pre_slope.sel(models=gm
 pre_his_India_pre_slope_gens_mask = xr.where((ca.MME_reg_mask(pre_his_India_pre_slope_gens, pre_his_India_pre_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(pre_his_India_pre_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 pre_ssp585_p3_India_pre_slope_gens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_p3_India_pre_slope_gens, pre_ssp585_p3_India_pre_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(pre_ssp585_p3_India_pre_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
-
+IndR_ssp585_p3_w_slope_gens = IndR_ssp585_p3_w_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+IndR_ssp585_p3_w_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_w_slope_gens, IndR_ssp585_p3_w_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_w_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 IndR_his_hgt_slope_gens = IndR_his_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_his_u_slope_gens = IndR_his_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_his_v_slope_gens = IndR_his_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -1275,12 +1303,18 @@ con = axs[0].contourf(
     zorder=0.8,
     extend="both"
     )
+
+axs[0].contour(
+    IndR_his_w_slope_gens,
+    color="green",
+    levels=np.arange(-5e-3, 6e-3, 2.5e-3)
+    )   
 sepl.plt_sig(
     pre_his_India_pre_slope_gens, axs[0], n, np.where(pre_his_India_pre_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 12.0,
 )
 
 axs[0].format(
-    ltitle="1979-2014", rtitle="gMME",
+    ltitle="1979-2014", rtitle="gMME"
 )
 # ===================================================
 con = axs[1].contourf(
@@ -1294,7 +1328,11 @@ con = axs[1].contourf(
 sepl.plt_sig(
     pre_ssp585_p3_India_pre_slope_gens, axs[1], n, np.where(pre_ssp585_p3_India_pre_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 12.0,
 )
-
+axs[1].contour(
+    IndR_ssp585_p3_w_slope_gens,
+    color="green",
+    levels=np.arange(-5e-3, 6e-3, 2.5e-3)
+    )
 axs[1].format(
     ltitle="2064-2099", rtitle="gMME",
 )
@@ -1320,7 +1358,7 @@ axs[2].format(
 # ===================================================
 cb = fig.colorbar(con, loc="b", width=0.13, length=0.85, label="", ticklabelsize=10, linewidth=1.2)
 cb.set_ticks(np.arange(-1.2, 1.3, 0.4))
-axs.format(linewidth=1.2, titlepad=6.0)
+axs.format(linewidth=1.2, titlepad=6.0, rc_kw={"contour.negative_linestyle":"-"})
 fig.format(abc="(a)", abcloc="l")
 # %% ##mark: plot the figure 5:  circulation regress onto SASMR, gMME, 1979-2014 & 2064-2099 & diff, 200/500/850hPa
 startlevel=[-15, -8, -6]
