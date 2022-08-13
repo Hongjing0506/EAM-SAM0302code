@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-07-07 15:42:39
 LastEditors: ChenHJ
-LastEditTime: 2022-08-12 13:03:31
+LastEditTime: 2022-08-13 21:27:15
 FilePath: /chenhj/0302code/final_figures.py
 Aim: This file is to plot final figures in paper.
 There are 10 figures in paper.
@@ -19,7 +19,7 @@ There are 10 figures in paper.
 Mission: 
 '''
 # %%
-# thie part is for the nondetrend plots
+# this part is for the nondetrend plots
 from mailbox import _PartialFile
 import numpy as np
 import xarray as xr
@@ -116,6 +116,8 @@ ftERA5 = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_d
 tERA5 = ftERA5["t"].sel(time=ftERA5["time"].dt.year>=1979)
 tERA5_ver_JJA = ca.p_time(tERA5, 6, 8, True)
 
+divERA5_ver_JJA = ca.cal_divergence(uERA5_ver_JJA.sel(level=[200.0, 850.0]), vERA5_ver_JJA.sel(level=[200.0, 850.0]))
+
 # read the data from CMIP6 historical experiment
 fprehis = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/pr_historical_r144x72_195001-201412.nc")
 prehis_JJA = fprehis["pr"].sel(time=fprehis["time"].dt.year>=1979)
@@ -167,6 +169,8 @@ sstssp585_p3_JJA = fsstssp585_p3_JJA["tos"].sel(time=fsstssp585_p3_JJA.time.dt.y
 ftssp585_p3_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ta_ssp585_r144x72_201501-209912.nc")
 tssp585_p3_ver_JJA = ftssp585_p3_ver_JJA["ta"].sel(time=ftssp585_p3_ver_JJA.time.dt.year>=2064)
 
+divhis_ver_JJA = ca.cal_divergence(uhis_ver_JJA.sel(level=[200.0, 850.0]), vhis_ver_JJA.sel(level=[200.0, 850.0]))
+divssp585_p3_ver_JJA = ca.cal_divergence(ussp585_p3_ver_JJA.sel(level=[200.0, 850.0]), vssp585_p3_ver_JJA.sel(level=[200.0, 850.0]))
 # ERA5_EAM = ca.EAM(uERA5_ver_JJA)
 
 # ERA5_IWF = ca.IWF(uERA5_ver_JJA, vERA5_ver_JJA)
@@ -468,6 +472,32 @@ wERA5_JJA.coords["time"] = preAIR_JJA.coords["time"]
     IndR_ssp585_p3_w_pvalue,
     IndR_ssp585_p3_w_hypothesis,
 ) = ca.dim_linregress(pressp585_p3_India_JJA, wssp585_p3_ver_JJA.sel(level=500.0))
+
+# calculate the divergence regress onto the precipitation
+divERA5_ver_JJA.coords["time"] = preAIR_JJA.coords["time"]
+(
+    IndRAIR_ERA5_div_slope,
+    IndRAIR_ERA5_div_intercept,
+    IndRAIR_ERA5_div_rvalue,
+    IndRAIR_ERA5_div_pvalue,
+    IndRAIR_ERA5_div_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, divERA5_ver_JJA)
+
+(
+    IndR_his_div_slope,
+    IndR_his_div_intercept,
+    IndR_his_div_rvalue,
+    IndR_his_div_pvalue,
+    IndR_his_div_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, divhis_ver_JJA)
+
+(
+    IndR_ssp585_p3_div_slope,
+    IndR_ssp585_p3_div_intercept,
+    IndR_ssp585_p3_div_rvalue,
+    IndR_ssp585_p3_div_pvalue,
+    IndR_ssp585_p3_div_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, divssp585_p3_ver_JJA)
 #   calculate the MME for historical and ssp585_p3
 pre_his_India_pre_slope_ens = pre_his_India_pre_slope.mean(dim="models", skipna=True)
 
@@ -709,6 +739,9 @@ gmodels = ["CAMS-CSM1-0", "CESM2-WACCM", "CMCC-ESM2", "INM-CM4-8", "MRI-ESM2-0",
 IndR_his_w_slope_gens = IndR_his_w_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_his_w_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_w_slope_gens, IndR_his_w_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_w_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
+IndR_his_div_slope_gens = IndR_his_div_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+IndR_his_div_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_div_slope_gens, IndR_his_div_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_div_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
 pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 pre_ssp585_p3_India_pre_slope_gens = pre_ssp585_p3_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 
@@ -717,6 +750,9 @@ pre_ssp585_p3_India_pre_slope_gens_mask = xr.where((ca.MME_reg_mask(pre_ssp585_p
 
 IndR_ssp585_p3_w_slope_gens = IndR_ssp585_p3_w_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_ssp585_p3_w_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_w_slope_gens, IndR_ssp585_p3_w_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_w_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+IndR_ssp585_p3_div_slope_gens = IndR_ssp585_p3_div_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+IndR_ssp585_p3_div_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_ssp585_p3_div_slope_gens, IndR_ssp585_p3_div_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_ssp585_p3_div_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
+
 IndR_his_hgt_slope_gens = IndR_his_hgt_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_his_u_slope_gens = IndR_his_u_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 IndR_his_v_slope_gens = IndR_his_v_slope.sel(models=gmodels).mean(dim="models", skipna=True)
@@ -1304,11 +1340,6 @@ con = axs[0].contourf(
     extend="both"
     )
 
-axs[0].contour(
-    IndR_his_w_slope_gens,
-    color="green",
-    levels=np.arange(-5e-3, 6e-3, 2.5e-3)
-    )   
 sepl.plt_sig(
     pre_his_India_pre_slope_gens, axs[0], n, np.where(pre_his_India_pre_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 12.0,
 )
@@ -1328,11 +1359,6 @@ con = axs[1].contourf(
 sepl.plt_sig(
     pre_ssp585_p3_India_pre_slope_gens, axs[1], n, np.where(pre_ssp585_p3_India_pre_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 12.0,
 )
-axs[1].contour(
-    IndR_ssp585_p3_w_slope_gens,
-    color="green",
-    levels=np.arange(-5e-3, 6e-3, 2.5e-3)
-    )
 axs[1].format(
     ltitle="2064-2099", rtitle="gMME",
 )
@@ -1446,6 +1472,37 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
         zorder=0.8,
         extend="both"
     )
+    if lev == 200.0:
+        axs[num_lev, 0].contour(
+          uhis_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
+          color="green6",
+          levels=np.array([20.0, 25.0, 30.0]),
+          zorder=0.8
+        )
+    # if lev == 200.0:
+    #   axs[num_lev, 0].contour(
+    #   IndR_his_div_slope_gens.sel(level=lev),
+    #   color="green",
+    #   levels=np.arange(-5e-6, 6e-6, 2.0e-7),
+    #   zorder=0.8,
+    #   nozero=True
+    #   )
+    # elif lev == 500.0:
+    #   axs[num_lev, 0].contour(
+    #   IndR_his_w_slope_gens,
+    #   color="green",
+    #   levels=np.arange(-5e-3, 6e-3, 2.5e-3),
+    #   nozero=True,
+    #   zorder=0.8
+    #   )  
+    # elif lev == 850.0:
+    #   axs[num_lev, 0].contour(
+    #   IndR_his_div_slope_gens.sel(level=lev),
+    #   color="green",
+    #   levels=np.arange(-3e-7, 3.5e-7, 1e-7),
+    #   zorder=0.8,
+    #   nozero=True
+    #   )
     sepl.plt_sig(
         IndR_his_hgt_slope_gens.sel(level=lev), axs[num_lev, 0], n, np.where(IndR_his_hgt_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 19.0,
     )
@@ -1495,6 +1552,37 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     sepl.plt_sig(
         IndR_ssp585_p3_hgt_slope_gens.sel(level=lev), axs[num_lev, 1], n, np.where(IndR_ssp585_p3_hgt_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 19.0,
     )
+    if lev == 200.0:
+        axs[num_lev, 1].contour(
+          ussp585_p3_ver_JJA.sel(level=200.0, models=gmodels).mean(dim=["time","models"]).loc[0.0:,:],
+          color="green6",
+          levels=np.array([20.0, 25.0, 30.0]),
+          zorder=0.8
+        )
+    # if lev == 200.0:
+    #   axs[num_lev, 1].contour(
+    #   IndR_ssp585_p3_div_slope_gens.sel(level=lev),
+    #   color="green",
+    #   levels=np.arange(-5e-6, 6e-6, 2.0e-7),
+    #   zorder=0.8,
+    #   nozero=True
+    #   )
+    # elif lev == 500.0:
+    #   axs[num_lev, 1].contour(
+    #   IndR_ssp585_p3_w_slope_gens,
+    #   color="green",
+    #   levels=np.arange(-5e-3, 6e-3, 2.5e-3),
+    #   nozero=True,
+    #   zorder=0.8
+    #   )  
+    # elif lev == 850.0:
+    #   axs[num_lev, 1].contour(
+    #   IndR_ssp585_p3_div_slope_gens.sel(level=lev),
+    #   color="green",
+    #   levels=np.arange(-3e-7, 3.5e-7, 1e-7),
+    #   zorder=0.8,
+    #   nozero=True
+    #   )
     # axs[num_lev, 1].quiver(
     #     IndR_ssp585_p3_u_slope_gens.sel(level=lev)[::ski, ::ski],
     #     IndR_ssp585_p3_v_slope_gens.sel(level=lev)[::ski, ::ski],
@@ -1580,7 +1668,7 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     cb = axs[num_lev, 2].colorbar(con, loc="r", width=0.17, length=0.8, label="", ticklabelsize=12, pad=1.8)
     cb.set_ticks(np.arange(diffstartlevel[num_lev], -diffstartlevel[num_lev]+diffspacinglevel[num_lev], diffspacinglevel[num_lev]*2))
 # ======================================
-axs.format(linewidth=1.5, titlepad=8.0)
+axs.format(linewidth=1.5, titlepad=8.0, rc_kw={"contour.negative_linestyle":"-"})
 fig.format(abc="(a)", abcloc="l")
 # %% ##mark: plot the figure 6:  bar plots that show the WAAC, EAAC and WNPAC in all 26 models, gMME and MME in the period of 1979-2014 & 2064-2099 & diff
 pplt.rc["figure.facecolor"] = "white"
@@ -3223,4 +3311,117 @@ axs[2].format(ylim=(-1.2,1.2),xlocator=np.arange(0,28), xtickminor=False, ytickm
 axs.format(xrotation=45, ticklabelsize=10.0, linewidth=1.2, titlepad=7.0, yticklabelsize=13)
 fig.format(abc="(a)", abcloc="l")
 
-# %%
+# %%##mark: plot the extra figure: divergence at upper level and low level, omega at middle level
+startlevel=[-1e-6, -7e-3, -5e-7]
+spacinglevel=[1.0e-7, 7e-4, 5e-8]
+
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+pplt.rc["figure.facecolor"] = "white"
+pplt.rc["font.large"] = 16
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=6.0, wspace=6.2, hspace=5.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 7), (3, 2))
+# plot_array[-1,-1] = 0
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([60, 90, 120])  # 设置纬度刻度
+yticks = np.arange(0, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [40.0, 140.0, yticks[0], 55.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, extents, majorticklabelsize=14, lonminorspace=5, coastlinewidth=1.7, majorticklabelpad=3.0, majorticklen=6.0, minorticklen=5.0)
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ======================================
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+    # if lev == 200.0:
+    #     #   WAhigh
+    #     x0 = WAhigh_W
+    #     y0 = WAhigh_S
+    #     width = WAhigh_E-WAhigh_W
+    #     height = WAhigh_N-WAhigh_S
+    #     sepl.patches(axs[num_lev, 0], x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-", linewidth=1.7)
+    #     #   EAhigh
+    #     x0 = EAhigh_W
+    #     y0 = EAhigh_S
+    #     width = EAhigh_E-EAhigh_W
+    #     height = EAhigh_N-EAhigh_S
+    #     sepl.patches(axs[num_lev, 0], x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-", linewidth=1.7)
+    # elif lev == 850.0:
+    #     #   WNPhigh
+    #     x0 = WNPhigh_W
+    #     y0 = WNPhigh_S
+    #     width = WNPhigh_E-WNPhigh_W
+    #     height = WNPhigh_N-WNPhigh_S
+    #     sepl.patches(axs[num_lev, 0], x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-", linewidth=1.7)
+    # ======================================
+    if lev == 200.0 or lev == 850.0:
+      axs[num_lev, 0].contourf(
+      IndR_his_div_slope_gens.sel(level=lev),
+      levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+      zorder=0.8,
+      cmap="ColdHot",
+      cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+      extend="both"
+      )
+      sepl.plt_sig(
+        IndR_his_div_slope_gens.sel(level=lev), axs[num_lev, 0], n, np.where(IndR_his_div_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 19.0,
+      )
+    if lev == 500.0:
+      axs[num_lev, 0].contourf(
+      IndR_his_w_slope_gens,
+      cmap="ColdHot",
+      cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+      levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+      zorder=0.8,
+      extend="both"
+      )  
+      sepl.plt_sig(
+          IndR_his_w_slope_gens, axs[num_lev, 0], n, np.where(IndR_his_w_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 19.0,
+      )
+    axs[num_lev, 0].format(
+        ltitle="1979-2014 {:.0f} hPa".format(lev), rtitle="gMME",
+    )
+	# ======================================
+    if lev == 200.0 or lev == 850.0:
+      con = axs[num_lev, 1].contourf(
+      IndR_ssp585_p3_div_slope_gens.sel(level=lev),
+      levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+      zorder=0.8,
+      cmap="ColdHot",
+      cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+      extend="both"
+      )
+      sepl.plt_sig(
+        IndR_ssp585_p3_div_slope_gens.sel(level=lev), axs[num_lev, 1], n, np.where(IndR_ssp585_p3_div_slope_gens_mask.sel(level=lev)[::n, ::n] > 0.00), "bright purple", 19.0,
+      )
+      
+    if lev == 500.0:
+      con = axs[num_lev, 1].contourf(
+      IndR_ssp585_p3_w_slope_gens,
+      levels=np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]),
+      zorder=0.8,
+      cmap="ColdHot",
+      cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
+      extend="both"
+      )
+      sepl.plt_sig(
+        IndR_ssp585_p3_w_slope_gens, axs[num_lev, 1], n, np.where(IndR_ssp585_p3_w_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 19.0,
+      )
+    axs[num_lev, 1].format(
+        ltitle="2064-2099 {:.0f} hPa".format(lev), rtitle="gMME",
+    )
+    cb = axs[num_lev, 1].colorbar(con, loc="r", width=0.17, length=0.8, label="", ticklabelsize=12, pad=1.8)
+    cb.set_ticks(np.arange(startlevel[num_lev], -startlevel[num_lev]+spacinglevel[num_lev], spacinglevel[num_lev]*2))
+# ======================================
+axs.format(linewidth=1.5, titlepad=8.0, rc_kw={"contour.negative_linestyle":"-"})
+fig.format(abc="(a)", abcloc="l")
+
+# %%##mark: plot the atmospheirc bridge over the Pacific Ocean
