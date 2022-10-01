@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-25 11:38:12
 LastEditors: ChenHJ
-LastEditTime: 2022-06-29 18:12:22
+LastEditTime: 2022-07-07 16:47:18
 FilePath: /chenhj/0302code/detrend_all_models.py
 Aim: 
 This code is to plot the detrended results of all models
@@ -243,6 +243,23 @@ vorhis_ver_JJA = vorhis_ver_JJA.metpy.dequantify()
 vorssp585_p3_ver_JJA = mpcalc.vorticity(ussp585_p3_ver_JJA.sel(level=200.0), vssp585_p3_ver_JJA.sel(level=200.0))
 vorssp585_p3_ver_JJA = vorssp585_p3_ver_JJA.metpy.dequantify()
 
+#   calculate the SST in Nino3.4
+lat = ssthis_JJA.coords["lat"]
+lon = ca.filplonlat(ssthis_JJA).coords["lon"]
+
+Nino34_N = 5.0
+# Nino34_N = 30.0
+Nino34_S = -5.0
+Nino34_W = -170.0
+Nino34_E = -120.0
+lat_Nino34_range = lat[(lat >= Nino34_S) & (lat <= Nino34_N)]
+lon_Nino34_range = lon[(lon >= Nino34_W) & (lon <= Nino34_E)]
+
+
+sstHad_Nino34_JJA = ca.cal_lat_weighted_mean(ca.filplonlat(sstHad_JJA).sel(lat=lat_Nino34_range, lon=lon_Nino34_range)).mean(dim="lon", skipna=True)
+ssthis_Nino34_JJA = ca.cal_lat_weighted_mean(ca.filplonlat(ssthis_JJA).sel(lat=lat_Nino34_range, lon=lon_Nino34_range)).mean(dim="lon", skipna=True)
+sstssp585_p3_Nino34_JJA = ca.cal_lat_weighted_mean(ca.filplonlat(sstssp585_p3_JJA).sel(lat=lat_Nino34_range, lon=lon_Nino34_range)).mean(dim="lon", skipna=True)
+
 #   calculate the precipitation in India
 lat = preGPCP_JJA.coords["lat"]
 lon = preGPCP_JJA.coords["lon"]
@@ -439,6 +456,10 @@ vorssp585_p3_ver_JJA = ca.detrend_dim(vorssp585_p3_ver_JJA, "time", deg=1, demea
 # ssp585_p3_LKY = ca.detrend_dim(ssp585_p3_LKY, "time", deg=1, demean=False)
 
 # preCRU_India_JJA = ca.detrend_dim(preCRU_India_JJA, "time", deg=1, demean=False)
+sstHad_Nino34_JJA = ca.detrend_dim(sstHad_Nino34_JJA, "time", deg=1, demean=False)
+ssthis_Nino34_JJA = ca.detrend_dim(ssthis_Nino34_JJA, "time", deg=1, demean=False)
+sstssp585_p3_Nino34_JJA = ca.detrend_dim(sstssp585_p3_Nino34_JJA, "time", deg=1, demean=False)
+
 preGPCP_India_JJA = ca.detrend_dim(preGPCP_India_JJA, "time", deg=1, demean=False)
 prehis_India_JJA = ca.detrend_dim(prehis_India_JJA, "time", deg=1, demean=False)
 pressp585_p3_India_JJA = ca.detrend_dim(pressp585_p3_India_JJA, "time", deg=1, demean=False)
@@ -1018,6 +1039,11 @@ IndR_ssp585_p3_WAhigh_regress = ca.dim_linregress(pressp585_p3_India_JJA, vorssp
 
 IndR_diff_WAhigh_slope = IndR_ssp585_p3_WAhigh_regress[0] - IndR_his_WAhigh_regress[0]
 IndR_diff_WAhigh_rvalue = ca.cal_rdiff(IndR_ssp585_p3_WAhigh_regress[2], IndR_his_WAhigh_regress[2])
+
+# JJA Nino3.4
+IndR_Had_Nino34_regress = stats.linregress(preAIR_JJA, sstHad_Nino34_JJA)
+IndR_his_Nino34_regress = ca.dim_linregress(prehis_India_JJA, ssthis_Nino34_JJA)
+IndR_ssp585_p3_Nino34_regress = ca.dim_linregress(pressp585_p3_India_JJA, sstssp585_p3_Nino34_JJA)
 
 # calculate the precipitation standard deviation for ERA5, historical and ssp585_p3 and then calculate the difference between ssp585_p3 and historical
 preGPCP_JJA_std = preGPCP_JJA.std(dim="time",skipna=True)
@@ -3201,4 +3227,36 @@ for num_mod, mod in enumerate(models_array):
 # ======================================
 fig.colorbar(con, loc="b", width=0.13, length=0.7, label="")
 fig.format(abc="(a)", abcloc="l", suptitle="precip std")
+# %%
+# plot the scatter-plot, x:corr(ISM, JJA Nino3.4), y:pcc
+fig = pplt.figure(span=False, share=False, refheight=4.0, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+cycle = pplt.Cycle('blues', 'acton', 'oranges', 'greens', 28, left=0.1)
+# cycle = pplt.Cycle('538', 'Vlag' , 15, left=0.1)
+# m = axs[0].scatter(IndR_CRU_SC_regress[2], IndR_CRU_NC_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="CRU", marker="s")
+m = axs[0].scatter(1.0, IndR_Had_Nino34_regress[2], cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="HadISST", marker="s", color="blue5")
+for num_models, mod in enumerate(models_array):
+    m = axs[0].scatter(np.array(IndR_200hgt_pcc)[num_models], IndR_his_Nino34_regress[2].sel(models=mod), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels=mod)
+# fig.legend(loc="bottom", labels=models)
+# axs[0].axhline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axhline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+# axs[0].axvline(-ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+m = axs[0].scatter(np.array(IndR_200hgt_pcc)[26], ca.cal_rMME(IndR_his_Nino34_regress[2],"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="MME", marker="^")
+m = axs[0].scatter(np.array(IndR_200hgt_pcc)[27], ca.cal_rMME(IndR_his_Nino34_regress[2].sel(models=gmodels),"models"), cycle=cycle, legend='b', legend_kw={"ncols":4}, labels="gMME", marker="*")
+#   x-axis title
+axs[0].text(-0.55,0.03,s='200hPa-pcc')
+#   y-axis title
+axs[0].text(0.03,-0.55,s='corr(IndR, JJA Nino3.4)')
+
+axs[0].hlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.9, 36), -ca.cal_rlim1(0.9, 36),ca.cal_rlim1(0.9, 36), lw=1.2, color="grey7", ls="--")
+
+axs[0].hlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].hlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].vlines(-ca.cal_rlim1(0.95, 36), -ca.cal_rlim1(0.95, 36),ca.cal_rlim1(0.95, 36), lw=1.2, color="grey7", ls="--")
+axs[0].format(xlim=(-1.0,1.2), ylim=(-0.6,0.6), xloc="zero", yloc="zero", grid=False, xlabel="", ylabel="", ytickloc="both", xtickloc="both", suptitle="his Corr Coeff. with IndR")
 # %%
