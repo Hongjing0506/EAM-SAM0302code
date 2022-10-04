@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-06-28 22:21:13
 LastEditors: ChenHJ
-LastEditTime: 2022-06-30 17:09:47
+LastEditTime: 2022-08-11 22:53:20
 FilePath: /chenhj/0302code/nondetrend_good_models.py
 Aim: 
 This code is to plot the non-detrended results of good models
@@ -440,6 +440,32 @@ preAIR_JJA.coords["time"] = preGPCP_JJA.coords["time"]
     pre_ssp585_p3_India_pre_hypothesis,
 ) = ca.dim_linregress(pressp585_p3_India_JJA, pressp585_p3_JJA)
 
+# calculate the omega regress onto the precipitation
+wERA5_JJA.coords["time"] = preAIR_JJA.coords["time"]
+(
+    IndRAIR_ERA5_w_slope,
+    IndRAIR_ERA5_w_intercept,
+    IndRAIR_ERA5_w_rvalue,
+    IndRAIR_ERA5_w_pvalue,
+    IndRAIR_ERA5_w_hypothesis,
+) = ca.dim_linregress(preAIR_JJA, wERA5_JJA.sel(level=500.0))
+
+(
+    IndR_his_w_slope,
+    IndR_his_w_intercept,
+    IndR_his_w_rvalue,
+    IndR_his_w_pvalue,
+    IndR_his_w_hypothesis,
+) = ca.dim_linregress(prehis_India_JJA, whis_ver_JJA.sel(level=500.0))
+
+(
+    IndR_ssp585_p3_w_slope,
+    IndR_ssp585_p3_w_intercept,
+    IndR_ssp585_p3_w_rvalue,
+    IndR_ssp585_p3_w_pvalue,
+    IndR_ssp585_p3_w_hypothesis,
+) = ca.dim_linregress(pressp585_p3_India_JJA, wssp585_p3_ver_JJA.sel(level=500.0))
+
 #   calculate the MME for historical and ssp585_p3
 pre_his_India_pre_slope_ens = pre_his_India_pre_slope.mean(dim="models", skipna=True)
 
@@ -668,6 +694,8 @@ IndR_850hgt_std.append(float((IndR_his_hgt_slope_ens.sel(lat=lat_ranking_range2,
 #   these gmodels are different from the ranking list calculated by the GPCP data
 gmodels = ["CAMS-CSM1-0", "CESM2-WACCM", "CMCC-ESM2", "INM-CM4-8", "MRI-ESM2-0", "UKESM1-0-LL"]
 # gmodels = ["CESM2-WACCM", "CMCC-ESM2", "MRI-ESM2-0", "UKESM1-0-LL"]
+IndR_his_w_slope_gens = IndR_his_w_slope.sel(models=gmodels).mean(dim="models", skipna=True)
+IndR_his_w_slope_gens_mask = xr.where((ca.MME_reg_mask(IndR_his_w_slope_gens, IndR_his_w_slope.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True) + ca.cal_mmemask(IndR_his_w_slope.sel(models=gmodels))) >= 2.0, 1.0, 0.0)
 
 pre_his_India_pre_slope_gens = pre_his_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
 pre_ssp585_p3_India_pre_slope_gens = pre_ssp585_p3_India_pre_slope.sel(models=gmodels).mean(dim="models", skipna=True)
