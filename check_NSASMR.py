@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-10-01 17:05:04
 LastEditors: ChenHJ
-LastEditTime: 2022-10-01 21:52:14
+LastEditTime: 2022-10-03 16:21:19
 FilePath: /chenhj/0302code/check_NSASMR.py
 Aim: 
 check the rainfall variation changes over the northern India in the future.
@@ -196,19 +196,168 @@ lon_India_range = lon[(lon >= India_W) & (lon <= India_E)]
 
 # preCRU_India_JJA = ca.cal_lat_weighted_mean(preCRU_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
 preGPCP_India_JJA = ca.cal_lat_weighted_mean(preGPCP_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
-preGPCP_India_JJA = ca.standardize(preGPCP_India_JJA)
-preAIR_JJA = ca.standardize(preAIR_JJA)
+# preGPCP_India_JJA = ca.standardize(preGPCP_India_JJA)
+# preAIR_JJA = ca.standardize(preAIR_JJA)
 prehis_India_JJA = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
-prehis_India_JJA = ca.standardize(prehis_India_JJA)
+# prehis_India_JJA = ca.standardize(prehis_India_JJA)
 pressp585_p3_India_JJA = ca.cal_lat_weighted_mean(pressp585_p3_JJA.sel(lat=lat_India_range, lon=lon_India_range)).mean(dim="lon", skipna=True)
-pressp585_p3_India_JJA =  ca.standardize(pressp585_p3_India_JJA)
+# pressp585_p3_India_JJA =  ca.standardize(pressp585_p3_India_JJA)
 prehis_India_JJA_sum = ca.cal_lat_weighted_mean(prehis_JJA.sel(lat=lat_India_range, lon=lon_India_range)).sum(dim="lon", skipna=True)*len(lat_India_range)
 pressp585_p3_India_JJA_sum = ca.cal_lat_weighted_mean(pressp585_p3_JJA.sel(lat=lat_India_range, lon=lon_India_range)).sum(dim="lon", skipna=True)*len(lat_India_range)
 
 
-prehis_India_JJA_fraction = prehis_India_JJA/prehis_India_JJA_sum
-pressp585_p3_India_JJA_fraction = pressp585_p3_India_JJA/pressp585_p3_India_JJA_sum
+prehis_India_JJA_fraction = (prehis_JJA.sel(lat=lat_India_range, lon=lon_India_range)*np.cos(np.deg2rad(lat_India_range))/prehis_India_JJA_sum).mean(dim="time", skipna=True)
+pressp585_p3_India_JJA_fraction = (pressp585_p3_JJA.sel(lat=lat_India_range, lon=lon_India_range)*np.cos(np.deg2rad(lat_India_range))/pressp585_p3_India_JJA_sum).mean(dim="time", skipna=True)
 prediff_India_JJA_fraction = pressp585_p3_India_JJA_fraction - prehis_India_JJA_fraction
 
+# select the good models and calculate the gMME
+gmodels = ["CAMS-CSM1-0", "CESM2-WACCM", "CMCC-ESM2", "INM-CM4-8", "MRI-ESM2-0", "UKESM1-0-LL"]
+prehis_India_JJA_fraction_gens = prehis_India_JJA_fraction.sel(models=gmodels).mean(dim="models", skipna=True)
+pressp585_p3_India_JJA_fraction_gens = pressp585_p3_India_JJA_fraction.sel(models=gmodels).mean(dim="models", skipna=True)
+prediff_India_JJA_fraction_gens = pressp585_p3_India_JJA_fraction_gens - prehis_India_JJA_fraction_gens
+
+# try to do the test
+prehis_India_JJA_fraction_gens_mask = ca.MME_reg_mask(prehis_India_JJA_fraction_gens, prediff_India_JJA_fraction.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
+pressp585_p3_India_JJA_fraction_gens_mask = ca.MME_reg_mask(pressp585_p3_India_JJA_fraction_gens, prediff_India_JJA_fraction.sel(models=gmodels).std(dim="models", skipna=True), len(gmodels), True)
+prediff_India_JJA_fraction_gens_mask = ca.cal_mmemask(prediff_India_JJA_fraction.sel(models=gmodels))
+# %% ##mark: plot the figure 1: precipitation regress onto SASMR, observation and MME, 1979-2014, regression coefficient
+pplt.rc.grid = False
+pplt.rc.reso = "lo"
+pplt.rc["figure.facecolor"] = "white"
+pplt.rc["font.large"]
+cl = 0  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+plot_array = np.reshape(range(1, 4), (3, 1))
+axs = fig.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+xticks = np.array([60, 90, 120])  # 设置纬度刻度
+yticks = np.arange(0, 46, 15)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [50.0, 140.0, yticks[0], 45.0]
+sepl.geo_ticks(axs, xticks, yticks, cl, extents, majorticklabelsize=10)
+
+# ===================================================
+ski = 2
+n = 1
+w, h = 0.12, 0.14
+# ===================================================
+for ax in axs:
+    # India area
+    x0 = India_W
+    y0 = India_S
+    width = India_E-India_W
+    height = India_N-India_S
+    sepl.patches(ax, x0 - cl, y0, width, height, proj, linestyle="-", linewidth=1.2)
+# ===================================================
+con = axs[0].contourf(
+    prehis_India_JJA_fraction_gens,
+    cmap="greys",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(0.0,0.11,0.01),
+    zorder=0.8,
+    extend="both"
+    )
+axs[0].format(
+    ltitle="1979-2014", rtitle="gMME",
+)
+# ===================================================
+con = axs[1].contourf(
+    pressp585_p3_India_JJA_fraction_gens,
+    cmap="greys",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(0.0,0.11,0.01),
+    zorder=0.8,
+    extend="both",
+    )
+
+axs[1].format(
+    ltitle="2064-2099", rtitle="gMME",
+)
+# ===================================================
+con = axs[2].contourf(
+    prediff_India_JJA_fraction_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.0e-2,1.1e-2,1.0e-3),
+    zorder=0.8,
+    extend="both",
+    )
+sepl.plt_sig(
+    prediff_India_JJA_fraction_gens, axs[2], n, np.where(prediff_India_JJA_fraction_gens_mask[::n, ::n] > 0.0), "bright purple", 12.0,
+)
+
+axs[2].format(
+    ltitle="diff", rtitle="gMME",
+)
+# ===================================================
+cb = fig.colorbar(con, loc="b", width=0.13, length=0.7, label="", ticklabelsize=8)
+# cb.set_ticks(np.arange(-2.0,2.1, 0.4))
+axs.format(linewidth=1.2)
+fig.format(abc="(a)", abcloc="l")
+
 # %%
-# draw the prediff_India_JJA_fraction
+# plot the scatter plots, p1 and p2; x: area-mean; y:specific area
+pplt.rc.grid = False
+pplt.rc["figure.facecolor"] = "white"
+pplt.rc["font.large"]
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+
+axs.scatter(prehis_India_JJA.sel(models=gmodels).mean(dim="models", skipna=True), prehis_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True), color="blue")
+
+axs.scatter(pressp585_p3_India_JJA.sel(models=gmodels).mean(dim="models", skipna=True), pressp585_p3_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True), color="red")
+
+a1 = stats.linregress(prehis_India_JJA.sel(models=gmodels).mean(dim="models", skipna=True), prehis_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True))
+
+a2 = stats.linregress(pressp585_p3_India_JJA.sel(models=gmodels).mean(dim="models", skipna=True), pressp585_p3_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True))
+
+axs.line(np.linspace(-1,1,10), np.linspace(-1,1,10)*a1[0]+a1[1], color="blue")
+
+axs.line(np.linspace(-1,1,10), np.linspace(-1,1,10)*a2[0]+a2[1], color="red")
+# %%
+# plot the scatter plots, p1 and p2; x: area-mean; y:specific area
+pplt.rc.grid = False
+pplt.rc["figure.facecolor"] = "white"
+pplt.rc["font.large"]
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+
+axs.scatter(prehis_India_JJA_sum.sel(models=gmodels).mean(dim="models", skipna=True), prehis_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True), color="blue")
+
+axs.scatter(pressp585_p3_India_JJA_sum.sel(models=gmodels).mean(dim="models", skipna=True), pressp585_p3_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True), color="red")
+
+a1 = stats.linregress(prehis_India_JJA_sum.sel(models=gmodels).mean(dim="models", skipna=True), prehis_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True))
+
+a2 = stats.linregress(pressp585_p3_India_JJA_sum.sel(models=gmodels).mean(dim="models", skipna=True), pressp585_p3_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True))
+
+axs.line(np.linspace(350,475,10), np.linspace(350,475,10)*a1[0]+a1[1], color="blue")
+
+axs.line(np.linspace(400,550,10), np.linspace(400,550,10)*a2[0]+a2[1], color="red")
+# %%
+# plot the scatter plots, p1 and p2; x: area-mean; y:specific area
+pplt.rc.grid = False
+pplt.rc["figure.facecolor"] = "white"
+pplt.rc["font.large"]
+
+fig = pplt.figure(span=False, share=False, refwidth=4.0, wspace=4.0, hspace=3.5, outerpad=2.0)
+axs = fig.subplots(ncols=1, nrows=1)
+
+# axs.scatter(prehis_India_JJA_sum.sel(models=gmodels).mean(dim="models", skipna=True), prehis_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True)/prehis_India_JJA_sum.sel(models=gmodels).mean(dim="models", skipna=True), color="blue")
+
+# axs.scatter(pressp585_p3_India_JJA_sum.sel(models=gmodels).mean(dim="models", skipna=True), pressp585_p3_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True)/pressp585_p3_India_JJA_sum.sel(models=gmodels).mean(dim="models", skipna=True), color="red")
+axs.line(np.arange(2064, 2100), pressp585_p3_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True)/pressp585_p3_India_JJA_sum.sel(models=gmodels).mean(dim="models", skipna=True))
+
+# a1 = stats.linregress(prehis_India_JJA_sum.sel(models=gmodels).mean(dim="models", skipna=True), prehis_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True))
+
+# a2 = stats.linregress(pressp585_p3_India_JJA_sum.sel(models=gmodels).mean(dim="models", skipna=True), pressp585_p3_JJA.sel(models=gmodels, lat=28.75, lon=82.5).mean(dim="models", skipna=True))
+
+# axs.line(np.linspace(350,475,10), np.linspace(350,475,10)*a1[0]+a1[1], color="blue")
+
+# axs.line(np.linspace(400,550,10), np.linspace(400,550,10)*a2[0]+a2[1], color="red")
+# %%
