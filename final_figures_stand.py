@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-09-11 13:52:35
 LastEditors: ChenHJ
-LastEditTime: 2022-10-01 21:49:01
+LastEditTime: 2022-10-06 20:22:32
 FilePath: /chenhj/0302code/final_figures_stand.py
 Aim: This file is to plot final figures in paper.
 There are 8 figures in paper.
@@ -2106,7 +2106,7 @@ axs[1].axhline(0,lw=1.5,color="grey7")
 #         axs[1].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[1].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
-axs[1].format(ylim=(-2.0,2.0),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="NCAC")
+axs[1].format(ylim=(-2.0,2.0),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="NEAAC")
 
 #   plot the bar-plot of the WNP high
 plot_data = np.zeros((28,3))
@@ -2130,7 +2130,7 @@ axs[2].axhline(0,lw=1.5,color="grey7")
 #         axs[2].plot(num, 0, marker='o', markersize=8,zorder=100, color="red")
 
 axs[2].legend(handles=m, loc='ur', labels=["1979-2014", "2064-2099", "diff"])
-axs[2].format(ylim=(-1.2,1.2),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WNPAC")
+axs[2].format(ylim=(-1.5,1.5),xlocator=np.arange(0,28), xtickminor=False, ytickminor=False, grid=False, tickwidth=1.5, ticklen=6.0, linewidth=1.5, edgecolor="grey8", rtitle="WNPAC")
 
 axs.format(xrotation=45, ticklabelsize=10.0, linewidth=1.2, titlepad=7.0, yticklabelsize=13)
 fig.format(abc="(a)", abcloc="l")
