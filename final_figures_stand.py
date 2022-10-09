@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-09-11 13:52:35
 LastEditors: ChenHJ
-LastEditTime: 2022-10-06 20:22:32
+LastEditTime: 2022-10-08 15:58:41
 FilePath: /chenhj/0302code/final_figures_stand.py
 Aim: This file is to plot final figures in paper.
 There are 8 figures in paper.
@@ -1313,13 +1313,14 @@ ski = 2
 n = 1
 w, h = 0.12, 0.14
 # ===================================================
-for ax in axs:
+for ax in axs[1:]:
     # India area
     x0 = India_W
     y0 = India_S
     width = India_E-India_W
     height = India_N-India_S
     sepl.patches(ax, x0 - cl, y0, width, height, proj, linestyle="-", linewidth=1.2)
+for ax in axs:
     # NC area
     x0 = NC_W
     y0 = NC_S
@@ -1415,14 +1416,14 @@ for ax in axs:
     # height = SJ_N-SJ_S
     # sepl.patches(ax, x0 - cl, y0, width, height, proj)
 # ======================================
-for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
-    if lev == 200.0:
-        for ax in axs[num_lev, :]:
-            x0 = lon_ranking1_W
-            y0 = lat_ranking1_S
-            width = lon_ranking1_E-lon_ranking1_W
-            height = lat_ranking1_N-lat_ranking1_S
-            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-", linewidth=1.7)
+# for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
+#     if lev == 200.0:
+#         for ax in axs[0, 1]:
+x0 = lon_ranking1_W
+y0 = lat_ranking1_S
+width = lon_ranking1_E-lon_ranking1_W
+height = lat_ranking1_N-lat_ranking1_S
+sepl.patches(axs[0, 1], x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-", linewidth=1.7)
             # #   EAM index
             # x0 = 110.0
             # y0 = 40.0
@@ -1434,13 +1435,14 @@ for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
             # width = 40.0
             # height = 10.0
             # sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="green8", linestyle="-")
-    elif lev == 850.0:
-        for ax in axs[num_lev, :]:
-            x0 = lon_ranking2_W
-            y0 = lat_ranking2_S
-            width = lon_ranking2_E-lon_ranking2_W
-            height = lat_ranking2_N-lat_ranking2_S
-            sepl.patches(ax, x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-", linewidth=1.7)
+    # elif lev == 850.0:
+        # for ax in axs[2, 1]:
+x0 = lon_ranking2_W
+y0 = lat_ranking2_S
+width = lon_ranking2_E-lon_ranking2_W
+height = lat_ranking2_N-lat_ranking2_S
+sepl.patches(axs[2, 1], x0 - cl, y0, width, height, proj, edgecolor="bright purple", linestyle="-", linewidth=1.7)
+for num_lev,lev in enumerate([200.0, 500.0, 850.0]):
     con = axs[num_lev, 0].contourf(
         IndRAIR_ERA5_hgt_slope.sel(level=lev),
         cmap="ColdHot",
