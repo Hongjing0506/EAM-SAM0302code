@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-09-11 13:52:35
 LastEditors: ChenHJ
-LastEditTime: 2022-10-08 15:58:41
+LastEditTime: 2022-10-14 15:54:25
 FilePath: /chenhj/0302code/final_figures_stand.py
 Aim: This file is to plot final figures in paper.
 There are 8 figures in paper.
@@ -178,6 +178,8 @@ preAIR_JJA.coords["time"] = prehis_JJA.coords["time"]
 
 models = uhis_ver_JJA.coords["models"]
 models_array = models.data
+lat = preGPCP_JJA.coords["lat"]
+lon = preGPCP_JJA.coords["lon"]
 
 #   pick up the area data
 #   calculate the vorticity in ERA5, historical and ssp585
@@ -191,9 +193,6 @@ vorssp585_p3_ver_JJA = mpcalc.vorticity(ussp585_p3_ver_JJA.sel(level=200.0), vss
 vorssp585_p3_ver_JJA = vorssp585_p3_ver_JJA.metpy.dequantify()
 
 #   calculate the precipitation in India
-lat = preGPCP_JJA.coords["lat"]
-lon = preGPCP_JJA.coords["lon"]
-
 India_N = 32.5
 # India_N = 30.0
 India_S = 7.5
