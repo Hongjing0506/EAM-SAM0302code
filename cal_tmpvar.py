@@ -2,7 +2,7 @@
 Author: ChenHJ
 Date: 2022-04-11 23:24:18
 LastEditors: ChenHJ
-LastEditTime: 2022-10-27 17:40:11
+LastEditTime: 2022-12-06 17:08:03
 FilePath: /chenhj/0302code/cal_tmpvar.py
 Aim: 
 Mission: 
@@ -581,7 +581,7 @@ hgtCMIP6_ds_ver_JJA = xr.concat([hgthis_ds_ver_JJA.sel(time=hgthis_ds_ver_JJA.ti
 uCMIP6_ds_ver_JJA = xr.concat([uhis_ds_ver_JJA.sel(time=uhis_ds_ver_JJA.time.dt.year>=1979), ussp585_ds_ver_JJA], "time")
 vCMIP6_ds_ver_JJA = xr.concat([vhis_ds_ver_JJA.sel(time=vhis_ds_ver_JJA.time.dt.year>=1979), vssp585_ds_ver_JJA], "time")
 qCMIP6_ds_ver_JJA = xr.concat([qhis_ds_ver_JJA.sel(time=qhis_ds_ver_JJA.time.dt.year>=1979), qssp585_ds_ver_JJA], "time")
-wapCMIP6_ds_ver_JJA = xr.concat([waphis_ds_ver_JJA.sel(time=waphis_ds_ver_JJA.time.dt.year>=1979), ussp585_ds_ver_JJA], "time")
+wapCMIP6_ds_ver_JJA = xr.concat([waphis_ds_ver_JJA.sel(time=waphis_ds_ver_JJA.time.dt.year>=1979), wapssp585_ds_ver_JJA], "time")
 taCMIP6_ds_ver_JJA = xr.concat([tahis_ds_ver_JJA.sel(time=tahis_ds_ver_JJA.time.dt.year>=1979), tassp585_ds_ver_JJA], "time")
 preCMIP6_ds_JJA = xr.concat([prehis_ds_JJA.sel(time=prehis_ds_JJA.time.dt.year>=1979), pressp585_ds_JJA], "time")
 spCMIP6_ds_JJA = xr.concat([sphis_ds_JJA.sel(time=sphis_ds_JJA.time.dt.year>=1979), spssp585_ds_JJA], "time")
