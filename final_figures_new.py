@@ -1195,11 +1195,11 @@ axs[1].format(
 )
 # ===================================================
 cb = fig1.colorbar(con, loc="b", width=0.13, length=0.85, label="", ticklabelsize=7.5, pad=1.5, ticklen=3.0)
-cb.set_ticks(np.arange(-2.0,2.1,0.4))
+cb.set_ticks(np.arange(-1.6,1.7,0.4))
 axs.format(linewidth=0.8)
 fig1.format(abc="(a)", abcloc="l", rc_kw={"grid": False, "reso": "lo", "figure.facecolor":"white", "font.large": 7.5})
 # fig1.save("/home/ys17-23/chenhj/Chen_etal_2023_fig/fig_1.ps", dpi=300)
-fig1.save("/home/ys17-23/chenhj/Chen_etal_2023_fig/fig_1_7.5pt.svg", dpi=300)
+# fig1.save("/home/ys17-23/chenhj/Chen_etal_2023_fig/fig_1_7.5pt.svg", dpi=300)
 pplt.rc.reset()
 #-----------------------------------------------------------------------
   # md: figure 2: circulation regress onto SASMR, observation and MME, 1979-2014, 200/500/850hPa
@@ -1667,7 +1667,7 @@ axs[1].format(
 )
 # ===================================================
 cb = axs[1].colorbar(con, loc="b", width=0.13, length=0.85, label="", ticklabelsize=7.5, linewidth=0.8, pad=0.85, ticklen=3.0)
-cb.set_ticks(np.arange(-2.0,2.1,0.4))
+cb.set_ticks(np.arange(-1.6,1.7,0.4))
 # ===================================================
 con = axs[2].contourf(
     pre_diff_India_pre_slope_gens,
@@ -2212,11 +2212,11 @@ pplt.rc.reset()
 pplt.rc.reset()
 pplt.rc["legend.fontsize"]="7.5pt"
 pplt.rc.grid = False
-startlevel=-4e-1
-spacinglevel=0.2
+startlevel=-6e-1
+spacinglevel=0.06
 
 wstartlevel=-0.012
-wspacinglevel=0.003
+wspacinglevel=0.006
 
 prestartlevel=-0.5
 prespacinglevel=0.25
@@ -2240,100 +2240,84 @@ ski = 2
 n = 2
 w, h = 0.12, 0.14
 # ======================================
-# con = axs[0].contourf(
-#     IndR_Had_sst_slope,
-#     cmap="ColdHot",
-#     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-#     levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
-#     zorder=0.8,
-#     extend="both"
-# )
-# sepl.plt_sig(
-#     IndR_Had_sst_slope, axs[0], n, np.where(IndR_Had_sst_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
-# )
-
 con = axs[0].contourf(
-    IndRAIR_ERA5_w_slope,
+    IndR_Had_sst_slope,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(wstartlevel, -wstartlevel+wspacinglevel, wspacinglevel),
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
     zorder=0.8,
     extend="both"
 )
 sepl.plt_sig(
-    IndRAIR_ERA5_w_slope, axs[0], n, np.where(IndRAIR_ERA5_w_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
+    IndR_Had_sst_slope, axs[0], n, np.where(IndR_Had_sst_pvalue[::n, ::n] <= 0.05), "bright purple", 3.0,
 )
+
 CS = axs[0].contour(
-    IndR_Had_sst_slope,
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    IndRAIR_ERA5_w_slope,
+    # levels=np.arange(wstartlevel, -wstartlevel+wspacinglevel, wspacinglevel),
+    levels=np.array([-100.0, -0.005, 0.005, 100.0]),
     zorder=0.8,
     extend="both",
-    linewidths=[0.6, 0.6, 0.8, 0.6, 0.6],
+    # labels=True,
+    # linewidths=[0.6, 0.6, 0.8, 0.6, 0.6],
     color="grey9",
-    labels=True,
-    labels_kw=dict(fontsize=6.5, levels=[-0.4, -0.2], rotation=0)
 )
-# sepl.contour_label_modified(axs[0], CS, fontsize=6.5, inline_spacing=3.5)
 sepl.plt_sig(
-    IndR_Had_sst_slope, axs[0], n, np.where(IndR_Had_sst_pvalue[::n, ::n] <= 0.05), "grey", 4.0, marker="x", markeredgewidth=0.5
+    IndRAIR_ERA5_w_pvalue, axs[0], n, np.where(IndRAIR_ERA5_w_pvalue[::n, ::n] < 0.05), "grey8", 6.0, marker="x", markeredgewidth=0.5
 )
 axs[0].format(
     ltitle="1979-2014", rtitle="obs",
 )
 # ======================================
 con = axs[1].contourf(
-    IndR_his_w_slope_gens,
+    IndR_his_sst_slope_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(wstartlevel, -wstartlevel+wspacinglevel, wspacinglevel),
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
     zorder=0.8,
     extend="both"
 )
 sepl.plt_sig(
-    IndR_his_w_slope_gens, axs[1], n, np.where(IndR_his_w_slope_gens_mask[::n, ::n] > 0.0), "bright purple", 3.0,
+    IndR_his_sst_slope_gens, axs[1], n, np.where(IndR_his_sst_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
 )
 CS = axs[1].contour(
-    IndR_his_sst_slope_gens,
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    IndR_his_w_slope_gens,
+    levels=np.array([-100.0, -0.005, 0.005, 100.0]),
     zorder=0.8,
     extend="both",
-    linewidths=[0.6, 0.6, 0.8, 0.6, 0.6],
+    # linewidths=[0.6, 0.6, 0.8, 0.6, 0.6],
     color="grey9",
-    labels=True,
-    labels_kw=dict(fontsize=6.5, levels=[-0.4, -0.2], rotation=0)
 )
 # sepl.contour_label_modified(axs[1], CS, fontsize=6.5, inline_spacing=3.5)
 sepl.plt_sig(
-    IndR_his_sst_slope_gens, axs[1], n, np.where(IndR_his_sst_slope_gens_mask[::n, ::n] > 0.0), "grey", 4.0, marker="x", markeredgewidth=0.5
+    IndR_his_w_slope_gens, axs[1], n, np.where(IndR_his_w_slope_gens_mask[::n, ::n] > 0.0), "grey8", 6.0, marker="x", markeredgewidth=0.5
 )
 axs[1].format(
     ltitle="1979-2014", rtitle="gMME",
 )
 # ======================================
 con = axs[2].contourf(
-    IndR_ssp585_p3_w_slope_gens,
+    IndR_ssp585_p3_sst_slope_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(wstartlevel, -wstartlevel+wspacinglevel, wspacinglevel),
-    zorder=0.8,
-    extend="both"
-)
-sepl.plt_sig(
-    IndR_ssp585_p3_w_slope_gens, axs[2], n, np.where(IndR_ssp585_p3_w_slope_gens_mask[::n, ::n] > 0.0), "bright purple", 3.0,
-)
-CS = axs[2].contour(
-    IndR_ssp585_p3_sst_slope_gens,
     levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
     zorder=0.8,
+    extend="both"
+) 
+sepl.plt_sig(
+    IndR_ssp585_p3_sst_slope_gens, axs[2], n, np.where(IndR_ssp585_p3_sst_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+CS = axs[2].contour(
+    IndR_ssp585_p3_w_slope_gens,
+    levels=np.array([-100.0, -0.005, 0.005, 100.0]),
+    zorder=0.8,
     extend="both",
-    linewidths=[0.6, 0.6, 0.8, 0.6, 0.6],
+    # linewidths=[0.6, 0.6, 0.8, 0.6, 0.6],
     color="grey9",
-    labels=True,
-    labels_kw=dict(fontsize=6.5, levels=[-0.4, -0.2], rotation=0)
 )
 # sepl.contour_label_modified(axs[2], CS, fontsize=6.5, inline_spacing=3.5)
 sepl.plt_sig(
-    IndR_ssp585_p3_sst_slope_gens, axs[2], n, np.where(IndR_ssp585_p3_sst_slope_gens_mask[::n, ::n] > 0.0), "grey", 4.0, marker="x", markeredgewidth=0.5
+    IndR_ssp585_p3_w_slope_gens, axs[2], n, np.where(IndR_ssp585_p3_w_slope_gens_mask[::n, ::n] > 0.0), "grey8", 6.0, marker="x", markeredgewidth=0.5
 )
 axs[2].format(
     ltitle="2064-2099", rtitle="gMME",
@@ -2343,35 +2327,32 @@ axs[2].format(
 
 # ======================================
 con = axs[3].contourf(
-    IndR_diff_w_slope_gens,
+    IndR_diff_sst_slope_gens,
     cmap="ColdHot",
     cmap_kw={"left": 0.06, "right": 0.94, "cut": -0.1},
-    levels=np.arange(wstartlevel, -wstartlevel+wspacinglevel, wspacinglevel),
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
     zorder=0.8,
     extend="both"
 )
 sepl.plt_sig(
-    IndR_diff_w_slope_gens, axs[3], n, np.where(IndR_diff_w_slope_gens_mask[::n, ::n] > 0.0), "bright purple", 3.0,
+    IndR_diff_sst_slope_gens, axs[3], n, np.where(IndR_diff_sst_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
 )
 CS = axs[3].contour(
-    IndR_diff_sst_slope_gens,
-    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    IndR_diff_w_slope_gens,
+    levels=np.array([-100.0, -0.005, 0.005, 100.0]),
     zorder=0.8,
     extend="both",
-    linewidths=[0.6, 0.6, 0.8, 0.6, 0.6],
     color="grey9",
-    labels=True,
-    labels_kw=dict(fontsize=6.5, levels=[-0.4, -0.2], rotation=0)
 )
 # sepl.contour_label_modified(axs[3], CS, fontsize=6.5, inline_spacing=3.5)
 sepl.plt_sig(
-    IndR_diff_sst_slope_gens, axs[3], n, np.where(IndR_diff_sst_slope_gens_mask[::n, ::n] > 0.0), "grey", 4.0, marker="x", markeredgewidth=0.5
+    IndR_diff_w_slope_gens, axs[3], n, np.where(IndR_diff_w_slope_gens_mask[::n, ::n] > 0.0), "grey8", 6.0, marker="x", markeredgewidth=0.5
 )
 axs[3].format(
     ltitle="diff", rtitle="gMME",
 )
-cb = axs[3].colorbar(con, loc="b", width=0.10, length=0.85, label="", ticklabelsize=7.5, ticklen=3.0, pad=1.2)
-cb.set_ticks(np.arange(wstartlevel, -wstartlevel+wspacinglevel, 2*wspacinglevel))
+cb = axs[3].colorbar(con, loc="b", width=0.13, length=0.7, label="", ticklabelsize=7.5)
+cb.set_ticks(np.arange(-1.0,1.1,0.4))
 # ======================================
 axs.format(linewidth=0.8, titlepad=4.0)
 fig8.format(abc="(a)", abcloc="l", rc_kw={"figure.facecolor":"white", "font.large":7.5, "grid":False, "reso":"lo"})
@@ -3357,6 +3338,129 @@ figR3_SASMR_GPCP_pre_regress.save("/home/ys17-23/chenhj/Chen_etal_2023_fig/fig_R
 pplt.rc.reset()
 
 # %%
+#-----------------------------------------------------------------------
+  # md: 回复意见补充图4：降水回归到GPCP印度半岛降水在
+pplt.rc.reset()
+pplt.rc["legend.fontsize"]="7.5pt"
+pplt.rc.grid = False
+startlevel=-1.6
+spacinglevel=0.2
+
+cl = 180  # 设置地图投影的中心纬度
+proj = pplt.PlateCarree(central_longitude=cl)
+
+figR4 = pplt.figure(span=False, share=False, figwidth="16cm", hspace=3.0)
+plot_array = np.reshape(range(1, 5), (4, 1))
+axs = figR4.subplots(plot_array, proj=proj)
+
+#   set the geo_ticks and map projection to the plots
+# xticks = np.array([30, 60, 90, 120, 150, 180])  # 设置纬度刻度
+xticks = np.array([30, 75, 120, 165, 210, 255, 300])  # 设置纬度刻度
+yticks = np.arange(0, 61, 30)  # 设置经度刻度
+# 设置绘图的经纬度范围extents，其中前两个参数为经度的最小值和最大值，后两个数为纬度的最小值和最大值
+# 当想要显示的经纬度范围不是正好等于刻度显示范围时，对extents进行相应的修改即可
+extents = [xticks[0], xticks[-1], -15, yticks[-1]]
+sepl.geo_ticks(axs, xticks, yticks, cl, extents, majorticklabelsize=7.5, latminorspace=10, coastlinewidth=1.0, majorticklabelpad=3.0, majorticklen=3.5, minorticklen=2.5, lonminorspace=15)
+# ===================================================
+ski = 2
+n = 2
+w, h = 0.12, 0.14
+# ======================================
+con = axs[0].contourf(
+    pre_GPCP_India_pre_slope,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    pre_GPCP_India_pre_slope, axs[0], n, np.where(pre_GPCP_India_pre_pvalue[::n, ::n] <= 0.10), "bright purple", 3.0,
+)
+
+# CS = axs[0].contour(
+#     IndRAIR_ERA5_w_slope,
+#     # levels=np.arange(wstartlevel, -wstartlevel+wspacinglevel, wspacinglevel),
+#     levels=np.array([-100.0, -0.005, 0.005, 100.0]),
+#     zorder=0.8,
+#     extend="both",
+#     # labels=True,
+#     # linewidths=[0.6, 0.6, 0.8, 0.6, 0.6],
+#     color="grey9",
+# )
+# sepl.plt_sig(
+#     IndRAIR_ERA5_w_pvalue, axs[0], n, np.where(IndRAIR_ERA5_w_pvalue[::n, ::n] < 0.05), "grey8", 6.0, marker="x", markeredgewidth=0.5
+# )
+axs[0].format(
+    ltitle="1979-2014", rtitle="obs",
+)
+# ======================================
+con = axs[1].contourf(
+    pre_his_India_pre_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    pre_his_India_pre_slope_gens, axs[1], n, np.where(pre_his_India_pre_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+
+axs[1].format(
+    ltitle="1979-2014", rtitle="gMME",
+)
+# ======================================
+con = axs[2].contourf(
+    pre_ssp585_p3_India_pre_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(startlevel, -startlevel+spacinglevel, spacinglevel),
+    zorder=0.8,
+    extend="both"
+) 
+sepl.plt_sig(
+    pre_ssp585_p3_India_pre_slope_gens, axs[2], n, np.where(pre_ssp585_p3_India_pre_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+
+axs[2].format(
+    ltitle="2064-2099", rtitle="gMME",
+)
+cb = axs[2].colorbar(con, loc="b", width=0.13, length=0.7, label="", ticklabelsize=7.0)
+cb.set_ticks(np.arange(-1.6,1.7,0.4))
+
+# ======================================
+con = axs[3].contourf(
+    pre_diff_India_pre_slope_gens,
+    cmap="ColdHot",
+    cmap_kw={"left": 0.06, "right": 0.94},
+    levels=np.arange(-1.2, 1.3, 0.2),
+    zorder=0.8,
+    extend="both"
+)
+sepl.plt_sig(
+    pre_diff_India_pre_slope_gens, axs[3], n, np.where(pre_diff_India_pre_slope_gens_mask[::n, ::n] > 0.00), "bright purple", 3.0,
+)
+# CS = axs[3].contour(
+#     IndR_diff_w_slope_gens,
+#     levels=np.array([-100.0, -0.005, 0.005, 100.0]),
+#     zorder=0.8,
+#     extend="both",
+#     color="grey9",
+# )
+# sepl.plt_sig(
+#     IndR_diff_w_slope_gens, axs[3], n, np.where(IndR_diff_w_slope_gens_mask[::n, ::n] > 0.0), "grey8", 6.0, marker="x", markeredgewidth=0.5
+# )
+axs[3].format(
+    ltitle="diff", rtitle="gMME",
+)
+cb = axs[3].colorbar(con, loc="b", width=0.13, length=0.7, label="", ticklabelsize=7.5)
+cb.set_ticks(np.arange(-1.6,1.7,0.4))
+# ======================================
+axs.format(linewidth=0.8, titlepad=4.0)
+figR4.format(abc="(a)", abcloc="l", rc_kw={"figure.facecolor":"white", "font.large":7.5, "grid":False, "reso":"lo"})
+figR4.save("/home/ys17-23/chenhj/Chen_etal_2023_fig/fig_R4_7.5pt.svg", dpi=300)
+pplt.rc.reset()
 
 
-
+# %%
