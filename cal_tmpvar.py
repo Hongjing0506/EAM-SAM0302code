@@ -8,26 +8,29 @@ Aim:
 Mission: 
 '''
 # %%
+from mailbox import _PartialFile
 import numpy as np
 import xarray as xr
 import os
 import re
-from cdo import Cdo
+from cdo import *
 import shutil
 import sys
 
 sys.path.append("/home/ys17-23/chenhj/self_def/")
 import plot as sepl
 import cal as ca
-from importlib import reload
-reload(sepl)
-
 import pandas as pd
+from importlib import reload
+
 import metpy.calc as mpcalc
 import metpy.constants as constants
 import geocat.comp
 from windspharm.xarray import VectorWind
+import skill_metrics as sm
+from brokenaxes import brokenaxes
 
+reload(ca)
 
 # sd.path.append("/home/ys17-23/chenhj/1201code/self_def.py")
 
@@ -46,9 +49,10 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from scipy.stats import t
 from scipy import signal
-from scipy.interpolate import interp2d
 from eofs.multivariate.standard import MultivariateEof
 from eofs.standard import Eof
+import statsmodels.api as sm
+import metpy.constants as constants
 
 # %%
 #   read multi-models data of historical
@@ -215,6 +219,25 @@ tosds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 toshis_ds = xr.DataArray(tosds_his["tos"])
 toshis_ds.coords["models"] = modelname_tos
 
+hfls_his_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/hfls"
+)
+g = os.walk(hfls_his_path)
+filepath = []
+modelname_hfls = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_hfls.append(filename[loc[1] + 1 : loc[2]])
+hflsds_his = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+hflshis_ds = xr.DataArray(hflsds_his["hfls"])
+hflshis_ds.coords["models"] = modelname_hfls
+
+hflshis_ds_ver_JJA = ca.p_time(hflshis_ds, 6, 8, True)
+
+
 #   read multi-models data of ssp585
 hgt_ssp585_path = (
     "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/zg"
@@ -378,6 +401,25 @@ for path, dir_list, file_name in g:
 tosds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
 tosssp585_ds = xr.DataArray(tosds_ssp585["tos"])
 tosssp585_ds.coords["models"] = modelname_tos
+
+
+hfls_ssp585_path = (
+    "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/hfls"
+)
+g = os.walk(hfls_ssp585_path)
+filepath = []
+modelname_hfls = []
+for path, dir_list, file_name in g:
+    for filename in file_name:
+        if re.search("ensemble", filename) == None:
+            filepath.append(os.path.join(path, filename))
+            loc = ca.retrieve_allstrindex(filename, "_")
+            modelname_hfls.append(filename[loc[1] + 1 : loc[2]])
+hflsds_ssp585 = xr.open_mfdataset(filepath, concat_dim="models", combine="nested")
+hflsssp585_ds = xr.DataArray(hflsds_ssp585["hfls"])
+hflsssp585_ds.coords["models"] = modelname_hfls
+
+hflsssp585_ds_ver_JJA = ca.p_time(hflsssp585_ds, 6, 8, True)
 # %%
 #   recalculate the plevel of the different variables in historical run
 hgthis_ds.coords["plev"] = hgthis_ds["plev"] / 100.0
@@ -444,6 +486,7 @@ sphis_ds_JJA_copy = sphis_ds_JJA.copy()
 prehis_ds_JJA_copy = prehis_ds_JJA.copy()
 tshis_ds_JJA_copy = tshis_ds_JJA.copy()
 toshis_ds_JJA_copy = toshis_ds_JJA.copy()
+hflshis_ds_ver_JJA_copy = hflshis_ds_ver_JJA.copy()
 
 #   reorder the multi-models in ssp585 run
 hgtssp585_ds_ver_JJA_copy = hgtssp585_ds_ver_JJA.copy()
@@ -456,6 +499,7 @@ spssp585_ds_JJA_copy = spssp585_ds_JJA.copy()
 pressp585_ds_JJA_copy = pressp585_ds_JJA.copy()
 tsssp585_ds_JJA_copy = tsssp585_ds_JJA.copy()
 tosssp585_ds_JJA_copy = tosssp585_ds_JJA.copy()
+hflsssp585_ds_ver_JJA_copy = hflsssp585_ds_ver_JJA.copy()
 
 models = hgthis_ds_ver_JJA.coords["models"]
 # print(models)
@@ -481,6 +525,9 @@ for i, mod in enumerate(models):
     pressp585_ds_JJA_copy[i, :, :, :] = np.array(pressp585_ds_JJA.sel(models=mod))
     tsssp585_ds_JJA_copy[i, :, :, :] = np.array(tsssp585_ds_JJA.sel(models=mod))
     tosssp585_ds_JJA_copy[i, :, :, :] = np.array(tosssp585_ds_JJA.sel(models=mod))
+    
+    hflshis_ds_ver_JJA_copy[i, :, :, :] = np.array(hflshis_ds_ver_JJA.sel(models=mod))
+    hflsssp585_ds_ver_JJA_copy[i, :, :, :] = np.array(hflsssp585_ds_ver_JJA.sel(models=mod))
     
 hgthis_ds_ver_JJA = hgthis_ds_ver_JJA_copy.copy()
 uhis_ds_ver_JJA = uhis_ds_ver_JJA_copy.copy()
@@ -526,6 +573,12 @@ spssp585_ds_JJA.coords["models"] = models
 pressp585_ds_JJA.coords["models"] = models
 tsssp585_ds_JJA.coords["models"] = models
 tosssp585_ds_JJA.coords["models"] = models
+
+hflshis_ds_ver_JJA = hflshis_ds_ver_JJA_copy.copy()
+hflshis_ds_ver_JJA.coords["models"] = models
+
+hflsssp585_ds_ver_JJA = hflsssp585_ds_ver_JJA_copy.copy()
+hflsssp585_ds_ver_JJA.coords["models"] = models
 # %%
 #   output the non-detrend variables of multi-models in historical run
 hgthis_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/zg_historical_r144x72_195001-201412.nc")
@@ -550,6 +603,11 @@ pressp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM
 spssp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ps_ssp585_r144x72_201501-209912.nc")
 tsssp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ts_ssp585_r144x72_201501-209912.nc")
 tosssp585_ds_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/tos_ssp585_r144x72_201501-209912.nc")
+
+
+hflshis_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/hfls_historical_r144x72_195001-201412.nc")
+
+hflsssp585_ds_ver_JJA.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/hfls_ssp585_r144x72_201501-209912.nc")
 # %%
 # concatenate the variables in historical to ssp585
 # First, read the non-detrend variables
@@ -563,7 +621,7 @@ prehis_ds_JJA = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/
 sphis_ds_JJA = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/ps_historical_r144x72_195001-201412.nc")
 tshis_ds_JJA = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/ts_historical_r144x72_195001-201412.nc")
 toshis_ds_JJA = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/tos_historical_r144x72_195001-201412.nc")
-
+hflshis_ds_ver_JJA = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/hfls_historical_r144x72_195001-201412.nc")
 #   output the non-detrend variables of multi-models in ssp585 run
 hgtssp585_ds_ver_JJA = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/zg_ssp585_r144x72_201501-209912.nc")
 ussp585_ds_ver_JJA = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ua_ssp585_r144x72_201501-209912.nc")
@@ -575,7 +633,7 @@ pressp585_ds_JJA = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chen
 spssp585_ds_JJA = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ps_ssp585_r144x72_201501-209912.nc")
 tsssp585_ds_JJA = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/ts_ssp585_r144x72_201501-209912.nc")
 tosssp585_ds_JJA = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/tos_ssp585_r144x72_201501-209912.nc")
-
+hflsssp585_ds_ver_JJA = xr.open_dataarray("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/hfls_ssp585_r144x72_201501-209912.nc")
 # Second, concatenate the variables
 hgtCMIP6_ds_ver_JJA = xr.concat([hgthis_ds_ver_JJA.sel(time=hgthis_ds_ver_JJA.time.dt.year>=1979), hgtssp585_ds_ver_JJA], "time")
 uCMIP6_ds_ver_JJA = xr.concat([uhis_ds_ver_JJA.sel(time=uhis_ds_ver_JJA.time.dt.year>=1979), ussp585_ds_ver_JJA], "time")
@@ -587,6 +645,7 @@ preCMIP6_ds_JJA = xr.concat([prehis_ds_JJA.sel(time=prehis_ds_JJA.time.dt.year>=
 spCMIP6_ds_JJA = xr.concat([sphis_ds_JJA.sel(time=sphis_ds_JJA.time.dt.year>=1979), spssp585_ds_JJA], "time")
 tsCMIP6_ds_JJA = xr.concat([tshis_ds_JJA.sel(time=tshis_ds_JJA.time.dt.year>=1979), tsssp585_ds_JJA], "time")
 tosCMIP6_ds_JJA = xr.concat([toshis_ds_JJA.sel(time=toshis_ds_JJA.time.dt.year>=1979), tosssp585_ds_JJA], "time")
+hflsCMIP6_ds_ver_JJA = xr.concat([hflshis_ds_ver_JJA.sel(time=hflshis_ds_ver_JJA.time.dt.year>=1979), hflsssp585_ds_ver_JJA], "time")
 
 # %%
 # calculate the trend of different variables
@@ -600,6 +659,8 @@ preCMIP6_ds_JJA_trend = preCMIP6_ds_JJA.polyfit(dim="time",deg=1,skipna=True)["p
 spCMIP6_ds_JJA_trend = spCMIP6_ds_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
 tsCMIP6_ds_JJA_trend = tsCMIP6_ds_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
 tosCMIP6_ds_JJA_trend = tosCMIP6_ds_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
+hflsCMIP6_ds_ver_JJA_trend = hflsCMIP6_ds_ver_JJA.polyfit(dim="time",deg=1,skipna=True)["polyfit_coefficients"].sel(degree=1)
+
 
 hgtCMIP6_ds_ver_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/hgtCMIP6_trend.nc")
 uCMIP6_ds_ver_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/uCMIP6_trend.nc")
@@ -611,6 +672,7 @@ preCMIP6_ds_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SA
 spCMIP6_ds_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/spCMIP6_trend.nc")
 tsCMIP6_ds_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/tsCMIP6_trend.nc")
 tosCMIP6_ds_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/tosCMIP6_trend.nc")
+hflsCMIP6_ds_ver_JJA_trend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/non_detrend/hflsCMIP6_trend.nc")
 # %%
 #   calculate the detrend of different variables of multi-models
 hgtCMIP6_ds_ver_JJA_detrend = ca.detrend_dim(hgtCMIP6_ds_ver_JJA, "time", deg=1, demean=True)
@@ -623,6 +685,7 @@ spCMIP6_ds_JJA_detrend = ca.detrend_dim(spCMIP6_ds_JJA, "time", deg=1, demean=Tr
 preCMIP6_ds_JJA_detrend = ca.detrend_dim(preCMIP6_ds_JJA, "time", deg=1, demean=True)
 tsCMIP6_ds_JJA_detrend = ca.detrend_dim(tsCMIP6_ds_JJA, "time", deg=1, demean=True)
 tosCMIP6_ds_JJA_detrend = ca.detrend_dim(tosCMIP6_ds_JJA, "time", deg=1, demean=True)
+hflsCMIP6_ds_ver_JJA_detrend = ca.detrend_dim(hflsCMIP6_ds_ver_JJA, "time", deg=1, demean=True)
 # %%
 #   rename the variables of detrend data
 hgtCMIP6_ds_ver_JJA_detrend.name = "zg"
@@ -635,6 +698,7 @@ spCMIP6_ds_JJA_detrend.name = "ps"
 preCMIP6_ds_JJA_detrend.name = "pr"
 tsCMIP6_ds_JJA_detrend.name = "ts"
 tosCMIP6_ds_JJA_detrend.name = "sst"
+hflsCMIP6_ds_ver_JJA_detrend.name = "zg"
 # %%
 # cut the CMIP6 variables into two experiment
 hgthis_ds_ver_JJA_detrend = ca.detrend_dim(hgtCMIP6_ds_ver_JJA_detrend.sel(time=hgtCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=True)
@@ -676,6 +740,10 @@ tsssp585_p3_ds_JJA_detrend = ca.detrend_dim(tsCMIP6_ds_JJA_detrend.sel(time=tsCM
 toshis_ds_JJA_detrend = ca.detrend_dim(tosCMIP6_ds_JJA_detrend.sel(time=tosCMIP6_ds_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=True)
 tosssp585_ds_JJA_detrend = ca.detrend_dim(tosCMIP6_ds_JJA_detrend.sel(time=tosCMIP6_ds_JJA_detrend.time.dt.year>=2015), "time", deg=1, demean=True)
 tosssp585_p3_ds_JJA_detrend = ca.detrend_dim(tosCMIP6_ds_JJA_detrend.sel(time=tosCMIP6_ds_JJA_detrend.time.dt.year>=2064), "time", deg=1, demean=True)
+
+hflshis_ds_ver_JJA_detrend = ca.detrend_dim(hflsCMIP6_ds_ver_JJA_detrend.sel(time=hflsCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=True)
+hflsssp585_ds_ver_JJA_detrend = ca.detrend_dim(hflsCMIP6_ds_ver_JJA_detrend.sel(time=hflsCMIP6_ds_ver_JJA_detrend.time.dt.year>=2015), "time", deg=1, demean=True)
+hflsssp585_p3_ds_ver_JJA_detrend = ca.detrend_dim(hflsCMIP6_ds_ver_JJA_detrend.sel(time=hflsCMIP6_ds_ver_JJA_detrend.time.dt.year>=2064), "time", deg=1, demean=True)
 # %%
 #   rename the variables of detrend data
 hgthis_ds_ver_JJA_detrend.name = "zg"
@@ -710,6 +778,10 @@ spssp585_p3_ds_JJA_detrend.name = "ps"
 pressp585_p3_ds_JJA_detrend.name = "pr"
 tsssp585_p3_ds_JJA_detrend.name = "ts"
 tosssp585_p3_ds_JJA_detrend.name = "sst"
+
+hflshis_ds_ver_JJA_detrend.name = "hfls"
+hflsssp585_ds_ver_JJA_detrend.name = "hfls"
+hflsssp585_p3_ds_ver_JJA_detrend.name = "hfls"
 # %%
 #   output the detrended variables of multi-models in historical run
 hgthis_ds_ver_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/zg_historical_r144x72_197901-201412.nc")
@@ -744,6 +816,10 @@ pressp585_p3_ds_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/che
 spssp585_p3_ds_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ps_ssp585_p3_r144x72_206401-209912.nc")
 tsssp585_p3_ds_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/ts_ssp585_p3_r144x72_206401-209912.nc")
 tosssp585_p3_ds_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/tos_ssp585_p3_r144x72_206401-209912.nc")
+
+hflshis_ds_ver_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/detrend/hfls_historical_r144x72_197901-201412.nc")
+hflsssp585_ds_ver_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/hfls_ssp585_r144x72_201501-209912.nc")
+hflsssp585_p3_ds_ver_JJA_detrend.to_netcdf("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/tmp_var/JJA/detrend/hfls_ssp585_p3_r144x72_206401-209912.nc")
 # %%
 #   read non-detrend data
 fuhis_ver_JJA = xr.open_dataset("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/tmp_var/JJA/non_detrend/ua_historical_r144x72_195001-201412.nc")
