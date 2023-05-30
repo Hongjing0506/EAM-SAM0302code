@@ -2,17 +2,18 @@
 Author: ChenHJ
 Date: 2022-03-02 16:45:05
 LastEditors: ChenHJ
-LastEditTime: 2022-05-21 00:12:57
-FilePath: /chenhj/0302code/data_predealing.py
+LastEditTime: 2023-05-30 17:30:21
+FilePath: /0302code/data_predealing.py
 Aim: 
 Mission: 
 '''
 # %%
+from mailbox import _PartialFile
 import numpy as np
 import xarray as xr
 import os
 import re
-from cdo import Cdo
+from cdo import *
 import shutil
 import sys
 
@@ -21,6 +22,14 @@ import plot as sepl
 import cal as ca
 import pandas as pd
 from importlib import reload
+
+import metpy.calc as mpcalc
+import metpy.constants as constants
+import geocat.comp
+from windspharm.xarray import VectorWind
+import skill_metrics as sm
+from brokenaxes import brokenaxes
+
 reload(ca)
 
 # sd.path.append("/home/ys17-23/chenhj/1201code/self_def.py")
@@ -39,6 +48,11 @@ from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 from scipy import stats
 from scipy.stats import t
+from scipy import signal
+from eofs.multivariate.standard import MultivariateEof
+from eofs.standard import Eof
+import statsmodels.api as sm
+import metpy.constants as constants
 # %%
 modelname = ["ACCESS-CM2", "BCC-CSM2-MR", "CAMS-CSM1-0", "CanESM5", "CESM2", "CESM2-WACCM", "CMCC-ESM2", "CNRM-CM6-1", "CNRM-ESM2-1", "EC-Earth3-Veg", "EC-Earth3", "FGOALS-g3", "GFDL-CM4", "HadGEM3-GC31-LL", "IITM-ESM", "INM-CM4-8", "INM-CM5-0", "IPSL-CM6A-LR", "KACE-1-0-G", "MIROC-ES2L", "MIROC6", "MPI-ESM1-2-HR", "MRI-ESM2-0", "NESM3", "NorESM2-LM", "TaiESM1", "UKESM1-0-LL"]
 rlzn = ["r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r11i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f2", "r1i1p1f2", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f3", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f2", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r3i1p1f2"]
@@ -47,15 +61,26 @@ for model,rl in zip(modelname, rlzn):
     srcPath = "/home/ys17-23/Extension/CMIP6/CMIP6/"+ model +"/historical/" + rl + "/Amon"
     tmpPath = "/home/ys17-23/Extension/CMIP6/CMIP6/tmpPath"
     dstPath = "/home/ys17-23/Extension/personal-data/chenhj/CMIP6/historical"
-    variable = ["ts"]
+    variable = ["hfls"]
     freq = "Amon"
     ca.CMIP6_predealing_1(srcPath, tmpPath, dstPath, variable, freq, rl)
 # %%
 modelname = ["ACCESS-CM2", "BCC-CSM2-MR", "CAMS-CSM1-0", "CanESM5", "CESM2", "CESM2-WACCM", "CMCC-ESM2", "CNRM-CM6-1", "CNRM-ESM2-1", "EC-Earth3-Veg", "EC-Earth3", "FGOALS-g3", "GFDL-CM4", "HadGEM3-GC31-LL", "IITM-ESM", "INM-CM4-8", "INM-CM5-0", "IPSL-CM6A-LR", "KACE-1-0-G", "MIROC-ES2L", "MIROC6", "MPI-ESM1-2-HR", "MRI-ESM2-0", "NESM3", "NorESM2-LM", "TaiESM1", "UKESM1-0-LL"]
+rlzn = ["r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r11i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f2", "r1i1p1f2", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f3", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f2", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r1i1p1f1", "r3i1p1f2"]
+for model,rl in zip(modelname, rlzn):
+    print(model)
+    srcPath = "/home/ys17-23/Extension/CMIP6/CMIP6/"+ model +"/ssp585/" + rl + "/Amon"
+    tmpPath = "/home/ys17-23/Extension/CMIP6/CMIP6/tmpPath"
+    dstPath = "/home/ys17-23/Extension/personal-data/chenhj/CMIP6/ssp585"
+    variable = ["hfls"]
+    freq = "Amon"
+    ca.CMIP6_predealing_1(srcPath, tmpPath, dstPath, variable, freq, rl)
+#%%
+modelname = ["ACCESS-CM2", "BCC-CSM2-MR", "CAMS-CSM1-0", "CanESM5", "CESM2", "CESM2-WACCM", "CMCC-ESM2", "CNRM-CM6-1", "CNRM-ESM2-1", "EC-Earth3-Veg", "EC-Earth3", "FGOALS-g3", "GFDL-CM4", "HadGEM3-GC31-LL", "IITM-ESM", "INM-CM4-8", "INM-CM5-0", "IPSL-CM6A-LR", "KACE-1-0-G", "MIROC-ES2L", "MIROC6", "MPI-ESM1-2-HR", "MRI-ESM2-0", "NESM3", "NorESM2-LM", "TaiESM1", "UKESM1-0-LL"]
 yearstart = "185001"
 yearend = ["201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201612", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412", "201412"]
 dstPath = "/home/ys17-23/Extension/personal-data/chenhj/CMIP6/historical"
-variable = ["ts", "tos"]
+variable = ["hfls"]
 
 for var in variable:
     dstpath = os.path.join(dstPath, var)
@@ -107,6 +132,22 @@ for var in variable:
     end = 2014
     ca.p_year(srcPath, dstPath, start, end)
 # %%
+variable = ["hfls"]
+for var in variable:
+    srcPath = "/home/ys17-23/Extension/personal-data/chenhj/CMIP6/historical/" + var
+    dstPath = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical/" + var
+    start = 1950
+    end = 2014
+    ca.p_year(srcPath, dstPath, start, end)
+# %%
+variable = ["hfls"]
+for var in variable:
+    srcPath = "/home/ys17-23/Extension/personal-data/chenhj/CMIP6/ssp585/" + var
+    dstPath = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585/" + var
+    start = 2015
+    end = 2099
+    ca.p_year(srcPath, dstPath, start, end)
+# %%
 variable = ["ua", "va", "ta", "wap", "hus", "zg", "pr"]
 for var in variable:
     srcPath = "/home/ys17-23/chenhj/CMIP6/ssp585/" + var
@@ -126,6 +167,17 @@ for var in variable:
         for filename in file_list:
             print(filename)
             ca.uniform_timestamp(os.path.join(path, filename), os.path.join("/home/ys17-23/chenhj/SAM_EAM_data/CMIP6/ssp5852", var, filename), var, "20150101", "20991201", "MS")
+# %%
+#   uniform the time of different models
+path1 = "/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585"
+variable = ["hfls"]
+for var in variable:
+    varpath = os.path.join(path1, var)
+    g = os.walk(varpath)
+    for path, dir_list, file_list in g:
+        for filename in file_list:
+            print(filename)
+            ca.uniform_timestamp(os.path.join(path, filename), os.path.join("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp5852", var, filename), var, "20150101", "20991201", "MS")
 # %%
 def uniform_plev(filepath, dstpath, var):
     plev = np.array([100000.0, 92500.0, 85000.0, 70000.0, 60000.0, 50000.0, 40000.0, 30000.0, 25000.0, 20000.0, 15000.0, 10000.0, 7000.0, 5000.0, 3000.0, 2000.0, 1000.0, 500.0, 100.0])
@@ -163,6 +215,27 @@ variables = ["ua", "va", "hus", "ta", "wap", "ps", "pr", "zg"]
 for var in variables:
     srcPath = os.path.join("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585", var)
     dstPath = os.path.join("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/ssp585", var)
+    cdo_ensmean(srcPath, dstPath)
+# %%
+#   calculate the ensmean of different variables
+    
+def cdo_ensmean(srcPath, dstPath):
+    g = os.walk(srcPath)
+    inputString = ""
+    mergelist = []
+    for path, dir_list, file_list in g:
+        for file_name in file_list:
+            if re.search("IITM-ESM", file_name) == None and re.search("ensemble", file_name) == None:
+                mergelist.append(os.path.join(path, file_name))
+    for i in range(len(mergelist)):
+        inputString += mergelist[i] + " "
+    print(inputString)
+    cdo.ensmean(input=inputString, output=os.path.join(dstPath, var + "_Amon_ensemble_historical_gn_195001-201412.nc"))
+    
+variables = ["hfls"]
+for var in variables:
+    srcPath = os.path.join("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical", var)
+    dstPath = os.path.join("/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/CMIP6/historical", var)
     cdo_ensmean(srcPath, dstPath)
 # %%
 modelname = ["ACCESS-CM2", "BCC-CSM2-MR", "CAMS-CSM1-0", "CanESM5", "CESM2", "CESM2-WACCM", "CMCC-ESM2", "CNRM-CM6-1", "CNRM-ESM2-1", "EC-Earth3-Veg", "EC-Earth3", "FGOALS-g3", "GFDL-CM4", "HadGEM3-GC31-LL", "INM-CM4-8", "INM-CM5-0", "IPSL-CM6A-LR", "KACE-1-0-G", "MIROC-ES2L", "MIROC6", "MPI-ESM1-2-HR", "MRI-ESM2-0", "NESM3", "NorESM2-LM", "TaiESM1", "UKESM1-0-LL"]
