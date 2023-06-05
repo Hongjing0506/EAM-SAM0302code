@@ -698,7 +698,7 @@ spCMIP6_ds_JJA_detrend.name = "ps"
 preCMIP6_ds_JJA_detrend.name = "pr"
 tsCMIP6_ds_JJA_detrend.name = "ts"
 tosCMIP6_ds_JJA_detrend.name = "sst"
-hflsCMIP6_ds_ver_JJA_detrend.name = "zg"
+hflsCMIP6_ds_ver_JJA_detrend.name = "hfls"
 # %%
 # cut the CMIP6 variables into two experiment
 hgthis_ds_ver_JJA_detrend = ca.detrend_dim(hgtCMIP6_ds_ver_JJA_detrend.sel(time=hgtCMIP6_ds_ver_JJA_detrend.time.dt.year<=2014), "time", deg=1, demean=True)
