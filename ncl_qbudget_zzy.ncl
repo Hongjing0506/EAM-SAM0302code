@@ -260,18 +260,21 @@ begin
 	Te2=new(dimsizes(dq), "float")
 	Te3=new(dimsizes(dq), "float")	 ;;[month]x[year|36]x[lev|12]x[lat]x[lon]
 	Te4=new(dimsizes(dq), "float")
+  Te5=new(dimsizes(dq), "float")
   do nyear = 0,35
     do i = 0,2
       Te1(i,nyear,:,:,:)=-1.0*wMM*dqdp(i,nyear,:,:,:)  ;垂直水汽输送热力项
       Te2(i,nyear,:,:,:)=-1.0*dw(i,nyear,:,:,:)*Cdqdp(:,:,:)  ;垂直水汽输送动力项
       Te3(i,nyear,:,:,:)=-1.0*uMM*dqdx(i,nyear,:,:,:)-1.0*vMM*dqdy(i,nyear,:,:,:)  ;水平水汽输送热力项
       Te4(i,nyear,:,:,:)=-1.0*du(i,nyear,:,:,:)*Cdqdx-1.0*dv(i,nyear,:,:,:)*Cdqdy  ;水平水汽输送动力项
+      Te5(i,nyear,:,:,:)=(-1.0*du(i,nyear,:,:,:)*dqdx(i,nyear,:,:,:)-1.0*dv(i,nyear,:,:,:)*dqdy(i,nyear,:,:,:))*100-1.0*dw(i,nyear,:,:,:)*dqdp(i,nyear,:,:,:)
     end do
   end do
 	copy_VarCoords(dw,Te1)
 	copy_VarCoords(dw,Te2)
 	copy_VarCoords(dq,Te3)
 	copy_VarCoords(dq,Te4)
+	copy_VarCoords(dq,Te5)
 	printVarSummary(Te1)	
 	printVarSummary(Te3)
 	; print(Te1(0,0,:,0,0))
@@ -289,47 +292,81 @@ begin
 	Tee2=new(dimsizes(dq), "float")
 	Tee3=new(dimsizes(dq), "float")	 ;;[month]x[year|36]x[lev|12]x[lat]x[lon]
 	Tee4=new(dimsizes(dq), "float")
+	Tee5=new(dimsizes(dq), "float")
 
+  ;计算水汽通量散度
+  uq_sl = uJJA*qJJA
+  vq_sl = vJJA*qJJA
+
+  uq_sl_dp = new(dimsizes(uq_sl), "float")
+  vq_sl_dp = new(dimsizes(vq_sl), "float")
 
 	do nyear=0,35
     Tee1(:,nyear,:,:,:)=Te1(:,nyear,:,:,:)*dp
     Tee2(:,nyear,:,:,:)=Te2(:,nyear,:,:,:)*dp
     Tee3(:,nyear,:,:,:)=Te3(:,nyear,:,:,:)*dp
     Tee4(:,nyear,:,:,:)=Te4(:,nyear,:,:,:)*dp
+    Tee5(:,nyear,:,:,:)=Te5(:,nyear,:,:,:)*dp
+    uq_sl_dp(:,nyear,:,:,:)=uq_sl(:,nyear,:,:,:)*dp*100
+    vq_sl_dp(:,nyear,:,:,:)=vq_sl(:,nyear,:,:,:)*dp*100
   end do
+
+
+
+
 	T1=dim_sum_n_Wrap(Tee1,2) ;垂直积分，变为[month]x[year]x[lat]x[lon]
 	T2=dim_sum_n_Wrap(Tee2,2)
 	T3=dim_sum_n_Wrap(Tee3,2)
 	T4=dim_sum_n_Wrap(Tee4,2)
+  T5=dim_sum_n_Wrap(Tee5,2)
+
+  uq_vert=dim_sum_n_Wrap(uq_sl_dp,2)/9.81*1000
+  vq_vert=dim_sum_n_Wrap(vq_sl_dp,2)/9.81*1000
+
+
+  uq_output=dim_avg_n_Wrap(uq_vert, 0)
+  vq_output=dim_avg_n_Wrap(vq_vert, 0)
+  copy_VarCoords(dq(0,:,0,:,:), uq_output)
+  copy_VarCoords(dq(0,:,0,:,:), vq_output)
+  printVarSummary(uq_output)
+
 	T1=T1/9.81*86400  ;;单位换算成mm/day
 	T2=T2/9.81*86400
 	T3=T3/9.81*86400*100
 	T4=T4/9.81*86400*100
-
+  T5=T5/9.81*86400
 	copy_VarCoords(dw(:,:,0,:,:),T1)
 	copy_VarCoords(dw(:,:,0,:,:),T2)
 	copy_VarCoords(dq(:,:,0,:,:),T3)
 	copy_VarCoords(dq(:,:,0,:,:),T4)
+  copy_VarCoords(dq(:,:,0,:,:),T5)
 
 	T1draw = dim_avg_n_Wrap(T1,0) ;[year]x[lat]x[lon]
 	T2draw = dim_avg_n_Wrap(T2,0)
 	T3draw = dim_avg_n_Wrap(T3,0)
 	T4draw = dim_avg_n_Wrap(T4,0)
+  T5draw = dim_avg_n_Wrap(T5,0)
 	printMinMax(T1draw(0,{0:40},{95:150}),True) ;min=-2.85205   max=4.00643	
 	printMinMax(T2draw(0,{0:40},{95:150}),True) ;min=-11.0172   max=18.0444
 	printMinMax(T3draw(0,{0:40},{95:150}),True) ;min=-6.84386   max=5.86864
 	printMinMax(T4draw(0,{0:40},{95:150}),True) ;min=-4.3223   max=4.08617
 
-	output="/home/ys17-23/chenhj/0302code/"
-   system("rm -f "+output+"ERA5_ncl_qbudget_zzy.nc")
-   fout = addfile(output+"ERA5_ncl_qbudget_zzy.nc","c")
+	output="/home/ys17-23/Extension/personal-data/chenhj/SAM_EAM_data/new_paper_data/qbudgetanalysis/"
+   system("rm -f "+output+"ERA5_ncl_qbudget_zzy_1x1.nc")
+   fout = addfile(output+"ERA5_ncl_qbudget_zzy_1x1.nc","c")
    fout->pre  = predraw
    fout->E    = Edraw
    fout->T1   = T1draw
    fout->T2   = T2draw
    fout->T3   = T3draw
    fout->T4   = T4draw
+   fout->T5   = T5draw
 
+
+   system("rm -f "+output+"ERA5_ncl_uqvq_zzy_1x1.nc")
+   fuqvq = addfile(output+"ERA5_ncl_uqvq_zzy_1x1.nc","c")
+   fuqvq->uq_vert  = uq_output
+   fuqvq->vq_vert =  vq_output
 ; ;;画图，展板=============================================
 ; wks = gsn_open_wks("pdf","Fig2-202010-202101-ERA5")
 ; plot = new(6,graphic)
