@@ -67,11 +67,11 @@ res_models = []
 for mod in models:
   fhfls_ssp585 = xr.open_dataset("/home/ys17-23/Extension2/LuoHL/EmerCon/ssp585/mergetime_remap/hfls_{}_ssp585_remap.nc".format(mod))
   hfls_ssp585 = fhfls_ssp585["hfls"].sel(time=(fhfls_ssp585.time.dt.year>=2050)&(fhfls_ssp585.time.dt.year<=2099))*0.408*1e-6
-  hfls_ssp585.attrs["units"] = "mm/day"
+  hfls_ssp585.attrs["units"] = "mm/s"
 
   fpr_ssp585 = xr.open_dataset("/home/ys17-23/Extension2/LuoHL/EmerCon/ssp585/mergetime_remap/pr_{}_ssp585_remap.nc".format(mod))
   pr_ssp585 = fpr_ssp585["pr"].sel(time=(fpr_ssp585.time.dt.year>=2050)&(fpr_ssp585.time.dt.year<=2099))
-  pr_ssp585.attrs["units"] = "mm/day"
+  pr_ssp585.attrs["units"] = "mm/s"
 
   fhus_ssp585 = xr.open_dataset("/home/ys17-23/Extension2/LuoHL/EmerCon/ssp585/mergetime_remap/hus_{}_ssp585_remap.nc".format(mod))
   hus_ssp585 = fhus_ssp585["hus"].sel(time=(fhus_ssp585.time.dt.year>=2050)&(fhus_ssp585.time.dt.year<=2099))
@@ -90,11 +90,11 @@ for mod in models:
 
   fhfls_hist = xr.open_dataset("/home/ys17-23/Extension2/LuoHL/EmerCon/hist/mergetime_remap/hfls_{}_hist_remap.nc".format(mod))
   hfls_hist = fhfls_hist["hfls"].sel(time=(fhfls_hist.time.dt.year>=1965)&(fhfls_hist.time.dt.year<=2014))*0.408*1e-6
-  hfls_hist.attrs["units"] = "mm/day"
+  hfls_hist.attrs["units"] = "mm/s"
 
   fpr_hist = xr.open_dataset("/home/ys17-23/Extension2/LuoHL/EmerCon/hist/mergetime_remap/pr_{}_hist_remap.nc".format(mod))
   pr_hist = fpr_hist["pr"].sel(time=(fpr_hist.time.dt.year>=1965)&(fpr_hist.time.dt.year<=2014))
-  pr_hist.attrs["units"] = "mm/day"
+  pr_hist.attrs["units"] = "mm/s"
 
   fhus_hist = xr.open_dataset("/home/ys17-23/Extension2/LuoHL/EmerCon/hist/mergetime_remap/hus_{}_hist_remap.nc".format(mod))
   hus_hist = fhus_hist["hus"].sel(time=(fhus_hist.time.dt.year>=1965)&(fhus_hist.time.dt.year<=2014))
